@@ -140,8 +140,7 @@ object XMLDeserializer {
     val description = e.attribute("Description")
     val children    = e.getChildElements
     val components  = for ( i <- 0 until children.size ) yield component ( children.get(i), i + 1 )
-    if( components.isEmpty ) Primitive(id, name, description)
-    else Composite(id, name, description, components.toList)
+    Datatype(id, name, description, components.toList)
   }
 
   private def component( e: Element, position: Int )(implicit map: Map[String, Datatype]) = {

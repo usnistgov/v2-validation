@@ -58,16 +58,9 @@ object XMLSerializer {
         Table={f.table.getOrElse(null)}
     />
 
-  def datatype(d: Datatype) = d match {
-    case p: Primitive => primitive(p)
-    case c: Composite => composite(c)
-  }
-
-  def primitive(p: Primitive) = <Datatype ID={p.id}  Name={p.name} Description={p.description}/>
-
-  def composite(c: Composite) = 
-    <Datatype ID={c.id}  Name={c.name} Description={c.description}>
-      { c.components map component }
+  def datatype(d: Datatype) = 
+    <Datatype ID={d.id}  Name={d.name} Description={d.description}>
+      { d.components map component }
     </Datatype>
 
   def component(c: Component) =

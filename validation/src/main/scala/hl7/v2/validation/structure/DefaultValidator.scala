@@ -1,19 +1,23 @@
 package hl7.v2.validation.structure
 
-/*
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import generic.Location
-import hl7.v2.instance.Composite
-import hl7.v2.instance.DataElement
+import hl7.v2.instance.ComplexComponent
+import hl7.v2.instance.ComplexField
+import hl7.v2.instance.Component
+import hl7.v2.instance.Field
 import hl7.v2.instance.Group
+import hl7.v2.instance.Location
 import hl7.v2.instance.Message
-import hl7.v2.instance.Primitive
 import hl7.v2.instance.Segment
-import hl7.v2.validation.report.Entry
-import hl7.v2.vs.{Validator => VSValidator}
-
+import hl7.v2.instance.Simple
+import hl7.v2.instance.SimpleComponent
+import hl7.v2.instance.SimpleField
+import hl7.v2.profile.{Component => CM}
+import hl7.v2.profile.Range
+import hl7.v2.validation.report.SEntry
+  
 /**
   * Default implementation of the structure validator
   * 
@@ -22,78 +26,109 @@ import hl7.v2.vs.{Validator => VSValidator}
 
 trait DefaultValidator extends Validator with BasicChecks {
 
-  def checkStructure(m: Message): Future[Seq[Entry]] = Future { check( m.asGroup ) }
-
-      /**
-    * Checks the message and returns the list of structure errors if any
-    */
-  private[structure] def check(m: Message): Seq[Entry] = check(m.asGroup)
+  def checkStructure(m: Message): Future[Seq[SEntry]] = Future { check(m.asGroup) }
 
   /**
-    * Checks the group and returns the list of structure errors if any
+    * Checks the group against the constraints defined
+    * in the profile and return the list of problem.
     */
-  private[structure] def check(g: Group): Seq[Entry] = 
-    zip3(g.structure, g.req) flatMap { t =>
-      val(position, losg, req) = t
-      val lsg = losg.merge
-      val dl = location( g.location, position )
-      checkUsage(req.usage, lsg)(dl) match {
-        case Nil => 
-          val childErrors = losg match { 
-            case Left (ls) => ls flatMap check 
-            case Right(lg) => lg flatMap check
-          }
-          checkCardinality(lsg, req.cardinality) ::: childErrors
+  def check(g: Group): Seq[SEntry] = 
+    (g.structure zip g.model.children) flatMap { _ match {
+      case (Left(ls), Left(model)) => 
+        val dl = location( g.location, model.position )
+        checkUsage(model.usage, ls)(dl) match {
+          case Nil => checkCardinality(ls, model.cardinality) ::: (ls flatMap check)
+          case xs  => xs
+        }
+      case (Right(lg), Right(model)) => 
+        val dl = location( g.location, model.position )
+        checkUsage(model.usage, lg)(dl) match {
+          case Nil => checkCardinality(lg, model.cardinality) ::: (lg flatMap check)
+          case xs  => xs
+        }
+      case _ => ??? //FIXME
+    }}
+
+  /**
+    * Checks the segment against the constraints defined
+    * in the profile and return the list of problems.
+    */
+  def check(s: Segment): Seq[SEntry] = 
+    (s.fields zip s.model.ref.fields) flatMap { t =>
+      val(lf, model) = t
+      val dl = location( s.location, model.position )
+      checkUsage(model.usage, lf)(dl) match {
+        case Nil => checkCardinality(lf, model.cardinality) ::: (lf flatMap check)
         case xs  => xs
       }
     }
 
   /**
-    * Checks the segment and returns the list of structure errors if any
+    * Checks the component against the constraints defined
+    * in the profile and return the list of problems.
     */
-  private[structure] def check(s: Segment): Seq[Entry] = 
-    zip3(s.fields, s.req) flatMap { t =>
-      val(position, lf, req) = t
-      val dl = location( s.location, position )
-      checkUsage(req.usage, lf)(dl) match {
-        case Nil => checkCardinality(lf, req.cardinality) ::: (lf flatMap check)
-        case xs  => xs
-      }
-    }
-
-  /**
-    * Checks the data element and returns the list of structure errors if any
-    */
-  private[structure] def check(d: DataElement): Seq[Entry] = d match {
-    case p: Primitive => check(p)
-    case c: Composite => check(c)
+  def check(f: Field): Seq[SEntry] = f match {
+    case sf: SimpleField  => checkSimpleElem(sf, sf.model.length, sf.model.table)
+    case cf: ComplexField => checkComplexDataElem(cf.location, cf.components, childrenModels(cf))
   }
 
   /**
-    * Checks the composite data element and returns the list of structure errors if any
+    * Checks the component against the constraints defined
+    * in the profile and return the list of problems.
     */
-  private[structure] def check(c: Composite): Seq[Entry] = 
-    zip3(c.components, c.req) flatMap { t =>
-      val(position, oc, req) = t
-      val dl = location( c.location, position )
-      checkUsage(req.usage, oc.toList)(dl) match {
+  def check(c: Component): Seq[SEntry] = c match {
+    case sc: SimpleComponent  => checkSimpleElem(sc, sc.model.length, sc.model.table)
+    case cc: ComplexComponent => checkComplexDataElem(cc.location, cc.components, childrenModels(cc))
+  }
+
+  type OC = Option[Component] // Alias
+
+  /**
+    * Checks the complex data element (either a complex field or a 
+    * complex component) children and returns the list of problems. 
+    *
+    * 
+    * @param  l - The location of the complex data element
+    * @param cl - The list of children
+    * @param ml - The children models
+    * @return The list of problems
+    */
+  private def checkComplexDataElem(l: Location, cl: List[OC], ml: List[CM]): Seq[SEntry] =
+    (cl zip ml ) flatMap { t =>
+      val(oc, model) = t
+      val dl = location( l, model.position )
+      checkUsage(model.usage, oc.toList)(dl) match {
         case Nil => oc match { case Some(c) => check(c) case _ => Nil }
         case xs  => xs
       }
     }
 
   /**
-    * Checks the primitive data element and returns the list of structure errors if any
+    * Checks the simple element and returns the list of problems
+    * 
+    * @param s - The simple element
+    * @param l - The length constraint
+    * @param t - The table constraint if any
+    * @return The list of problems
     */
-  private[structure] def check(p: Primitive): Seq[Entry] = 
-    List( checkLength(p), checkTable(p) ).flatten
+  private def checkSimpleElem(s: Simple, l: Range, t: Option[String]): Seq[SEntry] = 
+    t match {
+      case None    => checkLength(s, l)
+      case Some(x) => checkLength(s, l) ::: checkTable(s, x)
+    }
 
-  private def checkLength(p: Primitive): Option[Entry] = checkLength(p, p.req.length)
+  /**
+    * Creates a new location by changing the path
+    */
+  private def location(l: Location, position: Int) = l.copy( path = s"${l.path}.$position")
 
-  private def checkTable(p: Primitive): Option[Entry] = p.req.table flatMap( checkTable(p, _) )
+  /**
+    * Complex field children models
+    */
+  private def childrenModels(cf: ComplexField) = cf.model.datatype.components
 
-  private def zip3[A,B](s1: Seq[A], s2: Seq[B]) = ( Stream.from(1), s1, s2).zipped.toList
-
-  private def location(l: Location, position: Int) = l.copy( path = s"${l.path}.$position" ) 
+  /**
+    * Complex component children models
+    */
+  private def childrenModels(cc: ComplexComponent) = cc.model.datatype.components
 }
-*/

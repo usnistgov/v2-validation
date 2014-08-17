@@ -7,7 +7,6 @@ package hl7.v2.instance
 
 sealed trait Value {
   def asString: String
-  def length = asString.length
 }
 
 case class Number(asString: String)   extends Value

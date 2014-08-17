@@ -5,49 +5,16 @@ package hl7.v2.profile
   */
 
 /**
-  * Generic element model
+  * A data type
   */
-trait EM {
-  def usage: Usage
-  def cardinality: Range
-  def position: Int
-}
-
-/**
-  * Data element model (either a field or a component model)
-  */
-trait DEM extends EM {
-  def datatype: Datatype
-  def length: Range
-  def table: Option[String]
-}
-
-/**
-  * Trait Representing a data type
-  */
-sealed trait Datatype {
-  def id: String
-  def name: String
-  def description: String
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
-}
-
-/**
-  * A primitive data type
-  */
-case class Primitive(id: String, name: String, description: String) extends Datatype
-
-/**
-  * A composite data type
-  */
-case class Composite(
+case class Datatype(
     id: String,
     name: String,
     description: String,
-    components: Seq[Component] 
-  ) extends Datatype {
-  assert( components.nonEmpty, s"Composite datatype must have at least one component # $this" )
+    components: List[Component] 
+  ) {
+  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
+  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
 }
 
 /**
@@ -61,16 +28,16 @@ case class Component(
     length: Range,
     confLength: String,
     table: Option[String]
-  ) extends DEM {
-  assert( isWellNested, s"""The component is not well nested # $this""" )
+  ) {
+  /*assert( isWellNested, s"""The component is not well nested # $this""" )
 
   //Checks for component nesting
   private def isWellNested = datatype match {
     case p: Primitive => true
     case c: Composite => c.components.forall( _.datatype.isInstanceOf[Primitive] )
-  }
+  }*/
 
-  lazy val cardinality = Range(1, "1")
+  //lazy val cardinality = Range(1, "1")
 }
 
 /**
@@ -85,7 +52,7 @@ case class Field(
     length: Range,
     confLength: String,
     table: Option[String]
-) extends DEM
+)
 
 case class DynamicMapping(position: Int, reference: Int, map: Map[String, Datatype])
 
@@ -100,7 +67,7 @@ case class Segment(id: String, name: String, description: String, fields: Seq[Fi
 /**
   * A segment reference
   */
-case class SegmentRef(position: Int, ref: Segment, usage: Usage, cardinality: Range) extends EM
+case class SegmentRef(position: Int, ref: Segment, usage: Usage, cardinality: Range)
 
 /**
   * A group
@@ -111,7 +78,7 @@ case class Group(
     usage: Usage,
     cardinality: Range,
     children: Seq[Either[SegmentRef, Group]]
-  ) extends EM {
+  ) {
   assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
   assert( children.nonEmpty, s"A group cannot be empty # $this" )
 }
@@ -125,7 +92,7 @@ case class Message(name: String, description: String, children: Seq[Either[Segme
   assert( children.head match {case Left(x) => x.ref.name == "MSH" case _ => false},
       s"The first element of the message must be the MSH Segment # $this" )
 
-  def asGroup = Group(1, name, Usage.R, Range(1,"*"), children)
+  def asGroup = Group(1, name, Usage.R, Range(1,"1"), children)
 }
 
 /**

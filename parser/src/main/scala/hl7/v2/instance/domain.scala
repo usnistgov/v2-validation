@@ -88,4 +88,5 @@ case class Message(
     case Right(lg) => lg.head.location.copy(path = model.name)
   }
   lazy val children = structure flatMap { _ match { case Left(ls) => ls case Right(lg) => lg } }
+  def asGroup = Group(model.asGroup, structure, instance)
 }
