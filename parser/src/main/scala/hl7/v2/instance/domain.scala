@@ -78,7 +78,9 @@ case class Group(
 
 case class Message(
     model: MM,
-    structure: List[Either[List[Segment], List[Group]]]
+    structure: List[Either[List[Segment], List[Group]]],
+    invalid: List[(Int, String)],
+    unexpected: List[(Int, String)]
   ) extends Complex {
 
   def position = 1

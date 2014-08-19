@@ -5,4 +5,5 @@ case class Range(min: Int, max: String) {
   assert( "*" == max || max.forall( _.isDigit ), s"Invalid Range.max format # $this" )
   assert( if( "*" == max ) true else max.toInt >= min, 
       s"Range.min must lower than Range.max # $this" )
+  override def toString = s"$min..$max"
 }

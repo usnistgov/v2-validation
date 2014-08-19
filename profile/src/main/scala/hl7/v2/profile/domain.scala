@@ -59,7 +59,7 @@ case class DynamicMapping(position: Int, reference: Int, map: Map[String, Dataty
 /**
   * A segment
   */
-case class Segment(id: String, name: String, description: String, fields: Seq[Field], dynamicMapping: List[DynamicMapping] ) {
+case class Segment(id: String, name: String, description: String, fields: List[Field], dynamicMapping: List[DynamicMapping] ) {
   assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
   assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
 }
@@ -77,7 +77,7 @@ case class Group(
     name: String,
     usage: Usage,
     cardinality: Range,
-    children: Seq[Either[SegmentRef, Group]]
+    children: List[Either[SegmentRef, Group]]
   ) {
   assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
   assert( children.nonEmpty, s"A group cannot be empty # $this" )
@@ -86,7 +86,7 @@ case class Group(
 /**
   * A message
   */
-case class Message(name: String, description: String, children: Seq[Either[SegmentRef, Group]]) {
+case class Message(name: String, description: String, children: List[Either[SegmentRef, Group]]) {
   assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
   assert( children.nonEmpty, s"A message cannot be empty # $this" )
   assert( children.head match {case Left(x) => x.ref.name == "MSH" case _ => false},
