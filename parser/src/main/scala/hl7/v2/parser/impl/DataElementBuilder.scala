@@ -69,4 +69,7 @@ object DataElementBuilder {
   private val emptyComponent = s"(?:\\s*\\Q${cs}\\E*\\s*${ss}*\\s*)*"
 
   private val emptyField = s"(?:\\s*\\Q${cs}\\E*\\s*${ss}*\\s*)*"
+
+  private   def get(vs: Array[(Int, String)], i: Int) = 
+    try{ vs(i) } catch{ case _: Throwable => (-1, "") }
 }
