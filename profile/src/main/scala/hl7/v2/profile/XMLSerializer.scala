@@ -47,6 +47,7 @@ object XMLSerializer {
 
   def field(f: Field) =
     <Field 
+		pos={f.position.toString}
         Name={f.name}
         Datatype={f.datatype.name}
         Usage={f.usage.toString()}

@@ -48,7 +48,7 @@ object SegmentBuilder {
   }
 
   private def fields( fml: List[FM], vs: Array[(Int, String)], l: Location) =
-    fml map { mm => repetitions( mm, get(vs, mm.position - 1), l ) }
+    (fml zip vs) map { t => repetitions( t._1, t._2, l ) }
 
   private def repetitions( m:FM, t: (Int, String), l: Location): List[Field] =
     ( split(rs, t._2, t._1).toList.zipWithIndex map { tt => 

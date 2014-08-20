@@ -3,6 +3,7 @@ package hl7.v2.parser.impl
 import hl7.v2.profile.XMLDeserializer
 import scala.util.Success
 import scala.util.Failure
+import hl7.v2.instance.serializer.XML
 
 object Main extends App with DefaultParser {
 
