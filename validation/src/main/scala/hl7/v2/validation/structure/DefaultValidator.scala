@@ -16,8 +16,7 @@ import hl7.v2.instance.SimpleComponent
 import hl7.v2.instance.SimpleField
 import hl7.v2.profile.{Component => CM}
 import hl7.v2.profile.Range
-import hl7.v2.validation.report.SEntry
-  
+
 /**
   * Default implementation of the structure validator
   * 
@@ -26,13 +25,13 @@ import hl7.v2.validation.report.SEntry
 
 trait DefaultValidator extends Validator with BasicChecks {
 
-  def checkStructure(m: Message): Future[Seq[SEntry]] = Future { check(m.asGroup) }
+  def checkStructure(m: Message): Future[Seq[Entry]] = Future { check(m.asGroup) }
 
   /**
     * Checks the group against the constraints defined
     * in the profile and return the list of problem.
     */
-  def check(g: Group): Seq[SEntry] = 
+  def check(g: Group): Seq[Entry] = 
     (g.structure zip g.model.children) flatMap { _ match {
       case (Left(ls), Left(model)) => 
         val dl = location( g.location, model.position )
@@ -53,7 +52,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * Checks the segment against the constraints defined
     * in the profile and return the list of problems.
     */
-  def check(s: Segment): Seq[SEntry] = 
+  def check(s: Segment): Seq[Entry] = 
     (s.fields zip s.model.ref.fields) flatMap { t =>
       val(lf, model) = t
       val dl = location( s.location, model.position )
@@ -67,18 +66,18 @@ trait DefaultValidator extends Validator with BasicChecks {
     * Checks the component against the constraints defined
     * in the profile and return the list of problems.
     */
-  def check(f: Field): Seq[SEntry] = f match {
-    case sf: SimpleField  => checkSimpleElem(sf, sf.model.length, sf.model.table)
-    case cf: ComplexField => checkComplexDataElem(cf.location, cf.components, childrenModels(cf))
+  def check(f: Field): Seq[Entry] = f match {
+    case sf: SimpleField  => check(sf, sf.model.length)
+    case cf: ComplexField => check(cf.location, cf.components, cfc(cf))
   }
 
   /**
     * Checks the component against the constraints defined
     * in the profile and return the list of problems.
     */
-  def check(c: Component): Seq[SEntry] = c match {
-    case sc: SimpleComponent  => checkSimpleElem(sc, sc.model.length, sc.model.table)
-    case cc: ComplexComponent => checkComplexDataElem(cc.location, cc.components, childrenModels(cc))
+  def check(c: Component): Seq[Entry] = c match {
+    case sc: SimpleComponent  => check(sc, sc.model.length)
+    case cc: ComplexComponent => check(cc.location, cc.components, ccc(cc))
   }
 
   type OC = Option[Component] // Alias
@@ -93,7 +92,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * @param ml - The children models
     * @return The list of problems
     */
-  private def checkComplexDataElem(l: Location, cl: List[OC], ml: List[CM]): Seq[SEntry] =
+  private def check(l: Location, cl: List[OC], ml: List[CM]): Seq[Entry] =
     (cl zip ml ) flatMap { t =>
       val(oc, model) = t
       val dl = location( l, model.position )
@@ -108,14 +107,9 @@ trait DefaultValidator extends Validator with BasicChecks {
     * 
     * @param s - The simple element
     * @param l - The length constraint
-    * @param t - The table constraint if any
     * @return The list of problems
     */
-  private def checkSimpleElem(s: Simple, l: Range, t: Option[String]): Seq[SEntry] = 
-    t match {
-      case None    => checkLength(s, l)
-      case Some(x) => checkLength(s, l) ::: checkTable(s, x)
-    }
+  private def check(s: Simple, l: Range): Seq[Entry] = checkLength(s, l)
 
   /**
     * Creates a new location by changing the path
@@ -125,10 +119,10 @@ trait DefaultValidator extends Validator with BasicChecks {
   /**
     * Complex field children models
     */
-  private def childrenModels(cf: ComplexField) = cf.model.datatype.components
+  private def cfc(cf: ComplexField) = cf.model.datatype.components
 
   /**
     * Complex component children models
     */
-  private def childrenModels(cc: ComplexComponent) = cc.model.datatype.components
+  private def ccc(cc: ComplexComponent) = cc.model.datatype.components
 }

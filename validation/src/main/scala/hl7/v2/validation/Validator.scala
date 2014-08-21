@@ -16,7 +16,7 @@ import hl7.v2.validation.report.Report
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-trait Validator { this: Parser with structure.Validator with content.Validator =>
+trait Validator { this: Parser with structure.Validator with content.Validator with vs.Validator =>
 
   val profile: Profile
 
@@ -34,14 +34,15 @@ trait Validator { this: Parser with structure.Validator with content.Validator =
           case Success( m ) => 
             val structErrors  = checkStructure( m )
             val contentErrors = checkContent  ( m )
-            for { r1 <- structErrors; r2 <- contentErrors } yield Success( Report(r1, r2) )
+            val vsErrors      = checkValueSet ( m )
+            for { r1 <- structErrors; r2 <- contentErrors; r3 <- vsErrors } yield Success( Report(r1, r2, r3) )
           case Failure(e) => Future{ Failure(e) }
         }
     }
 }
 
-/*
-import hl7.v2.parser.DefaultParser
+
+/*import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.instance.Message
 import hl7.v2.validation.report.SEntry
 import hl7.v2.validation.report.CEntry
@@ -56,6 +57,5 @@ class HL7Validator(
   ) extends Validator 
     with DefaultParser
     with DefaultSValidator
-    with DefaultCValidator
+    with DefaultCValidator*/
     
-*/

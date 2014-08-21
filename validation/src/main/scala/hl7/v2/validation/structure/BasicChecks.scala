@@ -8,16 +8,6 @@ import hl7.v2.instance.Simple
 import hl7.v2.instance.Value
 import hl7.v2.profile.Range
 import hl7.v2.profile.Usage
-import hl7.v2.validation.report.Length
-import hl7.v2.validation.report.MaxCard
-import hl7.v2.validation.report.MinCard
-import hl7.v2.validation.report.RUsage
-import hl7.v2.validation.report.SEntry
-import hl7.v2.validation.report.Table
-import hl7.v2.validation.report.TableNF
-import hl7.v2.validation.report.WUsage
-import hl7.v2.validation.report.XUsage
-import hl7.v2.validation.vs.{Validator => VSValidator}
 
 /**
   * Trait containing functions for checking constraints defined 
@@ -39,7 +29,7 @@ trait BasicChecks {
     * @param dl - The default location
     * @return A list of report entries
     */
-  def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
+  def checkUsage(u: Usage, l: List[Element])(dl: Location): List[Entry] =
     (u, l) match {
       case (Usage.R, Nil) => RUsage(dl) :: Nil
       case (Usage.X,  xs) => xs map { e => XUsage( e.location ) }
@@ -56,7 +46,7 @@ trait BasicChecks {
     * @param range - The cardinality range
     * @return A list of report entries 
     */
-  def checkCardinality( l: List[Element], range: Range): List[SEntry] =
+  def checkCardinality( l: List[Element], range: Range): List[Entry] =
     if( l.isEmpty ) Nil
     else {
       val highestRep = l maxBy instance
@@ -70,19 +60,9 @@ trait BasicChecks {
   /**
     * Returns `Some(Entry)' if the value's length is not in range `None' otherwise
     */
-  def checkLength(s: Simple, range: Range): List[SEntry] = 
+  def checkLength(s: Simple, range: Range): List[Entry] = 
     if( inRange(s.value.length, range) ) Nil 
     else Length(s.location, s.value, range) :: Nil
-
-  /**
-    * Returns `Some(Entry)' if the code set validation fails `None' otherwise
-    */
-  def checkTable(s: Simple, codeSet: String)(implicit vsv: VSValidator): List[SEntry] =
-    vsv.checkCodeSet(s.value, codeSet) match {
-      case VSValidator.Pass => Nil
-      case VSValidator.Fail => Table(s.location, s.value, codeSet) :: Nil
-      case VSValidator.CodeSetNotFound => TableNF(s.location, s.value, codeSet) :: Nil
-    }
 
   // Returns true if i is in the range 
   def inRange(i: Int, r: Range) = i >= r.min && ( r.max == "*" || i <= r.max.toInt)
