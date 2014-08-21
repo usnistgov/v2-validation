@@ -62,9 +62,9 @@ object XMLDeserializer {
     val childrenElms = e.getChildElements
     for(i <- 0 until childrenElms.size) {
       val ee = childrenElms.get(i)
-      if( "Segment" == ee.getLocalName ) c += Left(segmentRef(ee, i))
-      else if( "Group" == ee.getLocalName ) c += Right(group(ee, i))
-      else ??? //FIXME if( "Choice" == ee.getLocalName ) c += choice(ee, i)
+      if( "Segment" == ee.getLocalName ) c += Left(segmentRef(ee, i + 1))
+      else if( "Group" == ee.getLocalName ) c += Right(group(ee, i + 1))
+      else ??? //FIXME if( "Choice" == ee.getLocalName ) c += choice(ee, i + 1)
     } 
     c.toList
   }
