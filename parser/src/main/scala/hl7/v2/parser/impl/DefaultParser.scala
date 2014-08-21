@@ -46,7 +46,7 @@ trait DefaultParser extends Parser {
   private def processGroup(gm: GM, stack: Stack): (List[Group], Stack) = {
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = s match {
       case x::xs if( isExpected(x, gm) ) => 
-        val(children, ss) = processChildren( gm.children, stack)
+        val(children, ss) = processChildren( gm.children, s)
         val g = Group( gm, children.reverse, i )
         loop( g::acc, ss , i +1)
       case _ => (acc.reverse, s)
