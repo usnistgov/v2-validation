@@ -45,9 +45,6 @@ object Query {
   /**
     * Returns the children at the specified position and instance 
     */
-  private def children(c: Complex, position: String, instance: String) = 
-    if( "*" == instance ) c.children filter( _.position == position.toInt )
-    else c.children filter { cc => 
-      cc.position == position.toInt && cc.instance == instance.toInt 
-    }
+  private def children(c: Complex, position: String, instance: String): Seq[Element] = 
+    if( "*" == instance ) c.get(position.toInt ) else c.get(position.toInt, instance.toInt )
 }

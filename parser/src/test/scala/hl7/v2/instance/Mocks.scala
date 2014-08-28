@@ -15,7 +15,10 @@ trait Mocks {
 
   case class S( position: Int, instance: Int, value: Value) extends Simple with Default
 
-  case class C( position: Int, instance: Int, children: List[Element] ) extends Complex with Default
+  case class C( position: Int, instance: Int, children: List[Element] ) extends Complex with Default{
+    def get(position: Int) = children filter ( _.position == position )
+    def get(position: Int, instance: Int) = children filter ( c => c.position == position && c.instance == instance )
+  }
 
   val s0  = S( 4, 1, Text("S0") )
 

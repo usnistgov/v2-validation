@@ -1,5 +1,7 @@
 package hl7.v2.instance
 
+import scala.util.Try
+
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
@@ -19,7 +21,8 @@ trait Element {
   * A complex element
   */
 trait Complex extends Element {
-  def children: Seq[Element]
+  def get(position: Int): Seq[Element]
+  def get(position: Int, instance: Int): Seq[Element]
 }
 
 /**
