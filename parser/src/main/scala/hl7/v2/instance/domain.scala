@@ -5,7 +5,6 @@ import hl7.v2.profile.{Field => FM}
 import hl7.v2.profile.{Group => GM}
 import hl7.v2.profile.{Message => MM}
 import hl7.v2.profile.{SegmentRef => SM}
-import scala.util.Try
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
@@ -28,7 +27,7 @@ case class ComplexComponent(
     components: List[Option[SimpleComponent]],
     location: Location
   ) extends Component with Complex {
-  def get(position: Int) = components(position -1).toList
+  def get(position: Int) = components(position -1).toList //FIXME: Can throw ... 
   def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
 }
 
@@ -50,7 +49,7 @@ case class ComplexField(
     instance: Int,
     location: Location
   ) extends Field with Complex {
-  def get(position: Int) = components(position -1).toList
+  def get(position: Int) = components(position -1).toList //FIXME: Can throw ... 
   def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
 }
 
@@ -77,7 +76,7 @@ case class Group(
     case Left (ls) => ls.head.location.copy(path = model.name)
     case Right(lg) => lg.head.location.copy(path = model.name)
   }
-  def get(position: Int) = structure(position -1).merge
+  def get(position: Int) = structure(position -1).merge //FIXME: Can throw ... 
   def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
 }
 
@@ -95,6 +94,6 @@ case class Message(
     case Right(lg) => lg.head.location.copy(path = model.id)
   }
   def asGroup = Group(model.asGroup, structure, instance)
-  def get(position: Int) = structure(position -1).merge
+  def get(position: Int) = structure(position -1).merge //FIXME: Can throw ... 
   def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
 }
