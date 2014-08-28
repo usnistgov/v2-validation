@@ -86,13 +86,20 @@ case class Group(
 /**
   * A message
   */
-case class Message(name: String, description: String, children: List[Either[SegmentRef, Group]]) {
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
+case class Message(
+    id      : String,
+    typ     : String,
+    event   : String,
+    structID: String, 
+    description: String, 
+    children: List[Either[SegmentRef, Group]]
+  ) {
+  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
   assert( children.nonEmpty, s"A message cannot be empty # $this" )
   assert( children.head match {case Left(x) => x.ref.name == "MSH" case _ => false},
       s"The first element of the message must be the MSH Segment # $this" )
 
-  def asGroup = Group(1, name, Usage.R, Range(1,"1"), children)
+  def asGroup = Group(1, id, Usage.R, Range(1,"1"), children)
 }
 
 /**

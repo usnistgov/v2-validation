@@ -18,7 +18,7 @@ object XMLSerializer {
     </ConformanceProfile>
 
   def message( m: Message ) = 
-    <Message ID={m.name} StructID={m.name} Description={m.description}>
+    <Message ID={m.id} Type={m.typ} Event={m.event} StructID={m.structID} Description={m.description}>
       { m.children map ( _ match { case Left(sr) => segmentRef(sr) case Right(g) => group(g) } ) }
     </Message>
 

@@ -9,7 +9,7 @@
   </Encodings>
   
   <Messages>
-    <Message ID="ORU_R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
+    <Message ID="ORU_R01" Type="ORU" Event="R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
       <Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
       <Segment Ref="SFT" Usage="W" Min="0" Max="*" />
       <Segment Ref="UAC" Usage="X" Min="0" Max="1"/>

@@ -46,15 +46,17 @@ object XMLDeserializer {
   private def messages( elements: Elements )(implicit map: Map[String, Segment]) = 
     elements.foldLeft(Map[String, Message]()) { (acc, x) => 
       val m = message(x)
-      acc + ( (m.name, m) )
+      acc + ( (m.id, m) )
     }
 
   private def message( e: Element )(implicit map: Map[String, Segment]) = {
-    //FIXME val id          = e.attribute("ID")
-    val name        = e.attribute("StructID")
+    val id          = e.attribute("ID")
+    val typ         = e.attribute("Type")
+    val event       = e.attribute("Event")
+    val structID    = e.attribute("StructID")
     val description = e.attribute("Description")
     val children    = mems(e)
-    Message(name, description, children)
+    Message(id, typ, event, structID, description, children)
   }
 
   private def mems( e: Element)(implicit map: Map[String, Segment]): List[Either[SegmentRef, Group]] = {

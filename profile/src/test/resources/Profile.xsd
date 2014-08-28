@@ -269,6 +269,8 @@
 		</xs:annotation>
 		<xs:group ref="GroupStructure" minOccurs="1" maxOccurs="1"/>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Type" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Event" type="NonEmptyString" use="required"/>
 		<xs:attribute name="StructID" type="MsgStructIDType" use="required">
 			<xs:annotation>
 				<xs:documentation>The HL7 message structure code, as identified in MSH-9.3 (see HL7 Table 0354 - Message Structure Type).</xs:documentation>

@@ -8,7 +8,9 @@ Changes:
  -->
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/hl7-tools/v2-tools/profile/src/test/resources/Profile.xsd"
+	>
 	
 	<Encodings>
 		<Encoding>ER7</Encoding>
@@ -16,7 +18,7 @@ Changes:
 	</Encodings>
 	
 	<Messages>
-		<Message ID="ORU_R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
+		<Message ID="ORU_R01" Type="ORU" Event="R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
 			<Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
 			<Segment Ref="SFT" Usage="W" Min="0" Max="*" />
 			<Segment Ref="UAC" Usage="O" Min="0" Max="1"/>

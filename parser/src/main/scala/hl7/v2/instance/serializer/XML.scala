@@ -75,7 +75,7 @@ object XML {
 
   implicit object messageXML extends XML[Message] {
     def xml(m: Message): Elem = 
-      <Message Name={m.model.name}>
+      <Message ID={m.model.id} Type={m.model.typ} Event={m.model.event} StructID={m.model.structID}>
         {
           <Structure>
             {  m.structure map {
