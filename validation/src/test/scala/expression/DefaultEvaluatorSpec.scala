@@ -1,0 +1,3 @@
+package expression
+
+object DefaultEvaluatorSpec extends EvaluatorSpec with DefaultEvaluator
