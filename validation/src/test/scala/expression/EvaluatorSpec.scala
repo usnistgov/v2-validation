@@ -22,15 +22,16 @@ trait EvaluatorSpec extends Specification with Evaluator with PlainTextSpec with
       eval( Presence("2[2]"), s0 ) should be inconclusive with the message "Unreachable Path ..." $pr4
 
     PlainTextSpec
-      PlainText evaluation should succeed if the path is not populated"                           $plainTextPathNotPopulated
-      PlainText evaluation should be inconclusive if the path is complex                          $plainTextPathComplex
-      PlainText evaluation should be inconclusive if the path is invalid                          $plainTextPathInvalid
-      PlainText evaluation should be inconclusive if the path is unreachable                      $plainTextPathUnreachable
-      eval( PlainText(3[*], x, y ), c1 ) should pass for ( x in {S3, s3} and y=true ) and ( x=S3, y=false ) $plainTextPass
-      eval( PlainText(3[*], XX, true/false ), c1 ) should fail                                    $pt6
-      eval( PlainText(3[*], s3, true ), c1 ) should pass (case insensitive)                       $todo
-      eval( PlainText(3[*], s3, false), c1 ) should fail (case sensitive)                         $todo
-      
+      PlainText evaluation should succeed if the path is not populated              $plainTextPathNotPopulated
+      PlainText evaluation should be inconclusive if the path is complex            $plainTextPathComplex
+      PlainText evaluation should be inconclusive if the path is invalid            $plainTextPathInvalid
+      PlainText evaluation should be inconclusive if the path is unreachable        $plainTextPathUnreachable
+
+      PlainText should pass if the values are the same                              $plainTextSameValue
+      PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
+
+      PlainText should fail if the values are different                             $plainTextDifferentValue
+      PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
   """
 
   assert( c2.get(2, 1).nonEmpty )
