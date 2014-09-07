@@ -10,15 +10,12 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   
   /*
   PlainTextSpec
-      PlainTextSpec
-      PlainText evaluation should succeed if the path is not populated"             $plainTextPathNotPopulated
+      PlainText evaluation should succeed if the path is not populated              $plainTextPathNotPopulated
       PlainText evaluation should be inconclusive if the path is complex            $plainTextPathComplex
       PlainText evaluation should be inconclusive if the path is invalid            $plainTextPathInvalid
       PlainText evaluation should be inconclusive if the path is unreachable        $plainTextPathUnreachable
-
       PlainText should pass if the values are the same                              $plainTextSameValue
       PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
-
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
   */
@@ -36,7 +33,7 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   // 4 is an invalid path
   def plainTextPathInvalid = Seq(true, false) map { b =>
     val p3 = PlainText("4", "", b)
-    eval( p3, c1 ) === inconclusive(c1, p3, s"Invalid Path '${p3.path}'")
+    eval( p3, c0 ) === inconclusive(c0, p3, s"Invalid Path '${p3.path}'")
   }
 
   // s0 is a simple element, querying it will fail
