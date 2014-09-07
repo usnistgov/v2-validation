@@ -50,11 +50,26 @@ trait DefaultEvaluator extends Evaluator {
 
   def pathValue(pv: PathValue, context: Element): EvalResult = ???
 
-  def and(and: AND, context: Element): EvalResult = ???
+  def and(and: AND, context: Element): EvalResult =
+    ( eval(and.exp1, context), eval(and.exp2, context) ) match {
+      case ( i: Inconclusive, _ ) => i
+      case ( _, i: Inconclusive ) => i
+      case (f: Fail, _) => Fail( Reason(context.location, s"${and.exp1} failed") :: f.reasons )
+      case (_, f: Fail) => Fail( Reason(context.location, s"${and.exp2} failed") :: f.reasons )
+      case _ => Pass
+    }
 
-  def or(or: OR, context: Element): EvalResult = ???
+  def or(or: OR, context: Element): EvalResult = eval( or.exp1, context ) match {
+    case Pass            => Pass
+    case f: Fail         => eval(or.exp2, context)
+    case i: Inconclusive => i
+  }
 
-  def not(not: NOT, context: Element): EvalResult = ???
+  def not(not: NOT, context: Element): EvalResult = eval( not.exp, context ) match {
+    case Pass    => Fail( Reason(context.location, s"${not.exp} succeed") :: Nil )
+    case f: Fail => Pass
+    case i: Inconclusive => i
+  }
 
   def xor(xor: XOR, context: Element): EvalResult = ???
 
@@ -73,6 +88,6 @@ trait DefaultEvaluator extends Evaluator {
 
   private def plainTextFailure(p: PlainText, xs: Seq[Simple]) = {
     val cs = if( p.ignoreCase ) "case insensitive" else "case sensitive"
-    Fail( xs map { s => Reason(s.location, s"'${s.value.asString}' is different from '${p.text}' ($cs)") } )
+    Fail( xs.toList map { s => Reason(s.location, s"'${s.value.asString}' is different from '${p.text}' ($cs)") } )
   }
 }

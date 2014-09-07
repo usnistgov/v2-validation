@@ -16,7 +16,7 @@ case object Pass extends EvalResult
 /**
   * A failed expression evaluation result
   */
-case class Fail( reasons: Seq[Reason] ) extends EvalResult
+case class Fail( reasons: List[Reason] ) extends EvalResult
 
 /**
   * An inconclusive expression evaluation result

@@ -35,7 +35,7 @@ trait EvaluatorSpec
     AND expression evaluation specifications
       AND should be inconclusive if at least one expression is inconclusive         $andInconclusive
       AND should pass if both expressions pass                                      $andPass
-      AND should fail if at least one expression fail                               $andFail
+      AND should fail if at least one expression fail and none is inconclusive      $andFail
 
     OR expression evaluation specifications
       OR should be inconclusive if the first is inconclusive or the first failed and the second is inconclusive $orInconclusive
