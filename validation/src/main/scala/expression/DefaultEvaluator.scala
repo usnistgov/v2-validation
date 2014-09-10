@@ -60,9 +60,14 @@ trait DefaultEvaluator extends Evaluator {
     }
 
   def or(or: OR, context: Element): EvalResult = eval( or.exp1, context ) match {
-    case Pass            => Pass
-    case f: Fail         => eval(or.exp2, context)
-    case i: Inconclusive => i
+    case f1: Fail =>
+      eval(or.exp2, context) match {
+        case f2: Fail =>
+          val msg = s"Both ${or.exp1} and ${or.exp2} failed"
+          Fail( Reason(context.location, msg) :: f1.reasons ::: f2.reasons )
+        case x => x
+      }
+    case r => r
   }
 
   def not(not: NOT, context: Element): EvalResult = eval( not.exp, context ) match {

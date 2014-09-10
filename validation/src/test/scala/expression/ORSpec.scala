@@ -11,10 +11,11 @@ trait ORSpec
 
   /*
   OR expression evaluation specifications
-      OR should be inconclusive if the first expression is inconclusive
-          or the first expression failed and the second is inconclusive     $orInconclusive
-      OR should pass if the first passes or the first fails and the second passes $orPass
-      OR should fail if both expressions fail                                   $orFail
+      OR should be inconclusive if the first expression is inconclusive                      $orInconclusive1 
+      OR should be inconclusive if the first expression fails and the second is inconclusive $orInconclusive2
+      OR should pass if the first expression passes                                          $orPass1
+      OR should pass if the first expression fails and the second passes                     $orPass2
+      OR should fail if both expressions fail                                                $orFail
   */
 
   private val exp1 = Presence("2[1]")
@@ -25,18 +26,19 @@ trait ORSpec
   assert( eval(exp2, c2).isInstanceOf[Fail] )
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
-  val random = new Random
-
-  def randomExp = {
-    val i = random.nextInt.abs % 3 + 1
-    if(i == 1) exp1 else if(i == 2) exp2 else if(i == 3) exp3 else ???
+  def orInconclusive1 = Seq(exp1, exp2, exp3) map { e => 
+    eval( OR(exp3, e), c2 ) === inconclusive(c2, exp3, "Invalid Path '1'")
   }
 
-  def orInconclusive1 = (1 to 10).toSeq map { i => eval( OR(exp3, randomExp), c2 ) === inconclusive(c2, exp3, "Invalid Path '1'")  }
+  def orInconclusive2 = eval( OR(exp2, exp3), c2 ) === inconclusive(c2, exp3, "Invalid Path '1'")
 
-  def orInconclusive = eval( OR(exp3, randomExp), c2 ) === inconclusive(c2, exp3, "Invalid Path '1'")
+  def orPass1 = Seq(exp1, exp2, exp3) map { e => eval( OR(exp1, e), c2 ) === Pass }
 
-  def orPass = todo
+  def orPass2 = eval( OR(exp2, exp1), c2 ) === Pass 
 
-  def orFail = todo
+  def orFail = {
+    val r = eval(exp2, c2).asInstanceOf[Fail]
+    val expected = Fail( Reason(c2.location, s"Both ${exp2} and ${exp2} failed") :: r.reasons ::: r.reasons )
+    eval( OR(exp2, exp2), c2 ) === expected
+  }
 }
