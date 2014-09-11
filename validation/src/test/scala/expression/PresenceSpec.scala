@@ -29,7 +29,7 @@ trait PresenceSpec extends Specification with Evaluator with Mocks {
 
   def presencePathNotPopulated = {
     assert(!isPopulated(c2, "2[2]"))
-    eval(Presence("2[2]"), c2) === fail(c2, "Path.2[2] is missing")
+    eval(Presence("2[2]"), c2) === Failures.presenceFailure(Presence("2[2]"), c2)
   }
 
   private def isPopulated(c: Element, path: String): Boolean = query(c, path) match {

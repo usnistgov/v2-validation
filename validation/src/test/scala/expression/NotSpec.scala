@@ -14,9 +14,17 @@ trait NOTSpec
       NOT should fail if the underlining expression pass                       $notFail
   */
 
-  def notInconclusive = todo
+  private val exp1 = Presence("2[1]")
+  private val exp2 = Presence("2[2]")
+  private val exp3 = Presence("1")
 
-  def notPass = todo
+  assert( eval(exp1, c2) == Pass )
+  assert( eval(exp2, c2).isInstanceOf[Fail] )
+  assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
-  def notFail = todo
+  def notInconclusive = eval( NOT(exp3), c2 ) === inconclusive(c2, Presence("1"), "Invalid Path '1'")
+
+  def notPass = eval( NOT(exp2), c2 ) === Pass
+
+  def notFail = eval( NOT(exp1), c2 ) === Failures.notFailure( NOT(exp1), c2 )
 }

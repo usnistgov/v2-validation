@@ -7,7 +7,7 @@ import org.specs2.Specification
 import scala.util.Success
 
 trait PlainTextSpec extends Specification with Evaluator with Mocks {
-  
+
   /*
   PlainTextSpec
       PlainText evaluation should succeed if the path is not populated              $plainTextPathNotPopulated
@@ -20,6 +20,8 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
   */
 
+  import Failures._
+  
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
   def plainTextPathNotPopulated = Seq(true, false) map { b => eval( PlainText("4[1]", "", b), c1 ) === Pass }
@@ -52,13 +54,8 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
 
   def plainTextDifferentValue = Seq(true, false) map { b =>
     val p = PlainText("3[1]", "X", b)
-    eval( p, c1 ) === fail(p, `c1.3[1]`)
+    eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`:: Nil)
   }
 
-  def plainTextSameValueCNI = { val p = PlainText("3[1]", "s3", false); eval( p, c1 ) === fail(p, `c1.3[1]`) }
-
-  private def fail( e: PlainText, s: Simple ) = {
-    val cs = if( e.ignoreCase ) "(case insensitive)" else "(case sensitive)"
-    Fail( Reason(s.location, s"'${s.value.asString}' is different from '${e.text}' $cs")::Nil )
-  }
+  def plainTextSameValueCNI = { val p = PlainText("3[1]", "s3", false); eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`::Nil) }
 }

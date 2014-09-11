@@ -26,7 +26,7 @@ trait DefaultEvaluator extends Evaluator {
   }
 
   def presence(p: Presence, context: Element): EvalResult = query(context, p.path) match {
-    case Success(Nil) => Fail( Reason( context.location, s"${path(context, p.path)} is missing") :: Nil)
+    case Success(Nil) => Failures.presenceFailure(p, context) 
     case Success(_)   => Pass
     case Failure(e)   => Inconclusive(context, p, e.getMessage :: Nil)
   }
@@ -35,7 +35,7 @@ trait DefaultEvaluator extends Evaluator {
     case Success(ls)  => 
       ls filter( s => !eq(s, p.text, p.ignoreCase) ) match {
         case Nil => Pass
-        case xs  => plainTextFailure(p, xs)
+        case xs  => Failures.plainTextFailure(p, xs)
       }
     case Failure(e) => Inconclusive(context, p, e.getMessage :: Nil)
   }
@@ -50,28 +50,27 @@ trait DefaultEvaluator extends Evaluator {
 
   def pathValue(pv: PathValue, context: Element): EvalResult = ???
 
-  def and(and: AND, context: Element): EvalResult =
-    ( eval(and.exp1, context), eval(and.exp2, context) ) match {
-      case ( i: Inconclusive, _ ) => i
-      case ( _, i: Inconclusive ) => i
-      case (f: Fail, _) => Fail( Reason(context.location, s"${and.exp1} failed") :: f.reasons )
-      case (_, f: Fail) => Fail( Reason(context.location, s"${and.exp2} failed") :: f.reasons )
-      case _ => Pass
-    }
+  def and(and: AND, context: Element): EvalResult = eval(and.exp1, context) match {
+    case i: Inconclusive => i
+    case f: Fail => Failures.andFailure(and, context, f)
+    case Pass => 
+      eval( and.exp2, context ) match {
+        case f: Fail => Failures.andFailure(and, context, f)
+        case x       => x
+      }
+  }
 
   def or(or: OR, context: Element): EvalResult = eval( or.exp1, context ) match {
     case f1: Fail =>
       eval(or.exp2, context) match {
-        case f2: Fail =>
-          val msg = s"Both ${or.exp1} and ${or.exp2} failed"
-          Fail( Reason(context.location, msg) :: f1.reasons ::: f2.reasons )
-        case x => x
+        case f2: Fail => Failures.orFailure(or, context, f1, f2)
+        case x        => x
       }
-    case r => r
+    case x => x
   }
 
   def not(not: NOT, context: Element): EvalResult = eval( not.exp, context ) match {
-    case Pass    => Fail( Reason(context.location, s"${not.exp} succeed") :: Nil )
+    case Pass    => Failures.notFailure( not, context)
     case f: Fail => Pass
     case i: Inconclusive => i
   }
@@ -84,15 +83,7 @@ trait DefaultEvaluator extends Evaluator {
 
   def forall(e: FORALL, context: Element): EvalResult = ???
 
-  //Presence evaluation helper
-  private def path(c: Element, path: String) = s"${c.location.path}.${path}"
-
   //Plain text evaluation helpers
   private def eq(s: Simple, text: String, cs: Boolean): Boolean = 
     if( cs ) s.value.asString.equalsIgnoreCase( text ) else s.value.asString == text
-
-  private def plainTextFailure(p: PlainText, xs: Seq[Simple]) = {
-    val cs = if( p.ignoreCase ) "case insensitive" else "case sensitive"
-    Fail( xs.toList map { s => Reason(s.location, s"'${s.value.asString}' is different from '${p.text}' ($cs)") } )
-  }
 }

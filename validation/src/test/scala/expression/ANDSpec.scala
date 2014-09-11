@@ -9,31 +9,38 @@ trait ANDSpec
 
   /*
   AND expression evaluation specifications
-      AND should be inconclusive if at least one expression is inconclusive    $andInconclusive
-      AND should pass if both expressions pass                                 $andPass
-      AND should fail if at least one expression fail and none is inconclusive $andFail
+      AND should be inconclusive if the first expression is inconclusive     $andFirstInconclusive
+      AND should fail in the first expression fails                          $andFirstFails
+      If the first expression passes
+          AND should be inconclusive if the second is inconclusive           $andFirstPassesSecondInconclusive
+          AND should pass if the second passes                               $andFirstPassesSecondPasses
+          AND should fail is the second fails                                $andFirstPassesSecondFails
   */
 
-  def andInconclusive = {
-    val exp1 = Presence("1")
-    val exp2 = Presence("2[1]")
-    assert( eval(exp2, c0).isInstanceOf[Fail] && eval(exp1, c0).isInstanceOf[Inconclusive] )
-    eval( AND(exp1, exp2), c0 ) === inconclusive(c0, Presence("1"), "Invalid Path '1'") and
-    eval( AND(exp2, exp1), c0 ) === inconclusive(c0, Presence("1"), "Invalid Path '1'")
+  private val exp1 = Presence("2[1]")
+  private val exp2 = Presence("2[2]")
+  private val exp3 = Presence("1")
+
+  assert( eval(exp1, c2) == Pass )
+  assert( eval(exp2, c2).isInstanceOf[Fail] )
+  assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
+
+  def andFirstInconclusive = Seq(exp1, exp2, exp3) map { e => 
+    eval( AND(exp3, e), c2 ) === inconclusive(c2, Presence("1"), "Invalid Path '1'")
   }
 
-  def andPass = {
-    val p = Presence("2[1]")
-    assert( eval(p, c2) == Pass )
-    eval( AND(p, p), c2) === Pass
+  def andFirstFails = Seq(exp1, exp2, exp3) map { e => 
+    val f = eval(exp2, c2).asInstanceOf[Fail]
+    eval( AND(exp2, e), c2 ) === Failures.andFailure(AND(exp2, e), c2, f)
   }
 
-  def andFail = {
-    val exp1 = Presence("2[1]")
-    val exp2 = Presence("2[2]")
-    val exp2EvalResult = eval(exp2, c2)
-    assert( eval(exp1, c2) == Pass && exp2EvalResult.isInstanceOf[Fail] )
-    val expected = Fail( Reason(c2.location, s"$exp2 failed") :: exp2EvalResult.asInstanceOf[Fail].reasons )
-    eval( AND(exp1, exp2), c2 ) === expected and eval( AND(exp2, exp1), c2 ) === expected
+  def andFirstPassesSecondInconclusive = eval( AND(exp1, exp3), c2 ) === 
+    inconclusive(c2, Presence("1"), "Invalid Path '1'")
+
+  def andFirstPassesSecondPasses = eval( AND(exp1, exp1), c2 ) === Pass
+
+  def andFirstPassesSecondFails = {
+    val f = eval(exp2, c2).asInstanceOf[Fail]
+    eval( AND(exp1, exp2), c2 ) === Failures.andFailure(AND(exp1, exp2), c2, f)
   }
 }
