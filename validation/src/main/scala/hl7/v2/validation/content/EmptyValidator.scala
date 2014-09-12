@@ -13,7 +13,7 @@ import hl7.v2.instance.Message
 
 trait EmptyValidator extends Validator {
 
-  implicit val constraintManager = new ConstraintManager {}
+  implicit val constraintManager = ??? //FIXMEnew ConstraintManager {}
 
   def checkContent(m: Message): Future[Seq[Entry]] = Future { Nil }
 }
