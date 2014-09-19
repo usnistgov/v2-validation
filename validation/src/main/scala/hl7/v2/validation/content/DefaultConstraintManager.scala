@@ -44,6 +44,11 @@ object DefaultConstraintManager {
 
   private def xsd = getClass.getResourceAsStream("/rules/ConformanceContext.xsd")
 
+  /**
+    * Build a constraint manager from the conformance context XML files
+    * @param confContext - The conformance context XML file
+    * @return A success containing the constraint manager or a failure
+    */
   def apply( confContext: InputStream ): Try[DefaultConstraintManager] = 
     XOMDocumentBuilder.build( confContext, xsd, resourceResolver ) map { doc =>
       val (groupByID, groupByName)       = init( doc.getRootElement.getFirstChildElement("Group").getChildElements )
@@ -66,7 +71,7 @@ object DefaultConstraintManager {
   private def constraint( e: nu.xom.Element ): Constraint = {
     val id          = e.attribute("ID")
     val reference   = None
-    val description = e.getFirstChildElement("Description").getValue()
+    val description = e.getFirstChildElement("Description").getValue
     Constraint(id, constraintTag(e), reference, description, assertion(e) )
   }
 
@@ -74,17 +79,17 @@ object DefaultConstraintManager {
     case ""              => ConstraintTag.ConfStmt
     case "ConfStatement" => ConstraintTag.ConfStmt
     case "Predicate"     => ConstraintTag.Predicate
-    case x               => throw new Error(s"[Error] Unkown constraint tag '$x'")
+    case x               => throw new Error(s"[Error] Unknown constraint tag '$x'")
   }
 
   private def assertion( e: nu.xom.Element ): Expression = {
     val assertionNode  = e.getFirstChildElement("Assertion")
-    val expressionNode = assertionNode.getChildElements().get(0)
+    val expressionNode = assertionNode.getChildElements.get(0)
     expression.XMLDeserializer.expression( expressionNode )
   }
 }
-/*
-object MainCM extends App {
+
+/*object MainCM extends App {
   
   val r = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
 
