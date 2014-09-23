@@ -16,11 +16,15 @@ trait PresenceSpec extends Specification with Evaluator with Mocks {
       Presence should fail if the path is not populated                          $presencePathNotPopulated
   */
 
-  def presencePathInvalid = eval(Presence("1"), c0) ===
-    inconclusive(c0, Presence("1"), "Invalid Path '1'")
+  def presencePathInvalid = {
+    val p = Presence("1")
+    eval( p, c0) === Inconclusive( p, "Invalid Path '1'" :: Nil )
+  }
 
-  def presencePathUnreachable = eval(Presence("2[2]"), s0) ===
-    inconclusive(s0, Presence("2[2]"), "Unreachable Path '2[2]'")
+  def presencePathUnreachable = {
+    val p = Presence("2[2]")
+    eval( p, s0 ) === Inconclusive( p, "Unreachable Path '2[2]'" :: Nil )
+  }
 
   def presencePathPopulated = {
     assert(isPopulated(c2, "2[1]"))

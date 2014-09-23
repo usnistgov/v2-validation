@@ -26,7 +26,7 @@ trait ANDSpec
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
   def andFirstInconclusive = Seq(exp1, exp2, exp3) map { e => 
-    eval( AND(exp3, e), c2 ) === inconclusive(c2, Presence("1"), "Invalid Path '1'")
+    eval( AND(exp3, e), c2 ) === Inconclusive(Presence("1"), "Invalid Path '1'" :: Nil)
   }
 
   def andFirstFails = Seq(exp1, exp2, exp3) map { e => 
@@ -35,7 +35,7 @@ trait ANDSpec
   }
 
   def andFirstPassesSecondInconclusive = eval( AND(exp1, exp3), c2 ) === 
-    inconclusive(c2, Presence("1"), "Invalid Path '1'")
+    Inconclusive(Presence("1"), "Invalid Path '1'" :: Nil)
 
   def andFirstPassesSecondPasses = eval( AND(exp1, exp1), c2 ) === Pass
 

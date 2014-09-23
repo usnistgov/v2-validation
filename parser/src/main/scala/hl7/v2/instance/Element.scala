@@ -1,7 +1,5 @@
 package hl7.v2.instance
 
-import scala.util.Try
-
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */

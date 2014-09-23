@@ -28,14 +28,15 @@ trait ORSpec
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
   def orFirstInconclusive = Seq(exp1, exp2, exp3) map { e => 
-    eval( OR(exp3, e), c2 ) === inconclusive(c2, exp3, "Invalid Path '1'")
+    eval( OR(exp3, e), c2 ) === Inconclusive(exp3, "Invalid Path '1'" :: Nil)
   }
 
   def orFirstPasses = Seq(exp1, exp2, exp3) map { e => 
     eval( OR(exp1, e), c2 ) === Pass
   }
 
-  def orFirstFailsSecondInconclusive = eval( OR(exp2, exp3), c2 ) === inconclusive(c2, exp3, "Invalid Path '1'")
+  def orFirstFailsSecondInconclusive = eval( OR(exp2, exp3), c2 ) ===
+    Inconclusive(exp3, "Invalid Path '1'" :: Nil)
 
   def orFirstFailsSecondPasses = eval( OR(exp2, exp1), c2 ) === Pass
 

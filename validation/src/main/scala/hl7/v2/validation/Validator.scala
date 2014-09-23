@@ -16,7 +16,9 @@ import hl7.v2.validation.report.Report
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-trait Validator { this: Parser with structure.Validator with content.Validator with vs.Validator =>
+trait Validator { this: Parser with structure.Validator
+                               with content.Validator
+                               with vs.Validator =>
 
   val profile: Profile
 
@@ -28,34 +30,33 @@ trait Validator { this: Parser with structure.Validator with content.Validator w
     */
   def validate( message: String, id: String ): Future[Try[Report]] = 
     profile.messages get( id ) match {
-      case None => Future{ Failure( new Error(s"No message with id '$id' is found in the profile") ) }
+      case None =>
+        val msg = s"No message with id '$id' is found in the profile"
+        Future{ Failure( new Error(msg) ) }
       case Some( model ) => 
         parse( message, model ) match {
           case Success( m ) => 
-            val structErrors  = checkStructure( m )
-            val contentErrors = checkContent  ( m )
-            val vsErrors      = checkValueSet ( m )
-            for { r1 <- structErrors; r2 <- contentErrors; r3 <- vsErrors } yield Success( Report(r1, r2, r3) )
+            val structErrors   = checkStructure( m )
+            val contentErrors  = checkContent  ( m )
+            val valueSetErrors = checkValueSet ( m )
+            for {
+              r1 <- structErrors
+              r2 <- contentErrors
+              r3 <- valueSetErrors
+            } yield Success( Report(r1, r2, r3) )
           case Failure(e) => Future{ Failure(e) }
         }
     }
 }
 
-
-/*import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.instance.Message
-import hl7.v2.validation.report.SEntry
-import hl7.v2.validation.report.CEntry
-
-trait DefaultSValidator extends structure.Validator { def checkStructure(m: Message): Future[Seq[SEntry]] = ??? }
-trait DefaultCValidator extends content.Validator { def checkContent(m: Message): Future[Seq[CEntry]] = ??? }
-
 class HL7Validator(
     val profile: Profile,
-    val vsv: vs.Validator,
+    //val vsv: vs.Validator,
     val constraintManager: content.ConstraintManager
   ) extends Validator 
-    with DefaultParser
-    with DefaultSValidator
-    with DefaultCValidator*/
+    with hl7.v2.parser.impl.DefaultParser
+    with structure.DefaultValidator
+    with content.DefaultValidator
+    with vs.EmptyValidator
+    with expression.DefaultEvaluator
     

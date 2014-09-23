@@ -28,7 +28,11 @@ trait StructValidationSpec
     The structure validation should correctly report usage errors                      $e2
     The structure validation should correctly report cardinality errors                $e3
     The structure validation should correctly report length errors                     $e4
+    The structure validation should correctly report invalid lines                     $e5
+    The structure validation should correctly report unexpected segments               $e6
   """
+
+  //TODO: Implements invalid lines and unexpected segments
 
   val profile = {
     val xml = getClass.getResourceAsStream("/ORU_R01_Profile.xml")
@@ -103,6 +107,35 @@ trait StructValidationSpec
   def e4 = {
     val expected = Len("PID[1].1", 2, 5, "1", Range(2, "3"))::Len("PID[1].1", 5, 5, "3333", Range(2, "3"))::Nil
     validate(m4) ===  expected 
+  }
+
+  /*
+   * Invalid lines:
+   *    (1, "sss")
+   *    (4, "xzsas")
+   */
+  val m5 = """sss
+              /MSH|^~\&#
+              /PID|11||~^^^&3.4.2
+              /xzsas
+              /UAC
+              /UAC""".stripMargin('/')
+  def e5 = {
+    validate(m5) === InvalidLines( (1, "sss") :: (4, "xzsas") :: Nil ) :: Nil
+  }
+
+  /*
+   * Unexpected segments:
+   *    (5, PDQ|1)
+   */
+  //FIXME improve test
+  val m6 = """/MSH|^~\&#
+              /PID|11||~^^^&3.4.2
+              /UAC
+              /UAC
+              /PDQ|1""".stripMargin('/')
+  def e6 = {
+    validate(m6) === UnexpectedLines( (5, "PDQ|1") :: Nil ) :: Nil
   }
 
   private def validate(m: String): Seq[Entry] = parse(m, mm) match {

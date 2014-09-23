@@ -24,24 +24,26 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
-  def plainTextPathNotPopulated = Seq(true, false) map { b => eval( PlainText("4[1]", "", b), c1 ) === Pass }
+  def plainTextPathNotPopulated = Seq(true, false) map { b =>
+    eval( PlainText("4[1]", "", b), c1 ) === Pass
+  }
 
   // c1.2[3] is complex
   def plainTextPathComplex = Seq(true, false) map { b =>
     val p2 = PlainText("2[3]", "", b)
-    eval( p2, c2 ) === inconclusive(c2, p2, "Path resolution returned at least one complex element")
+    eval( p2, c2 ) === Inconclusive(p2, "Path resolution returned at least one complex element"::Nil)
   }
 
   // 4 is an invalid path
   def plainTextPathInvalid = Seq(true, false) map { b =>
     val p3 = PlainText("4", "", b)
-    eval( p3, c0 ) === inconclusive(c0, p3, s"Invalid Path '${p3.path}'")
+    eval( p3, c0 ) === Inconclusive(p3, s"Invalid Path '${p3.path}'"::Nil)
   }
 
   // s0 is a simple element, querying it will fail
   def plainTextPathUnreachable = Seq(true, false) map { b =>
     val p4 = PlainText("4[1]", "", b)
-    eval( p4, s0 ) === inconclusive(s0, p4, s"Unreachable Path '${p4.path}'")
+    eval( p4, s0 ) === Inconclusive(p4, s"Unreachable Path '${p4.path}'":: Nil)
   }
 
   // The following value will be used in the next tests

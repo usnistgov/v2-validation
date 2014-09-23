@@ -25,20 +25,22 @@ trait DefaultEvaluator extends Evaluator {
     case e: FORALL      => forall(e, context)
   }
 
-  def presence(p: Presence, context: Element): EvalResult = query(context, p.path) match {
-    case Success(Nil) => Failures.presenceFailure(p, context) 
-    case Success(_)   => Pass
-    case Failure(e)   => Inconclusive(context, p, e.getMessage :: Nil)
-  }
+  def presence(p: Presence, context: Element): EvalResult =
+    query(context, p.path) match {
+      case Success(Nil) => Failures.presenceFailure(p, context)
+      case Success(_)   => Pass
+      case Failure(e)   => Inconclusive(p, e.getMessage :: Nil)
+    }
 
-  def plainText(p: PlainText, context: Element): EvalResult = queryAsSimple(context, p.path) match {
-    case Success(ls)  => 
-      ls filter( s => !eq(s, p.text, p.ignoreCase) ) match {
-        case Nil => Pass
-        case xs  => Failures.plainTextFailure(p, xs)
-      }
-    case Failure(e) => Inconclusive(context, p, e.getMessage :: Nil)
-  }
+  def plainText(p: PlainText, context: Element): EvalResult =
+    queryAsSimple(context, p.path) match {
+      case Success(ls)  =>
+        ls filter( s => notEqual(s, p.text, p.ignoreCase) ) match {
+          case Nil => Pass
+          case xs  => Failures.plainTextFailure(p, xs)
+        }
+      case Failure(e) => Inconclusive(p, e.getMessage :: Nil)
+    }
 
   def format(f: Format, context: Element): EvalResult = ???
 
@@ -50,30 +52,33 @@ trait DefaultEvaluator extends Evaluator {
 
   def pathValue(pv: PathValue, context: Element): EvalResult = ???
 
-  def and(and: AND, context: Element): EvalResult = eval(and.exp1, context) match {
-    case i: Inconclusive => i
-    case f: Fail => Failures.andFailure(and, context, f)
-    case Pass => 
-      eval( and.exp2, context ) match {
-        case f: Fail => Failures.andFailure(and, context, f)
-        case x       => x
-      }
-  }
+  def and(and: AND, context: Element): EvalResult =
+    eval(and.exp1, context) match {
+      case i: Inconclusive => i
+      case f: Fail         => Failures.andFailure(and, context, f)
+      case Pass            =>
+        eval( and.exp2, context ) match {
+          case f: Fail => Failures.andFailure(and, context, f)
+          case x       => x
+        }
+    }
 
-  def or(or: OR, context: Element): EvalResult = eval( or.exp1, context ) match {
-    case f1: Fail =>
-      eval(or.exp2, context) match {
-        case f2: Fail => Failures.orFailure(or, context, f1, f2)
-        case x        => x
-      }
-    case x => x
-  }
+  def or(or: OR, context: Element): EvalResult =
+    eval( or.exp1, context ) match {
+      case f1: Fail =>
+        eval(or.exp2, context) match {
+          case f2: Fail => Failures.orFailure(or, context, f1, f2)
+          case x        => x
+        }
+      case x => x
+    }
 
-  def not(not: NOT, context: Element): EvalResult = eval( not.exp, context ) match {
-    case Pass    => Failures.notFailure( not, context)
-    case f: Fail => Pass
-    case i: Inconclusive => i
-  }
+  def not(not: NOT, context: Element): EvalResult =
+    eval( not.exp, context ) match {
+      case Pass    => Failures.notFailure( not, context)
+      case f: Fail => Pass
+      case i: Inconclusive => i
+    }
 
   def xor(xor: XOR, context: Element): EvalResult = ???
 
@@ -84,6 +89,8 @@ trait DefaultEvaluator extends Evaluator {
   def forall(e: FORALL, context: Element): EvalResult = ???
 
   //Plain text evaluation helpers
-  private def eq(s: Simple, text: String, cs: Boolean): Boolean = 
-    if( cs ) s.value.asString.equalsIgnoreCase( text ) else s.value.asString == text
+  // Returns true if the value of `s' is not equal to `text'
+  private def notEqual(s: Simple, text: String, cs: Boolean): Boolean =
+    if( cs ) !s.value.asString.equalsIgnoreCase( text )
+    else !(s.value.asString == text)
 }

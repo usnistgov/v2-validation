@@ -24,5 +24,8 @@ object Failures {
   def orFailure(e: OR, c: Element, f1: Fail, f2: Fail): Fail =
     Fail( e -> List() :: f1.stack ::: f2.stack )
 
-  def notFailure(e: NOT, c: Element): Fail = Fail( e -> List( ) :: Nil )
+  def notFailure(e: NOT, c: Element): Fail = {
+    val reasons = List( Reason(c.location, "The inner expression evaluation returned `true' ") )
+    Fail( e -> reasons :: Nil )
+  }
 }

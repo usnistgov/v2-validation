@@ -15,7 +15,7 @@ trait Validator {
   /**
     * The constraint manager used by this validator
     */
-  implicit val constraintManager: ConstraintManager
+  val constraintManager: ConstraintManager
 
   /**
     * Check the message against the constraints defined 

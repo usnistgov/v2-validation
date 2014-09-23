@@ -20,5 +20,8 @@ case class MaxCard(location: Location, instance: Int, range: Range) extends Entr
 
 case class Length(location: Location, value: String, range: Range) extends Entry
 
-//case class Extra(location: Location) extends Entry
+case class UnexpectedLines( list: List[(Int, String)] ) extends Entry
 
+case class InvalidLines( list: List[(Int, String)] ) extends Entry
+
+//case class Extra(location: Location) extends Entry

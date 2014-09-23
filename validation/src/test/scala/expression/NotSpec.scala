@@ -22,7 +22,8 @@ trait NOTSpec
   assert( eval(exp2, c2).isInstanceOf[Fail] )
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
-  def notInconclusive = eval( NOT(exp3), c2 ) === inconclusive(c2, Presence("1"), "Invalid Path '1'")
+  def notInconclusive = eval( NOT(exp3), c2 ) ===
+    Inconclusive(Presence("1"), "Invalid Path '1'" :: Nil)
 
   def notPass = eval( NOT(exp2), c2 ) === Pass
 

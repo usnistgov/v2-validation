@@ -27,7 +27,7 @@ case class Fail( stack: List[(Expression, List[Reason])] ) extends EvalResult
   *   2) Invalid conversion between `Value' classes. Example: attempting to convert Text(X2) to a number
   *   3) An operation is not supported. Example: Date(20140326) LT Time(010100)
   */
-case class Inconclusive(context: Element, expression: Expression, details: List[String]) extends EvalResult
+case class Inconclusive(expression: Expression, details: List[String]) extends EvalResult
 
 /**
   * The reason of an expression evaluation failure
