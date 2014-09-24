@@ -10,7 +10,7 @@
 	 
 	<Datatype>
 		
-		<ByName Name="CWE">
+		<ByName Name="HD">
 			
 			<!-- Generic Expressions -->
 			
@@ -21,12 +21,12 @@
 				</Assertion>
 			</Constraint>
 			
-			<Constraint ID="Path Value">
+			<!--<Constraint ID="Path Value">
 				<Description>Path Value</Description>
 				<Assertion>
 					<PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/>
 				</Assertion>
-			</Constraint>
+			</Constraint> -->
 			
 			<!-- Value Expressions -->
 			
@@ -36,7 +36,8 @@
 					<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
 				</Assertion>
 			</Constraint>
-			
+
+            <!--
 			<Constraint ID="Format">
 				<Description>Format</Description>
 				<Assertion> 
@@ -54,7 +55,7 @@
 			<Constraint ID="String List">
 				<Description>String List</Description>
 				<Assertion> 
-					<StringList Path="1[1]" CSV="1,2"/> <!-- No spaces -->
+					<StringList Path="1[1]" CSV="1,2"/>
 				</Assertion>
 			</Constraint>
 			
@@ -70,7 +71,7 @@
 				<Assertion>
 					<SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/>
 				</Assertion>
-			</Constraint>
+			</Constraint> -->
 			
 			<!-- Combination Expressions -->
 			
@@ -104,7 +105,8 @@
 			</Constraint>
 			
 		</ByName>
-		
+
+        <!--
 		<ByID ID="_XX_">
 			<Constraint ID="XOR">
 				<Description>XOR</Description>
@@ -147,7 +149,7 @@
 					</EXIST>
 				</Assertion>
 			</Constraint>
-		</ByID>
+		</ByID> -->
 		
 	</Datatype>
 	

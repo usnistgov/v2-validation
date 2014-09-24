@@ -3,7 +3,7 @@ package hl7.v2.validation.structure
 import scala.concurrent.Future
 
 import hl7.v2.instance.Message
-import hl7.v2.validation.vs.{Validator => VSValidator}
+import hl7.v2.validation.report.SEntry
 
 /**
   * The message structure validator
@@ -20,5 +20,5 @@ trait Validator {
     * @param m - The message to be checked
     * @return  - The list of violations
     */
-  def checkStructure(m: Message): Future[Seq[Entry]]
+  def checkStructure(m: Message): Future[Seq[SEntry]]
 }

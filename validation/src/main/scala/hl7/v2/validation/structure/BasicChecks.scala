@@ -1,13 +1,10 @@
 package hl7.v2.validation.structure
 
-import scala.language.implicitConversions
+import hl7.v2.instance.{Element, Location, Simple, Value}
+import hl7.v2.profile.{Range, Usage}
+import hl7.v2.validation.report.{Length, MaxCard, MinCard, RUsage, SEntry, WUsage, XUsage}
 
-import hl7.v2.instance.Element
-import hl7.v2.instance.Location
-import hl7.v2.instance.Simple
-import hl7.v2.instance.Value
-import hl7.v2.profile.Range
-import hl7.v2.profile.Usage
+import scala.language.implicitConversions
 
 /**
   * Trait containing functions for checking constraints defined 
@@ -29,7 +26,7 @@ trait BasicChecks {
     * @param dl - The default location
     * @return A list of report entries
     */
-  def checkUsage(u: Usage, l: List[Element])(dl: Location): List[Entry] =
+  def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
     (u, l) match {
       case (Usage.R, Nil) => RUsage(dl) :: Nil
       case (Usage.X,  xs) => xs map { e => XUsage( e.location ) }
@@ -46,7 +43,7 @@ trait BasicChecks {
     * @param range - The cardinality range
     * @return A list of report entries 
     */
-  def checkCardinality( l: List[Element], range: Range): List[Entry] =
+  def checkCardinality( l: List[Element], range: Range): List[SEntry] =
     if( l.isEmpty ) Nil
     else {
       val highestRep = l maxBy instance
@@ -60,7 +57,7 @@ trait BasicChecks {
   /**
     * Returns `Some(Entry)' if the value's length is not in range `None' otherwise
     */
-  def checkLength(s: Simple, range: Range): List[Entry] = 
+  def checkLength(s: Simple, range: Range): List[SEntry] =
     if( inRange(s.value.length, range) ) Nil 
     else Length(s.location, s.value, range) :: Nil
 

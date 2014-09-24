@@ -51,7 +51,6 @@ trait Validator { this: Parser with structure.Validator
 
 class HL7Validator(
     val profile: Profile,
-    //val vsv: vs.Validator,
     val constraintManager: content.ConstraintManager
   ) extends Validator 
     with hl7.v2.parser.impl.DefaultParser

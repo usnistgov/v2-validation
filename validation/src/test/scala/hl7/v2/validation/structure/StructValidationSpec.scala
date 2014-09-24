@@ -1,16 +1,14 @@
 package hl7.v2.validation.structure
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.util.Failure
-import scala.util.Success
-
-import org.specs2.Specification
-
 import hl7.v2.instance.Location
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.Range
-import hl7.v2.profile.XMLDeserializer
+import hl7.v2.profile.{Range, XMLDeserializer}
+import hl7.v2.validation.report.{InvalidLines, Length, MaxCard, MinCard, RUsage, SEntry, UnexpectedLines, WUsage, XUsage}
+import org.specs2.Specification
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
 
 /**
   * Integration test for the structure validation
@@ -138,7 +136,7 @@ trait StructValidationSpec
     validate(m6) === UnexpectedLines( (5, "PDQ|1") :: Nil ) :: Nil
   }
 
-  private def validate(m: String): Seq[Entry] = parse(m, mm) match {
+  private def validate(m: String): Seq[SEntry] = parse(m, mm) match {
     case Success(msg) => Await.result( checkStructure(msg) , Duration(2, "seconds"))
     case Failure(e) => throw e
   }

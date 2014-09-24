@@ -16,6 +16,7 @@ import hl7.v2.instance.SimpleComponent
 import hl7.v2.instance.SimpleField
 import hl7.v2.profile.{Component => CM}
 import hl7.v2.profile.Range
+import hl7.v2.validation.report.{SEntry, InvalidLines, UnexpectedLines}
 
 /**
   * Default implementation of the structure validator
@@ -25,7 +26,7 @@ import hl7.v2.profile.Range
 
 trait DefaultValidator extends Validator with BasicChecks {
 
-  def checkStructure(m: Message): Future[Seq[Entry]] = Future {
+  def checkStructure(m: Message): Future[Seq[SEntry]] = Future {
     (m.unexpected, m.invalid) match {
       case (Nil, Nil) => check(m.asGroup)
       case (u, Nil)   => UnexpectedLines(u) :: check(m.asGroup)
@@ -38,7 +39,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * Checks the group against the constraints defined
     * in the profile and return the list of problem.
     */
-  private def check(g: Group): List[Entry] =
+  private def check(g: Group): List[SEntry] =
     (g.structure zip g.model.children) flatMap { _ match {
       case (Left(ls), Left(model)) => 
         val dl = location( g.location, model.position )
@@ -59,7 +60,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * Checks the segment against the constraints defined
     * in the profile and return the list of problems.
     */
-  private def check(s: Segment): List[Entry] =
+  private def check(s: Segment): List[SEntry] =
     (s.fields zip s.model.ref.fields) flatMap { t =>
       val(lf, model) = t
       val dl = location( s.location, model.position )
@@ -73,7 +74,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * Checks the component against the constraints defined
     * in the profile and return the list of problems.
     */
-  private def check(f: Field): List[Entry] = f match {
+  private def check(f: Field): List[SEntry] = f match {
     case sf: SimpleField  => check(sf, sf.model.length)
     case cf: ComplexField => check(cf.location, cf.components, cfc(cf))
   }
@@ -82,7 +83,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * Checks the component against the constraints defined
     * in the profile and return the list of problems.
     */
-  private def check(c: Component): List[Entry] = c match {
+  private def check(c: Component): List[SEntry] = c match {
     case sc: SimpleComponent  => check(sc, sc.model.length)
     case cc: ComplexComponent => check(cc.location, cc.components, ccc(cc))
   }
@@ -99,7 +100,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * @param ml - The children models
     * @return The list of problems
     */
-  private def check(l: Location, cl: List[OC], ml: List[CM]): List[Entry] =
+  private def check(l: Location, cl: List[OC], ml: List[CM]): List[SEntry] =
     (cl zip ml ) flatMap { t =>
       val(oc, model) = t
       val dl = location( l, model.position )
@@ -116,7 +117,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * @param l - The length constraint
     * @return The list of problems
     */
-  private def check(s: Simple, l: Range): List[Entry] = checkLength(s, l)
+  private def check(s: Simple, l: Range): List[SEntry] = checkLength(s, l)
 
   /**
     * Creates a new location by changing the path
