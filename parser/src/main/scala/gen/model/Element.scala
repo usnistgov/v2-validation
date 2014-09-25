@@ -62,14 +62,15 @@ trait Element {
 
   assert( desc.nonEmpty, s"[Empty description] $this" )
   assert( path.nonEmpty, s"[Empty path] $this" )
-  assert( line   > 0 ,   s"[Invalid line] $this" )
-  assert( column > 0 ,   s"[Invalid column] $this" )
+  assert( line   == -1 || line   > 0, s"[Invalid line] $this" )
+  assert( column == -1 || column > 0, s"[Invalid column] $this" )
 }
 
 /**
-  * Trait representing a complex element
+  * Trait representing a complex element.
   */
 trait Complex extends Element {
+
   /**
     * The children of the complex element
     */

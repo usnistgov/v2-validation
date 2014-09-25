@@ -13,8 +13,8 @@ trait Mocks {
   private val req = Requirement(Usage.O, Range(0, "*"), None,  None)
 
   trait Default {
-    def line   = 1
-    def column = 1
+    def line   = -1
+    def column = -1
     def path = "path"
     def desc = "description ..."
   }
