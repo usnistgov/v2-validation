@@ -5,7 +5,7 @@ import gen.model.{QKind, Element, Complex, Simple, Value, QProps, Requirement}
 /**
   * Query-able HL7 v2x kinds
   */
-object Group    extends QKind
+object Group    extends QKind //FIXME This will probably clash with Group companion object
 object Segment  extends QKind
 object Datatype extends QKind
 
