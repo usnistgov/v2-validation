@@ -1,42 +1,31 @@
-package hl7.v2.instance.n
+package gen.model
 
-/**
-  * Trait representing the kind of an element.
-  * Possible kinds are: Group, Segment, Field,
-  * Component and SubComponent.
-  */
-sealed trait EKind
-object Group        extends EKind with QKind
-object Segment      extends EKind with QKind
-object Field        extends EKind
-object Component    extends EKind
-object SubComponent extends EKind
+import hl7.v2.profile.{Range, Usage}
 
 /**
   * Trait representing a query-able element kind.
-  * Possible kinds are: Group, Segment and Datatype.
+  * Possible kinds in case of HL7 v2x are: Group,
+  * Segment and Datatype.
   */
-sealed trait QKind
-object Datatype extends QKind
+trait QKind
 
 /**
   * Class representing query-able properties of an element.
   */
-case class QProps(
-    kind : QKind,
-    id   : String,
-    name : String,
-    position: Int,
-    instance: Int
-)
+case class QProps(kind: QKind, id: String, name : String, position: Int, instance: Int){
+  assert( id.nonEmpty,   s"[Empty id] $this" )
+  assert( name.nonEmpty, s"[Empty name] $this" )
+  assert( position > 0 , s"[Invalid position] $this" )
+  assert( instance > 0 , s"[Invalid instance] $this" )
+}
 
 /**
   * Class representing requirement of an element.
   */
 case class Requirement (
-    usage      : String,
-    cardinality: String,
-    length     : Option[String],
+    usage      : Usage,
+    cardinality: Range,
+    length     : Option[Range],
     table      : Option[String]
 )
 
@@ -44,11 +33,6 @@ case class Requirement (
   * Trait representing an element
   */
 trait Element {
-  /**
-    * The kind of the element.
-    * @see hl7.v2.instance.EKind
-    */
-  def kind: EKind
 
   /**
     * The description of the element
@@ -75,6 +59,11 @@ trait Element {
     * @see hl7.v2.instance.QProps
    */
   def qProps: QProps
+
+  assert( desc.nonEmpty, s"[Empty description] $this" )
+  assert( path.nonEmpty, s"[Empty path] $this" )
+  assert( line   > 0 ,   s"[Invalid line] $this" )
+  assert( column > 0 ,   s"[Invalid column] $this" )
 }
 
 /**
@@ -108,8 +97,7 @@ trait Complex extends Element {
 trait Simple extends Element {
   /**
     * The value of the simple element
+    * @see hl7.v2.instance.Value
     */
   def value: Value
 }
-
-trait Value

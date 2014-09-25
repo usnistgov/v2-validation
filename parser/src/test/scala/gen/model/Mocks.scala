@@ -1,4 +1,6 @@
-package hl7.v2.instance
+package gen.model
+
+import hl7.v2.profile.{Range, Usage}
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
@@ -6,17 +8,24 @@ package hl7.v2.instance
 
 trait Mocks {
 
-  trait Default { 
-    def position: Int
-    def instance: Int
-    val location = Location("", -1, -1)
+  private def props(p: Int, i: Int) = QProps( new QKind {}, "id", "name", p, i)
+
+  private val req = Requirement(Usage.O, Range(0, "*"), None,  None)
+
+  trait Default {
+    def line   = 1
+    def column = 1
+    def path = "path"
+    def desc = "description ..."
   }
 
-  case class S( position: Int, instance: Int, value: Value) extends Simple with Default
+  case class S( position: Int, instance: Int, value: Value) extends Simple with Default {
+    def qProps = props(position, instance)
+  }
 
   case class C( position: Int, instance: Int, children: List[Element] ) extends Complex with Default{
-    def get(position: Int) = children filter ( _.position == position )
-    def get(position: Int, instance: Int) = children filter ( c => c.position == position && c.instance == instance )
+    def qProps = props(position, instance)
+    def reqs = Nil
   }
 
   val s0  = S( 4, 1, Text("S0") )
