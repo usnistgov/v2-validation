@@ -15,8 +15,8 @@ object Datatype extends QKind
 sealed trait Component extends Element
 
 /**
- * Class representing a simple component
- */
+  * Class representing a simple component
+  */
 case class SComponent (
     value: Value,
     path: String,
@@ -27,8 +27,8 @@ case class SComponent (
 ) extends Component with Simple
 
 /**
- * Trait representing a complex component
- */
+  * Trait representing a complex component
+  */
 case class CComponent (
     children: List[SComponent],
     path: String,
@@ -40,13 +40,13 @@ case class CComponent (
 ) extends Component with Complex
 
 /**
- * Trait representing a field
- */
+  * Trait representing a field
+  */
 sealed trait Field extends Element
 
 /**
- * Class representing a simple field
- */
+  * Class representing a simple field
+  */
 case class SField(
     value: Value,
     path: String,
@@ -57,8 +57,8 @@ case class SField(
 ) extends Field with Simple
 
 /**
- * Class representing a complex field
- */
+  * Class representing a complex field
+  */
 case class CField(
     children: List[Component],
     path: String,
@@ -70,13 +70,13 @@ case class CField(
 ) extends Field with Complex
 
 /**
- * Trait representing either a segment or a group
- */
+  * Trait representing either a segment or a group
+  */
 sealed trait SegOrGroup extends Complex { val column = 1 }
 
 /**
- * Class representing a segment
- */
+  * Class representing a segment
+  */
 case class Segment (
     children: List[Field],
     path: String,
@@ -87,8 +87,8 @@ case class Segment (
 ) extends SegOrGroup
 
 /**
- * Class representing a group
- */
+  * Class representing a group
+  */
 case class Group (
     children: List[SegOrGroup],
     path: String,
