@@ -30,8 +30,6 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     Deserialization of forall expression should work as expected          $pe14
   """
 
-  import XMLDeserializer.expression
-
   def pe1 = expression( <Presence Path="1[1]"/> ) === Presence( "1[1]" ) 
 
   def pe2 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
