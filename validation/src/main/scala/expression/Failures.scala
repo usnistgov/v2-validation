@@ -1,7 +1,6 @@
 package expression
 
-import hl7.v2.instance.Element
-import hl7.v2.instance.Simple
+import hl7.v2.instance.{Element, Simple}
 
 object Failures {
 

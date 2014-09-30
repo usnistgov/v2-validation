@@ -1,4 +1,4 @@
-package hl7.v2.validation.content
+/*package hl7.v2.validation.content
 
 import hl7.v2.instance.{Component, Field, Segment, Group}
 
@@ -27,3 +27,4 @@ object EmptyConstraintManager extends ConstraintManager {
    */
   def constraintsFor( c: Component ): List[Constraint] = Nil
 }
+*/

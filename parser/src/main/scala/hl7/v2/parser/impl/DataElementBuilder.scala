@@ -1,15 +1,13 @@
-package hl7.v2.parser.impl
+/*package hl7.v2.parser.impl
 
 import hl7.v2.instance.ComplexComponent
 import hl7.v2.instance.ComplexField
 import hl7.v2.instance.Component
 import hl7.v2.instance.Field
-import hl7.v2.instance.Location
+import hl7.v2.old.Location
 import hl7.v2.instance.SimpleComponent
 import hl7.v2.instance.SimpleField
 import hl7.v2.instance.Value
-import hl7.v2.profile.{Component => CM}
-import hl7.v2.profile.{Field => FM}
 
 /**
   * Data element (either a field or a component) builder
@@ -27,7 +25,7 @@ object DataElementBuilder {
     * @param l - The location
     * @return The field instance
     */
-  def apply(m: FM, v: String, i: Int, l: Location): Option[Field] = 
+  def apply(m: Field, v: String, i: Int, l: Location): Option[Field] =
     if( v matches emptyField ) None
     else m.datatype.components match {
       case Nil => Some( SimpleField(m, Value(m.datatype.name, v), i, l) )
@@ -49,7 +47,7 @@ object DataElementBuilder {
     * @param l - The location
     * @return The component instance
     */
-  def apply(m: CM, v: String, l: Location): Option[Component] = 
+  def apply(m: Component, v: String, l: Location): Option[Component] =
     if( v matches emptyComponent ) None
     else m.datatype.components match {
       case Nil => Some( SimpleComponent(m, Value(m.datatype.name, v), l) )
@@ -73,3 +71,4 @@ object DataElementBuilder {
   private   def get(vs: Array[(Int, String)], i: Int) = 
     try{ vs(i) } catch{ case _: Throwable => (-1, "") }
 }
+*/

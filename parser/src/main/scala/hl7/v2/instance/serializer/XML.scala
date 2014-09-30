@@ -1,4 +1,4 @@
-package hl7.v2.instance
+/*package hl7.v2.instance
 package serializer
 
 import scala.xml.Elem
@@ -90,3 +90,4 @@ object XML {
       </Message>
   }
 }
+*/

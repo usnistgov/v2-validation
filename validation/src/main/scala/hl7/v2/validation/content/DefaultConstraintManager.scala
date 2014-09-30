@@ -1,4 +1,4 @@
-package hl7.v2.validation.content
+/*package hl7.v2.validation.content
 
 import hl7.v2.instance.Group
 import hl7.v2.instance.Segment
@@ -87,7 +87,7 @@ object DefaultConstraintManager {
     val expressionNode = assertionNode.getChildElements.get(0)
     expression.XMLDeserializer.expression( expressionNode )
   }
-}
+}*/
 
 /*object MainCM extends App {
   

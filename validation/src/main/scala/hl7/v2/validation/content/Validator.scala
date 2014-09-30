@@ -1,8 +1,8 @@
-package hl7.v2.validation.content
+/*package hl7.v2.validation.content
 
 import scala.concurrent.Future
 
-import hl7.v2.instance.Message
+import hl7.v2.old.Message
 import hl7.v2.validation.report.CEntry
 
 /**
@@ -23,4 +23,4 @@ trait Validator {
     * in the constraint manager and returns the report 
     */
   def checkContent(m: Message): Future[Seq[CEntry]]
-}
+}*/

@@ -1,7 +1,7 @@
 package expression
 
-import hl7.v2.instance.Element
-import hl7.v2.instance.Query.query
+import hl7.v2.instance.{Element, Query}
+import Query.query
 import org.specs2.Specification
 
 import scala.util.{Failure, Success}

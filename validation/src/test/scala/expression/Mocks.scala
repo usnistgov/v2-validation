@@ -1,24 +1,24 @@
 package expression
 
 import hl7.v2.instance.Value
-import hl7.v2.instance.Simple
-import hl7.v2.instance.Complex
-import hl7.v2.instance.Element
 import hl7.v2.instance.Text
 import hl7.v2.instance.Number
-import hl7.v2.instance.Location
+import hl7.v2.instance.{Simple, Element, Location, Complex}
+import hl7.v2.profile.{DT, QProps, Req}
 
 trait Mocks {
 
-  trait Default { val location= Location("Path", -1, -1) }
-
-  case class S( position: Int, instance: Int, value: Value) extends Simple  with Default
-
-  case class C( position: Int, instance: Int, children: List[Element] ) extends Complex with Default{
-    def get(position: Int): Seq[Element] = children filter ( _.position == position )
-    def get(position: Int, instance: Int): Seq[Element] = 
-      children filter ( c =>  c.position == position && c.instance == instance )
+  trait Default {
+    val reqs     = List[Req]()
+    val location = Location("desc ...", "Path", -1, -1)
+    val qProps   = QProps(DT, "id", "name")
   }
+
+  case class S( position: Int, instance: Int, value: Value)
+    extends Simple  with Default
+
+  case class C( position: Int, instance: Int, children: List[Element] )
+    extends Complex with Default
 
   val s0  = S( 4, 1, Text("41")   )
   val s1  = S( 5, 1, Number("51") )

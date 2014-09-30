@@ -1,116 +1,72 @@
 package hl7.v2.profile
 
 /**
-  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
+  * Trait representing a data type
   */
+sealed trait Datatype {
+  def id: String
+  def name: String
+  def desc: String
+  lazy val qProps = QProps(DT, id, name)
+}
 
-/**
-  * A data type
-  */
-case class Datatype(
+case class Primitive(id: String, name: String, desc: String) extends Datatype
+
+case class Composite (
     id: String,
     name: String,
-    description: String,
-    components: List[Component] 
-  ) {
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
+    desc: String,
+    components: List[Component]
+) extends Datatype {
+
+  lazy val requirements: List[Req] = components map ( _.req )
 }
 
+case class Component( name: String, datatypeId: String, req: Req )
+
+case class Field( name: String, datatypeId: String, req: Req )
+
 /**
-  * A composite data type component
+  * Describes the mapping for dynamic data type
+  * @param position  - The position of the element with dynamic data type
+  * @param reference - The position which defines the data type name to be used
+  * @param map       - The mapping ( data type name -> data type id )
   */
-case class Component(
-    position: Int,
+case class DynMapping( position: Int, reference: Int, map: Map[String, String] )
+
+case class Segment (
+    id: String,
     name: String,
-    datatype: Datatype,
-    usage: Usage,
-    length: Range,
-    confLength: String,
-    table: Option[String]
-  ) {
-  /*assert( isWellNested, s"""The component is not well nested # $this""" )
+    desc: String,
+    fields: List[Field],
+    mappings: List[DynMapping]
+) {
 
-  //Checks for component nesting
-  private def isWellNested = datatype match {
-    case p: Primitive => true
-    case c: Composite => c.components.forall( _.datatype.isInstanceOf[Primitive] )
-  }*/
+  lazy val qProps = QProps(SEG, id, name)
 
-  //lazy val cardinality = Range(1, "1")
+  lazy val requirements: List[Req] = fields map ( _.req )
 }
 
-/**
-  * A field
-  */
-case class Field(
-    position: Int,
+case class Group(
     name: String,
-    datatype: Datatype,
-    usage: Usage,
-    cardinality: Range,
-    length: Range,
-    confLength: String,
-    table: Option[String]
+    structure: List[(Req, Either[String, Group])]
+) {
+
+  lazy val qProps = QProps(GRP, "", name) //FIXME: Review the id
+}
+
+case class Message (
+    id: String,
+    structId: String,
+    event: String,
+    `type`: String,
+    desc: String,
+    root: Group
 )
 
-case class DynamicMapping(position: Int, reference: Int, map: Map[String, Datatype])
-
-/**
-  * A segment
-  */
-case class Segment(id: String, name: String, description: String, fields: List[Field], dynamicMapping: List[DynamicMapping] ) {
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
-}
-
-/**
-  * A segment reference
-  */
-case class SegmentRef(position: Int, ref: Segment, usage: Usage, cardinality: Range)
-
-/**
-  * A group
-  */
-case class Group(
-    position: Int,
-    name: String,
-    usage: Usage,
-    cardinality: Range,
-    children: List[Either[SegmentRef, Group]]
-  ) {
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
-  assert( children.nonEmpty, s"A group cannot be empty # $this" )
-}
-
-/**
-  * A message
-  */
-case class Message(
-    id      : String,
-    typ     : String,
-    event   : String,
-    structID: String, 
-    description: String, 
-    children: List[Either[SegmentRef, Group]]
-  ) {
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert( children.nonEmpty, s"A message cannot be empty # $this" )
-  assert( children.head match {case Left(x) => x.ref.name == "MSH" case _ => false},
-      s"The first element of the message must be the MSH Segment # $this" )
-
-  def asGroup = Group(1, id, Usage.R, Range(1,"1"), children)
-}
-
-/**
-  * The profile
-  */
 case class Profile(
-    id           : String,
-    typ          : String,
-    hl7Version   : String,
-    schemaVersion: String,
-    messages     : Map[String, Message],
-    segments     : Map[String, Segment],
-    datatypes    : Map[String, Datatype]
+    id: String,
+    messages : Map[String, Message],
+    segments : Map[String, Segment],
+    datatypes: Map[String, Datatype]
 )

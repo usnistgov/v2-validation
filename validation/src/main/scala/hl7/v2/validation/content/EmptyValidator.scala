@@ -1,9 +1,9 @@
-package hl7.v2.validation.content
+/*package hl7.v2.validation.content
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import hl7.v2.instance.Message
+import hl7.v2.old.Message
 import hl7.v2.validation.report.CEntry
 
 /**
@@ -18,3 +18,4 @@ trait EmptyValidator extends Validator {
 
   def checkContent(m: Message): Future[Seq[CEntry]] = Future { Nil }
 }
+*/

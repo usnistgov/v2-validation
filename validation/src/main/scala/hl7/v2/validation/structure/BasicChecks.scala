@@ -1,6 +1,7 @@
-package hl7.v2.validation.structure
+/*package hl7.v2.validation.structure
 
-import hl7.v2.instance.{Element, Location, Simple, Value}
+import hl7.v2.instance.Value
+import hl7.v2.old.{Simple, Element, Location}
 import hl7.v2.profile.{Range, Usage}
 import hl7.v2.validation.report.{Length, MaxCard, MinCard, RUsage, SEntry, WUsage, XUsage}
 
@@ -73,3 +74,4 @@ trait BasicChecks {
   // Implicit conversion from Value to String
   private implicit def asString(v: Value): String = v.asString
 }
+*/

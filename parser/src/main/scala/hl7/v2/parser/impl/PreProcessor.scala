@@ -1,4 +1,4 @@
-package hl7.v2.parser.impl
+/*package hl7.v2.parser.impl
 
 import scala.util.Try
 import scala.util.Failure
@@ -88,4 +88,4 @@ object PreProcessor {
     } else ( line._1, splitAndReplace( line._2 , l) )
   }*/
 
-}
+}*/

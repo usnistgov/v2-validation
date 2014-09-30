@@ -1,4 +1,4 @@
-package hl7.v2.validation.structure
+/*package hl7.v2.validation.structure
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -8,13 +8,12 @@ import hl7.v2.instance.ComplexField
 import hl7.v2.instance.Component
 import hl7.v2.instance.Field
 import hl7.v2.instance.Group
-import hl7.v2.instance.Location
-import hl7.v2.instance.Message
+import hl7.v2.old.Location
+import hl7.v2.old.Message
 import hl7.v2.instance.Segment
-import hl7.v2.instance.Simple
+import hl7.v2.old.Simple
 import hl7.v2.instance.SimpleComponent
 import hl7.v2.instance.SimpleField
-import hl7.v2.profile.{Component => CM}
 import hl7.v2.profile.Range
 import hl7.v2.validation.report.{SEntry, InvalidLines, UnexpectedLines}
 
@@ -100,7 +99,7 @@ trait DefaultValidator extends Validator with BasicChecks {
     * @param ml - The children models
     * @return The list of problems
     */
-  private def check(l: Location, cl: List[OC], ml: List[CM]): List[SEntry] =
+  private def check(l: Location, cl: List[OC], ml: List[Component]): List[SEntry] =
     (cl zip ml ) flatMap { t =>
       val(oc, model) = t
       val dl = location( l, model.position )
@@ -135,3 +134,4 @@ trait DefaultValidator extends Validator with BasicChecks {
     */
   private def ccc(cc: ComplexComponent) = cc.model.datatype.components
 }
+*/

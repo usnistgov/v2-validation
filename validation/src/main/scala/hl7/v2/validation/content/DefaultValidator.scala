@@ -1,4 +1,4 @@
-package hl7.v2.validation.content
+/*package hl7.v2.validation.content
 
 import expression._
 import hl7.v2.instance._
@@ -63,3 +63,4 @@ trait DefaultValidator extends Validator with expression.Evaluator {
       case Inconclusive(exp,details) => SpecError(e, c, exp, details)
     }
 }
+*/

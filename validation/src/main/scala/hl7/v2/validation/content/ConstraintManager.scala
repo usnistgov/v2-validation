@@ -1,6 +1,18 @@
 package hl7.v2.validation.content
 
-import hl7.v2.instance.Group
+import hl7.v2.instance.Element
+
+
+trait ConstraintManager {
+
+  /**
+    * Returns the list of constraints defined for
+    * the specified element.
+    */
+  def constraintsFor(e: Element): List[Constraint]
+}
+
+/*import hl7.v2.instance.Group
 import hl7.v2.instance.Segment
 import hl7.v2.instance.Field
 import hl7.v2.instance.Component
@@ -27,3 +39,4 @@ trait ConstraintManager {
     */
   def constraintsFor( c: Component ): List[Constraint]
 }
+*/

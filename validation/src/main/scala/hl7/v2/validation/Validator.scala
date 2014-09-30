@@ -1,4 +1,6 @@
-package hl7.v2.validation
+/*package hl7.v2.validation
+
+import hl7.v2.profile.old.Profile
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -7,7 +9,6 @@ import scala.util.Success
 import scala.util.Try
 
 import hl7.v2.parser.Parser
-import hl7.v2.profile.Profile
 import hl7.v2.validation.report.Report
 
 /**
@@ -58,4 +59,4 @@ class HL7Validator(
     with content.DefaultValidator
     with vs.EmptyValidator
     with expression.DefaultEvaluator
-    
+*/

@@ -1,4 +1,4 @@
-package hl7.v2.instance
+/*package hl7.v2.instance
 package serializer
 
 object Serializer {
@@ -8,3 +8,4 @@ object Serializer {
     pp.format( implicitly[XML[A]].xml(value) )
   }
 }
+*/

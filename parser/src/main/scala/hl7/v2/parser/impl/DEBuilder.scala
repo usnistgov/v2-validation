@@ -1,11 +1,9 @@
-package hl7.v2.parser.impl
+/*package hl7.v2.parser.impl
 
 import scala.language.implicitConversions
 
 import gen.model.{Requirement, Text, Value, QProps}
 import hl7.v2.instance.n._
-import hl7.v2.profile.{Field => FM, Component => CM}
-import hl7.v2.profile.{Datatype => DT}
 
 object DEBuilder {
 
@@ -25,7 +23,7 @@ object DEBuilder {
    * @param p - The path
    * @return
    */
-  def component(m: CM, v: String, l: Int, c: Int, p: String): Option[Component] =
+  def component(m: Component, v: String, l: Int, c: Int, p: String): Option[Component] =
     if( v matches emptyComponent )
       None
     else
@@ -37,7 +35,7 @@ object DEBuilder {
         }
       }
 
-  private def cComponent(v: String, cm: List[CM], l: Int, c: Int, p: String)
+  private def cComponent(v: String, cm: List[Component], l: Int, c: Int, p: String)
                 (implicit  qp: QProps): CComponent = {
     //1. get the list of requirements
     // val reqs = ....
@@ -55,9 +53,10 @@ object DEBuilder {
 
   implicit def hl7Value(v: String): Value = Text(v) ///FIXME
 
-  private def qprops(d: DT, position: Int, instance: Int = 1) =
+  private def qprops(d: Datatype, position: Int, instance: Int = 1) =
     QProps(kind, d.id, d.name, position, instance)
 
   //private def reqs(l: ) : List[Requirement] = ???
 
 }
+*/

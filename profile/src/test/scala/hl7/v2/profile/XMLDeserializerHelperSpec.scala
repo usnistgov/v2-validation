@@ -1,24 +1,19 @@
-package hl7.v2.profile.n
+package hl7.v2.profile
 
 import org.specs2.Specification
 
-import hl7.v2.profile.Range
-import hl7.v2.profile.Usage
-
-class XMLDeserializerHelperSpec
-      extends Specification
-      with XMLDeserializerHelper { def is =s2"""
+class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
 
     Deserialization of segment should work as expected $todo
     Deserialization of dynamic mappings should work as expected $todo
-    Deserialization of field should work as expected            $f
-    Deserialization of datatype should work as expected         $d
-    Deserialization of requirement should work as expected      $r
-    Deserialization of cardinality should work as expected      $c
-    Deserialization of length should work as expected           $l
+    Deserialization of field should work as expected            $field
+    Deserialization of datatype should work as expected         $dt
+    Deserialization of requirement should work as expected      $req
+    Deserialization of cardinality should work as expected      $card
+    Deserialization of length should work as expected           $len
 """
 
-  def f = field( 1,
+  def field = XMLDeserializerHelper.field( 1,
     <Field
       Name="X"
       Datatype="Y"
@@ -35,7 +30,7 @@ class XMLDeserializerHelperSpec
     Field("X", "Y", r)
   }
 
-  def d = Seq (
+  def dt = Seq (
     <Datatype ID="i1" Name="N1" Description="xx"/>
         -> Primitive("i1", "N1", "xx"),
     <Datatype ID="i2" Name="N2" Description="xx">{
@@ -53,10 +48,10 @@ class XMLDeserializerHelperSpec
            val r = Req(1, Usage.R, None, Some(Range(1,"*")), Some("=2"), Some("tt"))
            Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
          }
-  ) map ( t => datatype( t._1 ) === t._2 )
+  ) map ( t => XMLDeserializerHelper.datatype( t._1 ) === t._2 )
 
 
-  def r = Seq (
+  def req = Seq (
     <E Usage="R"/>
         -> Req(1, Usage.R, None, None, None, None),
     <E Usage="R" Min="1" Max="2"/>
@@ -67,17 +62,17 @@ class XMLDeserializerHelperSpec
         -> Req(1, Usage.R, None, Some(Range(1, "*")), None, Some("tt")),
     <E Usage="R" MinLength="1" MaxLength="*" Table="tt" ConfLength="=2"/>
         -> Req(1, Usage.R, None, Some(Range(1, "*")), Some("=2"), Some("tt"))
-    ) map ( t => requirement(1, t._1) === t._2 )
+    ) map ( t => XMLDeserializerHelper.requirement(1, t._1) === t._2 )
 
-  def c = Seq (
+  def card = Seq (
       <E Min="1" Max="*"/> -> Some(Range(1, "*") ),
       <E/> -> None
-  ) map( t => cardinality( t._1 ) === t._2 )
+  ) map( t => XMLDeserializerHelper.cardinality( t._1 ) === t._2 )
 
-  def l = Seq (
+  def len = Seq (
     <E MinLength="1" MaxLength="*"/> -> Some(Range(1, "*") ),
     <E/> -> None
-  ) map( t => length( t._1 ) === t._2 )
+  ) map( t => XMLDeserializerHelper.length( t._1 ) === t._2 )
 
   //FIXME move this to nist.xml
   private implicit def toXOM( e: scala.xml.Node ): nu.xom.Element = {

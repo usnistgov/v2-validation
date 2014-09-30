@@ -1,99 +1,119 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Component => CM}
-import hl7.v2.profile.{Field => FM}
-import hl7.v2.profile.{Group => GM}
-import hl7.v2.profile.{Message => MM}
-import hl7.v2.profile.{SegmentRef => SM}
+import hl7.v2.profile.{QProps, Req}
 
 /**
-  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
+  * Trait representing a component
   */
+sealed trait Component extends Element { val instance = 1 }
 
-sealed trait Component extends Element {
-  def model: CM
-  def position = model.position
-  def instance = 1
-}
-
-case class SimpleComponent(
-    model: CM,
-    value: Value,
-    location: Location
+/**
+  * Class representing a simple component
+  */
+case class SComponent (
+    qProps: QProps,
+    location: Location,
+    position: Int,
+    value: Value
 ) extends Component with Simple
 
-case class ComplexComponent(
-    model: CM,
-    components: List[Option[SimpleComponent]],
-    location: Location
-  ) extends Component with Complex {
-  def get(position: Int) = components(position -1).toList //FIXME: Can throw ... 
-  def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
-}
+/**
+  * Trait representing a complex component
+  */
+case class CComponent (
+    qProps: QProps,
+    location: Location,
+    position: Int,
+    children: List[Component],
+    reqs: List[Req]
+) extends Component with Complex
 
-sealed trait Field extends Element {
-  def model: FM
-  def position = model.position
-}
+/**
+  * Trait representing a field
+  */
+sealed trait Field extends Element
 
-case class SimpleField(
-    model: FM,
-    value: Value,
+/**
+  * Class representing a simple field
+  */
+case class SField(
+    qProps: QProps,
+    location: Location,
+    position: Int,
     instance: Int,
-    location: Location
+    value: Value
 ) extends Field with Simple
 
-case class ComplexField(
-    model: FM,
-    components: List[Option[Component]],
+/**
+  * Class representing a complex field
+  */
+case class CField(
+    qProps: QProps,
+    location: Location,
+    position: Int,
     instance: Int,
-    location: Location
-  ) extends Field with Complex {
-  def get(position: Int) = components(position -1).toList //FIXME: Can throw ... 
-  def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
-}
+    children: List[Component],
+    reqs: List[Req]
+) extends Field with Complex
 
-case class Segment(
-    model: SM,
-    fields: List[List[Field]],
+/**
+  * Trait representing either a segment or a group
+  */
+sealed trait SegOrGroup extends Complex { val column = 1 }
+
+/**
+  * Class representing a segment
+  */
+case class Segment (
+    qProps: QProps,
+    location: Location,
+    position: Int,
     instance: Int,
-    location: Location
-  ) extends Complex {
+    children: List[Field],
+    reqs: List[Req]
+) extends SegOrGroup
 
-  def position = model.position
-  def get(position: Int) = fields(position -1)
-  def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
+/**
+  * Class representing a group
+  */
+case class Group (
+    qProps: QProps,
+    position: Int,
+    instance: Int,
+    children: List[SegOrGroup],
+    reqs: List[Req]
+  ) extends SegOrGroup {
+
+  // The group should contain an element with position = 1 and instance = 1
+  require( children exists {c => c.position == 1 && c.instance == 1} )
+
+  lazy val head: Segment =
+    children find { c => c.position == 1 && c.instance == 1 } match {
+      case Some(s: Segment) => s
+      case Some(g: Group)   => g.head
+      case None => throw new Error(s"The group head is missing. $this")
+    }
+
+  lazy val location =
+    head.location.copy( desc="", path = s"${qProps.name}[$instance]" )
 }
 
-case class Group(
-    model: GM,
-    structure: List[Either[List[Segment], List[Group]]],
-    instance: Int
-  ) extends Complex {
+/**
+  * Class representing a message
+  */
+case class Message (
+    id: String,
+    structId: String,
+    event: String,
+    typ: String,
+    desc: String,
+    children: List[SegOrGroup],
+    reqs: List[Req]
+) {
 
-  def position = model.position
-  def location = structure.head match {
-    case Left (ls) => ls.head.location.copy(path = model.name)
-    case Right(lg) => lg.head.location.copy(path = model.name)
-  }
-  def get(position: Int) = structure(position -1).merge //FIXME: Can throw ... 
-  def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
-}
+  private lazy val qProps = QProps(hl7.v2.profile.MSG, id, structId)
 
-case class Message(
-    model: MM,
-    structure: List[Either[List[Segment], List[Group]]],
-    invalid: List[(Int, String)],
-    unexpected: List[(Int, String)]
-  ) extends Complex {
+  lazy val asGroup = Group(qProps, -1, 1, children, reqs)
 
-  def position = 1
-  def instance = 1
-  def location = structure.head match {
-    case Left (ls) => ls.head.location.copy(path = model.id)
-    case Right(lg) => lg.head.location.copy(path = model.id)
-  }
-  def asGroup = Group(model.asGroup, structure, instance)
-  def get(position: Int) = structure(position -1).merge //FIXME: Can throw ... 
-  def get(position: Int, instance: Int) = get(position) filter ( _.instance == instance )
+  lazy val location = asGroup.location
 }

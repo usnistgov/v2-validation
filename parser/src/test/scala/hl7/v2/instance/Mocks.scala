@@ -1,23 +1,24 @@
 package hl7.v2.instance
 
+import hl7.v2.profile.{Usage, QProps, Req, DT}
+
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
 trait Mocks {
 
-  trait Default { 
-    def position: Int
-    def instance: Int
-    val location = Location("", -1, -1)
+  trait Default {
+    val reqs     = List[Req]()
+    val location = Location("desc ...", "Path", -1, -1)
+    val qProps   = QProps(DT, "id", "name")
   }
 
-  case class S( position: Int, instance: Int, value: Value) extends Simple with Default
+  case class S( position: Int, instance: Int, value: Value)
+    extends Simple with Default
 
-  case class C( position: Int, instance: Int, children: List[Element] ) extends Complex with Default{
-    def get(position: Int) = children filter ( _.position == position )
-    def get(position: Int, instance: Int) = children filter ( c => c.position == position && c.instance == instance )
-  }
+  case class C( position: Int, instance: Int, children: List[Element] )
+    extends Complex with Default
 
   val s0  = S( 4, 1, Text("S0") )
 

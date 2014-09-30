@@ -1,6 +1,6 @@
-package hl7.v2.validation
+/*package hl7.v2.validation
 
-import hl7.v2.profile.XMLDeserializer
+import hl7.v2.profile.old.XMLDeserializer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -61,3 +61,4 @@ object ValidatorMain extends App {
     }
   }
 }
+*/

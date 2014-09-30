@@ -1,8 +1,9 @@
-package hl7.v2.validation.structure
+/*package hl7.v2.validation.structure
 
-import hl7.v2.instance.Location
+import hl7.v2.old.Location
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.{Range, XMLDeserializer}
+import hl7.v2.profile.Range
+import hl7.v2.profile.old.XMLDeserializer
 import hl7.v2.validation.report.{InvalidLines, Length, MaxCard, MinCard, RUsage, SEntry, UnexpectedLines, WUsage, XUsage}
 import org.specs2.Specification
 
@@ -148,3 +149,4 @@ trait StructValidationSpec
   private def MinC(p: String, l: Int, c: Int, i: Int, r: Range) = MinCard(Location(p, l, c), i, r)
   private def Len(p: String, l: Int, c: Int, v: String, r: Range) = Length(Location(p, l, c), v, r)
 }
+*/

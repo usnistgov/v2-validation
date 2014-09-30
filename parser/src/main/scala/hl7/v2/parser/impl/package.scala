@@ -1,6 +1,6 @@
-package hl7.v2.parser
+/*package hl7.v2.parser
 
-import hl7.v2.instance.Location
+import hl7.v2.old.Location
 
 package object impl {
 
@@ -55,3 +55,4 @@ package object impl {
 
   def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )
 }
+*/

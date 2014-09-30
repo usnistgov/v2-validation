@@ -1,8 +1,8 @@
 package hl7.v2.validation.structure
 
-import scala.concurrent.Future
-
 import hl7.v2.instance.Message
+
+import scala.concurrent.Future
 import hl7.v2.validation.report.SEntry
 
 /**

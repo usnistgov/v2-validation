@@ -1,8 +1,7 @@
 package hl7.v2.instance
 
+import hl7.v2.instance.Path.isValid
 import org.specs2.mutable.Specification
-
-import Path.isValid
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>

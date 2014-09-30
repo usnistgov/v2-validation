@@ -1,7 +1,8 @@
 package expression
 
-import hl7.v2.instance.Query.queryAsSimple
-import hl7.v2.instance.{Simple, Text}
+import hl7.v2.instance.Query
+import Query.queryAsSimple
+import hl7.v2.instance.Text
 import org.specs2.Specification
 
 import scala.util.Success

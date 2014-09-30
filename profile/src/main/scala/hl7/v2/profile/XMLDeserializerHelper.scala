@@ -1,13 +1,12 @@
-package hl7.v2.profile.n
+package hl7.v2.profile
 
-import hl7.v2.profile.{Range, Usage}
 import nist.xml.util.XOMExtensions.{ExtendedElement, ExtendedElements}
 import nu.xom.{Element, Elements}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait XMLDeserializerHelper {
+object XMLDeserializerHelper {
 
   type SOG = Either[String, Group]
 
@@ -24,7 +23,7 @@ trait XMLDeserializerHelper {
     } yield Profile( id, ms, ss, ds )
   }
 
-  private def messages(e: Element): Future[Map[String, Message]] =
+  def messages(e: Element): Future[Map[String, Message]] =
     Future {
       e.getChildElements("Message").foldLeft( Map[String, Message]() )
         { (acc, x) =>
@@ -33,7 +32,7 @@ trait XMLDeserializerHelper {
         }
     }
 
-  private def segments(e: Element): Future[Map[String, Segment]] =
+  def segments(e: Element): Future[Map[String, Segment]] =
     Future {
       e.getChildElements("Segment").foldLeft( Map[String, Segment]() )
         { (acc, x) =>
@@ -42,7 +41,7 @@ trait XMLDeserializerHelper {
         }
     }
 
-  private def datatypes(e: Element): Future[Map[String, Datatype]] =
+  def datatypes(e: Element): Future[Map[String, Datatype]] =
     Future {
       e.getChildElements("Datatype").foldLeft( Map[String, Datatype]() )
         { (acc, d) =>
@@ -97,7 +96,7 @@ trait XMLDeserializerHelper {
   def dynMappings(elements: Elements): List[DynMapping] =
     (elements map dynMapping).toList
 
-  private def dynMapping(e: Element): DynMapping = {
+  def dynMapping(e: Element): DynMapping = {
     val pos = e.attribute("Position").toInt
     val ref = e.attribute("Reference").toInt
     val map =
@@ -109,7 +108,7 @@ trait XMLDeserializerHelper {
 
   def field(p: Int, e: Element) = dataElem(p, e, Field.apply)
 
-  protected def datatype(e: Element): Datatype = {
+  def datatype(e: Element): Datatype = {
     val id   = e.attribute("ID")
     val name = e.attribute("Name")
     val desc = e.attribute("Description")
@@ -132,7 +131,7 @@ trait XMLDeserializerHelper {
     f(name, dtId, req)
   }
 
-  protected def requirement(p: Int, e: Element): Req = {
+  def requirement(p: Int, e: Element): Req = {
     val usage  = Usage.fromString( e.attribute("Usage") )
     val card   = cardinality(e)
     val len    = length(e)
@@ -141,12 +140,12 @@ trait XMLDeserializerHelper {
     Req(p, usage, card, len, confLen, table)
   }
 
-  protected def length(e: Element): Option[Range] =
+  def length(e: Element): Option[Range] =
     asOption( e.attribute("MinLength") ) map { min =>
       Range( min.toInt, e.attribute("MaxLength") )
     }
 
-  protected def cardinality(e: Element): Option[Range] =
+  def cardinality(e: Element): Option[Range] =
     asOption( e.attribute("Min") ) map { min =>
       Range( min.toInt, e.attribute("Max") )
     }
