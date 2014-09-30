@@ -37,6 +37,11 @@ trait Element {
 trait Complex extends Element {
 
   /**
+    * Returns true if the complex element has extra children
+    */
+  def hasExtra: Boolean
+
+  /**
     * The children of the complex element
     */
   def children: List[Element]

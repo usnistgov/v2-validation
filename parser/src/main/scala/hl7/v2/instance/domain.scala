@@ -25,7 +25,8 @@ case class CComponent (
     location: Location,
     position: Int,
     children: List[Component],
-    reqs: List[Req]
+    reqs: List[Req],
+    hasExtra: Boolean
 ) extends Component with Complex
 
 /**
@@ -53,7 +54,8 @@ case class CField(
     position: Int,
     instance: Int,
     children: List[Component],
-    reqs: List[Req]
+    reqs: List[Req],
+    hasExtra: Boolean
 ) extends Field with Complex
 
 /**
@@ -70,7 +72,8 @@ case class Segment (
     position: Int,
     instance: Int,
     children: List[Field],
-    reqs: List[Req]
+    reqs: List[Req],
+    hasExtra: Boolean
 ) extends SegOrGroup
 
 /**
@@ -86,6 +89,8 @@ case class Group (
 
   // The group should contain an element with position = 1 and instance = 1
   require( children exists {c => c.position == 1 && c.instance == 1} )
+
+  val hasExtra = false //FIXME A group cannot have extra right ?
 
   lazy val head: Segment =
     children find { c => c.position == 1 && c.instance == 1 } match {

@@ -12,6 +12,7 @@ trait Mocks {
     val reqs     = List[Req]()
     val location = Location("desc ...", "Path", -1, -1)
     val qProps   = QProps(DT, "id", "name")
+    val hasExtra = false
   }
 
   case class S( position: Int, instance: Int, value: Value)

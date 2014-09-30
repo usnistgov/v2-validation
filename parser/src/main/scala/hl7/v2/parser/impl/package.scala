@@ -1,6 +1,6 @@
-/*package hl7.v2.parser
+package hl7.v2.parser
 
-import hl7.v2.old.Location
+import hl7.v2.instance.Location
 
 package object impl {
 
@@ -49,10 +49,8 @@ package object impl {
     trimmed.split( sep ) map { ss => val r = column -> ss; column += ss.length + 1; r }
   }
 
-  def location(l: Location, p: Int, c: Int, i: Int = 1) =
-
-    l.copy( path = s"${l.path}.$p${ if(i==1) "" else s"[$i]"}", column= c)
+  //def location(l: Location, p: Int, c: Int, i: Int = 1) =
+  //  l.copy( path = s"${l.path}.$p${ if(i==1) "" else s"[$i]"}", column= c)
 
   def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )
 }
-*/

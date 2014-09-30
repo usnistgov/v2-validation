@@ -25,7 +25,7 @@ case class Date(asString: String)     extends Value
 case class Time(asString: String)     extends Value
 case class DateTime(asString: String) extends Value
 
-/*object Value {
+object Value {
 
   /**
    * Create the value from string depending on the data type
@@ -37,4 +37,4 @@ case class DateTime(asString: String) extends Value
     case "DTM" => DateTime(asString)
     case _     => Text(asString)
   }
-}*/
+}

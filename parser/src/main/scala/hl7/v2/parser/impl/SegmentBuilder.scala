@@ -1,5 +1,6 @@
 /*package hl7.v2.parser.impl
 
+
 import hl7.v2.instance.Field
 import hl7.v2.old.Location
 import hl7.v2.instance.Segment

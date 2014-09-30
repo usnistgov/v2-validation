@@ -18,3 +18,5 @@ case class Length(location: Location, value: String, range: Range) extends SEntr
 case class UnexpectedLines( list: List[(Int, String)] ) extends SEntry
 
 case class InvalidLines( list: List[(Int, String)] ) extends SEntry
+
+case class Extra( location: Location ) extends SEntry
