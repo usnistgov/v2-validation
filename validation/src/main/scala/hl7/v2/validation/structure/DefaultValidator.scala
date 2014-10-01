@@ -1,26 +1,27 @@
 package hl7.v2.validation.structure
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import hl7.v2.profile.{Req, Usage, Range}
-import hl7.v2.instance.{Complex, Simple, Element, Value, Message, Location}
+import hl7.v2.instance.{Complex, Element, Location, Message, Simple}
+import hl7.v2.profile.{Range, Req, Usage}
 import hl7.v2.validation.report._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
+/**
+  * Default implementation of the structure validation
+  */
 trait DefaultValidator extends Validator {
 
-
-  def checkStructure(m: Message): Future[Seq[SEntry]] =
-    Future { check( m.asGroup) }
+  def checkStructure(m: Message): Future[List[SEntry]] =
+    Future { check(m.asGroup) }
 
   def check(e: Element, r: Req): List[SEntry] = e match {
-    case s: Simple  => check(s, r.length.get, r.table) //FIXME will blow if length is not defined ... :-)
+    case s: Simple  => check(s, r)
     case c: Complex => check(c)
   }
 
-  // Checks a simple elememt
-  def check(s: Simple, len: Range, table: Option[String]): List[SEntry] = {
+  // Checks a simple element
+  def check(s: Simple, req: Req): List[SEntry] = {
     //FIXME 1. Check the length
     //FIXME 2. Check escape sequence
     ???
@@ -40,8 +41,10 @@ trait DefaultValidator extends Validator {
       // Checks the usage
       checkUsage( r.usage, children )(c.location) match {
         case Nil => // No usage error thus we can continue the validation
-          val r1 = checkExtra( c )  // Check for extra
-          val r2 = checkCardinality( children, r.cardinality ) // Check the cardinality
+          // Check for extra children
+          val r1 = checkExtra( c )
+          // Check the cardinality
+          val r2 = checkCardinality( children, r.cardinality )
           // Recursively check the children
           val r3 = children flatMap { check( _, r ) }
           r1 ::: r2 ::: r3 ::: acc
@@ -66,7 +69,7 @@ trait DefaultValidator extends Validator {
       case (Usage.R, Nil) => RUsage(dl) :: Nil
       case (Usage.X, xs ) => xs map { e => XUsage( e.location ) }
       case (Usage.W, xs ) => xs map { e => WUsage( e.location ) }
-      case _                     => Nil
+      case _              => Nil
     }
 
   /**
@@ -74,13 +77,14 @@ trait DefaultValidator extends Validator {
    * number is greater than the maximum range or a list with a single
    * element if the highest instance number is lower than the minimum range
    *
-   * @param l - The list of element
+   * @param l     - The list of element
    * @param range - The cardinality range
    * @return A list of report entries
    */
   def checkCardinality(l: List[Element], range: Range): List[SEntry] =
     if( l.isEmpty ) Nil
     else {
+      //FIXME: The only reason this is needed is because of field repetition
       val highestRep = l maxBy instance
       val i = instance( highestRep )
       if( i < range.min ) MinCard( highestRep.location, i, range ) :: Nil
@@ -101,163 +105,33 @@ trait DefaultValidator extends Validator {
     if( c.hasExtra ) Extra( c.location ) :: Nil else Nil
 
   /**
-    * Returns `Some(Entry)' if the value's length is not in range `None' otherwise
-    *
-    * This assumes that the underlining string has been properly escaped
+    * Returns a length entry if the length is not in range Nil otherwise.
+    * This assumes that the underlining string has been properly escaped.
     */
-  def checkLength(s: Simple, range: Range): List[SEntry] =
-    if( inRange(s.value.asString.length, range) ) Nil
-    else Length(s.location, s.value.asString, range) :: Nil
+  def checkLength(s: Simple, range: Range): List[SEntry] = {
+    val v = s.value.asString
+    if (inRange(v.length, range)) Nil else Length(s.location, v, range) :: Nil
+  }
 
-  // Returns the instance number of the element
+  private def checkLength(s: Simple, or: Option[Range]): List[SEntry] =
+    or match {
+      case Some(r) => checkLength(s, r)
+      case None    => Nil
+    }
+
+  /**
+    * Returns the instance number of the element
+    */
   private def instance(e: Element) = e.instance
 
-  // Returns true if i is in the range
-  def inRange(i: Int, r: Range) =
-    i >= r.min && ( r.max == "*" || i <= r.max.toInt)
+  /**
+    * Returns true if i is in the range
+    */
+  def inRange(i: Int, r: Range) = i >= r.min && (r.max == "*" || i <= r.max.toInt)
 
-  // Returns true is i > Range.max
-  def afterRange(i: Int, r: Range) =
-    if( r.max == "*" ) false else i > r.max.toInt
-
-  private def lengthOf(v: Value) = v.asString.length
+  /**
+    * Returns true is i > Range.max
+    */
+  def afterRange(i: Int, r: Range) = if(r.max == "*") false else i > r.max.toInt
 
 }
-
-
-/*
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
-import hl7.v2.instance.ComplexComponent
-import hl7.v2.instance.ComplexField
-import hl7.v2.instance.Component
-import hl7.v2.instance.Field
-import hl7.v2.instance.Group
-import hl7.v2.old.Location
-import hl7.v2.old.Message
-import hl7.v2.instance.Segment
-import hl7.v2.old.Simple
-import hl7.v2.instance.SimpleComponent
-import hl7.v2.instance.SimpleField
-import hl7.v2.profile.Range
-import hl7.v2.validation.report.{SEntry, InvalidLines, UnexpectedLines}
-
-/**
-  * Default implementation of the structure validator
-  * 
-  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
-  */
-
-trait DefaultValidator extends Validator with BasicChecks {
-
-  def checkStructure(m: Message): Future[Seq[SEntry]] = Future {
-    (m.unexpected, m.invalid) match {
-      case (Nil, Nil) => check(m.asGroup)
-      case (u, Nil)   => UnexpectedLines(u) :: check(m.asGroup)
-      case (Nil, i)   => InvalidLines(i) :: check(m.asGroup)
-      case (u, i)     => InvalidLines(i) :: UnexpectedLines(u) :: check(m.asGroup)
-    }
-  }
-
-  /**
-    * Checks the group against the constraints defined
-    * in the profile and return the list of problem.
-    */
-  private def check(g: Group): List[SEntry] =
-    (g.structure zip g.model.children) flatMap { _ match {
-      case (Left(ls), Left(model)) => 
-        val dl = location( g.location, model.position )
-        checkUsage(model.usage, ls)(dl) match {
-          case Nil => checkCardinality(ls, model.cardinality) ::: (ls flatMap check)
-          case xs  => xs
-        }
-      case (Right(lg), Right(model)) => 
-        val dl = location( g.location, model.position )
-        checkUsage(model.usage, lg)(dl) match {
-          case Nil => checkCardinality(lg, model.cardinality) ::: (lg flatMap check)
-          case xs  => xs
-        }
-      case _ => ??? //FIXME
-    }}
-
-  /**
-    * Checks the segment against the constraints defined
-    * in the profile and return the list of problems.
-    */
-  private def check(s: Segment): List[SEntry] =
-    (s.fields zip s.model.ref.fields) flatMap { t =>
-      val(lf, model) = t
-      val dl = location( s.location, model.position )
-      checkUsage(model.usage, lf)(dl) match {
-        case Nil => checkCardinality(lf, model.cardinality) ::: (lf flatMap check)
-        case xs  => xs
-      }
-    }
-
-  /**
-    * Checks the component against the constraints defined
-    * in the profile and return the list of problems.
-    */
-  private def check(f: Field): List[SEntry] = f match {
-    case sf: SimpleField  => check(sf, sf.model.length)
-    case cf: ComplexField => check(cf.location, cf.components, cfc(cf))
-  }
-
-  /**
-    * Checks the component against the constraints defined
-    * in the profile and return the list of problems.
-    */
-  private def check(c: Component): List[SEntry] = c match {
-    case sc: SimpleComponent  => check(sc, sc.model.length)
-    case cc: ComplexComponent => check(cc.location, cc.components, ccc(cc))
-  }
-
-  type OC = Option[Component] // Alias
-
-  /**
-    * Checks the complex data element (either a complex field or a 
-    * complex component) children and returns the list of problems. 
-    *
-    * 
-    * @param  l - The location of the complex data element
-    * @param cl - The list of children
-    * @param ml - The children models
-    * @return The list of problems
-    */
-  private def check(l: Location, cl: List[OC], ml: List[Component]): List[SEntry] =
-    (cl zip ml ) flatMap { t =>
-      val(oc, model) = t
-      val dl = location( l, model.position )
-      checkUsage(model.usage, oc.toList)(dl) match {
-        case Nil => oc match { case Some(c) => check(c) case _ => Nil }
-        case xs  => xs
-      }
-    }
-
-  /**
-    * Checks the simple element and returns the list of problems
-    * 
-    * @param s - The simple element
-    * @param l - The length constraint
-    * @return The list of problems
-    */
-  private def check(s: Simple, l: Range): List[SEntry] = checkLength(s, l)
-
-  /**
-    * Creates a new location by changing the path
-    */
-  private def location(l: Location, position: Int) =
-    l.copy( path = s"${l.path}.$position")
-
-  /**
-    * Complex field children models
-    */
-  private def cfc(cf: ComplexField) = cf.model.datatype.components
-
-  /**
-    * Complex component children models
-    */
-  private def ccc(cc: ComplexComponent) = cc.model.datatype.components
-}
-*/

@@ -90,7 +90,7 @@ case class Group (
   // The group should contain an element with position = 1 and instance = 1
   require( children exists {c => c.position == 1 && c.instance == 1} )
 
-  val hasExtra = false //FIXME A group cannot have extra right ?
+  val hasExtra = false //FIXME: A group cannot have extra unless it is the root right ?
 
   lazy val head: Segment =
     children find { c => c.position == 1 && c.instance == 1 } match {
