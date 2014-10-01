@@ -72,6 +72,14 @@ trait DefaultValidator extends Validator {
       case _              => Nil
     }
 
+  def checkUsage(u: Usage, ol: Option[List[Element]])(dl: Location): List[SEntry] =
+    (u, ol) match {
+      case (Usage.R,  None    ) => RUsage(dl) :: Nil
+      case (Usage.X, Some(xs) ) => xs map { e => XUsage( e.location ) }
+      case (Usage.W, Some(xs) ) => xs map { e => WUsage( e.location ) }
+      case _                    => Nil // No error or element is Null
+    }
+
   /**
    * Returns a list of report entries for every element which instance
    * number is greater than the maximum range or a list with a single

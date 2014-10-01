@@ -7,7 +7,7 @@ case class Location(desc: String, path: String, line: Int, column: Int)
 /**
   * Trait representing an element
   */
-trait Element {
+sealed trait Element {
 
   /**
     * The location of the element
