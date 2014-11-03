@@ -1,6 +1,6 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Usage, QProps, Req, DT}
+import hl7.v2.profile._
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
@@ -11,7 +11,7 @@ trait Mocks {
   trait Default {
     val reqs     = List[Req]()
     val location = Location("desc ...", "Path", -1, -1)
-    val qProps   = QProps(DT, "id", "name")
+    val qProps   = QProps(QType.DT, "id", "name")
     val hasExtra = false
   }
 

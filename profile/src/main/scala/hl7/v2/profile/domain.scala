@@ -7,7 +7,7 @@ sealed trait Datatype {
   def id: String
   def name: String
   def desc: String
-  lazy val qProps = QProps(DT, id, name)
+  lazy val qProps = QProps(QType.DT, id, name)
 }
 
 case class Primitive(id: String, name: String, desc: String) extends Datatype
@@ -42,7 +42,7 @@ case class Segment (
     mappings: List[DynMapping]
 ) {
 
-  lazy val qProps = QProps(SEG, id, name)
+  lazy val qProps = QProps(QType.SEG, id, name)
 
   lazy val requirements: List[Req] = fields map ( _.req )
 }
@@ -52,7 +52,7 @@ case class Group(
     structure: List[(Req, Either[String, Group])]
 ) {
 
-  lazy val qProps = QProps(GRP, "", name) //FIXME: Review the id
+  lazy val qProps = QProps(QType.GRP, "", name) //FIXME: Review the id
 }
 
 case class Message (

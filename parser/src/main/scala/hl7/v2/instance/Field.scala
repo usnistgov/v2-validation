@@ -1,6 +1,6 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{QProps, Req}
+import hl7.v2.profile._
 
 /**
   * Trait representing a field
@@ -30,6 +30,23 @@ case class ComplexField(
     reqs: List[Req],
     hasExtra: Boolean
 ) extends Field with Complex
+
+object Field {
+
+  def apply(v: String, dt: Datatype, r: Req, l: Location, p: Int, i: Int): Option[Field] =
+    if( v.isEmpty ) None
+    else dt match {
+      case pm: Primitive => Some(SimpleField(pm.qProps, l, p, i, value(pm, v)))
+      case cm: Composite =>
+        // if the value is null return list of null
+        apply(v, cm, r, l, p, i)
+    }
+
+  def apply(v: String, cm: Composite, rs: List[Req], l: Location, p: Int, i: Int): Option[ComplexField] = {
+    ???
+  }
+}
+
 
 /*
 
