@@ -2,7 +2,7 @@ package hl7.v2.instance
 
 import hl7.v2.profile.{QProps, Req}
 
-case class Location(desc: String, path: String, line: Int, column: Int)
+import scala.annotation.elidable
 
 /**
   * Trait representing an element
@@ -28,13 +28,25 @@ sealed trait Element {
     * The query-able properties of the element
     * @see hl7.v2.instance.QProps
    */
-  def qProps: QProps //FIXME
+  def qProps: QProps //FIXME: This makes element tied to the profile which is probably not necessary
 }
 
 /**
   * Trait representing a complex element.
   */
 trait Complex extends Element {
+
+  //FIXME mock objects need to be updated to satisfy this
+  // assert( children.nonEmpty, "[Error] A complex element must have at least one child" )
+
+  @elidable(elidable.ASSERTION)
+  private def reqsCheckOk: Boolean = {
+    val definedPositions = children.groupBy( _.position ).keySet
+    val definedReqs = reqs map ( _.position )
+    definedPositions forall ( definedReqs contains _  )
+  }
+  //FIXME mock objects need to be updated to satisfy this
+  //assert(reqsCheckOk, "[Error] A requirement should be defined for every child")
 
   /**
     * Returns true if the complex element has extra children
@@ -59,6 +71,7 @@ trait Complex extends Element {
     * than the size of the list of requirements than this
     * complex has extra children.
     */
+  //FIXME: This makes element tied to the profile which is probably not necessary
   def reqs: List[Req]
 }
 

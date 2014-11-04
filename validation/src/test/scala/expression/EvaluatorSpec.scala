@@ -2,7 +2,6 @@ package expression
 
 trait EvaluatorSpec
   extends org.specs2.Specification
-  with Evaluator
   with PresenceSpec
   with PlainTextSpec
   with ANDSpec
@@ -38,7 +37,7 @@ trait EvaluatorSpec
       If the first expression passes
           AND should be inconclusive if the second is inconclusive                   $andFirstPassesSecondInconclusive
           AND should pass if the second passes                                       $andFirstPassesSecondPasses
-          AND should fail is the second fails                                        $andFirstPassesSecondFails  
+          AND should fail if the second fails                                        $andFirstPassesSecondFails
 
     OR expression evaluation specifications
       OR should be inconclusive if the first expression is inconclusive              $orFirstInconclusive

@@ -26,11 +26,11 @@ class QuerySpec extends Specification with Mocks { def is = s2"""
     Querying c2 for the path 4[1] and casting the result as list of `Simple' should succeed         $q9
 """
 
-  def q1 = Seq("1", "1[a]", "0[1]", "1[2].", "1[2].a", "1[1]/2[2]" ) map { p => 
-    query(c0, p) must beFailedTry.withThrowable[Error]( s"Invalid Path '\\Q${p}\\E'" ) 
+  def q1 = Seq("1", "1[a]", "0[1]", "1[2].", "1[2].a", "1[1]/2[2]" ) map { p =>
+    query(c1, p) must beFailedTry.withThrowable[Error]( s"Invalid Path '\\Q${p}\\E'" )
   }
 
-  def q2 = Seq("1[1]", "1[*]", "2[2].3[*].4[4]" ) map { p => query(c0, p) must beSuccessfulTry }
+  def q2 = Seq("1[1]", "1[*]", "2[2].3[*].4[4]" ) map { p => query(c1, p) must beSuccessfulTry }
 
   def q3 = query(s0, "1[1].2[3]") must
     beFailedTry.withThrowable[Error]( "Unreachable Path '\\Q1[1].2[3]\\E'" )

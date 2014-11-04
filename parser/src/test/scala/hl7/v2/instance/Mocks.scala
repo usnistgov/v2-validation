@@ -23,7 +23,7 @@ trait Mocks {
 
   val s0  = S( 4, 1, Text("S0") )
 
-  val c0 = C(2,1, Nil)
+  val c0 = C(2,1, s0 :: Nil)
   
   val c1 = C( 2, 3, ( 1 to 3 ).toList map { i => S( 1, i, Text(s"S1$i") ) } )
 

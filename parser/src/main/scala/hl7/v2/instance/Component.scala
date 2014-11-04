@@ -59,7 +59,9 @@ object Component {
     if( v.matches(empty) ) None
     else {
       val cml = dt.components
-      val values = split(ss, v, l.column)
+      // If the value is Null "" then all sub components will be Null
+      val values = if( "\"\"" == v ) Array.fill(cml.size)( l.column -> "\"\"")
+                   else split(ss, v, l.column)
       val hasExtra = values.size > cml.size
       val cs = children(cml, values, l)
       Some(ComplexComponent(dt.qProps, l, p, cs, dt.requirements, hasExtra))
@@ -79,26 +81,3 @@ object Component {
     r.flatten
   }
 }
-
-/*
-
-"HL7 does not care how systems actually store data within an application. When fields are transmitted, they are sent as character strings. Except where noted, HL7 data fields may take on the null value. Sending the null value, which is transmitted as two double quote marks (""), is different from omitting an optional data field. The difference appears when the contents of a message will be used to update a record in a database rather than create a new one. If no value is sent, (i.e., it is omitted) the old value should remain unchanged. If the null value is sent, the old value should be changed to null. For further details, see Section 2.6, "Message construction rules".
-
-The above is little obscure.
-
-Here is what I think. I believe that the data type of the file should be taken into account.
-So for primitive field there is no problem the will be "" and will keep its semantic.
-
-For complex and depending on the data type Null ("") means every primitive component/sub component should be null.
-"" <=> ""^""^""^""^""^ <=> ""^""&""&""^""   ( <=> means equivalent)
-In term of validation
-
-Usage:
-     "" and R => OK
-      "" and X or W => Error or Warning
-
-Cardinality
-
-""~""....
-
- */
