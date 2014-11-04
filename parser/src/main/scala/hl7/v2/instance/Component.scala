@@ -31,6 +31,9 @@ case class ComplexComponent (
 
 object Component {
 
+  /**
+    * Regular expression for matching empty components
+    */
   private val empty = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
 
   /**
@@ -49,11 +52,29 @@ object Component {
       case cm: Composite => apply(v, cm, l, p)
     }
 
-  private def apply(v: String, pm: Primitive, l: Location, p: Int)
+  /**
+    * Creates and returns a simple component
+    * @param v   - The value as string
+    * @param dt  - The data type
+    * @param l   - The location
+    * @param p   - The position
+    * @param map - The data type map
+    * @return A simple component
+    */
+  private def apply(v: String, dt: Primitive, l: Location, p: Int)
            (implicit map: Map[String, Datatype]): Option[SimpleComponent] =
     if( v.matches(empty) ) None
-    else Some(SimpleComponent(pm.qProps, l, p, value(pm, v)))
+    else Some(SimpleComponent(dt.qProps, l, p, value(dt, v)))
 
+  /**
+    * Creates and returns a complex component
+    * @param v   - The value as string
+    * @param dt  - The data type
+    * @param l   - The location
+    * @param p   - The position
+    * @param map - The data type map
+    * @return A complex component
+    */
   private def apply(v: String, dt: Composite, l: Location, p: Int)
            (implicit map: Map[String, Datatype]): Option[ComplexComponent] =
     if( v.matches(empty) ) None
@@ -67,8 +88,17 @@ object Component {
       Some(ComplexComponent(dt.qProps, l, p, cs, dt.requirements, hasExtra))
     }
 
+  // Alias for the component model
   type CM = hl7.v2.profile.Component
 
+  /**
+    * Creates and returns a list of simple components
+    * @param cml - The list of component models
+    * @param vs  - The Array of values and their corresponding column
+    * @param l   - The location of the parent
+    * @param map - The data type map
+    * @return A list of simple components
+    */
   private def children(cml: List[CM], vs: Array[(Int, String)], l: Location)
         (implicit map: Map[String, Datatype]): List[SimpleComponent] = {
     var cp = 0
