@@ -22,4 +22,7 @@ trait DataElementCreationHelper {
 
   // The default position
   val pos = 1
+
+  // The default instance number
+  val ins = 1
 }

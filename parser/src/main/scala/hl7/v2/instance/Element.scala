@@ -7,7 +7,7 @@ import scala.annotation.elidable
 /**
   * Trait representing an element
   */
-sealed trait Element {
+trait Element {
 
   /**
     * The location of the element

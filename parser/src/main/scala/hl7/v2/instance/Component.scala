@@ -5,7 +5,7 @@ import hl7.v2.profile.{QProps, Req, Datatype, Primitive, Composite}
 /**
   * Trait representing a component
   */
-sealed trait Component { val instance = 1 }
+sealed trait Component extends Element { val instance = 1 }
 
 /**
   * Class representing a simple component
@@ -34,7 +34,7 @@ object Component {
   /**
     * Regular expression for matching empty components
     */
-  private val empty = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
+  private val empty = s"(?:\\s*\\s*$ss*\\s*)*"
 
   /**
     * Creates and returns a component object
@@ -62,7 +62,7 @@ object Component {
     * @return A simple component
     */
   private def apply(v: String, dt: Primitive, l: Location, p: Int)
-           (implicit map: Map[String, Datatype]): Option[SimpleComponent] =
+                   (implicit map: Map[String, Datatype]): Option[SimpleComponent] =
     if( v.matches(empty) ) None
     else Some(SimpleComponent(dt.qProps, l, p, value(dt, v)))
 
@@ -76,38 +76,19 @@ object Component {
     * @return A complex component
     */
   private def apply(v: String, dt: Composite, l: Location, p: Int)
-           (implicit map: Map[String, Datatype]): Option[ComplexComponent] =
+                   (implicit map: Map[String, Datatype]): Option[ComplexComponent] =
     if( v.matches(empty) ) None
     else {
       val cml = dt.components
-      // If the value is Null "" then all sub components will be Null
-      val values = if( "\"\"" == v ) Array.fill(cml.size)( l.column -> "\"\"")
+      val values = if( isNull(v) ) Array.fill(cml.size)( l.column -> "\"\"")
                    else split(ss, v, l.column)
       val hasExtra = values.size > cml.size
-      val cs = children(cml, values, l)
-      Some(ComplexComponent(dt.qProps, l, p, cs, dt.requirements, hasExtra))
+      val children = ( cml zip values map { t =>
+        val (m, (col, s)) = t
+        val cp = m.req.position
+        val loc = l.copy( desc=m.name, path=s"${l.path}.$cp[1]", column=col )
+        apply(s, map(m.datatypeId).asInstanceOf[Primitive], loc, cp)
+      } ).flatten
+      Some(ComplexComponent(dt.qProps, l, p, children, dt.requirements, hasExtra))
     }
-
-  // Alias for the component model
-  type CM = hl7.v2.profile.Component
-
-  /**
-    * Creates and returns a list of simple components
-    * @param cml - The list of component models
-    * @param vs  - The Array of values and their corresponding column
-    * @param l   - The location of the parent
-    * @param map - The data type map
-    * @return A list of simple components
-    */
-  private def children(cml: List[CM], vs: Array[(Int, String)], l: Location)
-        (implicit map: Map[String, Datatype]): List[SimpleComponent] = {
-    var cp = 0
-    val r = cml zip vs map { t =>
-      cp = cp + 1
-      val (m, (col, s)) = t
-      val loc = l.copy( desc=m.name, path=s"${l.path}.$cp[1]", column=col )
-      apply(s, map(m.datatypeId).asInstanceOf[Primitive], loc, cp)
-    }
-    r.flatten
-  }
 }
