@@ -4,6 +4,7 @@ import hl7.v2.profile._
 import org.specs2.Specification
 
 class ComponentSpec extends Specification with DataElementCreationHelper { def is = s2"""
+
   Component Specification
 
     Component creation should return None if the string value is empty                $e1
@@ -44,36 +45,23 @@ class ComponentSpec extends Specification with DataElementCreationHelper { def i
 
   /**
     * Creates and returns a complex component
-    * @param l - The location
-    * @param v - The set of children positions and their corresponding value and column
-    * @param c - The data type
+    * @param l  - The location
+    * @param v  - The set of children positions and their corresponding value and column
+    * @param dt - The data type
     * @return A complex component
     */
-  private def complexComp(l: Location, v: Set[(Int, (String, Int))], c: Composite) = {
+  private def complexComp(l: Location, v: Set[(Int, (String, Int))], dt: Composite) = {
     require( v.forall( _._1 > 0) )
-    val hasExtra = v.maxBy( _._1 )._1 > c.components.maxBy( _.req.position ).req.position
+    val hasExtra = v.maxBy( _._1 )._1 > dt.components.maxBy( _.req.position ).req.position
     // Positions for which a requirement has been defined
-    val validPos = v.filter( t => c.components.exists( _.req.position == t._1 ) )
+    val validPos = v.filter( t => dt.components.exists( _.req.position == t._1 ) )
     val children = validPos map { t =>
-      simpleComp( l, t._2._1, c.components(t._1 - 1), t._2._2 )
+      val(cpos, (cv, ccol)) = t
+      val component = dt.components( cpos - 1 )
+      val cloc = l.copy( desc=component.name, path=s"${l.path}.$cpos[1]", column = ccol )
+      val cdt  = map(component.datatypeId)
+      SimpleComponent (cdt.qProps, cloc, cpos, Value( cdt.id, cv ))
     }
-    ComplexComponent (c.qProps, l, pos, children.toList, c.requirements, hasExtra)
+    ComplexComponent(dt.qProps, l, pos, children.toList, dt.requirements, hasExtra)
   }
-
-  /**
-   * Creates and returns a simple component
-   * @param pl - The parent location
-   * @param v  - The value as string
-   * @param c  - The component model
-   * @param col- The column
-   * @return A simple component
-   */
-  private def simpleComp(pl: Location, v: String, c: hl7.v2.profile.Component, col: Int = 1) = {
-    val dt  = map(c.datatypeId)
-    val pos = c.req.position
-    val loc = pl.copy( desc=c.name, path=s"${pl.path}.$pos[1]", column = col )
-    SimpleComponent (dt.qProps, loc, pos, Value( dt.id, v ))
-  }
-
 }
-
