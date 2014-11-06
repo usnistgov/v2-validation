@@ -1,22 +1,19 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Segment => SM}
-import hl7.v2.profile.{Datatype, Req, QProps}
+import hl7.v2.profile.{SegmentRef => SM}
 
 /**
   * Class representing a segment
   */
 case class Segment (
-    qProps: QProps,
+    model: SM,
     location: Location,
-    position: Int,
     instance: Int,
     children: List[Field],
-    reqs: List[Req],
     hasExtra: Boolean
 ) extends SegOrGroup
 
-object Segment {
+/*object Segment {
 
   /**
     * Creates and returns a segment
@@ -50,7 +47,10 @@ object Segment {
 
   private def isValid( s: String ) = segFormat.pattern.matcher( s ).matches
 
-}
+}*/
+
+
+
 
 /*
  /**

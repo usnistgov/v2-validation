@@ -27,8 +27,4 @@ package object instance {
   }
 
   def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )
-
-  implicit def value(p: Primitive, v: String) = Value(p.name, v)
-
-  def isNull(v: String) = "\"\"" == v
 }

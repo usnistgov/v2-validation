@@ -62,12 +62,17 @@ case class Segment(
 /**
   * Trait representing either a segment reference or a group
   */
-sealed trait SegRefOrGroup { def req: Req }
+sealed trait SegRefOrGroup {
+  def req: Req
+  def reqs: List[Req]
+}
 
 /**
   * A segment reference
   */
-case class SegmentRef( req: Req, ref: Segment ) extends SegRefOrGroup
+case class SegmentRef( req: Req, ref: Segment ) extends SegRefOrGroup {
+  def reqs = ref.reqs
+}
 
 /**
   * A group
@@ -91,7 +96,10 @@ case class Message (
     typ  : String,
     desc : String,
     structure: List[SegRefOrGroup]
-)
+) {
+
+  lazy val asGroup = Group(structId, structure, Req(1, Usage.R, None, None, None, None))
+}
 
 /**
   * A profile

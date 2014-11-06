@@ -4,14 +4,14 @@ import hl7.v2.instance.Value
 import hl7.v2.instance.Text
 import hl7.v2.instance.Number
 import hl7.v2.instance.{Simple, Element, Location, Complex}
-import hl7.v2.profile.{QType, QProps, Req}
+import hl7.v2.profile.Req
 
 trait Mocks {
 
   trait Default {
     val reqs     = List[Req]()
     val location = Location("desc ...", "Path", -1, -1)
-    val qProps   = QProps(QType.DT, "id", "name")
+    /*val qProps   = QProps(QType.DT, "id", "name")*/
     val hasExtra = false
   }
 

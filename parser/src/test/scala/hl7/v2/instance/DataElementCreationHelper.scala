@@ -1,4 +1,4 @@
-package hl7.v2.instance
+/*package hl7.v2.instance
 
 import hl7.v2.profile.{Usage, Req, Composite, Primitive}
 
@@ -26,3 +26,4 @@ trait DataElementCreationHelper {
   // The default instance number
   val ins = 1
 }
+*/

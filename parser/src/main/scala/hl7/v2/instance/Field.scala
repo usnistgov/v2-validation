@@ -1,17 +1,22 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{QProps, Req, Datatype, Primitive, Composite}
+import hl7.v2.profile.{Datatype, Composite, Primitive}
 
 /**
   * Trait representing a field
   */
-sealed trait Field extends Element
+sealed trait Field extends Element {
+  def datatype: Datatype
+  def location: Location
+  def position: Int
+  def instance: Int
+}
 
 /**
   * Class representing a simple field
   */
 case class SimpleField(
-    qProps: QProps,
+    datatype: Primitive,
     location: Location,
     position: Int,
     instance: Int,
@@ -22,15 +27,18 @@ case class SimpleField(
   * Class representing a complex field
   */
 case class ComplexField(
-    qProps: QProps,
+    datatype: Composite,
     location: Location,
     position: Int,
     instance: Int,
     children: List[Component],
-    reqs: List[Req],
     hasExtra: Boolean
-) extends Field with Complex
+) extends Field with Complex {
 
+  def reqs = datatype.reqs
+}
+
+/*
 object Field {
 
   /**
@@ -94,3 +102,4 @@ object Field {
       Some( ComplexField(dt.qProps, l, p, i, children, dt.requirements, hasExtra))
     }
 }
+*/

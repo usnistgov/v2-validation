@@ -11,7 +11,7 @@ trait Mocks {
   trait Default {
     val reqs     = List[Req]()
     val location = Location("desc ...", "Path", -1, -1)
-    val qProps   = QProps(QType.DT, "id", "name")
+    /*val qProps   = QProps(QType.DT, "id", "name")*/
     val hasExtra = false
   }
 

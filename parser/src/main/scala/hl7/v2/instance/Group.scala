@@ -1,16 +1,14 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Req, QProps}
+import hl7.v2.profile.{Group => GM}
 
 /**
   * Class representing a group
   */
 case class Group (
-    qProps: QProps,
-    position: Int,
+    model: GM,
     instance: Int,
-    children: List[SegOrGroup],
-    reqs: List[Req]
+    children: List[SegOrGroup]
 ) extends SegOrGroup {
 
   // The group should contain an element with position = 1 and instance = 1
@@ -26,5 +24,6 @@ case class Group (
       case Some(x) => throw new Error(s"Unknown Group element '$x'. $this")
     }
 
-  lazy val location = head.location.copy(desc="", path = s"${qProps.name}[$instance]")
+  lazy val location = head.location
+    .copy(desc=s"Group ${model.name}", path = s"${model.name}[$instance]")
 }
