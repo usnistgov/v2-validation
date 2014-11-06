@@ -85,4 +85,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     e.child foreach{ c => r.appendChild( toXOM( c ) ) }
     r
   }
+
+  implicit val dtMap = Map( "Y" -> Primitive("Y", "Y", "Y desc") )
+
 }

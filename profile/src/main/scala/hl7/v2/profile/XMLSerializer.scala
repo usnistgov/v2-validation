@@ -25,43 +25,39 @@ object XMLSerializer {
   def message( m: Message ) =
     <Message
         ID={m.id}
-        Type={m.`type`}
+        Type={m.typ}
         Event={m.event}
         StructID={m.structId}
         Description={m.desc}
     >
       {
-        m.root.structure map { s =>
-          s match {
-            case (r, Left(id))   => segmentRef(id, r)
-            case (r, Right(gg)) => group(gg, r)
-          }
+        m.structure map {
+          case s: SegmentRef  => segmentRef(s)
+          case g: Group => group(g)
         }
       }
     </Message>
 
-  def group( g: Group, r: Req ): Elem =
+  def group( g: Group): Elem =
     <Group Name={g.name}
-           Usage={r.usage.toString}
-           Min={r.cardinality.get.min.toString}
-           Max={r.cardinality.get.min.toString}
+           Usage={g.req.usage.toString}
+           Min={g.req.cardinality.get.min.toString}
+           Max={g.req.cardinality.get.min.toString}
     >
       {
-        g.structure map { s =>
-          s match {
-            case (r, Left(id))   => segmentRef(id, r)
-            case (r, Right(gg)) => group(gg, r)
-          }
+        g.structure map {
+          case s: SegmentRef  => segmentRef(s)
+          case g: Group => group(g)
         }
       }
     </Group>
 
-  def segmentRef( id: String, r: Req ) =
+  def segmentRef( s: SegmentRef ) =
     <Segment
-        Ref={id}
-        Usage={r.usage.toString}
-        Min={r.cardinality.get.min.toString}
-        Max={r.cardinality.get.min.toString}
+        Ref={s.ref.name}
+        Usage={s.req.usage.toString}
+        Min={s.req.cardinality.get.min.toString}
+        Max={s.req.cardinality.get.min.toString}
     />
 
   def segment( s: Segment ) =
@@ -76,14 +72,14 @@ object XMLSerializer {
           Position={dm.position.toString}
           Reference={dm.reference.toString}
       >
-        { dm.map map ( t => <Case Value={t._1} Datatype={t._2}/> ) }
+        { dm.map map ( t => <Case Value={t._1} Datatype={t._2.name}/> ) }
       </Mapping>
     </DynamicMapping>
 
   def field(f: Field) =
       <Field
         Name={f.name}
-        Datatype={f.datatypeId}
+        Datatype={f.datatype.name}
         Usage={f.req.usage.toString}
         MinLength={f.req.length.get.min.toString}
         MaxLength={f.req.length.get.max}
@@ -106,7 +102,7 @@ object XMLSerializer {
   def component(c: Component) =
       <Component
         Name={c.name}
-        Datatype={c.datatypeId}
+        Datatype={c.datatype.name}
         Usage={c.req.usage.toString}
         MinLength={c.req.length.get.min.toString}
         MaxLength={c.req.length.get.max}

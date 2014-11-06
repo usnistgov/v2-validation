@@ -5,9 +5,6 @@ import java.io.ByteArrayInputStream
 import nist.xml.util.XOMDocumentBuilder
 import org.specs2.Specification
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
-
 class XMLSerializerSpec extends Specification { def is = s2"""
 
   This the spec of XML Serializer and Deserializer
@@ -19,17 +16,17 @@ class XMLSerializerSpec extends Specification { def is = s2"""
 
   def e1 = {
     val xml = getClass.getResourceAsStream("/Profile.xml")
-    val p = profile( XMLDeserializer.deserialize(xml) )
-    p mustNotEqual null
+    val profile = XMLDeserializer.deserialize(xml)
+    profile mustNotEqual null
   }
 
   def e2 = {
     val xml = getClass.getResourceAsStream("/Profile.xml")
 
-    val p = profile( XMLDeserializer.deserialize(xml) )
-    p mustNotEqual null
+    val p = XMLDeserializer.deserialize(xml)
+    p  must beSuccessfulTry
 
-    val serialized = XMLSerializer.serialize(p)
+    val serialized = XMLSerializer.serialize(p.get)
 
     val result = {
       val stream = new ByteArrayInputStream( serialized.toString.getBytes("UTF-8"))
@@ -38,5 +35,5 @@ class XMLSerializerSpec extends Specification { def is = s2"""
     result must beSuccessfulTry
   }
 
-  private def profile(f: Future[Profile]) = Await.result(f, Duration(300, "millis"))
+  //private def profile(f: Future[Profile]) = Await.result(f, Duration(300, "millis"))
 }

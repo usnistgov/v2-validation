@@ -5,8 +5,7 @@ import java.io.InputStream
 import hl7.v2.profile.XMLDeserializerHelper.profile
 import nist.xml.util.XOMDocumentBuilder
 
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Try
 
 /**
   * Module to deserialize an HL7 profile from XML
@@ -26,9 +25,6 @@ object XMLDeserializer {
     * @param xml - The XML file
     * @return A future containing the profile object or a failure
     */
-  def deserialize( xml: InputStream ): Future[Profile] =
-    XOMDocumentBuilder.build(xml, xsd) match {
-      case Success(doc) => profile( doc.getRootElement )
-      case Failure(e)   => Future.failed(e)
-    }
+  def deserialize( xml: InputStream ): Try[Profile] =
+    XOMDocumentBuilder.build(xml, xsd) map { doc => profile( doc.getRootElement ) }
 }

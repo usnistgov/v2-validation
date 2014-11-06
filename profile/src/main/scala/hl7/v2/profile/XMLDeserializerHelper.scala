@@ -3,85 +3,84 @@ package hl7.v2.profile
 import nist.xml.util.XOMExtensions.{ExtendedElement, ExtendedElements}
 import nu.xom.{Element, Elements}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 object XMLDeserializerHelper {
 
   type SOG = Either[String, Group]
 
-  def profile(e: Element): Future[Profile] = {
+  def profile(e: Element): Profile = {
     val id = e.attribute("ID")
-    // Computes the different maps in parallel
-    val mmap = messages ( e.getChildElements("Messages" ).get(0) )
-    val smap = segments ( e.getChildElements("Segments" ).get(0) )
-    val dmap = datatypes( e.getChildElements("Datatypes").get(0) )
-    for {
-      ms <- mmap
-      ss <- smap
-      ds <- dmap
-    } yield Profile( id, ms, ss, ds )
+    //val typ        = e.attribute("Type")
+    //val hl7Ver     = e.attribute("HL7Version")
+    //val schemaVer  = e.attribute("SchemaVersion")
+    val dtElems = e.getChildElements("Datatypes").get(0).getChildElements("Datatype")
+    val sgElems = e.getChildElements("Segments").get(0).getChildElements("Segment")
+    val mgElems = e.getChildElements("Messages").get(0).getChildElements("Message")
+    implicit val dts = datatypes( dtElems )
+    implicit val sgs = segments( sgElems )
+    val mgs = messages( mgElems )
+    Profile( id, mgs, sgs, dts )
   }
 
-  def messages(e: Element): Future[Map[String, Message]] =
-    Future {
-      e.getChildElements("Message").foldLeft( Map[String, Message]() )
-        { (acc, x) =>
-          val m = message(x)
-          acc + (m.id -> m)
-        }
+  def messages( elems: Elements )(implicit map: Map[String, Segment]) =
+    elems.foldLeft(Map[String, Message]()) { (acc, x) =>
+      val m = message(x)
+      acc + ( (m.id, m) )
     }
 
-  def segments(e: Element): Future[Map[String, Segment]] =
-    Future {
-      e.getChildElements("Segment").foldLeft( Map[String, Segment]() )
-        { (acc, x) =>
-          val s = segment(x)
-          acc + (s.id -> s)
-        }
+  def segments( elems: Elements )(implicit map: Map[String, Datatype]) =
+    elems.foldLeft( Map[String, Segment]() ){ (acc, e) =>
+      val s = segment( e )
+      acc + ( (s.id, s) )
     }
 
-  def datatypes(e: Element): Future[Map[String, Datatype]] =
-    Future {
-      e.getChildElements("Datatype").foldLeft( Map[String, Datatype]() )
-        { (acc, d) =>
-          val dt = datatype(d)
-          acc + (dt.id -> dt)
-        }
-    }
+  /**
+   * Creates and returns the data type map
+   */
+  //FIXME Exceptions can occur when l1 and l2 not properly defined.
+  private def datatypes(elems: Elements): Map[String, Datatype] = {
+    implicit var map = Map[String, Datatype]()
+    val (primitives, l1, l2) = categorize( elems )
+    primitives foreach { e => val dt = datatype( e ); map = map + ( (dt.id, dt) ) }
+    l1 foreach { e => val dt = datatype( e ); map = map + ( (dt.id, dt) ) }
+    l2 foreach { e => val dt = datatype( e ); map = map + ( (dt.id, dt) ) }
+    map
+  }
 
-  def message(e: Element): Message = {
-    val id     = e.attribute("ID")
-    val `type` = e.attribute("Type")
-    val event  = e.attribute("Event")
-    val desc   = e.attribute("Description") //FIXME
+
+  def message(e: Element)(implicit map: Map[String, Segment]): Message = {
+    val id = e.attribute("ID")
+    val typ = e.attribute("Type")
+    val event = e.attribute("Event")
+    val desc = e.attribute("Description")
     val structId = e.attribute("StructID")
-    val root     = group( structId, e.getChildElements )
-    Message(id, structId, event, `type`, desc, root)
+    val structure = children( e.getChildElements )
+    Message(id, structId, event, typ, desc, structure )
   }
 
-  private def group(name: String, es: Elements) = {
+  private def group(name: String, r: Req, es: Elements)
+                   (implicit map: Map[String, Segment])= {
     val structure = children( es )
-    Group(name, structure)
+    Group(name, structure, r)
   }
 
-  def group(e: Element): Group = {
+  def group(r: Req, e: Element)(implicit map: Map[String, Segment]): Group = {
     val name = e.attribute("Name")
-    group(name, e.getChildElements)
+    group(name, r, e.getChildElements)
   }
 
-  private def children(es: Elements): List[(Req, SOG)] =
+  private def children(es: Elements)
+                      (implicit map: Map[String, Segment]): List[SegRefOrGroup] =
     (for( i <- 0 until es.size) yield {
       val ee  = es.get(i)
       val req = requirement(i + 1, ee)
       ee.getLocalName match {
-        case "Segment" => req -> Left( ee.attribute("Ref") )
-        case "Group"   => req -> Right( group(ee))
+        case "Segment" => SegmentRef(req, ee.attribute("Ref"))
+        case "Group"   => group(req, ee)
         case x => throw new Error(s"[Error] Unsupported element '$x' found")
       }
     }).toList
 
-  def segment(e: Element): Segment = {
+  def segment(e: Element)(implicit map: Map[String, Datatype]): Segment = {
     val id   = e.attribute("ID")
     val name = e.attribute("Name")
     val desc = e.attribute("Description")
@@ -93,44 +92,57 @@ object XMLDeserializerHelper {
     Segment(id, name, desc, fields.toList, mappings)
   }
 
-  def dynMappings(elements: Elements): List[DynMapping] =
+  def dynMappings(elements: Elements)
+                 (implicit map: Map[String, Datatype]): List[DynMapping] =
     (elements map dynMapping).toList
 
-  def dynMapping(e: Element): DynMapping = {
+  def dynMapping(e: Element)(implicit map: Map[String, Datatype]): DynMapping = {
     val pos = e.attribute("Position").toInt
     val ref = e.attribute("Reference").toInt
-    val map =
-      e.getChildElements("Case").foldLeft(Map[String, String]()) { (acc, x) =>
-        acc + ( x.attribute("Value") -> x.attribute("Datatype") )
+    val mapping =
+      e.getChildElements("Case").foldLeft(Map[String, Datatype]()) { (acc, x) =>
+        acc + ( x.attribute("Value") -> map(x.attribute("Datatype")) )
       }
-    DynMapping(pos, ref, map)
+    DynMapping(pos, ref, mapping)
   }
 
-  def field(p: Int, e: Element) = dataElem(p, e, Field.apply)
+  /**
+    * Creates and returns a field object from a xom.Element
+    */
+  def field(p: Int, e: Element)(implicit map: Map[String, Datatype]) =
+    dataElem(p, e, Field.apply)
 
-  def datatype(e: Element): Datatype = {
+  /**
+    * Creates a data type object from xom.Element
+    */
+  def datatype(e: Element)(implicit map: Map[String, Datatype]): Datatype = {
     val id   = e.attribute("ID")
     val name = e.attribute("Name")
     val desc = e.attribute("Description")
     val cs   = e.getChildElements("Component")
-    if( cs.size == 0 )
-      Primitive(id, name, desc)
-    else {
-      val comps = for(i <- 0 until cs.size) yield component(i + 1, cs.get(i))
-      Composite(id, name, desc, comps.toList)
-    }
+    val comps = for(i <- 0 until cs.size) yield component(i + 1, cs.get(i))
+    if( comps.size == 0 ) Primitive(id, name, desc)
+    else Composite(id, name, desc, comps.toList)
   }
 
-  private def component(p: Int, e: Element) = dataElem(p, e, Component.apply)
+  /**
+    * Creates a component object from xom.Element
+    */
+  private def component(p: Int, e: Element)(implicit map: Map[String, Datatype]) =
+    dataElem(p, e, Component.apply)
 
   private
-  def dataElem[A](p: Int, e: Element, f: (String, String, Req) => A): A = {
+  def dataElem[A](p: Int, e: Element, f: (String, Datatype, Req) => A)
+                 (implicit map: Map[String, Datatype]): A = {
     val name = e.attribute("Name")
     val dtId = e.attribute("Datatype")
     val req  = requirement(p, e)
-    f(name, dtId, req)
+    f(name, map(dtId), req)
   }
 
+  /**
+    * Creates a requirement(Req) object from xom.Element
+    */
   def requirement(p: Int, e: Element): Req = {
     val usage  = Usage.fromString( e.attribute("Usage") )
     val card   = cardinality(e)
@@ -140,15 +152,42 @@ object XMLDeserializerHelper {
     Req(p, usage, card, len, confLen, table)
   }
 
+  /**
+    * Extracts the length from a xom.Element
+    */
   def length(e: Element): Option[Range] =
     asOption( e.attribute("MinLength") ) map { min =>
       Range( min.toInt, e.attribute("MaxLength") )
     }
 
+  /**
+    * Extracts the cardinality
+    */
   def cardinality(e: Element): Option[Range] =
     asOption( e.attribute("Min") ) map { min =>
       Range( min.toInt, e.attribute("Max") )
     }
 
   private def asOption(s: String) = if( s == "" ) None else Some( s )
+
+
+  /**
+    * Sorts the data type elements into 3 categories:
+    *   - Primitives
+    *   - Level 1: Complex with primitive children
+    *   - Level 2: The rest
+    */
+  private def categorize(elements: Elements) = {
+
+    def isPrimitive(e: Element) = e.getChildElements("Component").size() == 0
+
+    val(primitives, others) = elements.partition( isPrimitive )
+
+    def isL1(e: Element) = e.getChildElements("Component").forall { ee =>
+      primitives.exists( _.attribute("ID") == ee.attribute("Datatype") )
+    }
+    val(l1, l2) = others.partition( isL1 )
+    (primitives, l1, l2)
+  }
+
 }

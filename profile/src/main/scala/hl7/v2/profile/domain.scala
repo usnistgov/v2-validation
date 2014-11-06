@@ -7,24 +7,35 @@ sealed trait Datatype {
   def id: String
   def name: String
   def desc: String
-  lazy val qProps = QProps(QType.DT, id, name)
 }
 
-case class Primitive(id: String, name: String, desc: String) extends Datatype
+/**
+  * A primitive data type
+  */
+case class Primitive( id: String, name: String, desc: String ) extends Datatype
 
-case class Composite (
+/**
+  * A composite data type
+  */
+case class Composite(
     id: String,
     name: String,
     desc: String,
     components: List[Component]
 ) extends Datatype {
 
-  lazy val requirements: List[Req] = components map ( _.req )
+  lazy val reqs: List[Req] = components map ( _.req )
 }
 
-case class Component( name: String, datatypeId: String, req: Req )
+/**
+  * A composite data type component
+  */
+case class Component( name: String, datatype: Datatype, req: Req )
 
-case class Field( name: String, datatypeId: String, req: Req )
+/**
+  * A segment field
+  */
+case class Field( name: String, datatype: Datatype, req: Req )
 
 /**
   * Describes the mapping for dynamic data type
@@ -32,9 +43,12 @@ case class Field( name: String, datatypeId: String, req: Req )
   * @param reference - The position which defines the data type name to be used
   * @param map       - The mapping ( data type name -> data type id )
   */
-case class DynMapping( position: Int, reference: Int, map: Map[String, String] )
+case class DynMapping( position: Int, reference: Int, map: Map[String, Datatype] )
 
-case class Segment (
+/**
+  * A segment
+  */
+case class Segment(
     id: String,
     name: String,
     desc: String,
@@ -42,28 +56,46 @@ case class Segment (
     mappings: List[DynMapping]
 ) {
 
-  lazy val qProps = QProps(QType.SEG, id, name)
-
-  lazy val requirements: List[Req] = fields map ( _.req )
+  lazy val reqs: List[Req] = fields map ( _.req )
 }
 
+/**
+  * Trait representing either a segment reference or a group
+  */
+sealed trait SegRefOrGroup { def req: Req }
+
+/**
+  * A segment reference
+  */
+case class SegmentRef( req: Req, ref: Segment ) extends SegRefOrGroup
+
+/**
+  * A group
+  */
 case class Group(
     name: String,
-    structure: List[(Req, Either[String, Group])]
-) {
+    structure: List[SegRefOrGroup],
+    req: Req
+) extends SegRefOrGroup {
 
-  lazy val qProps = QProps(QType.GRP, "", name) //FIXME: Review the id
+  lazy val reqs: List[Req] = structure map ( _.req )
 }
 
+/**
+  * A message
+  */
 case class Message (
     id: String,
     structId: String,
     event: String,
-    `type`: String,
-    desc: String,
-    root: Group
+    typ  : String,
+    desc : String,
+    structure: List[SegRefOrGroup]
 )
 
+/**
+  * A profile
+  */
 case class Profile(
     id: String,
     messages : Map[String, Message],
