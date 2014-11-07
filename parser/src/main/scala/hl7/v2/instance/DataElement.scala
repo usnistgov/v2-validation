@@ -1,6 +1,6 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Field => FM, Component => CM, Composite, Primitive}
+import hl7.v2.profile.{ Field => FM, Component => CM, Composite, Primitive }
 
 object DataElement {
 
@@ -45,11 +45,10 @@ object DataElement {
   /**
     * Creates and returns the list of components
     */
-  private def children(l: Location, ml: List[CM], v: String, sep: Char):
-                      (Boolean, List[Component]) = {
-    val vs = if( isNull(v) ) Array.fill( ml.size )( l.column -> "\"\"")
-             else split(sep, v, l.column)
-    val hasExtra = vs.size > ml.size
+  private def children(l: Location, ml: List[CM], v: String, sep: Char): (Boolean, List[Component]) = {
+    val max = ml.size
+    val vs = if( isNull(v) ) Array.fill(max)(l.column -> "\"\"") else split(sep, v, l.column)
+    val hasExtra = vs.size > max
     val _children = ml zip vs map { t =>
       val (m, (col, vv)) = t
       val pos = m.req.position
@@ -65,7 +64,7 @@ object DataElement {
     * @param v - The values as String
     * @return An hl7.v2.instance.Value
     */
-  private implicit def value(p: Primitive, v: String) = Value(p.name, v)
+  private implicit def value(p: Primitive, v: String) = Value(p, v)
 
   /**
     * Returns if the value is Null i.e. ""
