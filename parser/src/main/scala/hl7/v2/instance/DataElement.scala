@@ -64,7 +64,7 @@ object DataElement {
     * @param v - The values as String
     * @return An hl7.v2.instance.Value
     */
-  private implicit def value(p: Primitive, v: String) = Value(p, v)
+  private implicit def value(p: Primitive, v: String): Value = Value(p, v)
 
   /**
     * Returns if the value is Null i.e. ""

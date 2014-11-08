@@ -13,6 +13,9 @@ case class Segment (
     hasExtra: Boolean
 ) extends SegOrGroup
 
+/**
+  * Segment companion object
+  */
 object Segment {
 
   /**
@@ -32,30 +35,42 @@ object Segment {
     val fml = m.ref.fields
     val vs  = split( fs, v drop 4 , 5)
     val (hasExtra, lfs) =
-      if( v.startsWith("MSH") ) (vs.size > fml.size - 2, mshFields(fml, vs, loc))
-      else (vs.size > fml.size - 2, fields( fml, vs, loc ))
+      if( v startsWith "MSH" ) (vs.size > fml.size - 2) -> mshFields(fml, vs, loc)
+      else (vs.size > fml.size - 1) -> fields( fml, vs, loc )
     Segment(m, loc, i, lfs.flatten, hasExtra)
   }
 
   /**
     * Creates abd returns a list of field
-   * @param fml - The list of field models
-   * @param vs  - The value and column array
-   * @param l   - The parent location
-   * @return A list of field
-   */
+    * @param fml - The list of field models
+    * @param vs  - The value and column array
+    * @param l   - The parent location
+    * @return A list of field
+    */
   private def fields( fml: List[FM], vs: Array[(Int, String)], l: Location) =
     fml zip vs map { t => repetitions( t._1, t._2, l ) }
 
   private def mshFields( fml: List[FM], vs: Array[(Int, String)], l: Location ) = {
     val separators = vs(0)._2
-    require( separators matches( """\Q^\E~\Q\\E&(?:#.*)?""" ) , s"Invalid HL7 separators. Expected '^~\\&' or '^~\\&#'. Found: '$separators'" )
+    require( separators matches """\Q^\E~\Q\\E&(?:#.*)?""" ,
+      s"Invalid HL7 separators. Expected '^~\\&' or '^~\\&#'. Found: '$separators'" )
+    val `MSH.1` = field(l, fml.head, s"$fs", 1, 4)
+    val `MSH.2` = field(l, fml.tail.head, separators, 1, 5)
     val _fields = fields(fml.tail.tail, vs drop 1 , l)
-    val `MSH.1` = DataElement(fml.head, s"$fs", location(l, "Field Separator", 1, 1, 4), 1) //FIXME use description from model
-    val `MSH.2` = DataElement(fml.tail.head, s"$separators", location(l, "Separators", 2, 1, 5), 1)
     `MSH.1`.toList  :: `MSH.2`.toList :: _fields
   }
 
+  /**
+    * Creates and returns a field
+    * @param l - The parent location
+    * @param m - The field model
+    * @param v - The value as string
+    * @param i - The instance(repetition) number
+    * @param c - The column
+    * @return A field
+    */
+  private def field(l: Location, m: FM, v: String, i: Int, c: Int) =
+    DataElement(m, v, location(l, m.name, m.req.position, i, c), i)
 
   /**
     * Creates and returns a list representing a repetition of a field
@@ -68,8 +83,7 @@ object Segment {
     val vs = split(rs, t._2, t._1)
     val r = vs.toList.zipWithIndex map { tt =>
       val( (col, v), ins) = tt
-      val loc = location(l, m.name, m.req.position, ins, col)
-      DataElement(m, v, loc, ins)
+      field(l, m, v, ins, col)
     }
     r.flatten
   }
