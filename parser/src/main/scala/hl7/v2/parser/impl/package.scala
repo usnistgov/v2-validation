@@ -13,11 +13,6 @@ package object impl {
 
   val lineBreak = """\r?\n|\r\n?|\r\n""".r
 
-  /**
-    * Regular expression representing a valid segment instance
-    */
-  val validLinesRegex = s"^[A-Z]{2}[A-Z0-9](${quote(fs)}.*)*".r
-
   def quote(c: Char) = java.util.regex.Pattern.quote( c.toString )
 
   case class Separators( fs: Char, cs: Char, rs: Char, ec: Char, ss: Char, tc: Option[Char] ) {

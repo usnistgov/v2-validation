@@ -8,6 +8,8 @@ import scala.util.Success
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
+case class PPR( valid: List[Line], invalid: List[Line], separators: Separators )
+
 object PreProcessor {
 
   /**
@@ -47,8 +49,10 @@ object PreProcessor {
     * Partition the list of lines into list of valid and invalid lines.
     */
   private def partition(list: List[Line])
-                       (implicit fs: Char): (List[Line], List[Line]) =
-    list partition( l => validLinesRegex.pattern.matcher( l._2 ).matches )
+                       (implicit fs: Char): (List[Line], List[Line]) = {
+    val validLinesRegex = s"^[A-Z]{2}[A-Z0-9](${quote(fs)}.*)*".r
+    list partition (l => validLinesRegex.pattern.matcher(l._2).matches)
+  }
 
   /**
     * Returns the separators defined in MSH.2 or a Failure
@@ -77,24 +81,22 @@ object PreProcessor {
     * Standardizes the lines of lines i.e. replace the separators with
     * the ones recommended by HL7 is necessary
     */
-  private def standardize(list: List[Line], seps: Separators): List[Line] =
-    if( seps.areRecommended ) list else ??? //TODO list map ( standardize( _, seps) )
+  private def standardize(list: List[Line], separators: Separators): List[Line] =
+    if(separators.areRecommended) list else list map (standardize( _, separators))
 
-  /*
   //FIXME standardize will remove trailing field separator .... re-implement with regular expression
   //FIXME Replace Escape sequence
   private def standardize(line: Line, seps: Separators) = {
     def splitAndReplace(s: String, l: List[(Char, Char)]): String = l match {
       case Nil         => s
       case (x, y)::Nil => s.replaceAll(quote(x), y.toString)
-      case (x, y)::xs  => s.split(x) map( splitAndReplace(_, xs) ) mkString (y.toString)
+      case (x, y)::xs  => s.split(x) map( splitAndReplace(_, xs) ) mkString y.toString
     }
-    val l = seps.toList zip List('|', '^', '~', '\\', '&', '#')
+    val l = seps.toList zip List(fs, cs, rs, ec, ss, tc)
     if( line._2 startsWith "MSH" ) seps.tc match {
-      case None    => ( line._1, s"MSH|^~\\&${ splitAndReplace( line._2.drop(8), l )}" )
-      case Some(_) => ( line._1, s"MSH|^~\\&#${splitAndReplace( line._2.drop(9), l )}" )
+      case None    => ( line._1, s"MSH$fs$cs$rs$ec$ss${ splitAndReplace( line._2.drop(8), l )}" )
+      case Some(_) => ( line._1, s"MSH$fs$cs$rs$ec$ss$tc${splitAndReplace( line._2.drop(9), l )}" )
     } else ( line._1, splitAndReplace( line._2 , l) )
-  }*/
+  }
 
 }
-
