@@ -12,13 +12,14 @@ object DataElement {
     * @param i - The instance (repetition) number
     * @return A field object
     */
-  def apply(m: FM, v: String, l: Location, i: Int): Option[Field] =
-    if( v matches emptyField ) None
+  def apply(m: FM, v: String, l: Location, i: Int)
+           (implicit s: Separators): Option[Field] =
+    if( v matches emptyField( cs, ss) ) None
     else Some {
       m.datatype match {
         case p: Primitive => SimpleField(m, l, i, value(p, v))
         case c: Composite =>
-          val(hasExtra, components) = children(l, c.components, v, cs)
+          val(hasExtra, components) = children(l, c.components, v, s.cs)
           ComplexField(m, l, i, components, hasExtra)
       }
     }
@@ -30,13 +31,14 @@ object DataElement {
     * @param l - The location
     * @return A component object
     */
-  def apply(m: CM, v: String, l: Location): Option[Component] =
-    if( v matches emptyComponent ) None
+  def apply(m: CM, v: String, l: Location)
+           (implicit s: Separators): Option[Component] =
+    if( v matches emptyComponent( s.ss ) ) None
     else Some {
       m.datatype match {
         case p: Primitive => SimpleComponent(m, l, value(p, v))
         case c: Composite =>
-          val(hasExtra, r) = children(l, c.components, v, ss)
+          val(hasExtra, r) = children(l, c.components, v, s.ss)
           val components  = r.asInstanceOf[List[SimpleComponent]]
           ComplexComponent(m, l, components, hasExtra)
       }
@@ -45,7 +47,8 @@ object DataElement {
   /**
     * Creates and returns the list of components
     */
-  private def children(l: Location, ml: List[CM], v: String, sep: Char): (Boolean, List[Component]) = {
+  private def children(l: Location, ml: List[CM], v: String, sep: Char)
+                      (implicit s: Separators): (Boolean, List[Component]) = {
     val max = ml.size
     val vs = if( isNull(v) ) Array.fill(max)(l.column -> "\"\"") else split(sep, v, l.column)
     val hasExtra = vs.size > max
@@ -74,11 +77,11 @@ object DataElement {
   /**
     * Regular expression to match an empty component
     */
-  private val emptyComponent = s"(?:\\s*$ss*\\s*)*"
+  private def emptyComponent(ss: Char) = s"(?:\\s*$ss*\\s*)*"
 
   /**
     * Regular expression to match an empty field
     */
-  private val emptyField = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
+  private def emptyField(cs: Char, ss: Char) = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
 
 }

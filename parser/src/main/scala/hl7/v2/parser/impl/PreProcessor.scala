@@ -1,5 +1,7 @@
 package hl7.v2.parser.impl
 
+import hl7.v2.instance.Separators
+
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
@@ -13,17 +15,17 @@ case class PPR( valid: List[Line], invalid: List[Line], separators: Separators )
 object PreProcessor {
 
   /**
-    * Splits the message into lines and returns a pair of valid and invalid lines.
+    * Splits the message into lines and returns a PPR.
     * This function will standardize the lines i.e. it will replace the separators
     * with the ones recommended by HL7 if necessary.
     *
     * @param message - The message to be pre-processed
-    * @return A `Success' containing  valid and invalid lines or a `Failure' if:
+    * @return A `Success' containing  the PPR or a `Failure' if:
     *    1) No MSH segment if defined in the message
     *    2) MSH segment contains less than 9 characters
     *    3) A character is use twice as a separator
     */
-  def process(message: String): Try[ Pair[List[Line], List[Line]] ] =
+  def process(message: String): Try[PPR] =
     splitOnMSH(message) match {
       case (beforeMSH, Nil) =>
         Failure( new Error("No MSH Segment found in the message.") )
@@ -31,8 +33,7 @@ object PreProcessor {
         getSeparators( xs.head._2 ) map { separators =>
           implicit val fs = separators.fs
           val (valid, invalid) = partition( xs )
-          //TODO Implement standardize
-          ( standardize(valid, separators) , beforeMSH:::invalid )
+          PPR(valid, beforeMSH:::invalid, separators)
         }
     }
 
@@ -76,27 +77,4 @@ object PreProcessor {
   } catch {
     case _: Throwable => Failure( new Error("The MSH line contains less than 9 characters.") )
   }
-
-  /**
-    * Standardizes the lines of lines i.e. replace the separators with
-    * the ones recommended by HL7 is necessary
-    */
-  private def standardize(list: List[Line], separators: Separators): List[Line] =
-    if(separators.areRecommended) list else list map (standardize( _, separators))
-
-  //FIXME standardize will remove trailing field separator .... re-implement with regular expression
-  //FIXME Replace Escape sequence
-  private def standardize(line: Line, seps: Separators) = {
-    def splitAndReplace(s: String, l: List[(Char, Char)]): String = l match {
-      case Nil         => s
-      case (x, y)::Nil => s.replaceAll(quote(x), y.toString)
-      case (x, y)::xs  => s.split(x) map( splitAndReplace(_, xs) ) mkString y.toString
-    }
-    val l = seps.toList zip List(fs, cs, rs, ec, ss, tc)
-    if( line._2 startsWith "MSH" ) seps.tc match {
-      case None    => ( line._1, s"MSH$fs$cs$rs$ec$ss${ splitAndReplace( line._2.drop(8), l )}" )
-      case Some(_) => ( line._1, s"MSH$fs$cs$rs$ec$ss$tc${splitAndReplace( line._2.drop(9), l )}" )
-    } else ( line._1, splitAndReplace( line._2 , l) )
-  }
-
 }

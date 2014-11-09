@@ -1,6 +1,6 @@
 package hl7.v2.parser.impl
 
-import hl7.v2.instance.{Group, Message, SegOrGroup, Segment}
+import hl7.v2.instance._
 import hl7.v2.parser.Parser
 import hl7.v2.profile.{Group => GM, Message => MM, SegRefOrGroup => SGM, SegmentRef => SM}
 
@@ -22,7 +22,8 @@ trait DefaultParser extends Parser {
     */
   def parse( message: String, model: MM ): Try[Message] =
     PreProcessor.process(message) map { t =>
-      val(valid, invalid) = t
+      val PPR(valid, invalid, separators) = t
+      implicit val s = separators
       val(children, unexpected) = processChildren( model.structure , valid)
       Message( model, children.reverse, invalid, unexpected )
     }
@@ -37,7 +38,8 @@ trait DefaultParser extends Parser {
     * Creates the children of a message or a group. Returns a pair consisting
     * of the list of children elements and the remaining stack.
     */
-  private def processChildren(models: List[SGM], stack: Stack): (LSG, Stack) =
+  private def processChildren(models: List[SGM], stack: Stack)
+                             (implicit seps: Separators): (LSG, Stack) =
     models.foldLeft( (List[SegOrGroup](), stack) ) { (acc, x) =>
       x match {
         case sm: SM => val (ls, s) = processSegment(sm, acc._2); (ls ::: acc._1, s)
@@ -45,7 +47,8 @@ trait DefaultParser extends Parser {
       }
     }
 
-  private def processGroup(gm: GM, stack: Stack): (List[Group], Stack) = {
+  private def processGroup(gm: GM, stack: Stack)
+                          (implicit seps: Separators): (List[Group], Stack) = {
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = s match {
       case x::xs if isExpected(x, gm)  =>
         val(children, ss) = processChildren( gm.structure, s)
@@ -56,13 +59,15 @@ trait DefaultParser extends Parser {
     loop(Nil, stack, 1)
   }
 
-  private def processSegment(sm: SM, stack: Stack): (List[Segment], Stack) = {
+  private def processSegment(sm: SM, stack: Stack)
+                            (implicit s: Separators): (List[Segment], Stack) = {
     val(x, remainingStack) = stack span (l => isExpected(l, sm))
     val ls = x.zipWithIndex map { t => segment(sm, t._1, t._2 +1) }
     (ls, remainingStack)
   }
 
-  private def segment(m: SM, l: Line, i: Int) = Segment(m, l._2, i, l._1)
+  private def segment(m: SM, l: Line, i: Int)
+                     (implicit s: Separators) = Segment(m, l._2, i, l._1)
 
   private def isExpected( l: Line, m: GM ) = l._2 startsWith headName(m)
 
