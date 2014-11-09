@@ -21,23 +21,6 @@ object XML {
       }</Component>
   }
 
-  /*
-  <Field
-          Name ={f.model.name}
-          Usage={f.model.usage.toString}
-          DT   ={f.model.datatype.name}
-          Card ={f.model.cardinality.toString}
-          LEN  ={f.model.length.toString}
-          CLen ={f.model.confLength}
-          Table={f.model.table.getOrElse("")}
-          Location={f.location.toString}
-      > { f match {
-            case s: SimpleField => s.value
-            case c: ComplexField => c.components.flatten.map( implicitly[XML[Component]].xml )
-        }}
-      </Field>
-   */
-
   implicit object fieldXML extends XML[Field] {
     def xml(f: Field): Elem = 
       <Field
@@ -98,3 +81,42 @@ object XML {
       }</Message>
   }
 }
+
+/*
+implicit object componentXML extends XML[Component] {
+    def xml(c: Component): Elem =
+      <Component
+          Name ={c.model.name}
+          Usage={c.model.req.usage.toString}
+          DT   ={c.model.datatype.name}
+          Card ={c.model.req.cardinality.getOrElse("").toString}
+          LEN  ={c.model.req.length.getOrElse("").toString}
+          CLen ={c.model.req.confLength.getOrElse("")}
+          Table={c.model.req.table.getOrElse("")}
+          Location={c.location.toString}
+      >{
+        c match {
+          case s: SimpleComponent  => s.value
+          case c: ComplexComponent => c.children map implicitly[XML[Component]].xml
+        }
+      }</Component>
+  }
+
+  implicit object fieldXML extends XML[Field] {
+    def xml(f: Field): Elem =
+      <Field
+          Name ={f.model.name}
+          Usage={f.model.req.usage.toString}
+          DT   ={f.model.datatype.name}
+          Card ={f.model.req.cardinality.getOrElse("").toString}
+          LEN  ={f.model.req.length.getOrElse("").toString}
+          CLen ={f.model.req.confLength.getOrElse("")}
+          Table={f.model.req.table.getOrElse("")}
+          Location={f.location.toString}
+      > { f match {
+            case s: SimpleField => s.value
+            case c: ComplexField => c.children. map( implicitly[XML[Component]].xml )
+        }}
+      </Field>
+  }
+ */

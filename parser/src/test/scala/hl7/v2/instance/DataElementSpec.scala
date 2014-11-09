@@ -1,4 +1,4 @@
-package hl7.v2.instance
+/*package hl7.v2.instance
 
 import hl7.v2.profile._
 import org.scalacheck.{Prop, Gen}
@@ -122,3 +122,4 @@ trait Data {
   val SE1 = hl7.v2.profile.Segment( "SE1", "SE1", "SE1 desc", List(`SE1.1`, `SE1.2`, `SE1.3`), Nil)
 
 }
+*/

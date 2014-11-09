@@ -16,10 +16,10 @@ object DataElement {
     if( v matches emptyField ) None
     else Some {
       m.datatype match {
-        case p: Primitive => SimpleField(p, l, m.req.position, i, value(p, v))
+        case p: Primitive => SimpleField(m, l, i, value(p, v))
         case c: Composite =>
           val(hasExtra, components) = children(l, c.components, v, cs)
-          ComplexField(c, l, m.req.position, i, components, hasExtra)
+          ComplexField(m, l, i, components, hasExtra)
       }
     }
 
@@ -34,11 +34,11 @@ object DataElement {
     if( v matches emptyComponent ) None
     else Some {
       m.datatype match {
-        case p: Primitive => SimpleComponent(p, l, m.req.position, value(p, v))
+        case p: Primitive => SimpleComponent(m, l, value(p, v))
         case c: Composite =>
           val(hasExtra, r) = children(l, c.components, v, ss)
           val components  = r.asInstanceOf[List[SimpleComponent]]
-          ComplexComponent(c, l, m.req.position, components, hasExtra)
+          ComplexComponent(m, l, components, hasExtra)
       }
     }
 
