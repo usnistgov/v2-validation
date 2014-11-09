@@ -1,6 +1,7 @@
 package hl7.v2.parser
 
 import hl7.v2.instance.Message
+import hl7.v2.profile.{ Message => MM }
 
 import scala.util.Try
 
@@ -15,5 +16,5 @@ trait Parser {
     * @param model   - The message model (profile)
     * @return The message instance model
     */
-  def parse( message: String, model: Message ): Try[Message]
+  def parse( message: String, model: MM ): Try[Message]
 }

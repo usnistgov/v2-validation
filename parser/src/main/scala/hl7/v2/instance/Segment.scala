@@ -22,12 +22,11 @@ object Segment {
     * Creates and returns a segment
     * @param m - The segment model
     * @param v - The value as string
-    * @param p - The position
     * @param i - The instance number
     * @param l - The line number
     * @return A segment
     */
-  def apply(m: SM, v: String, p: Int, i: Int, l: Int): Segment = {
+  def apply(m: SM, v: String, i: Int, l: Int): Segment = {
     require( isValid( v ), s"Invalid segment instance '$v'" )
     val name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
@@ -83,7 +82,7 @@ object Segment {
     val vs = split(rs, t._2, t._1)
     val r = vs.toList.zipWithIndex map { tt =>
       val( (col, v), ins) = tt
-      field(l, m, v, ins, col)
+      field(l, m, v, ins+1, col)
     }
     r.flatten
   }
