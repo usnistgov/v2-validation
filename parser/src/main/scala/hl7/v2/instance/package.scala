@@ -1,7 +1,5 @@
 package hl7.v2
 
-import hl7.v2.profile.Primitive
-
 package object instance {
 
   val rs = '~'  // Field repetition separator
