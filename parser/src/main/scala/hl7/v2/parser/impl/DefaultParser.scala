@@ -48,14 +48,17 @@ trait DefaultParser extends Parser {
     }
 
   private def processGroup(gm: GM, stack: Stack)
-                          (implicit seps: Separators): (List[Group], Stack) = {
-    def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = s match {
-      case x::xs if isExpected(x, gm)  =>
-        val(children, ss) = processChildren( gm.structure, s)
-        val g = Group( gm, i, children )
-        loop( g::acc, ss , i +1)
-      case _ => (acc, s)
-    }
+                          (implicit separators: Separators): (List[Group], Stack) = {
+
+    def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) =
+      s match {
+        case x::xs if isExpected(x, gm)  =>
+          val(children, ss) = processChildren( gm.structure, s)
+          val g = Group( gm, i, children )
+          loop( g::acc, ss , i +1)
+        case _ => (acc, s)
+      }
+
     loop(Nil, stack, 1)
   }
 
@@ -66,13 +69,26 @@ trait DefaultParser extends Parser {
     (ls, remainingStack)
   }
 
-  private def segment(m: SM, l: Line, i: Int)
-                     (implicit s: Separators) = Segment(m, l._2, i, l._1)
+  /**
+    * Creates and returns a segment instance
+    * @param m - The segment model
+    * @param l - The line number and the segment value as string
+    * @param i - The instance number
+    * @param s - The separators
+    * @return A segment instance
+    */
+  private def segment(m: SM, l: Line, i: Int)(implicit s: Separators) =
+    Segment(m, l._2, i, l._1)
 
   private def isExpected( l: Line, m: GM ) = l._2 startsWith headName(m)
 
   private def isExpected( l: Line, m: SM ) = l._2 startsWith m.ref.name
 
+  /**
+    * Returns the group head name
+    * @param m - The group model
+    * @return The group head name
+    */
   private def headName(m: GM): String = m.structure.head match {
     case s: SM => s.ref.name
     case g: GM => headName(g)

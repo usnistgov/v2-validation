@@ -18,8 +18,10 @@ sealed trait Value {
     *   Success( 0 ) if this is equal to `v'
     *   Failure if `v' cannot be converted to the current Value class or if the comparison is not permitted.
     */
-  def compareTo(v: Value): Try[Int] = ??? //FIXME
+  def compareTo(v: Value): Try[Int] = ??? //TODO To be implemented
 }
+
+//TODO: Correctly handle HL7 Null value
 
 case class Number(asString: String)   extends Value
 case class Text(asString: String)     extends Value
