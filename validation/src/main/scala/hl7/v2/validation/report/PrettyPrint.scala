@@ -8,13 +8,13 @@ import hl7.v2.instance.{Element, Location}
 object PrettyPrint {
 
   def prettyPrint(r: Report): Unit = {
-    println("########  Structure problems")
+    println(s"\n\n########  Structure check: ${r.structure.size} problem(s) detected.")
     r.structure foreach { e => println(asString(e)) }
 
-    println("########  Content problems")
+    println(s"\n\n########  Content check: ${r.content.size} problem(s) detected.")
     r.content foreach { e => println(asString(e)) }
 
-    println("########  Value set problems")
+    println(s"\n\n########  Value set check: ${r.vs.size} problem(s) detected.")
     r.vs foreach { e => println(asString(e)) }
   }
 
@@ -30,26 +30,43 @@ object PrettyPrint {
     case x: SpecError => specErr(x)
     case x: InvalidLines => invalid(x)
     case x: UnexpectedLines => unexpected(x)
+    case x: UnescapedSeparators => unescapedSep(x)
     case _ => ???
   }
 
-  private def loc(l: Location) = s"[${l.line}, ${l.column}][${l.path}]"
+  private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t"
 
-  private def rusage(e: RUsage) =  s"${loc(e.location)}[RUsage]"
+  private def desc(l: Location) = s"${l.path}(${l.desc})"
 
-  private def xusage(e: XUsage) = s"${loc(e.location)}[XUsage]"
+  private def rusage(e: RUsage) =
+    s"${loc(e.location)} ${desc(e.location)} is required but is missing."
 
-  private def wusage(e: WUsage) = s"${loc(e.location)}[WUsage]"
+  private def xusage(e: XUsage) =
+    s"${loc(e.location)} ${desc(e.location)} is not supported but is present."
 
-  private def mincard(e: MinCard) = s"${loc(e.location)}[Min Cardinality] ${e.instance} not in ${e.range}"
+  private def wusage(e: WUsage) =
+    s"${loc(e.location)} ${desc(e.location)} is withdrawn but is present."
 
-  private def maxcard(e: MaxCard) = s"${loc(e.location)}[Max Cardinality] ${e.instance} not in ${e.range}"
+  private def mincard(e: MinCard) =
+    s"${loc(e.location)} ${desc(e.location)} violated the minimum cardinality. Expected ${
+      e.range}, found ${e.instance} repetitions."
 
-  private def length(e: Length) = s"${loc(e.location)}[Length] length of '${e.value}' (${e.value.length}}) not in ${e.range}"
+  private def maxcard(e: MaxCard) =
+    s"${loc(e.location)} ${desc(e.location)} violated the maximum cardinality. Expected ${
+      e.range}, found ${e.instance} repetitions."
 
-  private def invalid(e: InvalidLines) = e.list.map( l => s"[${l._1}, 1][Invalid Line] ${l._2}" ).mkString("\n")
+  private def length(e: Length) =
+    s"${loc(e.location)} ${desc(e.location)} violated the length spec. Expected ${
+      e.range}, found ${e.value.length} => (${e.value})."
 
-  private def unexpected(e: UnexpectedLines) = e.list.map( l => s"[${l._1}, 1][Unexpected] ${l._2}" ).mkString("\n")
+  private def invalid(e: InvalidLines) =
+    e.list.map( l => s"[${l._1}, 1]\t Invalid Line ${l._2}" ).mkString("\n")
+
+  private def unexpected(e: UnexpectedLines) =
+    e.list.map( l => s"[${l._1}, 1]\t Unexpected segment ${l._2}" ).mkString("\n")
+
+  private def unescapedSep(e: UnescapedSeparators) =
+    s"${loc(e.location)} ${desc(e.location)} contains unescaped separators."
 
   private def success(e: Success) =
     s"${loc(e.context.location)}[Success] ${e.constraint.id} - ${ exp(e.constraint.assertion, e.context) }"

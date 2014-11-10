@@ -16,7 +16,7 @@ case class Segment (
 /**
   * Segment companion object
   */
-object Segment {
+object Segment extends EscapeSeqHandler {
 
   /**
     * Creates and returns a segment
@@ -35,8 +35,8 @@ object Segment {
     val fml = m.ref.fields
     val vs  = split( s.fs, v drop 4 , 5)
     val (hasExtra, lfs) =
-      if( v startsWith "MSH" ) (vs.size > fml.size - 2) -> mshFields(fml, vs, loc)
-      else (vs.size > fml.size - 1) -> fields( fml, vs, loc )
+      if( v startsWith "MSH" ) (vs.size > fml.size - 1) -> mshFields(fml, vs, loc)
+      else (vs.size > fml.size) -> fields( fml, vs, loc )
     Segment(m, loc, i, lfs.flatten, hasExtra)
   }
 
@@ -53,8 +53,8 @@ object Segment {
 
   private def mshFields( fml: List[FM], vs: Array[(Int, String)], l: Location )
                        (implicit s: Separators) = {
-    val `MSH.1` = field(l, fml.head, s"${s.fs}", 1, 4)
-    val `MSH.2` = field(l, fml.tail.head, vs(0)._2, 1, 5)
+    val `MSH.1` = field(l, fml.head, escape( s"${s.fs}" ), 1, 4)
+    val `MSH.2` = field(l, fml.tail.head, escape( vs(0)._2 ), 1, 5)
     val _fields = fields(fml.tail.tail, vs drop 1 , l)
     `MSH.1`.toList  :: `MSH.2`.toList :: _fields
   }

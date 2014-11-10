@@ -51,13 +51,11 @@ object Main extends App with DefaultParser {
       /SPM
       /""".stripMargin('/')
 
-  1 to 100 foreach { i =>
+  1 to 1 foreach { i =>
     time {
       parse( m , mm ) match {
         case Failure( e ) => e.printStackTrace()
-        case Success( r ) => Serializer.toXML(r)//println( Serializer.toXML(r) )
-        //implicit val defaultVSV = hl7.v2.vs.DefaultValidator
-        //println( structure.Validator.validate( m ).mkString("\n") )
+        case Success( r ) => println( Serializer.toXML(r) )
       }
     }
   }

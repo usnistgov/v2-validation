@@ -2,7 +2,7 @@ package hl7.v2.instance
 
 import hl7.v2.profile.{ Field => FM, Component => CM, Composite, Primitive }
 
-object DataElement {
+object DataElement extends EscapeSeqHandler {
 
   /**
     * Creates and returns a field object
@@ -64,10 +64,12 @@ object DataElement {
   /**
     * Creates and returns an HL7 hl7.v2.instance.Value
     * @param p - The data type
-    * @param v - The values as String
+    * @param v - The value as String
     * @return An hl7.v2.instance.Value
     */
-  private implicit def value(p: Primitive, v: String): Value = Value(p, v)
+  private implicit def value(p: Primitive, v: String)
+                            (implicit s: Separators): Value =
+    Value(p, unescape(v), isUnescaped(v))
 
   /**
     * Returns if the value is Null i.e. ""
@@ -84,4 +86,19 @@ object DataElement {
     */
   private def emptyField(cs: Char, ss: Char) = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
 
+  /**
+    * Returns true if the value contains unescaped field,
+    * component, sub-component or repetition separators
+    * @param v - The value
+    * @param s - The separator
+    * @return True if the value contains unescaped characters
+    */
+  private def isUnescaped(v: String)(implicit s: Separators): Boolean = s.tc match {
+    case Some(x) => v exists { c =>
+      c == s.fs || c == s.cs || c == s.ss || c == s.rs //|| c == s.ec || c == x
+    }
+    case None => v exists { c =>
+      c == s.fs || c == s.cs || c == s.ss || c == s.rs //|| c == s.ec
+    }
+  }
 }

@@ -1,9 +1,8 @@
-/*package hl7.v2.validation.structure
+package hl7.v2.validation.structure
 
-import hl7.v2.old.Location
+import hl7.v2.instance.Location
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.Range
-import hl7.v2.profile.old.XMLDeserializer
+import hl7.v2.profile.{XMLDeserializer, Range}
 import hl7.v2.validation.report.{InvalidLines, Length, MaxCard, MinCard, RUsage, SEntry, UnexpectedLines, WUsage, XUsage}
 import org.specs2.Specification
 
@@ -26,17 +25,16 @@ trait StructValidationSpec
     The minimally populated message should pass the validation                         $e1
     The structure validation should correctly report usage errors                      $e2
     The structure validation should correctly report cardinality errors                $e3
-    The structure validation should correctly report length errors                     $e4
-    The structure validation should correctly report invalid lines                     $e5
-    The structure validation should correctly report unexpected segments               $e6
+    The structure validation should correctly report length errors                     $todo
+    The structure validation should correctly report invalid lines                     $todo
+    The structure validation should correctly report unexpected segments               $todo
   """
 
   //TODO: Implements invalid lines and unexpected segments
 
   val profile = {
     val xml = getClass.getResourceAsStream("/ORU_R01_Profile.xml")
-    val xsd = getClass.getResourceAsStream("/Profile.xsd")
-    val r = XMLDeserializer.deserialize(xml, xsd)
+    val r = XMLDeserializer.deserialize( xml )
     assert( r.isSuccess, "[Error] An error occurred while creating the profile." )
     r.get
   }
@@ -57,19 +55,36 @@ trait StructValidationSpec
    * [4, 1] PID.1 is R but is missing
    * [4, 6] PID.2 is W but present
    * [4, 9] PID.3[2].1 is X but present
-   * [4, 1] PATIENT.2 (UAC) is R but is missing
-   * [5, 1] ORDER is X but present
+   * [7, 1] ORDER is X but present
    */
+
+
+  /*val m2 = """/MSH|^~\&#
+              /SFT
+              /UAC
+              /PID||x|~1^^^&3.4.2
+              /SFT""".stripMargin('/')*/
+
   val m2 = """/MSH|^~\&#
               /SFT
               /UAC
               /PID||x|~1^^^&3.4.2
+              /UAC
+              /UAC
               /SFT""".stripMargin('/')
+
   def e2 = {
-    val expected = W("SFT[1]", 2, 1) :: X("UAC[1]",3 , 1):: R("PID[1].1", 4,1)::
-                   W("PID[1].2", 4, 6) :: X("PID[1].3[2].1", 4, 9):: R("PATIENT.2", 4, 1)::
-                   X("ORDER", 5, 1):: Nil
-    validate(m2) ===  expected 
+    val expected =
+      List(
+          W("Software Segment", "SFT[1]", 2, 1),
+          X("User Authentication Credential Segment", "UAC[1]",3 , 1),
+          R("...", "PID[1].1[1]", 4,1),
+          W("Patient ID", "PID[1].2[1]", 4, 6),
+          X("ID Number", "PID[1].3[2].1[1]", 4, 9),
+          X("Group ORDER", "ORDER[1]", 7, 1)
+      )
+
+    validate(m2) must containTheSameElementsAs( expected )
   }
 
   /*
@@ -87,9 +102,10 @@ trait StructValidationSpec
               /UAC
               /UAC""".stripMargin('/')
   def e3 = {
-    val expected = MaxC("PATIENT", 7, 1, 3, Range(1, "2"))::MaxC("PID[1].3[4]", 5, 12, 4, Range(2, "3"))::
-                   MinC("UAC[1]", 6, 1, 1, Range(2, "2")):: Nil
-    validate(m3) ===  expected 
+    val expected = MaxC("Group PATIENT", "PATIENT[3]", 7, 1, 3, Range(1, "2")) ::
+                   MaxC("Patient Identifier List", "PID[1].3[4]", 5, 12, 4, Range(2, "3")) ::
+                   MinC("User Authentication Credential Segment","UAC[1]", 6, 1, 1, Range(2, "2")) :: Nil
+    validate(m3) must containTheSameElementsAs( expected )
   }
 
   /*
@@ -103,10 +119,10 @@ trait StructValidationSpec
               /PID|3333||~^^^&3.4.2
               /UAC
               /UAC""".stripMargin('/')
-  def e4 = {
+  /*def e4 = {
     val expected = Len("PID[1].1", 2, 5, "1", Range(2, "3"))::Len("PID[1].1", 5, 5, "3333", Range(2, "3"))::Nil
     validate(m4) ===  expected 
-  }
+  }*/
 
   /*
    * Invalid lines:
@@ -142,11 +158,17 @@ trait StructValidationSpec
     case Failure(e) => throw e
   }
 
-  private def R(p: String, l: Int, c: Int) = RUsage( Location(p, l, c) )
-  private def X(p: String, l: Int, c: Int) = XUsage( Location(p, l, c) )
-  private def W(p: String, l: Int, c: Int) = WUsage( Location(p, l, c) )
-  private def MaxC(p: String, l: Int, c: Int, i: Int, r: Range) = MaxCard(Location(p, l, c), i, r)
-  private def MinC(p: String, l: Int, c: Int, i: Int, r: Range) = MinCard(Location(p, l, c), i, r)
-  private def Len(p: String, l: Int, c: Int, v: String, r: Range) = Length(Location(p, l, c), v, r)
+  private def R(d: String, p: String, l: Int, c: Int) = RUsage( Location(d, p, l, c) )
+  private def X(d: String, p: String, l: Int, c: Int) = XUsage( Location(d, p, l, c) )
+  private def W(d: String, p: String, l: Int, c: Int) = WUsage( Location(d, p, l, c) )
+
+  private def MaxC(d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
+    MaxCard(Location(d, p, l, c), i, r)
+
+  private def MinC(d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
+    MinCard(Location(d, p, l, c), i, r)
+
+  private def Len(d: String, p: String, l: Int, c: Int, v: String, r: Range) =
+    Length(Location(d, p, l, c), v, r)
+
 }
-*/

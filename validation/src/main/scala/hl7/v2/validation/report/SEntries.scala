@@ -20,3 +20,6 @@ case class UnexpectedLines( list: List[(Int, String)] ) extends SEntry
 case class InvalidLines( list: List[(Int, String)] ) extends SEntry
 
 case class Extra( location: Location ) extends SEntry
+
+case class UnescapedSeparators( location: Location ) extends SEntry
+

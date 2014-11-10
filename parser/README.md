@@ -37,3 +37,62 @@ Usage:
 Cardinality
 
 ""~""....
+
+## Escape Sequence
+        
+    ### 
+        
+        \F\     field separator
+        \S\     component separator
+        \T\     subcomponent separator
+        \R\     repetition separator
+        \E\     escape character
+        \P\     truncation character
+
+        \H\     start highlighting
+        \N\     normal text (end highlighting)
+        
+        \Xdddd...\   hexadecimal data
+        \Zdddd...\   locally defined escape sequence
+        
+        
+    ### Character Sets
+        
+        \Cxxyy\     single-byte character set       Examples: \C2842\ => ASCII  \C2D41\ => Latin Alphabet 1
+        \Mxxyyzz\   multi-byte character set        Examples: \M2442\ ISO-IR87 (JIS X 0208 : Kanji, hiragana and katakana)
+    
+    
+    ### Formatting commands (Only allowed in FT data type)
+        
+        .sp     <number> End current output line and skip <number> vertical spaces.
+        .br     Begin new output line.
+        .fi     Begin word wrap or fill mode.
+        .nf     Begin no-wrap mode.
+        .in     <number> Indent <number> of spaces,
+        .ti     <number> Temporarily indent <number> of spaces
+        .sk     < number> Skip <number> spaces to the right.
+        .ce     End current output line and center the next line.
+    
+    According to HL7 v28:
+        *For the purposes of determining length, all the characters inside the escape (all between the opening and
+        closing \, not including the \ symbols themselves) count towards the length. This applies to all the escape
+        sequences, including the formatting ones described below.*
+     
+   
+   Questions:
+   
+        1) Is there any use case for \Zdddd...\ ?
+        
+        2) How \Cxxyy\ and \Mxxyyzz\ are used ? 
+            Are they just flags indicating that the character sets has changed ?
+            If yes, then how the length should be computed ? before or after character set resolution ? 
+   
+   
+   Salifou's Comments
+   
+        1) \H\ and \N\ should be classified as formatting commands. The rational is that contrary to \F\ \S\ they do not have a corresponding replacement ... 
+        
+        2) Because of the formatting commands, length computation on a TX data type is problematic. 
+   
+   
+   Note that truncation was introduced in HL7 2.7 but the escape sequence is defined in HL7 2.8

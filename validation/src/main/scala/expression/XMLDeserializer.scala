@@ -2,14 +2,13 @@ package expression
 
 import nu.xom.Element
 import nist.xml.util.XOMExtensions._
-import hl7.v2.instance.Text
-import hl7.v2.instance.Number
+import hl7.v2.instance.{EscapeSeqHandler, Separators, Text, Number}
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-object XMLDeserializer {
+object XMLDeserializer extends EscapeSeqHandler {
 
   /**
     * Creates an expression from a nu.xom.Element representing an assertion
@@ -111,9 +110,13 @@ object XMLDeserializer {
     case   _  => throw new Error(s"[Error] Invalid Operator $v")
   }
 
-  private def value( v: String, typ: String ) = 
-    if( "" == typ || "String" == typ ) Text(v)
-    else if( "Number" == typ ) Number(v)
+  implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
+
+  //FIXME This may not work properly because of DataElement.isUnescaped ...
+  //We are assuming here that truncation is supported (see implicit val separators ) ...
+  private def value( v: String, typ: String ) =
+    if( "" == typ || "String" == typ ) Text( unescape(v) ) //FIXME: we will need to enforce the text format no separators should be allowed in XML or any inout file
+    else if( "Number" == typ ) Number(v) //FIXME: we will need to enforce the number format in XML or any inout file
     else throw new Error(s"[Error] Unsupported value $v")
 
   private def combination2( e: Element ) = {

@@ -15,19 +15,32 @@ trait DefaultValidator extends Validator {
   def checkStructure(m: Message): Future[List[SEntry]] =
     Future { check(m.asGroup) }
 
+  /**
+    * Checks the element against the the specified requirements
+    * and recursively check the children if applicable
+    * @param e - The element to be checked
+    * @param r - The requirements
+    * @return A list of problems found
+    */
   def check(e: Element, r: Req): List[SEntry] = e match {
     case s: Simple  => check(s, r)
     case c: Complex => check(c)
   }
 
-  // Checks a simple element
-  def check(s: Simple, req: Req): List[SEntry] = {
-    //FIXME 1. Check the length
-    //FIXME 2. Check escape sequence
-    ???
-  }
+  /**
+    * Checks the simple element against the specified requirements
+    * @param s   - The simple element to be checked
+    * @param req - The requirements
+    * @return A list of problems found
+    */
+  def check(s: Simple, req: Req): List[SEntry] =
+    checkUnescapedSeparators( s ) ::: checkLength( s, req.length )
 
-  // Checks a complex element
+  /**
+    * Checks the children of the complex element against their requirements
+    * @param c - The complex element to be checked
+    * @return A list of problems found
+    */
   def check(c: Complex): List[SEntry] = {
 
     // Sort the children by position
@@ -38,8 +51,11 @@ trait DefaultValidator extends Validator {
       // Get the children at the current position (r.position)
       val children = map.getOrElse(r.position, Nil)
 
+      //FIXME we are missing the description here ...
+      val dl = c.location.copy(desc="...", path=s"${c.location.path}.${r.position}[1]")
+
       // Checks the usage
-      checkUsage( r.usage, children )(c.location) match {
+      checkUsage( r.usage, children )(dl) match {
         case Nil => // No usage error thus we can continue the validation
           // Check for extra children
           val r1 = checkExtra( c )
@@ -54,16 +70,16 @@ trait DefaultValidator extends Validator {
   }
 
   /**
-   * Returns a list of report entries if the usage is:
-   *     1) R and the list of elements is empty
-   *     2) X and the list of elements is not empty
-   *     3) W and the list of elements is not empty
-   *
-   * @param u  - The usage
-   * @param l  - The list of elements
-   * @param dl - The default location
-   * @return A list of report entries
-   */
+    * Returns a list of report entries if the usage is:
+    *     1) R and the list of elements is empty
+    *     2) X and the list of elements is not empty
+    *     3) W and the list of elements is not empty
+    *
+    * @param u  - The usage
+    * @param l  - The list of elements
+    * @param dl - The default location
+    * @return A list of report entries
+    */
   def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
     (u, l) match {
       case (Usage.R, Nil) => RUsage(dl) :: Nil
@@ -72,27 +88,19 @@ trait DefaultValidator extends Validator {
       case _              => Nil
     }
 
-  def checkUsage(u: Usage, ol: Option[List[Element]])(dl: Location): List[SEntry] =
-    (u, ol) match {
-      case (Usage.R,  None    ) => RUsage(dl) :: Nil
-      case (Usage.X, Some(xs) ) => xs map { e => XUsage( e.location ) }
-      case (Usage.W, Some(xs) ) => xs map { e => WUsage( e.location ) }
-      case _                    => Nil // No error or element is Null
-    }
-
   /**
-   * Returns a list of report entries for every element which instance
-   * number is greater than the maximum range or a list with a single
-   * element if the highest instance number is lower than the minimum range
-   *
-   * @param l     - The list of element
-   * @param range - The cardinality range
-   * @return A list of report entries
-   */
+    * Returns a list of report entries for every element which instance
+    * number is greater than the maximum range or a list with a single
+    * element if the highest instance number is lower than the minimum range
+    *
+    * @param l     - The list of element
+    * @param range - The cardinality range
+    * @return A list of report entries
+    */
   def checkCardinality(l: List[Element], range: Range): List[SEntry] =
     if( l.isEmpty ) Nil
     else {
-      //FIXME: The only reason this is needed is because of field repetition
+      // The only reason this is needed is because of field repetition
       val highestRep = l maxBy instance
       val i = instance( highestRep )
       if( i < range.min ) MinCard( highestRep.location, i, range ) :: Nil
@@ -102,15 +110,21 @@ trait DefaultValidator extends Validator {
         }
     }
 
+  /**
+    * Returns a list containing an extra entry
+    * if the complex element has extra children.
+    * @param c - The complex element
+    * @return A list of report entries
+    */
+  def checkExtra(c: Complex): List[SEntry] =
+    if( c.hasExtra ) Extra( c.location ) :: Nil else Nil
+
   private
   def checkCardinality(l: List[Element], or: Option[Range]): List[SEntry] =
     or match {
       case Some(r) => checkCardinality(l, r)
       case None    => Nil
     }
-
-  def checkExtra(c: Complex): List[SEntry] =
-    if( c.hasExtra ) Extra( c.location ) :: Nil else Nil
 
   /**
     * Returns a length entry if the length is not in range Nil otherwise.
@@ -126,6 +140,9 @@ trait DefaultValidator extends Validator {
       case Some(r) => checkLength(s, r)
       case None    => Nil
     }
+
+  private def checkUnescapedSeparators(s: Simple): List[UnescapedSeparators] =
+    if( s.value.isUnescaped ) UnescapedSeparators( s.location ):: Nil else Nil
 
   /**
     * Returns the instance number of the element
