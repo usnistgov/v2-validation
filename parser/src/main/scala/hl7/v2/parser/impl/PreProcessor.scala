@@ -50,10 +50,8 @@ object PreProcessor {
     * Partition the list of lines into list of valid and invalid lines.
     */
   private def partition(list: List[Line])
-                       (implicit fs: Char): (List[Line], List[Line]) = {
-    val validLinesRegex = s"^[A-Z]{2}[A-Z0-9](${quote(fs)}.*)*".r
+                       (implicit fs: Char): (List[Line], List[Line]) =
     list partition (l => validLinesRegex.pattern.matcher(l._2).matches)
-  }
 
   /**
     * Returns the separators defined in MSH.2 or a Failure

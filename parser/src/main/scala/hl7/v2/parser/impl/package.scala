@@ -6,6 +6,8 @@ package object impl {
 
   val lineBreak = """\r?\n|\r\n?|\r\n""".r
 
+  def validLinesRegex(implicit fs: Char) = s"^[A-Z]{2}[A-Z0-9](${quote(fs)}.*)*".r
+
   def quote(c: Char) = java.util.regex.Pattern.quote( c.toString )
 
   /**

@@ -13,7 +13,14 @@ import scala.concurrent.Future
 trait DefaultValidator extends Validator {
 
   def checkStructure(m: Message): Future[List[SEntry]] =
-    Future { check(m.asGroup) }
+    Future {
+      (m.invalid, m.unexpected) match {
+        case (Nil, Nil) => check(m.asGroup)
+        case (xs , Nil) => InvalidLines(xs) :: check(m.asGroup)
+        case (Nil,  xs) => UnexpectedLines(xs) :: check(m.asGroup)
+        case (xs, ys) => InvalidLines(xs) :: UnexpectedLines(ys) :: check(m.asGroup)
+      }
+    }
 
   /**
     * Checks the element against the the specified requirements
@@ -42,12 +49,11 @@ trait DefaultValidator extends Validator {
     * @return A list of problems found
     */
   def check(c: Complex): List[SEntry] = {
-
     // Sort the children by position
     val map = c.children.groupBy( x => x.position )
 
-    // For each position ...
-    c.reqs.foldLeft( List[SEntry]() ) { (acc, r) =>
+    // Check every position defined in the model
+    val r = c.reqs.foldLeft( List[SEntry]() ) { (acc, r) =>
       // Get the children at the current position (r.position)
       val children = map.getOrElse(r.position, Nil)
 
@@ -57,16 +63,17 @@ trait DefaultValidator extends Validator {
       // Checks the usage
       checkUsage( r.usage, children )(dl) match {
         case Nil => // No usage error thus we can continue the validation
-          // Check for extra children
-          val r1 = checkExtra( c )
           // Check the cardinality
-          val r2 = checkCardinality( children, r.cardinality )
+          val r1 = checkCardinality( children, r.cardinality )
           // Recursively check the children
-          val r3 = children flatMap { check( _, r ) }
-          r1 ::: r2 ::: r3 ::: acc
+          val r2 = children flatMap { check( _, r ) }
+          r1 ::: r2 ::: acc
         case xs  => xs ::: acc // Usage problem no further check is necessary
       }
     }
+
+    // Check for extra children and return the result
+    checkExtra( c ) ::: r
   }
 
   /**
