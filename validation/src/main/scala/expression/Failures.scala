@@ -4,7 +4,7 @@ import hl7.v2.instance.{Element, Simple}
 
 object Failures {
 
-  private def path(c: Element, p: String) = s"${c.location.path}.${p}"
+  private def path(c: Element, p: String) = s"${c.location.path}.$p"
 
   def presenceFailure(e: Presence, c: Element): Fail = {
     val reasons = Reason( c.location, s"${path(c, e.path)} is missing") :: Nil
@@ -13,7 +13,9 @@ object Failures {
 
   def plainTextFailure(e: PlainText, xs: Seq[Simple]): Fail = {
     val cs = if( e.ignoreCase ) "case insensitive" else "case sensitive"
-    val reasons = xs.toList map { s => Reason(s.location, s"'${s.value.asString}' is different from '${e.text}' ($cs)") }
+    val reasons = xs.toList map { s =>
+      Reason(s.location, s"'${s.value.asString}' is different from '${e.text}' ($cs)")
+    }
     Fail( e -> reasons :: Nil )
   }
 

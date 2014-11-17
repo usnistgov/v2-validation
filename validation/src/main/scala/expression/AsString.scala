@@ -4,7 +4,7 @@ import hl7.v2.instance.Element
 
 object AsString {
 
-  def path(c: Element, p: String) = s"${c.location.path}.${p}"
+  def path(c: Element, p: String) = s"${c.location.path}.$p"
 
   def expression(e: Expression, context: Element): String = e match {
     case e: Presence    => presence(e, context)
@@ -36,19 +36,25 @@ object AsString {
   def stringList(e: StringList, c: Element) = 
       s"${ path(c, e.path) } SHALL be one of '${e.csv.mkString("[", ", ", "]")}'"
 
-  def simpleValue(e: SimpleValue, c: Element) = s"${ path(c, e.path) } SHALL be ${e.operator} '${e.value}'"
+  def simpleValue(e: SimpleValue, c: Element) =
+    s"${ path(c, e.path) } SHALL be ${e.operator} '${e.value}'"
 
-  def pathValue(e: PathValue, c: Element) = s"${ path(c, e.path1) } SHALL be ${e.operator} ${ path(c, e.path2) }"
+  def pathValue(e: PathValue, c: Element) =
+    s"${ path(c, e.path1) } SHALL be ${e.operator} ${ path(c, e.path2) }"
 
-  def and(e: AND, c: Element) = s"( ${ expression(e.exp1, c) } and ${ expression(e.exp2, c) } )"
+  def and(e: AND, c: Element) =
+    s"( ${ expression(e.exp1, c) } and ${ expression(e.exp2, c) } )"
 
-  def or(e: OR, c: Element) = s"( ${ expression(e.exp1, c) } or ${ expression(e.exp2, c) } )"
+  def or(e: OR, c: Element) =
+    s"( ${ expression(e.exp1, c) } or ${ expression(e.exp2, c) } )"
 
   def not(e: NOT, c: Element) = s"not ( ${ expression(e.exp, c) } )"
 
-  def xor(e: XOR, c: Element) = s"either ${ expression(e.exp1, c) } or ${ expression(e.exp2, c) } but not both"
+  def xor(e: XOR, c: Element) =
+    s"either ${ expression(e.exp1, c) } or ${ expression(e.exp2, c) } but not both"
 
-  def imply(e: IMPLY, c: Element) = s"if ${ expression(e.exp1, c) } then ${ expression(e.exp2, c) }"
+  def imply(e: IMPLY, c: Element) =
+    s"if ${ expression(e.exp1, c) } then ${ expression(e.exp2, c) }"
 
   def exist(e: EXIST, c: Element) = ??? //FIXME //s"one of ${ e.list map { ee => expression(ee, c) }   } must be true)"
 

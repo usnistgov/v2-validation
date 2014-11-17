@@ -33,7 +33,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "IMPLY"       => imply( e )
     case "FORALL"      => forall( e )
     case "EXIST"       => exist( e )
-    case _ => throw new Error(s"[Error] Unkown expression node $e")
+    case _ => throw new Error(s"[Error] Unknown expression node $e")
   } 
 
   // Generic Expressions
