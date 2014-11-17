@@ -36,9 +36,10 @@ trait PresenceSpec extends Specification with Evaluator with Mocks {
     eval(Presence("2[2]"), c2) === Failures.presenceFailure(Presence("2[2]"), c2)
   }
 
-  private def isPopulated(c: Element, path: String): Boolean = query(c, path) match {
-    case Success(l) => l.nonEmpty
-    case Failure(f) => false
-  }
+  private def isPopulated(c: Element, path: String): Boolean =
+    query(c, path) match {
+      case Success(l) => l.nonEmpty
+      case Failure(f) => false
+    }
 }
 

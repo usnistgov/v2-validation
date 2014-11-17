@@ -51,7 +51,9 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   private val `c1.3[1]`  = queryAsSimple(c1, "3[1]").get.head
   assert( `c1.3[1]`.value == Text("S3") )
 
-  def plainTextSameValue = Seq(true, false) map { b => eval( PlainText("3[1]", "S3", b), c1 ) === Pass }
+  def plainTextSameValue = Seq(true, false) map { b =>
+    eval( PlainText("3[1]", "S3", b), c1 ) === Pass
+  }
 
   def plainTextSameValueIC = eval( PlainText("3[1]", "s3", true ), c1 ) === Pass
 
@@ -60,5 +62,8 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
     eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`:: Nil)
   }
 
-  def plainTextSameValueCNI = { val p = PlainText("3[1]", "s3", false); eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`::Nil) }
+  def plainTextSameValueCNI = {
+    val p = PlainText("3[1]", "s3", false)
+    eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`::Nil)
+  }
 }
