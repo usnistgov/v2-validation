@@ -12,15 +12,20 @@ import scala.concurrent.Future
   */
 trait DefaultValidator extends Validator {
 
-  def checkStructure(m: Message): Future[List[SEntry]] =
-    Future {
-      (m.invalid, m.unexpected) match {
-        case (Nil, Nil) => check(m.asGroup)
-        case (xs , Nil) => InvalidLines(xs) :: check(m.asGroup)
-        case (Nil,  xs) => UnexpectedLines(xs) :: check(m.asGroup)
-        case (xs, ys) => InvalidLines(xs) :: UnexpectedLines(ys) :: check(m.asGroup)
-      }
+  /**
+    * Checks the message structure and returns the list of problems.
+    *
+    * @param m - The message to be checked
+    * @return  - The list of problems
+    */
+  def checkStructure(m: Message): Future[List[SEntry]] = Future {
+    (m.invalid, m.unexpected) match {
+      case (Nil, Nil) => check(m.asGroup)
+      case (xs , Nil) => InvalidLines(xs) :: check(m.asGroup)
+      case (Nil,  xs) => UnexpectedLines(xs) :: check(m.asGroup)
+      case (xs, ys) => InvalidLines(xs) :: UnexpectedLines(ys) :: check(m.asGroup)
     }
+  }
 
   /**
     * Checks the element against the the specified requirements

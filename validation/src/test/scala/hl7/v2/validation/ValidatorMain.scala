@@ -41,19 +41,14 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       /OBX|1|NM|30341-2^Erythrocyte sedimentation rate^LN^815117^ESR^99USI^^^Erythrocyte sedimentation rate||10|mm/h^millimeter per hour^UCUM|0 to 17|N|||F|||20110331140551-0800|||||20110331150551-0800||||Century Hospital^^^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^XX^^^987|2070 Test Park^^Los Angeles^CA^90067^USA^B^^06037|2343242^Knowsalot^Phil^J.^III^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^DN
       /""".stripMargin('/')
 
+  val validtor = new HL7Validator(profile, content.EmptyConstraintManager)
+
   1 to 1 foreach { i =>
     time {
-      parse( m , mm ) match {
-        case Failure( e ) => e.printStackTrace()
-        case Success( r ) =>
-
-          println( Serializer.toXML(r) )
-
-          checkStructure( r ).onComplete {
-            case Success(ls) => PrettyPrint.prettyPrint( Report(ls, Nil, Nil) )
-            case Failure(e)  => e.printStackTrace()
-          }
-
+      validtor.validate( m, "ORU_R01" ) onComplete {
+        case Success( report ) => PrettyPrint.prettyPrint( report )
+        case Failure( e )      =>
+          println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
       }
     }
   }

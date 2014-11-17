@@ -7,7 +7,7 @@ import hl7.v2.instance.{Element, Location}
 
 object PrettyPrint {
 
-  def prettyPrint(r: Report): Unit = {
+  def prettyPrint(r: Report) {
     println(s"\n\n########  Structure check: ${r.structure.size} problem(s) detected.")
     r.structure foreach { e => println(asString(e)) }
 
@@ -34,30 +34,33 @@ object PrettyPrint {
     case _ => ???
   }
 
-  private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t"
+  private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
 
-  private def desc(l: Location) = s"${l.path}(${l.desc})"
+  //private def desc(l: Location) = s"${l.path}(${l.desc})"
 
-  private def rusage(e: RUsage) =
-    s"${loc(e.location)} ${desc(e.location)} is required but is missing."
+  // Usage problems
+  private def rusage(e: RUsage) = s"${loc(e.location)} is required but is missing."
 
-  private def xusage(e: XUsage) =
-    s"${loc(e.location)} ${desc(e.location)} is not supported but is present."
+  private def xusage(e: XUsage) = s"${loc(e.location)} is not supported but is present."
 
-  private def wusage(e: WUsage) =
-    s"${loc(e.location)} ${desc(e.location)} is withdrawn but is present."
+  private def wusage(e: WUsage) = s"${loc(e.location)} is withdrawn but is present."
 
-  private def mincard(e: MinCard) =
-    s"${loc(e.location)} ${desc(e.location)} violated the minimum cardinality. Expected ${
-      e.range}, found ${e.instance} repetitions."
 
-  private def maxcard(e: MaxCard) =
-    s"${loc(e.location)} ${desc(e.location)} violated the maximum cardinality. Expected ${
-      e.range}, found ${e.instance} repetitions."
+  // Cardinality problems
+  private def mincard(e: MinCard) = {
+    val expectation = s"Expected ${e.range}, found ${e.instance} repetitions."
+    s"${loc(e.location)} violated the minimum cardinality. $expectation"
+  }
 
-  private def length(e: Length) =
-    s"${loc(e.location)} ${desc(e.location)} violated the length spec. Expected ${
-      e.range}, found ${e.value.length} => (${e.value})."
+  private def maxcard(e: MaxCard) = {
+    val expectation = s"Expected ${e.range}, found ${e.instance} repetitions."
+    s"${loc(e.location)} violated the maximum cardinality. $expectation."
+  }
+
+  private def length(e: Length) = {
+    val expectation = s"Expected ${e.range}, found ${e.value.length} => (${e.value})"
+    s"${loc(e.location)} violated the length spec. $expectation."
+  }
 
   private def invalid(e: InvalidLines) =
     e.list.map( l => s"[${l._1}, 1]\t Invalid Line ${l._2}" ).mkString("\n")
@@ -66,21 +69,23 @@ object PrettyPrint {
     e.list.map( l => s"[${l._1}, 1]\t Unexpected segment ${l._2}" ).mkString("\n")
 
   private def unescapedSep(e: UnescapedSeparators) =
-    s"${loc(e.location)} ${desc(e.location)} contains unescaped separators."
+    s"${loc(e.location)} contains unescaped separators."
 
-  private def success(e: Success) =
-    s"${loc(e.context.location)}[Success] ${e.constraint.id} - ${ exp(e.constraint.assertion, e.context) }"
+  private def success(e: Success) = s"[Success] ${loc(e.context.location)} ${
+    e.constraint.id} - ${ exp(e.constraint.assertion, e.context) }"
 
-  private def failure(e: Failure) =
-    s"${loc(e.context.location)}[Failure] ${e.constraint.id} - ${ exp(e.constraint.assertion, e.context) } \n ${stackTrace(e.context, e.stack)} "
+  private def failure(e: Failure) = s"[Failure] ${loc(e.context.location)} ${
+    e.constraint.id} - ${ exp(e.constraint.assertion, e.context) } \n ${
+    stackTrace(e.context, e.stack)} "
 
   private def specErr(e: SpecError) = {
     val details = s"\t${exp(e.expression, e.context)} \n ${ e.details.mkString("\n\t\t") }"
-    s"${loc(e.context.location)}[Success] ${e.constraint.id} - ${exp(e.constraint.assertion, e.context)} \n $details"
+    s"[Spec Error] ${loc(e.context.location)} ${e.constraint.id} - ${exp(e.constraint.assertion, e.context)} \n $details"
   }
 
+  type EStack = List[(Expression, List[Reason])]
   //FIXME this is just for testing ... need to be reimplemented
-  private def stackTrace(context: Element, stack: List[(Expression, List[Reason])]): String = {
+  private def stackTrace(context: Element, stack: EStack): String = {
     var i = 0
     stack.map { x =>
       i = i + 1

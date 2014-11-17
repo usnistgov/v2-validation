@@ -14,11 +14,10 @@ import hl7.v2.validation.report.SEntry
 trait Validator { 
 
   /**
-    * Checks the message against the basic constraints (usage,
-    * cardinality and length ) defined in the message profile
+    * Checks the message structure and returns the list of problems.
     * 
     * @param m - The message to be checked
-    * @return  - The list of violations
+    * @return  - The list of problems
     */
   def checkStructure(m: Message): Future[Seq[SEntry]]
 }
