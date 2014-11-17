@@ -30,6 +30,7 @@ trait EscapeSeqHandler {
     * @param separators - The separators
     * @return A new string with HL7 basic escape sequence replaced
     */
+  //FIXME: There is a bug here: \S\F\F\ will unescaped as \S|F\ instead of ^F|
   def unescape(s: String)(implicit  separators: Separators): String = {
     val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
 

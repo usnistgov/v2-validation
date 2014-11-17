@@ -19,12 +19,12 @@ case class Fail( stack: List[(Expression, List[Reason])] ) extends EvalResult
 
 /**
   * An inconclusive expression evaluation result
-  * 
+  *
   * An expression evaluation is usually inconclusive when :
   *   1) Path resolution fails or returns a complex element
   *      while a simple element is expected
   *   2) Invalid conversion between 'Value' classes.
- *       Example: attempting to convert Text(X2) to a number
+  *       Example: attempting to convert Text(X2) to a number
   *   3) An operation is not supported. Example: Date(20140326) LT Time(010100)
   */
 case class Inconclusive(expression: Expression, details: List[String]) extends EvalResult

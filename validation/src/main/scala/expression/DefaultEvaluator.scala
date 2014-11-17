@@ -41,15 +41,15 @@ trait DefaultEvaluator extends Evaluator {
       case Failure(e) => Inconclusive(p, e.getMessage :: Nil)
     }
 
-  def format(f: Format, context: Element): EvalResult = ???
+  def format(f: Format, context: Element): EvalResult = ??? //FIXME
 
-  def numberList(nl: NumberList, context: Element): EvalResult = ???
+  def numberList(nl: NumberList, context: Element): EvalResult = ??? //FIXME
 
-  def stringList(nl: StringList, context: Element): EvalResult = ???
+  def stringList(nl: StringList, context: Element): EvalResult = ??? //FIXME
 
-  def simpleValue(sv: SimpleValue, context: Element): EvalResult = ???
+  def simpleValue(sv: SimpleValue, context: Element): EvalResult = ??? //FIXME
 
-  def pathValue(pv: PathValue, context: Element): EvalResult = ???
+  def pathValue(pv: PathValue, context: Element): EvalResult = ??? //FIXME
 
   def and(and: AND, context: Element): EvalResult =
     eval(and.exp1, context) match {
@@ -79,13 +79,13 @@ trait DefaultEvaluator extends Evaluator {
       case i: Inconclusive => i
     }
 
-  def xor(xor: XOR, context: Element): EvalResult = ???
+  def xor(xor: XOR, context: Element): EvalResult = ??? //FIXME
 
-  def imply(e: IMPLY, context: Element): EvalResult = ???
+  def imply(e: IMPLY, context: Element): EvalResult = ??? //FIXME
 
-  def exist(e: EXIST, context: Element): EvalResult = ???
+  def exist(e: EXIST, context: Element): EvalResult = ??? //FIXME
 
-  def forall(e: FORALL, context: Element): EvalResult = ???
+  def forall(e: FORALL, context: Element): EvalResult = ??? //FIXME
 
   //Plain text evaluation helpers
   // Returns true if the value of `s' is not equal to `text'
