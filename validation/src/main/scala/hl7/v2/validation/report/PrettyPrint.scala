@@ -9,7 +9,7 @@ object PrettyPrint {
 
   def prettyPrint(r: Report) {
     println(s"\n\n########  Structure check: ${r.structure.size} problem(s) detected.")
-    r.structure foreach { e => println(asString(e)) }
+    r.structure.reverse foreach { e => println(asString(e)) }
 
     println(s"\n\n########  Content check: ${r.content.size} problem(s) detected.")
     r.content foreach { e => println(asString(e)) }
@@ -39,37 +39,41 @@ object PrettyPrint {
   //private def desc(l: Location) = s"${l.path}(${l.desc})"
 
   // Usage problems
-  private def rusage(e: RUsage) = s"${loc(e.location)} is required but is missing."
+  private def rusage(e: RUsage) = s"${loc(e.location)}\tR-Usage (required but missing)."
 
-  private def xusage(e: XUsage) = s"${loc(e.location)} is not supported but is present."
+  private def xusage(e: XUsage) = s"${loc(e.location)}\tX-Usage (not supported but present)."
 
-  private def wusage(e: WUsage) = s"${loc(e.location)} is withdrawn but is present."
+  private def wusage(e: WUsage) = s"${loc(e.location)}\tW-Usage (withdrawn but present)."
 
 
   // Cardinality problems
   private def mincard(e: MinCard) = {
-    val expectation = s"Expected ${e.range}, found ${e.instance} repetitions."
-    s"${loc(e.location)} violated the minimum cardinality. $expectation"
+    val expectation = s"Expected ${e.range}, found ${e.instance} repetitions"
+    s"${loc(e.location)}\tMinimum cardinality violated. $expectation"
   }
 
   private def maxcard(e: MaxCard) = {
-    val expectation = s"Expected ${e.range}, found ${e.instance} repetitions."
-    s"${loc(e.location)} violated the maximum cardinality. $expectation."
+    val expectation = s"Expected ${e.range}, found ${e.instance} repetitions"
+    s"${loc(e.location)}\tMaximum cardinality violated. $expectation"
   }
 
   private def length(e: Length) = {
     val expectation = s"Expected ${e.range}, found ${e.value.length} => (${e.value})"
-    s"${loc(e.location)} violated the length spec. $expectation."
+    s"${loc(e.location)}\tLength violated. $expectation"
   }
 
-  private def invalid(e: InvalidLines) =
-    e.list.map( l => s"[${l._1}, 1]\t Invalid Line ${l._2}" ).mkString("\n")
+  private def invalid(e: InvalidLines) = {
+    println("\n>>>>> Invalid line(s)")
+    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2}'").mkString("\n")
+  }
 
-  private def unexpected(e: UnexpectedLines) =
-    e.list.map( l => s"[${l._1}, 1]\t Unexpected segment ${l._2}" ).mkString("\n")
+  private def unexpected(e: UnexpectedLines) = {
+    println("\n>>>>> Unexpected segment(s)")
+    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2}'").mkString("\n")
+  }
 
   private def unescapedSep(e: UnescapedSeparators) =
-    s"${loc(e.location)} contains unescaped separators."
+    s"${loc(e.location)}\tUnescaped separators in primitive element."
 
   private def success(e: Success) = s"[Success] ${loc(e.context.location)} ${
     e.constraint.id} - ${ exp(e.constraint.assertion, e.context) }"
