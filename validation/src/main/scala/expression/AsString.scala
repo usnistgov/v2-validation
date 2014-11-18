@@ -21,6 +21,7 @@ object AsString {
     case e: IMPLY       => imply(e, context)
     case e: EXIST       => exist(e, context)
     case e: FORALL      => forall(e, context)
+    case e: Plugin      => ???
   }
 
   def presence(e: Presence, c: Element) = s"${ path(c, e.path) } SHALL be present"
@@ -59,4 +60,6 @@ object AsString {
   def exist(e: EXIST, c: Element) = ??? //FIXME //s"one of ${ e.list map { ee => expression(ee, c) }   } must be true)"
 
   def forall(e: FORALL, c: Element) = ??? //FIXME
+
+  def plugin(e: Plugin, c: Element) = s"Plugin '${e.id}'"
 }

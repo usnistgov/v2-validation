@@ -34,3 +34,5 @@ case class IMPLY( exp1: Expression, exp2: Expression ) extends Expression
 case class FORALL( list: Expression* ) extends Expression
 
 case class EXIST( list: Expression* ) extends Expression
+
+case class Plugin( id: String, params: String* ) extends Expression

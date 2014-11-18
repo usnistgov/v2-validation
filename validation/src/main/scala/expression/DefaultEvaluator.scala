@@ -22,6 +22,7 @@ trait DefaultEvaluator extends Evaluator {
     case e: IMPLY       => imply(e, context)
     case e: EXIST       => exist(e, context)
     case e: FORALL      => forall(e, context)
+    case e: Plugin      => plugin(e, context)
   }
 
   def presence(p: Presence, context: Element): EvalResult =
@@ -86,6 +87,12 @@ trait DefaultEvaluator extends Evaluator {
   def exist(e: EXIST, context: Element): EvalResult = ??? //FIXME
 
   def forall(e: FORALL, context: Element): EvalResult = ??? //FIXME
+
+  def plugin(e: Plugin, context: Element): EvalResult =
+    pluginMap.get( e.id ) match {
+      case Some( f ) => f( e.params )
+      case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
+    }
 
   //Plain text evaluation helpers
   // Returns true if the value of `s' is not equal to `text'

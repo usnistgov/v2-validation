@@ -1,14 +1,12 @@
 package hl7.v2.validation
 
+import expression.EvalResult
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.report.{PrettyPrint, Report}
-
-import scala.util.Success
-import scala.util.Failure
-import hl7.v2.instance.serializer.{Serializer, XML}
+import hl7.v2.validation.report.PrettyPrint
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 object Main extends App with DefaultParser with structure.DefaultValidator {
 
@@ -47,7 +45,9 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       /PDQ
       /""".stripMargin('/')
 
-  val validtor = new HL7Validator(profile, content.EmptyConstraintManager)
+  val pluginMap = Map[String, Seq[String] => EvalResult]()
+
+  val validtor = new HL7Validator(profile, content.EmptyConstraintManager, pluginMap)
 
   1 to 1 foreach { i =>
     time {
