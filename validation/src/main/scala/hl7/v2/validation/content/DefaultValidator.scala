@@ -9,8 +9,6 @@ import scala.concurrent.Future
 
 trait DefaultValidator extends Validator with expression.Evaluator {
 
-  val cm = constraintManager
-
   /**
     * Check the message against the constraints defined
     * in the constraint manager and returns the report.

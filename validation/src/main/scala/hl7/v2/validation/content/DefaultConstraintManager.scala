@@ -150,16 +150,3 @@ object DefaultConstraintManager {
     doc.getRootElement.getFirstChildElement( name ).getChildElements
 
 }
-
-/*object MainCM extends App {
-
-  val r = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
-
-  DefaultConstraintManager(r) match {
-    case scala.util.Success(cm) =>
-      println( cm.datatypeByID )
-      println( cm.datatypeByName )
-    case scala.util.Failure(e)  => e.printStackTrace()
-  }
-}
-*/
