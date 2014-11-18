@@ -20,8 +20,6 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
   */
-
-  import Failures._
   
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
@@ -59,11 +57,11 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
 
   def plainTextDifferentValue = Seq(true, false) map { b =>
     val p = PlainText("3[1]", "X", b)
-    eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`:: Nil)
+    eval( p, c1 ) === Failures.plainTextFailure(p, `c1.3[1]`:: Nil)
   }
 
   def plainTextSameValueCNI = {
     val p = PlainText("3[1]", "s3", false)
-    eval( p, c1 ) === plainTextFailure(p, `c1.3[1]`::Nil)
+    eval( p, c1 ) === Failures.plainTextFailure(p, `c1.3[1]`::Nil)
   }
 }

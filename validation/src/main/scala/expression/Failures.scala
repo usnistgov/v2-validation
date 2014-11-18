@@ -19,6 +19,13 @@ object Failures {
     Fail( e -> reasons :: Nil )
   }
 
+  def formatFailure(e: Format, xs: Seq[Simple]): Fail = {
+    val reasons = xs.toList map { s =>
+      Reason(s.location, s"'${s.value.asString}' doesn't match '${e.pattern}'")
+    }
+    Fail( e -> reasons :: Nil )
+  }
+
   def andFailure(e: AND, c: Element, f: Fail): Fail = 
     Fail( e -> List() :: f.stack )
 

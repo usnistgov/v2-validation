@@ -61,7 +61,21 @@ trait DefaultEvaluator extends Evaluator {
       case Failure(e) => Inconclusive(p, e.getMessage :: Nil)
     }
 
-  def format(f: Format, context: Element): EvalResult = ??? //FIXME
+  /**
+    * Evaluates the format expression and returns the result
+    * @param f       - The format expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def format(f: Format, context: Element): EvalResult =
+    queryAsSimple(context, f.path) match {
+      case Success(ls)  =>
+        ls filter( s => notMatch(s, f.pattern) ) match {
+          case Nil => Pass
+          case xs  => Failures.formatFailure(f, xs)
+        }
+      case Failure(e) => Inconclusive(f, e.getMessage :: Nil)
+    }
 
   def numberList(nl: NumberList, context: Element): EvalResult = ??? //FIXME
 
@@ -142,4 +156,7 @@ trait DefaultEvaluator extends Evaluator {
   private def notEqual(s: Simple, text: String, cs: Boolean): Boolean =
     if( cs ) !s.value.asString.equalsIgnoreCase( text )
     else !(s.value.asString == text)
+
+  private def notMatch(s: Simple, regex: String): Boolean =
+    !regex.r.pattern.matcher(s.value.asString).matches
 }

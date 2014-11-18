@@ -4,6 +4,7 @@ trait EvaluatorSpec
   extends org.specs2.Specification
   with PresenceSpec
   with PlainTextSpec
+  with FormatSpec
   with ANDSpec
   with ORSpec
   with NOTSpec
@@ -31,21 +32,26 @@ trait EvaluatorSpec
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
 
+    FormatSpec
+      Format evaluation should succeed if the path is not populated                 $formatPathNotPopulated
+      Format should pass if the value match the pattern                             $formatMatch
+      Format should fail if the value doesn't match the pattern                     $formatNoMatch
+
    AND expression evaluation specifications
-      AND should be inconclusive if the first expression is inconclusive             $andFirstInconclusive
-      AND should fail in the first expression fails                                  $andFirstFails
+      AND should be inconclusive if the first expression is inconclusive            $andFirstInconclusive
+      AND should fail in the first expression fails                                 $andFirstFails
       If the first expression passes
-          AND should be inconclusive if the second is inconclusive                   $andFirstPassesSecondInconclusive
-          AND should pass if the second passes                                       $andFirstPassesSecondPasses
-          AND should fail if the second fails                                        $andFirstPassesSecondFails
+          AND should be inconclusive if the second is inconclusive                  $andFirstPassesSecondInconclusive
+          AND should pass if the second passes                                      $andFirstPassesSecondPasses
+          AND should fail if the second fails                                       $andFirstPassesSecondFails
 
     OR expression evaluation specifications
-      OR should be inconclusive if the first expression is inconclusive              $orFirstInconclusive
-      OR should pass if the first expression passes                                  $orFirstPasses
+      OR should be inconclusive if the first expression is inconclusive             $orFirstInconclusive
+      OR should pass if the first expression passes                                 $orFirstPasses
       If the first expression fails
-          OR should be inconclusive if the second is inconclusive                    $orFirstFailsSecondInconclusive
-          OR should pass if the second passes                                        $orFirstFailsSecondPasses
-          OR should fail if the second fails                                         $orFirstFailsSecondFails
+          OR should be inconclusive if the second is inconclusive                   $orFirstFailsSecondInconclusive
+          OR should pass if the second passes                                       $orFirstFailsSecondPasses
+          OR should fail if the second fails                                        $orFirstFailsSecondFails
 
     NOT expression evaluation specifications
       NOT should be inconclusive if the underlining expression is inconclusive      $notInconclusive
