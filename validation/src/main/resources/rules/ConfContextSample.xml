@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConformanceContext UUID="xxx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ConformanceContext.xsd"
+	>
+	
+	<MetaData>
+		<Description>Conformance context sample</Description>
+	</MetaData>
+	 
+	<Datatype>
+		
+		<ByName Name="HD">
+			
+			<!-- Generic Expressions -->
+			
+			<Constraint ID="Presence">
+				<Description>Presence</Description>
+				<Assertion>
+					<Presence Path="1[1]"/>
+				</Assertion>
+			</Constraint>
+			
+			<!--<Constraint ID="Path Value">
+				<Description>Path Value</Description>
+				<Assertion>
+					<PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/>
+				</Assertion>
+			</Constraint> -->
+			
+			<!-- Value Expressions -->
+			
+			<Constraint ID="PlainText">
+				<Description>Plain Text</Description>
+				<Assertion> 
+					<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+				</Assertion>
+			</Constraint>
+
+            <!--
+			<Constraint ID="Format">
+				<Description>Format</Description>
+				<Assertion> 
+					<Format Path="1[1]" Regex="XX"/>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="NumberList">
+				<Description>Number List</Description>
+				<Assertion>
+					<NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="String List">
+				<Description>String List</Description>
+				<Assertion> 
+					<StringList Path="1[1]" CSV="1,2"/>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="Simple Value">
+				<Description>Simple Value</Description>
+				<Assertion>
+					<SimpleValue Path="1[1]" Operator="NE" Value="XX"/>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="Simple Value">
+				<Description>Simple Value</Description>
+				<Assertion>
+					<SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/>
+				</Assertion>
+			</Constraint> -->
+			
+			<!-- Combination Expressions -->
+			
+			<Constraint ID="AND">
+				<Description>AND</Description>
+				<Assertion>
+					<AND>
+						<Presence Path="1[1]"/>
+						<Presence Path="2[2]"/>
+					</AND>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="OR">
+				<Description>OR</Description>
+				<Assertion>
+					<OR>
+						<Presence Path="1[1]"/>
+						<Presence Path="2[2]"/>
+					</OR>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="NOT">
+				<Description>NOT</Description>
+				<Assertion>
+					<NOT>
+						<Presence Path="1[1]"/>
+					</NOT>
+				</Assertion>
+			</Constraint>
+			
+		</ByName>
+
+        <!--
+		<ByID ID="_XX_">
+			<Constraint ID="XOR">
+				<Description>XOR</Description>
+				<Assertion>
+					<XOR>
+						<Presence Path="1[1]"/>
+						<Presence Path="2[2]"/>
+					</XOR>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="IMPLY">
+				<Description>IMPLY</Description>
+				<Assertion>
+					<IMPLY>
+						<Presence Path="1[1]"/>
+						<Presence Path="2[2]"/>
+					</IMPLY>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="FORALL">
+				<Description>FORALL</Description>
+				<Assertion>
+					<FORALL>
+						<Presence Path="1[1]"/>
+						<Presence Path="2[2]"/>
+						<Presence Path="3[3]"/>
+					</FORALL>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="EXIST">
+				<Description>EXIST</Description>
+				<Assertion>
+					<EXIST>
+						<Presence Path="1[1]"/>
+						<Presence Path="2[2]"/>
+						<Presence Path="3[3]"/>
+					</EXIST>
+				</Assertion>
+			</Constraint>
+		</ByID> -->
+		
+	</Datatype>
+	
+	<Segment>
+		
+		<ByName Name="PID">
+			<Constraint ID="XX_1">
+				<Description>Test</Description>
+				<Assertion>
+					<Presence Path="1[1]"/>
+				</Assertion>
+			</Constraint>
+		</ByName>
+		
+		<ByName Name="XXX">
+			<Constraint ID="XX_1">
+				<Description>Test</Description>
+				<Assertion>
+					<Presence Path="1[1]"/>
+				</Assertion>
+			</Constraint>
+		</ByName>
+		
+		<ByID ID="YYY">
+			<Constraint ID="XX_1">
+				<Description>Test</Description>
+				<Assertion>
+					<Presence Path="1[1]"/>
+				</Assertion>
+			</Constraint>
+		</ByID>
+		
+		
+	</Segment>
+	
+	<Group/> 
+	
+</ConformanceContext>

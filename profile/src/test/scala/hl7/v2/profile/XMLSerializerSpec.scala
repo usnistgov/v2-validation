@@ -2,9 +2,8 @@ package hl7.v2.profile
 
 import java.io.ByteArrayInputStream
 
-import org.specs2.Specification
-
 import nist.xml.util.XOMDocumentBuilder
+import org.specs2.Specification
 
 class XMLSerializerSpec extends Specification { def is = s2"""
 
@@ -15,25 +14,26 @@ class XMLSerializerSpec extends Specification { def is = s2"""
 
   """
 
-
   def e1 = {
     val xml = getClass.getResourceAsStream("/Profile.xml")
-    val xsd = getClass.getResourceAsStream("/Profile.xsd")
-    val deserialized = XMLDeserializer.deserialize(xml, xsd)
-    deserialized must beSuccessfulTry
+    val profile = XMLDeserializer.deserialize(xml)
+    profile mustNotEqual null
   }
 
   def e2 = {
     val xml = getClass.getResourceAsStream("/Profile.xml")
-    val xsd = getClass.getResourceAsStream("/Profile.xsd")
-    val deserialized = XMLDeserializer.deserialize(xml, xsd)
-    assert( deserialized.isSuccess, "The deserialzed must be a success" )
-    val serialized   = deserialized map ( XMLSerializer.serialize _ )
-    assert( serialized.isSuccess, "The serialzed must be a success" )
+
+    val p = XMLDeserializer.deserialize(xml)
+    p  must beSuccessfulTry
+
+    val serialized = XMLSerializer.serialize(p.get)
+
     val result = {
-      val stream = new ByteArrayInputStream( serialized.get.toString.getBytes("UTF-8"))
+      val stream = new ByteArrayInputStream( serialized.toString.getBytes("UTF-8"))
       XOMDocumentBuilder.build(stream, getClass.getResourceAsStream("/Profile.xsd"))
     }
     result must beSuccessfulTry
   }
+
+  //private def profile(f: Future[Profile]) = Await.result(f, Duration(300, "millis"))
 }

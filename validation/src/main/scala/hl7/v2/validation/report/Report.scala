@@ -1,7 +1,27 @@
 package hl7.v2.validation.report
 
-import hl7.v2.validation.structure.{Entry => SEntry}
-import hl7.v2.validation.content.{Entry => CEntry}
-import hl7.v2.validation.vs.{Entry => VSEntry}
+/**
+  * Trait representing a report entry
+  */
+sealed trait Entry
 
+/**
+  * Trait representing a structure error report entry
+  */
+trait SEntry extends Entry
+
+/**
+  * Trait representing a content error report entry
+  */
+trait CEntry extends Entry
+
+/**
+  * Trait representing a value set error report entry
+  */
+trait VSEntry extends Entry
+
+
+/**
+  * Class representing a validation report
+  */
 case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry])

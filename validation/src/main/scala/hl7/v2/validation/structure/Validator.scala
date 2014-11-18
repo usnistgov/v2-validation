@@ -1,9 +1,9 @@
 package hl7.v2.validation.structure
 
-import scala.concurrent.Future
-
 import hl7.v2.instance.Message
-import hl7.v2.validation.vs.{Validator => VSValidator}
+
+import scala.concurrent.Future
+import hl7.v2.validation.report.SEntry
 
 /**
   * The message structure validator
@@ -14,11 +14,10 @@ import hl7.v2.validation.vs.{Validator => VSValidator}
 trait Validator { 
 
   /**
-    * Checks the message against the basic constraints (usage,
-    * cardinality and length ) defined in the message profile
+    * Checks the message structure and returns the list of problems.
     * 
     * @param m - The message to be checked
-    * @return  - The list of violations
+    * @return  - The list of problems
     */
-  def checkStructure(m: Message): Future[Seq[Entry]]
+  def checkStructure(m: Message): Future[Seq[SEntry]]
 }

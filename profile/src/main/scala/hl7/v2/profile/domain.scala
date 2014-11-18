@@ -1,116 +1,112 @@
 package hl7.v2.profile
 
 /**
-  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
+  * Trait representing a data type
   */
+sealed trait Datatype {
+  def id: String
+  def name: String
+  def desc: String
+}
 
 /**
-  * A data type
+  * A primitive data type
   */
-case class Datatype(
+case class Primitive( id: String, name: String, desc: String ) extends Datatype
+
+/**
+  * A composite data type
+  */
+case class Composite(
     id: String,
     name: String,
-    description: String,
-    components: List[Component] 
-  ) {
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
+    desc: String,
+    components: List[Component]
+) extends Datatype {
+
+  lazy val reqs: List[Req] = components map ( _.req )
 }
 
 /**
   * A composite data type component
   */
-case class Component(
-    position: Int,
-    name: String,
-    datatype: Datatype,
-    usage: Usage,
-    length: Range,
-    confLength: String,
-    table: Option[String]
-  ) {
-  /*assert( isWellNested, s"""The component is not well nested # $this""" )
-
-  //Checks for component nesting
-  private def isWellNested = datatype match {
-    case p: Primitive => true
-    case c: Composite => c.components.forall( _.datatype.isInstanceOf[Primitive] )
-  }*/
-
-  //lazy val cardinality = Range(1, "1")
-}
+case class Component( name: String, datatype: Datatype, req: Req )
 
 /**
-  * A field
+  * A segment field
   */
-case class Field(
-    position: Int,
-    name: String,
-    datatype: Datatype,
-    usage: Usage,
-    cardinality: Range,
-    length: Range,
-    confLength: String,
-    table: Option[String]
-)
+case class Field( name: String, datatype: Datatype, req: Req )
 
-case class DynamicMapping(position: Int, reference: Int, map: Map[String, Datatype])
+/**
+  * Describes the mapping for dynamic data type
+  * @param position  - The position of the element with dynamic data type
+  * @param reference - The position which defines the data type name to be used
+  * @param map       - The mapping ( data type name -> data type id )
+  */
+case class DynMapping( position: Int, reference: Int, map: Map[String, Datatype] )
 
 /**
   * A segment
   */
-case class Segment(id: String, name: String, description: String, fields: List[Field], dynamicMapping: List[DynamicMapping] ) {
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
+case class Segment(
+    id: String,
+    name: String,
+    desc: String,
+    fields: List[Field],
+    mappings: List[DynMapping]
+) {
+
+  lazy val reqs: List[Req] = fields map ( _.req )
+}
+
+/**
+  * Trait representing either a segment reference or a group
+  */
+sealed trait SegRefOrGroup {
+  def req: Req
+  def reqs: List[Req]
 }
 
 /**
   * A segment reference
   */
-case class SegmentRef(position: Int, ref: Segment, usage: Usage, cardinality: Range)
+case class SegmentRef( req: Req, ref: Segment ) extends SegRefOrGroup {
+  def reqs = ref.reqs
+}
 
 /**
   * A group
   */
 case class Group(
-    position: Int,
     name: String,
-    usage: Usage,
-    cardinality: Range,
-    children: List[Either[SegmentRef, Group]]
-  ) {
-  assert(name.trim.nonEmpty, s"The name cannot be blank # $this")
-  assert( children.nonEmpty, s"A group cannot be empty # $this" )
+    structure: List[SegRefOrGroup],
+    req: Req
+) extends SegRefOrGroup {
+
+  lazy val reqs: List[Req] = structure map ( _.req )
 }
 
 /**
   * A message
   */
-case class Message(
-    id      : String,
-    typ     : String,
-    event   : String,
-    structID: String, 
-    description: String, 
-    children: List[Either[SegmentRef, Group]]
-  ) {
-  assert(id.trim.nonEmpty, s"The id cannot be blank # $this")
-  assert( children.nonEmpty, s"A message cannot be empty # $this" )
-  assert( children.head match {case Left(x) => x.ref.name == "MSH" case _ => false},
-      s"The first element of the message must be the MSH Segment # $this" )
+case class Message (
+    id: String,
+    structId: String,
+    event: String,
+    typ  : String,
+    desc : String,
+    structure: List[SegRefOrGroup]
+) {
 
-  def asGroup = Group(1, id, Usage.R, Range(1,"1"), children)
+  lazy val asGroup = Group(structId, structure, Req(1, Usage.R, None, None, None, None))
 }
 
 /**
-  * The profile
+  * A profile
   */
 case class Profile(
-    id           : String,
-    typ          : String,
-    hl7Version   : String,
-    schemaVersion: String,
-    messages     : Map[String, Message],
-    segments     : Map[String, Segment],
-    datatypes    : Map[String, Datatype]
+    id: String,
+    messages : Map[String, Message],
+    segments : Map[String, Segment],
+    datatypes: Map[String, Datatype]
 )

@@ -1,14 +1,13 @@
 package hl7.v2.validation
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-
+import expression.EvalResult
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
 import hl7.v2.validation.report.Report
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
   * Trait defining the message validation 
@@ -16,46 +15,52 @@ import hl7.v2.validation.report.Report
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-trait Validator { this: Parser with structure.Validator with content.Validator with vs.Validator =>
+trait Validator { this: Parser with structure.Validator
+                               with content.Validator
+                               with vs.Validator =>
 
   val profile: Profile
 
   /**
-    * Validates the message against the structure and content constraints
+    * Validates the message using the mixed in structure,
+    * content and value set validators and returns the report.
     * @param message - The message to be validated
-    * @param id      - The id of the message with the profile
-    * @return The report
+    * @param id      - The id of the message as defined in the profile
+    * @return The validation report
     */
-  def validate( message: String, id: String ): Future[Try[Report]] = 
-    profile.messages get( id ) match {
-      case None => Future{ Failure( new Error(s"No message with id '$id' is found in the profile") ) }
+  def validate( message: String, id: String ): Future[Report] =
+    profile.messages get id match {
+      case None =>
+        val msg = s"No message with id '$id' is defined in the profile"
+        Future failed new Exception(msg)
       case Some( model ) => 
         parse( message, model ) match {
           case Success( m ) => 
-            val structErrors  = checkStructure( m )
-            val contentErrors = checkContent  ( m )
-            val vsErrors      = checkValueSet ( m )
-            for { r1 <- structErrors; r2 <- contentErrors; r3 <- vsErrors } yield Success( Report(r1, r2, r3) )
-          case Failure(e) => Future{ Failure(e) }
+            val structErrors   = checkStructure( m )
+            val contentErrors  = checkContent  ( m )
+            val valueSetErrors = checkValueSet ( m )
+            for {
+              r1 <- structErrors
+              r2 <- contentErrors
+              r3 <- valueSetErrors
+            } yield Report(r1, r2, r3)
+          case Failure(e) => Future failed e
         }
     }
 }
 
-
-/*import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.instance.Message
-import hl7.v2.validation.report.SEntry
-import hl7.v2.validation.report.CEntry
-
-trait DefaultSValidator extends structure.Validator { def checkStructure(m: Message): Future[Seq[SEntry]] = ??? }
-trait DefaultCValidator extends content.Validator { def checkContent(m: Message): Future[Seq[CEntry]] = ??? }
-
+/**
+  * An HL7 message validator which uses an empty value set validator
+  * and the default implementation of the parser, structure validator,
+  * content validator and expression evaluator.
+  */
 class HL7Validator(
     val profile: Profile,
-    val vsv: vs.Validator,
-    val constraintManager: content.ConstraintManager
-  ) extends Validator 
-    with DefaultParser
-    with DefaultSValidator
-    with DefaultCValidator*/
-    
+    val constraintManager: content.ConstraintManager,
+    val pluginMap: Map[String, Seq[String] => EvalResult]
+  ) extends Validator
+    with hl7.v2.parser.impl.DefaultParser
+    with structure.DefaultValidator
+    with content.DefaultValidator
+    with vs.EmptyValidator
+    with expression.DefaultEvaluator

@@ -1,5 +1,6 @@
 package hl7.v2.instance
 
+import hl7.v2.profile._
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
@@ -7,22 +8,22 @@ package hl7.v2.instance
 
 trait Mocks {
 
-  trait Default { 
-    def position: Int
-    def instance: Int
-    val location = Location("", -1, -1)
+  trait Default {
+    val reqs     = List[Req]()
+    val location = Location("desc ...", "Path", -1, -1)
+    /*val qProps   = QProps(QType.DT, "id", "name")*/
+    val hasExtra = false
   }
 
-  case class S( position: Int, instance: Int, value: Value) extends Simple with Default
+  case class S( position: Int, instance: Int, value: Value)
+    extends Simple with Default
 
-  case class C( position: Int, instance: Int, children: List[Element] ) extends Complex with Default{
-    def get(position: Int) = children filter ( _.position == position )
-    def get(position: Int, instance: Int) = children filter ( c => c.position == position && c.instance == instance )
-  }
+  case class C( position: Int, instance: Int, children: List[Element] )
+    extends Complex with Default
 
   val s0  = S( 4, 1, Text("S0") )
 
-  val c0 = C(2,1, Nil)
+  val c0 = C(2,1, s0 :: Nil)
   
   val c1 = C( 2, 3, ( 1 to 3 ).toList map { i => S( 1, i, Text(s"S1$i") ) } )
 
