@@ -64,12 +64,12 @@ object PrettyPrint {
 
   private def invalid(e: InvalidLines) = {
     println("\n>>>>> Invalid line(s)")
-    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2}'").mkString("\n")
+    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2.take(70)}'").mkString("\n")
   }
 
   private def unexpected(e: UnexpectedLines) = {
     println("\n>>>>> Unexpected segment(s)")
-    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2}'").mkString("\n")
+    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2.take(70)}'").mkString("\n")
   }
 
   private def unescapedSep(e: UnescapedSeparators) =
