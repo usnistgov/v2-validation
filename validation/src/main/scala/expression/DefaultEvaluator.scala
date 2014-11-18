@@ -151,12 +151,16 @@ trait DefaultEvaluator extends Evaluator {
       case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
     }
 
-  //Plain text evaluation helpers
-  // Returns true if the value of `s' is not equal to `text'
+  /**
+    * Returns true if the value of 's' is not equal to 'text' depending on the case
+    */
   private def notEqual(s: Simple, text: String, cs: Boolean): Boolean =
     if( cs ) !s.value.asString.equalsIgnoreCase( text )
     else !(s.value.asString == text)
 
+  /**
+    * Returns true if the value of 's' don't match the regular expression 'regex'
+    */
   private def notMatch(s: Simple, regex: String): Boolean =
     !regex.r.pattern.matcher(s.value.asString).matches
 }
