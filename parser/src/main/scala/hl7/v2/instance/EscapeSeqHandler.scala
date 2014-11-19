@@ -1,5 +1,7 @@
 package hl7.v2.instance
 
+import scala.annotation.tailrec
+
 trait EscapeSeqHandler {
 
   /**
@@ -30,20 +32,47 @@ trait EscapeSeqHandler {
     * @param separators - The separators
     * @return A new string with HL7 basic escape sequence replaced
     */
-  //FIXME: There is a bug here: \S\F\F\ will unescaped as \S|F\ instead of ^F|
   def unescape(s: String)(implicit  separators: Separators): String = {
     val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
+    val escapeTruncation = otc match { case None => false case _ => true }
+    val efs = s"${ec}F$ec"
+    val ecs = s"${ec}S$ec"
+    val ess = s"${ec}T$ec"
+    val ers = s"${ec}R$ec"
+    val eec = s"${ec}E$ec"
+    val etc = s"${ec}P$ec"
 
-    val r = s.replaceAllLiterally( s"${ec}F$ec",  fs.toString )
-             .replaceAllLiterally( s"${ec}S$ec",  cs.toString )
-             .replaceAllLiterally( s"${ec}T$ec",  ss.toString )
-             .replaceAllLiterally( s"${ec}R$ec",  rs.toString )
-             .replaceAllLiterally( s"${ec}E$ec",  ec.toString )
+    @tailrec
+    def f(sb: StringBuilder, s: String): String =
+      s span ( _ != ec ) match {
+        case (x, "") => sb.append(x).toString()
+        case (x, y) if y.take(3) == efs => f( sb.append(x).append(fs), y drop 3 )
+        case (x, y) if y.take(3) == ecs => f( sb.append(x).append(cs), y drop 3 )
+        case (x, y) if y.take(3) == ess => f( sb.append(x).append(ss), y drop 3 )
+        case (x, y) if y.take(3) == ers => f( sb.append(x).append(rs), y drop 3 )
+        case (x, y) if y.take(3) == eec => f( sb.append(x).append(ec), y drop 3 )
+        case (x, y) if escapeTruncation && y.take(3) == etc =>
+          f( sb.append(x).append( otc.get ), y drop 3 )
+        case (x, y) => f( sb.append(x).append(ec), y drop 1 )
+      }
 
-    otc match {
-      case Some(x) => r.replaceAllLiterally( s"${ec}P$ec",  x.toString )
-      case None    => r
-    }
+    f( new StringBuilder, s )
   }
 
 }
+
+//This code is a bogus: \S\F\F\ will unescaped as \S|F\ instead of ^F|
+/*def unescape(s: String)(implicit  separators: Separators): String = {
+  val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
+
+  val r = s.replaceAllLiterally( s"${ec}F$ec",  fs.toString )
+           .replaceAllLiterally( s"${ec}S$ec",  cs.toString )
+           .replaceAllLiterally( s"${ec}T$ec",  ss.toString )
+           .replaceAllLiterally( s"${ec}R$ec",  rs.toString )
+           .replaceAllLiterally( s"${ec}E$ec",  ec.toString )
+
+  otc match {
+    case Some(x) => r.replaceAllLiterally( s"${ec}P$ec",  x.toString )
+    case None    => r
+  }
+}*/
