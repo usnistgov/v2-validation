@@ -33,7 +33,7 @@ object Failures {
     Fail( e -> List() :: f1.stack ::: f2.stack )
 
   def notFailure(e: NOT, c: Element): Fail = {
-    val reasons = List( Reason(c.location, "The inner expression evaluation returned `true' ") )
+    val reasons = List(Reason(c.location, "The inner expression evaluation returned 'true'"))
     Fail( e -> reasons :: Nil )
   }
 }

@@ -1,6 +1,7 @@
 package hl7.v2.validation
 
-import expression.EvalResult
+import expression.{Plugin, EvalResult}
+import hl7.v2.instance.Element
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
 import hl7.v2.validation.report.Report
@@ -57,7 +58,7 @@ trait Validator { this: Parser with structure.Validator
 class HL7Validator(
     val profile: Profile,
     val constraintManager: content.ConstraintManager,
-    val pluginMap: Map[String, Seq[String] => EvalResult]
+    val pluginMap: Map[String, (Plugin, Element) => EvalResult]
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator

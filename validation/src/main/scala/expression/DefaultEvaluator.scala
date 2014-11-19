@@ -147,7 +147,7 @@ trait DefaultEvaluator extends Evaluator {
     */
   def plugin(e: Plugin, context: Element): EvalResult =
     pluginMap.get( e.id ) match {
-      case Some( f ) => f( e.params )
+      case Some( f ) => f( e, context )
       case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
     }
 

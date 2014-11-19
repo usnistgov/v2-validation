@@ -5,9 +5,11 @@ import hl7.v2.instance.Element
 trait Evaluator {
 
   /**
-    * The plugin map to be used by this expression evaluator
+    * The plugin map to be used by this expression evaluator.
+    * The map will contain plugins ID as key and a function
+    * which has the same signature as Evaluator.eval as value.
     */
-  def pluginMap: Map[String, Seq[String] => EvalResult]
+  def pluginMap: Map[String, (Plugin, Element) => EvalResult]
 
   /**
     * Evaluates the expression within the specified context

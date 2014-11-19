@@ -8,6 +8,7 @@ trait EvaluatorSpec
   with ANDSpec
   with ORSpec
   with NOTSpec
+  with PluginSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -57,5 +58,12 @@ trait EvaluatorSpec
       NOT should be inconclusive if the underlining expression is inconclusive      $notInconclusive
       NOT should pass if the underlining expression fail                            $notPass
       NOT should fail if the underlining expression pass                            $notFail
+
+    PluginSpec
+      Plugin execution should fail if there is no associated function in the map      $pluginNoFunction
+      Plugin execution should pass if the function returns Pass                       $pluginPass
+      Plugin execution should fail if the function returns Fail                       $pluginFail
+      Plugin execution should be inconclusive if the function returns is inconclusive $pluginInconclusive
+
   """
 }
