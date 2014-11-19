@@ -6,7 +6,9 @@ import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
 import hl7.v2.validation.report.PrettyPrint
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
 object Main extends App with DefaultParser with structure.DefaultValidator {
@@ -59,4 +61,13 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       }
     }
   }
+
+  import scala.concurrent.duration._
+
+  1 to 200 foreach { i =>
+    time {
+      Await.result( validtor.validate( m, "ORU_R01" ), 1.second )
+    }
+  }
+
 }

@@ -130,12 +130,12 @@ trait StructValidationSpec
                /PID|1||~^^^&3.4.2
                /UAC
                /UAC
-               /PID|3333||~^^^&3.4.2
+               /PID|333\F\||~^^^&3.4.2
                /UAC
                /UAC""".stripMargin('/')
     val expected = List(
             Len("Set ID - PID", "PID[1].1[1]", 2, 5, "1", Range(2, "3")),
-            Len("Set ID - PID", "PID[1].1[1]", 5, 5, "3333", Range(2, "3"))
+            Len("Set ID - PID", "PID[1].1[1]", 5, 5, "333|", Range(2, "3"))
     )
 
     validate(m) must containTheSameElementsAs( expected )
