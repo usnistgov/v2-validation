@@ -48,6 +48,7 @@ trait DefaultValidator extends Validator {
     * @return A list of problems found
     */
   def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
+    //FIXME: Check the format of the value and may be highlight commands in Formatted Text (FT and cousins ...)
     checkUnescapedSeps( ss ) ::: checkLength( ss, req.length )
 
   /**
