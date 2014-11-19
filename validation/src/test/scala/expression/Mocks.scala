@@ -1,12 +1,11 @@
 package expression
 
-import hl7.v2.instance.Value
-import hl7.v2.instance.Text
-import hl7.v2.instance.Number
-import hl7.v2.instance.{Simple, Element, Location, Complex}
+import hl7.v2.instance._
 import hl7.v2.profile.Req
 
 trait Mocks {
+
+  implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
 
   trait Default {
     val reqs     = List[Req]()

@@ -1,7 +1,7 @@
 package hl7.v2.validation.content
 
 import expression.{Inconclusive, Fail, Pass}
-import hl7.v2.instance.{Complex, Element, Message}
+import hl7.v2.instance.{Separators, Complex, Element, Message}
 import hl7.v2.validation.report.{CEntry, Failure, SpecError, Success}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +15,10 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @param m - The message to be checked
     * @return The report
     */
-  def checkContent(m: Message): Future[Seq[CEntry]] = Future { check(m.asGroup) }
+  def checkContent(m: Message): Future[Seq[CEntry]] = Future {
+    implicit val separators = m.separators
+    check(m.asGroup)
+  }
 
   /**
     * Checks the element and its descendants against the constraints
@@ -23,7 +26,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @param e - The element to be checked
     * @return The report
     */
-  private def check(e: Element): List[CEntry] = {
+  private def check(e: Element)(implicit s: Separators): List[CEntry] = {
     val cl: List[Constraint] = constraintManager.constraintsFor(e)
     val r = cl map { check(e, _)  }
     e match {
@@ -38,7 +41,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @param c - The constraint
     * @return A CEntry
     */
-  private def check(e: Element, c: Constraint): CEntry =
+  private def check(e: Element, c: Constraint)(implicit s: Separators): CEntry =
     eval(c.assertion, e) match {
       case Pass        => Success(e, c)
       case Fail(stack) => Failure(e, c, stack)

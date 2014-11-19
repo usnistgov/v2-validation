@@ -33,7 +33,9 @@ trait EscapeSeqHandler {
     * @return A new string with HL7 basic escape sequence replaced
     */
   def unescape(s: String)(implicit  separators: Separators): String = {
+
     val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
+
     val escapeTruncation = otc match { case None => false case _ => true }
     val efs = s"${ec}F$ec"
     val ecs = s"${ec}S$ec"

@@ -2,7 +2,7 @@ package hl7.v2.instance
 
 import hl7.v2.profile.{ Field => FM, Component => CM, Composite, Primitive }
 
-object DataElement extends EscapeSeqHandler {
+object DataElement {
 
   /**
     * Creates and returns a field object
@@ -17,7 +17,7 @@ object DataElement extends EscapeSeqHandler {
     if( v matches emptyField( cs, ss) ) None
     else Some {
       m.datatype match {
-        case p: Primitive => SimpleField(m, l, i, value(p, v))
+        case p: Primitive => SimpleField(m, l, i, Value(p, v))
         case c: Composite =>
           val(hasExtra, components) = children(l, c.components, v, s.cs)
           ComplexField(m, l, i, components, hasExtra)
@@ -36,7 +36,7 @@ object DataElement extends EscapeSeqHandler {
     if( v matches emptyComponent( s.ss ) ) None
     else Some {
       m.datatype match {
-        case p: Primitive => SimpleComponent(m, l, value(p, v))
+        case p: Primitive => SimpleComponent(m, l, Value(p, v))
         case c: Composite =>
           val(hasExtra, r) = children(l, c.components, v, s.ss)
           val components  = r.asInstanceOf[List[SimpleComponent]]
@@ -62,19 +62,9 @@ object DataElement extends EscapeSeqHandler {
   }
 
   /**
-    * Creates and returns an HL7 hl7.v2.instance.Value
-    * @param p - The data type
-    * @param v - The value as String
-    * @return An hl7.v2.instance.Value
-    */
-  private implicit def value(p: Primitive, v: String)
-                            (implicit s: Separators): Value =
-    Value(p, unescape(v), isUnescaped(v))
-
-  /**
     * Returns if the value is Null i.e. ""
     */
-  private def isNull(v: String) = "\"\"" == v
+  private def isNull(v: String) = v == Value.NULL
 
   /**
     * Regular expression to match an empty component
@@ -86,19 +76,4 @@ object DataElement extends EscapeSeqHandler {
     */
   private def emptyField(cs: Char, ss: Char) = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
 
-  /**
-    * Returns true if the value contains unescaped field,
-    * component, sub-component or repetition separators
-    * @param v - The value
-    * @param s - The separator
-    * @return True if the value contains unescaped characters
-    */
-  private def isUnescaped(v: String)(implicit s: Separators): Boolean = s.tc match {
-    case Some(x) => v exists { c =>
-      c == s.fs || c == s.cs || c == s.ss || c == s.rs //|| c == s.ec || c == x
-    }
-    case None => v exists { c =>
-      c == s.fs || c == s.cs || c == s.ss || c == s.rs //|| c == s.ec
-    }
-  }
 }

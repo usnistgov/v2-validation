@@ -9,7 +9,8 @@ case class Message(
     model: MM,
     children: List[SegOrGroup],
     invalid: List[(Int, String)],
-    unexpected: List[(Int, String)]
+    unexpected: List[(Int, String)],
+    separators: Separators
 ) {
 
   lazy val asGroup = Group( model.asGroup, 1, children)

@@ -1,35 +1,37 @@
 package expression
 
 import hl7.v2.instance.Query._
-import hl7.v2.instance.{Element, Simple}
+import hl7.v2.instance.{Separators, Element, EscapeSeqHandler, Simple}
 
 import scala.util.{Failure, Success}
 
-trait DefaultEvaluator extends Evaluator {
+trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
   /**
     * Evaluates the expression within the specified context
     * and returns the result
-    * @param exp     - The expression to be evaluated
-    * @param context - The context node
+    * @param e - The expression to be evaluated
+    * @param c - The context node
+    * @param s - The message separators
     * @return The evaluation result
     */
-  def eval(exp: Expression, context: Element): EvalResult = exp match {
-    case e: Presence    => presence(e, context)
-    case e: PlainText   => plainText(e, context)
-    case e: Format      => format(e, context)
-    case e: NumberList  => numberList(e, context)
-    case e: StringList  => stringList(e, context)
-    case e: SimpleValue => simpleValue(e, context)
-    case e: PathValue   => pathValue(e, context)
-    case e: AND         => and(e, context)
-    case e: OR          => or(e, context)
-    case e: NOT         => not(e, context)
-    case e: XOR         => xor(e, context)
-    case e: IMPLY       => imply(e, context)
-    case e: EXIST       => exist(e, context)
-    case e: FORALL      => forall(e, context)
-    case e: Plugin      => plugin(e, context)
+  def eval(e: Expression, c: Element)
+          (implicit  s: Separators): EvalResult = e match {
+    case x: Presence    => presence(x, c)
+    case x: PlainText   => plainText(x, c)
+    case x: Format      => format(x, c)
+    case x: NumberList  => numberList(x, c)
+    case x: StringList  => stringList(x, c)
+    case x: SimpleValue => simpleValue(x, c)
+    case x: PathValue   => pathValue(x, c)
+    case x: AND         => and(x, c)
+    case x: OR          => or(x, c)
+    case x: NOT         => not(x, c)
+    case x: XOR         => xor(x, c)
+    case x: IMPLY       => imply(x, c)
+    case x: EXIST       => exist(x, c)
+    case x: FORALL      => forall(x, c)
+    case x: Plugin      => plugin(x, c)
   }
 
   /**
@@ -51,10 +53,11 @@ trait DefaultEvaluator extends Evaluator {
     * @param context - The context
     * @return The evaluation result
     */
-  def plainText(p: PlainText, context: Element): EvalResult =
+  def plainText(p: PlainText, context: Element)
+               (implicit s: Separators): EvalResult =
     queryAsSimple(context, p.path) match {
       case Success(ls)  =>
-        ls filter( s => notEqual(s, p.text, p.ignoreCase) ) match {
+        ls filter( x => notEqual(x, p.text, p.ignoreCase) ) match {
           case Nil => Pass
           case xs  => Failures.plainTextFailure(p, xs)
         }
@@ -67,10 +70,10 @@ trait DefaultEvaluator extends Evaluator {
     * @param context - The context
     * @return The evaluation result
     */
-  def format(f: Format, context: Element): EvalResult =
+  def format(f: Format, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, f.path) match {
       case Success(ls)  =>
-        ls filter( s => notMatch(s, f.pattern) ) match {
+        ls filter( x => notMatch(x, f.pattern) ) match {
           case Nil => Pass
           case xs  => Failures.formatFailure(f, xs)
         }
@@ -91,7 +94,7 @@ trait DefaultEvaluator extends Evaluator {
     * @param context - The context
     * @return The evaluation result
     */
-  def and(and: AND, context: Element): EvalResult =
+  def and(and: AND, context: Element)(implicit s: Separators): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
       case f: Fail         => Failures.andFailure(and, context, f)
@@ -108,7 +111,7 @@ trait DefaultEvaluator extends Evaluator {
     * @param context - The context
     * @return The evaluation result
     */
-  def or(or: OR, context: Element): EvalResult =
+  def or(or: OR, context: Element)(implicit s: Separators): EvalResult =
     eval( or.exp1, context ) match {
       case f1: Fail =>
         eval(or.exp2, context) match {
@@ -124,20 +127,20 @@ trait DefaultEvaluator extends Evaluator {
     * @param context - The context
     * @return The evaluation result
     */
-  def not(not: NOT, context: Element): EvalResult =
+  def not(not: NOT, context: Element)(implicit s: Separators): EvalResult =
     eval( not.exp, context ) match {
       case Pass    => Failures.notFailure( not, context)
       case f: Fail => Pass
       case i: Inconclusive => i
     }
 
-  def xor(xor: XOR, context: Element): EvalResult = ??? //FIXME
+  def xor(xor: XOR, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
 
-  def imply(e: IMPLY, context: Element): EvalResult = ??? //FIXME
+  def imply(e: IMPLY, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
 
-  def exist(e: EXIST, context: Element): EvalResult = ??? //FIXME
+  def exist(e: EXIST, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
 
-  def forall(e: FORALL, context: Element): EvalResult = ??? //FIXME
+  def forall(e: FORALL, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
 
   /**
     * Evaluates the plugin expression and returns the result
@@ -145,22 +148,26 @@ trait DefaultEvaluator extends Evaluator {
     * @param context - The context
     * @return The evaluation result
     */
-  def plugin(e: Plugin, context: Element): EvalResult =
+  def plugin(e: Plugin, context: Element)(implicit s: Separators): EvalResult =
     pluginMap.get( e.id ) match {
-      case Some( f ) => f( e, context )
+      case Some( f ) => f( e, context, s )
       case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
     }
 
   /**
-    * Returns true if the value of 's' is not equal to 'text' depending on the case
+    * Returns true if the unescaped value of 's' is not
+    * equal to the unescaped 'text' depending on the case
     */
-  private def notEqual(s: Simple, text: String, cs: Boolean): Boolean =
-    if( cs ) !s.value.asString.equalsIgnoreCase( text )
-    else !(s.value.asString == text)
+  private def notEqual(s: Simple, text: String, cs: Boolean)
+                      (implicit separators: Separators): Boolean =
+    if( cs ) ! unescape(s.value.raw).equalsIgnoreCase( unescape(text) )
+    else unescape(s.value.raw) != unescape(text)
 
   /**
-    * Returns true if the value of 's' don't match the regular expression 'regex'
+    * Returns true if the unescaped value of 's'
+    * don't match the regular expression 'regex'
     */
-  private def notMatch(s: Simple, regex: String): Boolean =
-    !regex.r.pattern.matcher(s.value.asString).matches
+  private def notMatch(s: Simple, regex: String)
+                      (implicit separators: Separators): Boolean =
+    !regex.r.pattern.matcher( unescape(s.value.raw) ).matches
 }

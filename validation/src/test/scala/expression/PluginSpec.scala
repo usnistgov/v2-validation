@@ -22,7 +22,7 @@ trait PluginSpec extends Specification with Evaluator with Mocks {
     assert( pluginMap contains "P1" )
     val p = Plugin( "P1", Map[String, String]() )
     val expected = Pass
-    assert( pluginMap("P1")(p, c1) === expected)
+    assert( pluginMap("P1")(p, c1, separators) === expected)
     eval( p, c1 ) === expected
   }
 
@@ -31,7 +31,7 @@ trait PluginSpec extends Specification with Evaluator with Mocks {
     val p = Plugin( "P2", Map[String, String]() )
     val reasons = Reason(c1.location, s"$p execution failed") :: Nil
     val expected = Fail( p -> reasons :: Nil)
-    assert( pluginMap("P2")(p, c1) === expected)
+    assert( pluginMap("P2")(p, c1, separators) === expected)
     eval( p, c1 ) === expected
   }
 
@@ -39,7 +39,7 @@ trait PluginSpec extends Specification with Evaluator with Mocks {
     assert( pluginMap contains "P3" )
     val p = Plugin( "P3", Map[String, String]() )
     val expected = Inconclusive(p, Nil)
-    assert( pluginMap("P3")(p, c1) === expected)
+    assert( pluginMap("P3")(p, c1, separators) === expected)
     eval( p, c1 ) === Inconclusive(p, Nil)
   }
 

@@ -1,19 +1,19 @@
 package expression
 
-import hl7.v2.instance.Element
+import hl7.v2.instance.{Separators, Element}
 
 object DefaultEvaluatorSpec extends EvaluatorSpec with DefaultEvaluator {
 
-  val f1 = (p: Plugin, c: Element) => Pass
+  val f1 = (p: Plugin, c: Element, s: Separators) => Pass
 
-  def f2(p: Plugin, c: Element): Fail = {
+  def f2(p: Plugin, c: Element, s: Separators): Fail = {
     val reasons = Reason(c.location, s"$p execution failed") :: Nil
     Fail( p -> reasons :: Nil)
   }
 
-  def f3 = (p: Plugin, c: Element) => Inconclusive(p, Nil)
+  def f3 = (p: Plugin, c: Element, s: Separators) => Inconclusive(p, Nil)
 
-  val pluginMap = Map[String, (Plugin, Element) => EvalResult](
+  val pluginMap = Map[String, (Plugin, Element, Separators) => EvalResult](
     "P1" -> f1,
     "P2" -> f2,
     "P3" -> f3

@@ -8,14 +8,17 @@ import scala.util.Try
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-sealed trait Value {
-  def asString: String
+sealed trait Value extends EscapeSeqHandler {
 
   /**
-    * Returns true if the value contains unescaped field,
-    * component, sub-component or repetition separators
+    * The raw string value as defined in the message
     */
-  def isUnescaped: Boolean
+  def raw: String
+
+  /**
+    * The raw value with escaped separators replaced with their values.
+    */
+  def unescaped(implicit s: Separators) = unescape( raw )
 
   /**
     * Compares this to v and returns :
@@ -30,25 +33,31 @@ sealed trait Value {
 
 //TODO: Correctly handle HL7 Null value
 
-case class Number(asString: String, isUnescaped: Boolean = false) extends Value
-case class Text(asString: String, isUnescaped: Boolean = false) extends Value
-case class Date(asString: String, isUnescaped: Boolean = false) extends Value
-case class Time(asString: String, isUnescaped: Boolean = false) extends Value
-case class DateTime(asString: String, isUnescaped: Boolean = false) extends Value
-case class FormattedText(asString: String, isUnescaped: Boolean = false) extends Value
+case class Number(raw: String) extends Value
+case class Text(raw: String) extends Value
+case class Date(raw: String) extends Value
+case class Time(raw: String) extends Value
+case class DateTime(raw: String) extends Value
+case class FormattedText(raw: String) extends Value
+case object Null extends Value { val raw = Value.NULL }
 
 object Value {
+
+  val NULL = ""
 
   /**
     * Create the value from string depending on the data type
     */
-  def apply(datatype: Primitive, asString: String, isUnescaped: Boolean): Value =
-    datatype.name match {
-      case "NM"  => Number( asString, isUnescaped )
-      case "DT"  => Date( asString, isUnescaped )
-      case "TM"  => Time( asString, isUnescaped )
-      case "DTM" => DateTime( asString, isUnescaped )
-      case "FT"  => FormattedText( asString, isUnescaped )
-      case _     => Text( asString, isUnescaped )
-    }
+  def apply(datatype: Primitive, raw: String): Value =
+    if( raw == NULL )
+      Null
+    else
+      datatype.name match {
+        case "NM"  => Number( raw )
+        case "DT"  => Date( raw )
+        case "TM"  => Time( raw )
+        case "DTM" => DateTime( raw )
+        case "FT"  => FormattedText( raw )
+        case _     => Text( raw )
+      }
 }

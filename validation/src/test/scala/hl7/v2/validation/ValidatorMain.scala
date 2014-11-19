@@ -1,7 +1,7 @@
 package hl7.v2.validation
 
 import expression.{Plugin, EvalResult}
-import hl7.v2.instance.Element
+import hl7.v2.instance.{Separators, Element}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
 import hl7.v2.validation.report.PrettyPrint
@@ -48,7 +48,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       /PDQ
       /""".stripMargin('/')
 
-  val pluginMap = Map[String, (Plugin, Element) => EvalResult]()
+  val pluginMap = Map[String, (Plugin, Element, Separators) => EvalResult]()
 
   val validtor = new HL7Validator(profile, content.EmptyConstraintManager, pluginMap)
 

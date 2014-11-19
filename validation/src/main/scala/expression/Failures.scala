@@ -14,14 +14,14 @@ object Failures {
   def plainTextFailure(e: PlainText, xs: Seq[Simple]): Fail = {
     val cs = if( e.ignoreCase ) "case insensitive" else "case sensitive"
     val reasons = xs.toList map { s =>
-      Reason(s.location, s"'${s.value.asString}' is different from '${e.text}' ($cs)")
+      Reason(s.location, s"'${s.value.raw}' is different from '${e.text}' ($cs)") //FIXME escape both values?
     }
     Fail( e -> reasons :: Nil )
   }
 
   def formatFailure(e: Format, xs: Seq[Simple]): Fail = {
     val reasons = xs.toList map { s =>
-      Reason(s.location, s"'${s.value.asString}' doesn't match '${e.pattern}'")
+      Reason(s.location, s"'${s.value.raw}' doesn't match '${e.pattern}'") //FIXME escape both values?
     }
     Fail( e -> reasons :: Nil )
   }

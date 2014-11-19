@@ -25,7 +25,7 @@ trait DefaultParser extends Parser {
       val PPR(valid, invalid, separators) = t
       implicit val s = separators
       val(children, unexpected) = processChildren( model.structure , valid)
-      Message( model, children.reverse, invalid, unexpected )
+      Message( model, children.reverse, invalid, unexpected, s )
     }
 
   // Type Aliases
@@ -42,8 +42,12 @@ trait DefaultParser extends Parser {
                              (implicit seps: Separators): (LSG, Stack) =
     models.foldLeft( (List[SegOrGroup](), stack) ) { (acc, x) =>
       x match {
-        case sm: SM => val (ls, s) = processSegment(sm, acc._2); (ls ::: acc._1, s)
-        case gm: GM => val (lg, s) = processGroup(gm, acc._2); (lg ::: acc._1, s)
+        case sm: SM =>
+          val (ls, s) = processSegment(sm, acc._2)
+          (ls ::: acc._1, s)
+        case gm: GM =>
+          val (lg, s) = processGroup(gm, acc._2)
+          (lg ::: acc._1, s)
       }
     }
 

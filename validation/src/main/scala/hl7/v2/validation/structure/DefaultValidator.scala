@@ -1,6 +1,6 @@
 package hl7.v2.validation.structure
 
-import hl7.v2.instance.{Complex, Element, Location, Message, Simple}
+import hl7.v2.instance._
 import hl7.v2.profile.{Range, Req, Usage}
 import hl7.v2.validation.report._
 
@@ -19,6 +19,7 @@ trait DefaultValidator extends Validator {
     * @return  - The list of problems
     */
   def checkStructure(m: Message): Future[List[SEntry]] = Future {
+    implicit val s = m.separators
     (m.invalid, m.unexpected) match {
       case (Nil, Nil) => check(m.asGroup)
       case (xs , Nil) => InvalidLines(xs) :: check(m.asGroup)
@@ -34,10 +35,11 @@ trait DefaultValidator extends Validator {
     * @param r - The requirements
     * @return A list of problems found
     */
-  def check(e: Element, r: Req): List[SEntry] = e match {
-    case s: Simple  => check(s, r)
-    case c: Complex => check(c)
-  }
+  def check(e: Element, r: Req)(implicit sep: Separators): List[SEntry] =
+    e match {
+      case s: Simple  => check(s, r)
+      case c: Complex => check(c)
+    }
 
   /**
     * Checks the simple element against the specified requirements
@@ -45,15 +47,15 @@ trait DefaultValidator extends Validator {
     * @param req - The requirements
     * @return A list of problems found
     */
-  def check(s: Simple, req: Req): List[SEntry] =
-    checkUnescapedSeparators( s ) ::: checkLength( s, req.length )
+  def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
+    checkUnescapedSeps( ss ) ::: checkLength( ss, req.length )
 
   /**
     * Checks the children of the complex element against their requirements
     * @param c - The complex element to be checked
     * @return A list of problems found
     */
-  def check(c: Complex): List[SEntry] = {
+  def check(c: Complex)(implicit s: Separators): List[SEntry] = {
     // Sort the children by position
     val map = c.children.groupBy( x => x.position )
 
@@ -142,19 +144,28 @@ trait DefaultValidator extends Validator {
     * Returns a length entry if the length is not in range Nil otherwise.
     * This assumes that the underlining string has been properly escaped.
     */
-  def checkLength(s: Simple, range: Range): List[SEntry] = {
-    val v = s.value.asString
+  def checkLength(s: Simple, range: Range)
+                 (implicit sep: Separators): List[SEntry] = {
+    val v = s.value.unescaped
     if (inRange(v.length, range)) Nil else Length(s.location, v, range) :: Nil
   }
 
-  private def checkLength(s: Simple, or: Option[Range]): List[SEntry] =
+  private def checkLength(s: Simple, or: Option[Range])
+                         (implicit sep: Separators): List[SEntry] =
     or match {
       case Some(r) => checkLength(s, r)
       case None    => Nil
     }
 
-  private def checkUnescapedSeparators(s: Simple): List[UnescapedSeparators] =
-    if( s.value.isUnescaped ) UnescapedSeparators( s.location ):: Nil else Nil
+  private def checkUnescapedSeps(ss: Simple)(implicit s: Separators) =
+    if(containSeparators(ss.value)) UnescapedSeparators(ss.location):: Nil else Nil
+
+  /**
+    * Returns true if the value contain unescaped field,
+    * component, sub-component or repetition separators
+    */
+  private def containSeparators(v: Value)(implicit s: Separators): Boolean =
+    v.raw exists { c => c == s.fs || c == s.cs || c == s.ss || c == s.rs }
 
   /**
     * Returns the instance number of the element
