@@ -21,22 +21,152 @@ sealed trait Value extends EscapeSeqHandler {
   def unescaped(implicit s: Separators) = unescape( raw )
 
   /**
+    * Returns the format error if any
+    */
+  def formatError: Option[String]
+
+  /**
     * Compares this to v and returns :
     *   Success( 1 ) if this is greater that `v'
     *   Success(-1 ) if this is lower that `v'
     *   Success( 0 ) if this is equal to `v'
-    *   Failure if `v' cannot be converted to the current Value class or if the comparison is not permitted.
+    *   Failure if `v' cannot be converted to the current
+    *   Value class or if the comparison is not permitted.
     */
-  def compareTo(v: Value): Try[Int] = Value.compareTo(this, v)
+  def compareTo(v: Value): Try[Int]
 }
 
-case object Null extends Value { def raw = Value.NULL }
-case class Number(raw: String) extends Value
-case class Text(raw: String) extends Value
-case class Date(raw: String) extends Value
-case class Time(raw: String) extends Value
-case class DateTime(raw: String) extends Value
-case class FormattedText(raw: String) extends Value
+/**
+  * Object representing an HL7 Null
+  */
+case object Null extends Value {
+
+  def raw = Value.NULL
+
+  val formatError = None
+
+  override def compareTo(v: Value): Try[Int] = v match {
+    case Null => Success( 0 )
+    case _    => Success( raw compareTo v.raw )
+  }
+}
+
+/**
+  * Class representing a number
+  */
+case class Number(raw: String) extends Value {
+
+  lazy val formatError: Option[String] =
+    if( raw matches Value.NMFormat) None
+    else Some(s"$this is invalid according to HL7 NM data type format rules")
+
+  override def compareTo(v: Value): Try[Int] = formatError match {
+    case Some(m) => Failure( new Exception(m) )
+    case None    =>
+      v match {
+        case x: Number =>
+          x.formatError match {
+            case None    => Success( raw.toDouble compareTo x.raw.toDouble )
+            case Some(m) => Failure( new Exception(m) )
+          }
+        case x: Text          => convertAndCompare( v )
+        case x: FormattedText => convertAndCompare( v )
+        case _ => Failure( new Exception(s"Cannot compare $this with $v") )
+      }
+  }
+
+  private def convertAndCompare(v: Value): Try[Int] =
+    if( v.raw matches Value.NMFormat )
+      Success(raw.toDouble compareTo v.raw.toDouble)
+    else
+      Failure( new Exception(s"Converting $v to a Number yielded an invalid result. The format is invalid") )
+}
+
+/**
+  * Class representing a date
+  */
+case class Date(raw: String) extends Value {
+
+  lazy val formatError: Option[String] =
+    Value.checkDate(raw) map { x => s"$this is invalid. $x." }
+
+  override def compareTo(v: Value): Try[Int] = formatError match {
+    case Some(m) => Failure( new Exception(m) )
+    case None    =>
+      v match {
+        case x: Date =>
+          x.formatError match {
+            case None    => Success( raw.toDouble compareTo x.raw.toDouble )
+            case Some(m) => Failure( new Exception(m) )
+          }
+        case Null      => Failure( new Exception(s"Cannot compare $this with $v") )
+        case x: Number => Failure( new Exception(s"Cannot compare $this with $v") ) //FIXME: The idea here is that 1.0 == 1 == 0001.000000
+        case x: Time   => Failure( new Exception(s"Cannot compare $this with $v") )
+        case _         => convertAndCompare( v )
+      }
+  }
+
+  private def convertAndCompare(v: Value): Try[Int] = {
+    //FIXME This is okay if we assume that DT and DTM have the same time zone
+    val x = if ( v.isInstanceOf[DateTime] ) v.raw take 6 else v.raw
+    Value.checkDate( x ) match {
+      case None => Success( raw.toDouble compareTo x.toDouble )
+      case Some(m) =>
+        Failure( new Exception(s"Converting $v to a Date yielded an invalid result. $m") )
+    }
+  }
+}
+
+/**
+  * Class representing a time
+  */
+case class Time(raw: String) extends Value {
+
+  lazy val formatError: Option[String] = ??? //FIXME
+
+  def compareTo(v: Value): Try[Int] = v match {
+    case x: Time          => Success( raw compareTo v.raw ) //FIXME
+    case x: Text          => Success( raw compareTo v.raw ) //FIXME check format
+    case x: FormattedText => Success( raw compareTo v.raw ) //FIXME check format
+    case _  => Failure( new Exception(s"Cannot compare $this with $v") ) //FIXME Is this Ok for Null?
+  }
+}
+
+/**
+  * Class representing a date time
+  */
+case class DateTime(raw: String) extends Value {
+
+  lazy val formatError: Option[String] = ??? //FIXME
+
+  def compareTo(v: Value): Try[Int] = v match {
+    case x: DateTime => Success( raw compareTo v.raw ) //FIXME
+    case x: Date     => x.compareTo( this ) map ( - _ ) //Forward and negate the result
+    case x: Text     => Success( raw compareTo v.raw ) //Textual comparison
+    case x: FormattedText => Success( raw compareTo v.raw ) //Textual comparison
+    case _ => Failure( new Exception(s"Cannot compare $this with $v") ) //FIXME Is this Ok for Null?
+  }
+}
+
+/**
+  * Class representing a text
+  */
+case class Text(raw: String) extends Value {
+
+  lazy val formatError = None
+
+  def compareTo(v: Value): Try[Int] = Success( raw compareTo v.raw )
+}
+
+/**
+  * Class representing a formatted text
+  */
+case class FormattedText(raw: String) extends Value {
+
+  lazy val formatError = None
+
+  def compareTo(v: Value): Try[Int] = Success( raw compareTo v.raw )
+}
 
 /**
   * Value companion object
@@ -70,32 +200,39 @@ object Value {
    Except for the optional leading sign (+ or -) and the optional decimal
    point (.), no non-numeric ASCII characters are allowed.
   */
-  val NMRegex = "(\\+|\\-)\\d+(\\.\\d*)?".r
+  val NMFormat = "(\\+|\\-)\\d+(\\.\\d*)?"
 
-  def hasValidNMFormat(s: String) = NMRegex.pattern.matcher(s).matches
+  //YYYY[MM[DD]]
+  val DTFormat = """\d{4}((0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])?)?"""
 
-  def toNMasDouble(v: Value): Try[Double] =
-    if( hasValidNMFormat(v.raw) )
-      Success( v.raw.toDouble )
-    else {
-      val msg = v match {
-        case Number(_) => s"$v is invalid according to HL7 NM format rules."
-        case _ => s"Cannot convert $v to a Number. Its value has an invalid HL7 NM format."
+  //HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]
+  val TMFormat = ""
+
+  // YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ]
+  val DTMFormat = ""
+
+
+  def compareTo(v1: Value, v2: Value): Try[Int] = ??? //FIXME
+
+  /**
+    * Checks the date and returns the error message if any.
+    * @param s - The date as string
+    * @return None if valid
+    */
+  def checkDate(s: String): Option[String] =
+    if( s matches DTFormat ) {
+      val y = s take 4
+      val m = s drop 4 take 2
+      val d = s drop 6 take 2
+      if( "02" == m ) {
+        if( d == "30" || d == "31" ) Some(s"February cannot have $d days")
+        else if( d == "29" && y.toInt % 4 != 0 )
+          Some(s"February cannot have 29 days since $y is not a leap year")
+        else None
       }
-      Failure( new Exception(msg) )
-    }
-
-
-  def compareTo(v1: Value, v2: Value): Try[Int] = (v1, v2) match {
-    case(n: Number, v) => toNMasDouble(n) flatMap { d => toNMasDouble(v) map (d compareTo _) }
-    case(v, n: Number) => toNMasDouble(v) flatMap { d => toNMasDouble(v) map (d compareTo _) }
-    case(x: Date, v)   => ???
-    case(v, x: Date)   => ???
-    case(x: Time, v)   => ???
-    case(v, x: Time)   => ???
-    case(x: DateTime, v) => ???
-    case(v, x: DateTime) => ???
-    case(x1, x2)         => Success( x1.raw compareTo x2.raw  )
-  }
+      else if( d == "31" && ("04" == m || "06" == m || "09" == m || "11" == m) )
+        Some(s"The month $m cannot have 31 days")
+      else None
+    } else Some("The format is invalid according to HL7 DT data type format")
 
 }
