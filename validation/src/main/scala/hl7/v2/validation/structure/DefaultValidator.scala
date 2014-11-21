@@ -10,7 +10,7 @@ import scala.concurrent.Future
 /**
   * Default implementation of the structure validation
   */
-trait DefaultValidator extends Validator {
+trait DefaultValidator extends Validator with EscapeSeqHandler {
 
   /**
     * Checks the message structure and returns the list of problems.
@@ -147,7 +147,7 @@ trait DefaultValidator extends Validator {
     */
   def checkLength(s: Simple, range: Range)
                  (implicit sep: Separators): List[SEntry] = {
-    val v = s.value.unescaped
+    val v = unescape( s.value.raw )
     if (inRange(v.length, range)) Nil else Length(s.location, v, range) :: Nil
   }
 
