@@ -96,3 +96,11 @@ Cardinality
    
    
    Note that truncation was introduced in HL7 2.7 but the escape sequence is defined in HL7 2.8
+   
+## Value semantic comparison
+
+Null, Number, Date, Time, DateTime, Text, FormattedText
+
+
+### Comparing Null with 
+    - Null: 
