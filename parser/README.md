@@ -1,5 +1,9 @@
 # HL7 Instance model
 
+## What is an Empty Field, Component ?
+
+    Note that whitespaces will cbe counted when computing the length
+
 ## HL7 Null value
 
     *HL7 does not care how systems actually store data within an application. When fields are transmitted, 
