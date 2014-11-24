@@ -1,6 +1,9 @@
 package hl7.v2.instance
 
 import hl7.v2.profile.Primitive
+import Value._
+
+import scala.util.{Success, Failure, Try}
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
@@ -13,21 +16,22 @@ sealed trait Value extends {
     */
   def raw: String
 
+  /**
+    * Returns true if the value is equal to HL7 Null ("")
+    */
+  def isNull: Boolean = raw == Value.NULL
+
 }
 
-sealed trait Null extends Value { val raw = Value.NULL }
-case object NullNumber   extends Null
-case object NullDate     extends Null
-case object NullTime     extends Null
-case object NullDateTime extends Null
-case object NullText     extends Null
+case class Number(raw: String) extends Value
+case class Date(raw: String) extends Value
+case class Time(raw: String) extends Value
+case class DateTime(raw: String) extends Value
+case class Text(raw: String) extends Value
+case class FText(raw: String) extends Value
 
-case class Number(raw: String)        extends Value
-case class Date(raw: String)          extends Value
-case class Time(raw: String)          extends Value
-case class DateTime(raw: String)      extends Value
-case class Text(raw: String)          extends Value
-case class FormattedText(raw: String) extends Value
+
+case class TimeZone(raw: String)
 
 /**
   * Value companion object
@@ -37,16 +41,17 @@ object Value {
   val NULL = "\"\""
 
   /**
-   * Create the value from string depending on the data type
-   */
+    * Create the value from string depending on the data type
+    */
   def apply(datatype: Primitive, raw: String): Value =
     datatype.name match {
-      case "NM" => if (raw == NULL) NullNumber else Number(raw)
-      case "DT" => if (raw == NULL) NullDate else Date(raw)
-      case "TM" => if (raw == NULL) NullTime else Time(raw)
-      case "DTM" => if (raw == NULL) NullDateTime else DateTime(raw)
-      case _ if raw == NULL => NullText
-      case "FT" => FormattedText(raw)
-      case _ => Text(raw)
+      case "NM" => Number(raw)
+      case "DT" => Date(raw)
+      case "TM" => Time(raw)
+      case "DTM"=> DateTime(raw)
+      case "FT" => FText(raw)
+      case _    => Text(raw)
     }
+
+  def splitOnTZ(s: String): (String, String) = s span( c => c != '+' && c != '-' )
 }

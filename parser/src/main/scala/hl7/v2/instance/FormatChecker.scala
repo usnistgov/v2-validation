@@ -2,20 +2,21 @@ package hl7.v2.instance
 
 object FormatChecker {
 
-  val NMFormat = """(\+|\-)?\d+(\.\d*)?"""
 
-  private val SS = "[0-5][0-9]"
-  private val MM = SS
+  //FIXME It seems like valid TZ offsets are -12 +14
+  // see: http://en.wikipedia.org/wiki/List_of_UTC_time_offsets
+
+  private val SS, MM = "[0-5][0-9]"
   private val HH = "([0-1][0-9]|2[0-3])"
-  //FIXME It seems like valid TZ offsets are -12 +14 see: http://en.wikipedia.org/wiki/List_of_UTC_time_offsets
-  private val TZ = s"(\\+|\\-)$HH$MM"
-  private val TMFormat = s"$HH($MM($SS(\\.\\d{1,4})?)?)?($TZ)?"
 
   private val YYYY = "\\d{4}"
   private val mm   = "(0[1-9]|1[0-2])"
   private val DD   = "(0[1-9]|[1-2][0-9]|3[0-1])"
 
-  private val DTFormat = s"$YYYY($mm($DD)?)?"
+  val NMFormat = """(\+|\-)?\d+(\.\d*)?"""
+  val DTFormat = s"$YYYY($mm($DD)?)?"
+  val TZFormat = s"(\\+|\\-)($HH)($MM)".r
+  val TMFormat = s"$HH($MM($SS(\\.\\d{1,4})?)?)?($TZFormat)?"
 
   /**
     * Checks the number format and returns the error message if any
@@ -81,9 +82,9 @@ object FormatChecker {
   }
 
   def checkTimeZoneFormat(s: String): Option[String] =
-    if( s matches TZ ) None
+    if( TZFormat.pattern.matcher(s).matches ) None
     else Some(s"TimeZone($s) is invalid. The format should be: [+|-]HHMM")
 
-  private
   def splitOnTZ(s: String): (String, String) = s span( c => c != '+' && c != '-' )
+
 }
