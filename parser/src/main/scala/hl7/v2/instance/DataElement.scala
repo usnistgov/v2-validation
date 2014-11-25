@@ -4,6 +4,8 @@ import hl7.v2.profile.{ Field => FM, Component => CM, Composite, Primitive }
 
 object DataElement {
 
+  implicit val dtz: Option[TimeZone] = None //FIXME Get the default from MSH
+
   /**
     * Creates and returns a field object
     * @param m - The field model
