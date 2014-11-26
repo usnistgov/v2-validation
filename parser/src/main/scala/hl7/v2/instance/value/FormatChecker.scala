@@ -4,12 +4,12 @@ package value
 trait FormatChecker {
 
   def checkFormat[T](t: T)(implicit x: Format[T]): Option[String] =
-    x.checkFormat(t)
+    x.check(t)
 }
 
 trait Format[T] {
 
-  def checkFormat(t: T): Option[String]
+  def check(t: T): Option[String]
 }
 
 object Format {
@@ -34,7 +34,7 @@ object Format {
     * Implicit object for checking the format of a Number
     */
   implicit object NumberFormatChecker extends Format[Number] {
-    def checkFormat(n: Number): Option[String] = checkNumberFormat(n.raw)
+    def check(n: Number): Option[String] = checkNumberFormat(n.raw)
   }
 
   /*****************************************************************************
@@ -62,7 +62,7 @@ object Format {
     * Implicit object for checking the format of a Date
     */
   implicit object DateFormatChecker extends Format[Date] {
-    def checkFormat(d: Date): Option[String] = checkDateFormat(d.raw)
+    def check(d: Date): Option[String] = checkDateFormat(d.raw)
   }
 
   /**
@@ -92,15 +92,14 @@ object Format {
     */
   def checkTimeFormat(s: String): Option[String] =
     if(s matches TM) None
-    else Some {
-      s"$s is not a valid Time(TM). The format should be: HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]"
-    }
+    else Some( s"$s is not a valid Time(TM). " +
+      s"The format should be: HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]")
 
   /**
     * Implicit object for checking the format of a time
     */
   implicit object TimeFormatChecker extends Format[Time] {
-    def checkFormat(t: Time): Option[String] = checkTimeFormat(t.raw)
+    def check(t: Time): Option[String] = checkTimeFormat(t.raw)
   }
 
   /*****************************************************************************
@@ -115,20 +114,36 @@ object Format {
     */
   def checkDateTimeFormat(s: String): Option[String] = s match {
     case DTM(ds, ts, tzs) =>
-      (checkDateFormat(ds), checkTimeFormat(s"$ts$tzs")) match {
-        case (None, None)         => None
-        case (Some(m), None)      => Some(s"$s is not a valid DateTime(DTM). $m")
-        case (None, Some(m))      => Some(s"$s is not a valid DateTime(DTM). $m")
-        case (Some(m1), Some(m2)) => Some(s"$s is not a valid DateTime(DTM). $m1 # $m2")
+      checkDateFormat(ds) match {
+        case Some(m)           => Some( dtmErr(s, m) )
+        case None if ts != ""  => checkTimeFormat(s"$ts$tzs") map { dtmErr(s, _) }
+        case None if tzs != "" =>    checkTimeZoneFormat(tzs) map { dtmErr(s, _) }
+        case None              => None
       }
-    case _ => Some(s"$s is not a valid DateTime(DTM). The format should " +
-      s"be: YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]][+/-ZZZZ]")
+    case _ => Some( dtmErr(s, "The format should be: YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]][+/-ZZZZ]") )
   }
 
   /**
     * Implicit object for checking the format of a DateTime.
     */
-  object DateTimeFormatChecker extends Format[DateTime] {
-    def checkFormat(d: DateTime): Option[String] = checkDateTimeFormat(d.raw)
+  implicit object DateTimeFormatChecker extends Format[DateTime] {
+    def check(d: DateTime): Option[String] = checkDateTimeFormat(d.raw)
   }
+
+  private def dtmErr(s: String, m: String) = s"$s is not a valid DateTime(DTM). $m"
+
+  /*****************************************************************************
+   **************    TimeZone format checking
+   *****************************************************************************/
+  private val TZ = s"(\\+|\\-)?(${Time.HH})(${Time.MM})".r
+
+  /**
+    * Checks the format of a TimeZone and returns the error if any
+    * @param s - The TimeZone as string
+    * @return The error message if any None otherwise
+    */
+  def checkTimeZoneFormat(s: String): Option[String] =
+    if( TZ.pattern.matcher(s).matches ) None
+    else Some(s"TimeZone($s) is invalid. The format should be: +/-HHMM")
+
 }
