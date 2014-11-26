@@ -26,6 +26,30 @@ object Comparator extends FormatChecker {
   import Format._
   import ComparisonGuard._
 
+  implicit object TextComparator extends Comparator[Text, Value] {
+
+    def compareTo(t1: Text, t2: Value): Try[Int] =
+      t2 match {
+        case x: Number   =>   NumberComparator.compareTo(x, t1) map ( - _ )
+        case x: Date     =>     DateComparator.compareTo(x, t1) map ( - _ )
+        case x: Time     =>     TimeComparator.compareTo(x, t1) map ( - _ )
+        case x: DateTime => DateTimeComparator.compareTo(x, t1) map ( - _ )
+        case _ => Success( t1.raw compareTo t2.raw )
+      }
+  }
+
+  implicit object FTextComparator extends Comparator[FText, Value] {
+
+    def compareTo(t1: FText, t2: Value): Try[Int] =
+      t2 match {
+        case x: Number   =>   NumberComparator.compareTo(x, t1) map ( - _ )
+        case x: Date     =>     DateComparator.compareTo(x, t1) map ( - _ )
+        case x: Time     =>     TimeComparator.compareTo(x, t1) map ( - _ )
+        case x: DateTime => DateTimeComparator.compareTo(x, t1) map ( - _ )
+        case _ => Success( t1.raw compareTo t2.raw )
+      }
+  }
+
   implicit object NumberComparator extends Comparator[Number, Value] {
 
     def compareTo(t1: Number, t2: Value): Try[Int] =

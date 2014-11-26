@@ -135,7 +135,7 @@ object Format {
   /*****************************************************************************
    **************    TimeZone format checking
    *****************************************************************************/
-  val TZ = s"(\\+|\\-)?(${Time.HH})(${Time.MM})".r
+  val TZ = s"(\\+|\\-)?($HH)($mm)".r
 
   /**
     * Checks the format of a TimeZone and returns the error if any
