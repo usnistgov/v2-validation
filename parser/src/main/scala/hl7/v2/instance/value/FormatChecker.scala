@@ -44,7 +44,7 @@ object Format {
   private val YY = "\\d{4}"
   private val MM = "(?:0[1-9]|1[0-2])"
   private val DD = "(?:0[1-9]|[1-2][0-9]|3[0-1])"
-  private val DT = s"($YY)(?:($MM)($DD)?)?".r
+  val DT = s"($YY)(?:($MM)($DD)?)?".r
 
   /**
     * Checks the format of a Date and returns the error if any
@@ -83,7 +83,7 @@ object Format {
    *****************************************************************************/
   private val SS, mm = "[0-5][0-9]"
   private val HH = "(?:[0-1][0-9]|2[0-3])"
-  private val TM = s"$HH($mm($SS(\\.\\d{1,4})?)?)?((\\+|\\-)?$HH$mm)?"
+  val TM = s"$HH($mm($SS(\\.\\d{1,4})?)?)?((\\+|\\-)?$HH$mm)?"
 
   /**
     * Checks the format of a Time and returns the error if any
@@ -105,7 +105,7 @@ object Format {
   /*****************************************************************************
    **************    DateTime format checking
    *****************************************************************************/
-  private val DTM = s"(\\d{4,8})([^\\+\\-]*)((?:\\+|\\-)?.*)".r
+  val DTM = s"(\\d{4,8})([^\\+\\-]*)((?:\\+|\\-)?.*)".r
 
   /**
     * Checks the format of a DateTime and returns the error if any
@@ -135,7 +135,7 @@ object Format {
   /*****************************************************************************
    **************    TimeZone format checking
    *****************************************************************************/
-  private val TZ = s"(\\+|\\-)?(${Time.HH})(${Time.MM})".r
+  val TZ = s"(\\+|\\-)?(${Time.HH})(${Time.MM})".r
 
   /**
     * Checks the format of a TimeZone and returns the error if any
