@@ -267,7 +267,7 @@ object Comparator extends FormatChecker {
   * Provides extension method which allow
   * to check if two values can be compared
   */
-object ComparisonGuard {
+object ComparisonGuard { //FIXME TO BE Replaced with extension.ValueComparisonGuards
 
   implicit class TextComparisonGuard(val o: Text) extends AnyVal {
     def comparableWith(v: Value) = true
