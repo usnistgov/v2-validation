@@ -52,4 +52,6 @@ class ValueFormatCheckersSpec extends Specification {
     }
   }
 
+  //TODO Implement TimeZone format tests
+
 }

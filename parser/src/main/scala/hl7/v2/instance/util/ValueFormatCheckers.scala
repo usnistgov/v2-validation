@@ -58,4 +58,11 @@ object ValueFormatCheckers {
     */
   def isValidDateTimeFormat(s: String): Boolean = DTM.pattern.matcher(s).matches
 
+  /**
+    * Returns true 's' has a valid TimeZone format
+    * @param s - The string to tested
+    * @return True 's' has a valid TimeZone format
+    */
+  def isValidTimeZone(s: String): Boolean = s matches TZ
+
 }
