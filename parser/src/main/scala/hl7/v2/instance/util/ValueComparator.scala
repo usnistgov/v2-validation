@@ -8,6 +8,15 @@ import scala.util.{Failure, Success, Try}
 
 object ValueComparator {
 
+  /**
+    * Compares the values v1 and v2 and returns :
+    *   A Success( 1 ) if 'v1' is greater that 'v2'
+    *   A Success(-1 ) if 'v1' is lower that 'v2'
+    *   A Success( 0 ) if 'v1' is equal to 'v2'
+    *   A Failure if :
+    *     'v1' and 'v2' are not comparable
+    *     'v1' or 'v2' is invalid according to the conversion target type
+    */
   def compareTo(v1: Value, v2: Value): Try[Int] = v1 match {
     case x: Text   => textComparison(x, v2)
     case x: Number => numberComparison(x, v2)
