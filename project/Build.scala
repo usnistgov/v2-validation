@@ -8,8 +8,9 @@ object Build extends Build {
   lazy val profile = project
     .settings( libraryDependencies ++= compile(`xml-util`) ++ test( spec2 ) )
 
-  lazy val parser = project.dependsOn( profile % "test->test;compile->compile" )
+  lazy val parser = project.dependsOn( profile % "test->test; compile->compile" )
+                           .settings( libraryDependencies ++= compile(joda) ++ compile(`joda-convert`) )
 
-  lazy val `validation` = project.dependsOn( parser % "test->test;compile->compile" )
+  lazy val `validation` = project.dependsOn( parser % "test->test; compile->compile" )
 
 }
