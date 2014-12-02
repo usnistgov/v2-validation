@@ -68,96 +68,91 @@ object ValueFormatCheckers {
     */
   def isValidTimeZone(s: String): Boolean = s matches TZ
 
-  val  NMFormatErrMsg = "The format should be: [+|-]digits[.digits]"
-  val  DTFormatErrMsg = "The format should be: YYYY[MM[DD]]"
-  val  TMFormatErrMsg = "The format should be: HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]"
-  val DTMFormatErrMsg = "The format should be: YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ]"
-  val TZFormatErrMsg  = "The format should be: +/-HHMM"
-
   /**
-    * Checks the Number format and and returns the error message if any
+    * Checks the Number format and returns the error message if any
     * @param s - The Number as a string
     * @return None if valid
     */
   def checkNumber(s: String): Option[String] =
-    isValidNumberFormat(s) match {
-      case true  => None
-      case false => Some(s"$s is not a valid Number. $NMFormatErrMsg")
-    }
+    if( isValidNumberFormat(s) ) None else Some( numberFormatErr(s) )
 
   /**
-    * Checks the Date format and and returns the error message if any
+    * Checks the Date format and returns the error message if any
     * @param s - The Date as a string
     * @return None if valid
     */
   def checkDate(s: String): Option[String] =
-    isValidDateFormat(s) match {
-      case false => Some(s"$s is not a valid Date. $DTFormatErrMsg")
-      case true  => checkNumberOfDaysInMonth(s)
-    }
+    if( isValidDateFormat(s) ) checkNumberOfDaysInMonth(s)
+    else Some( dateFormatErr(s))
 
   /**
-    * Checks the Time format and and returns the error message if any
+    * Checks the Time format and returns the error message if any
     * @param s - The Time as a string
     * @return None if valid
     */
   def checkTime(s: String): Option[String] =
-    isValidTimeFormat(s) match {
-      case true  => None
-      case false => Some(s"$s is not a valid Time. $TMFormatErrMsg")
-    }
+    if( isValidTimeFormat(s) ) None else  Some( timeFormatErr(s) )
 
   /**
-    * Checks the DateTime format and and returns the error message if any
+    * Checks the DateTime format and returns the error message if any
     * @param s - The DateTime as a string
     * @return None if valid
     */
   def checkDateTime(s: String): Option[String] =
-    isValidDateTimeFormat(s) match {
-      case false => Some(s"$s is not a valid DateTime. $DTMFormatErrMsg")
-      case true  => checkNumberOfDaysInMonth(s take 8)
-    }
+    if( isValidDateTimeFormat(s) ) checkNumberOfDaysInMonth(s take 8)
+    else Some( dateTimeFormatErr(s) )
 
+  /**
+    * Checks the TimeZone anr returns the error message if any
+    * @param s - The TimeZone as string
+    * @return None if valid
+    */
   def checkTimeZone(s: String): Option[String] =
-    isValidTimeZone( s ) match {
-      case true  => None
-      case false => Some(s"$s is not a valid Time Zone. $TZFormatErrMsg")
-    }
+    if( isValidTimeZone(s) ) None else Some( timeFormatErr(s) )
 
-  //============================================================================
-
+  /**
+    * Checks the Number and returns the raw value
+    * @param s - The Number as string
+    * @return A failure if the format is invalid
+    */
   def checkNumberFormat(s: String): Try[String] =
-    isValidNumberFormat(s) match {
-      case true  => Success(s)
-      case false => Failure( new Exception(numberFormatErr(s)) )
-    }
+    if( isValidNumberFormat(s) )  Success(s)
+    else  Failure( new Exception(numberFormatErr(s)) )
 
-  def checkDateFormat(s: String): Try[String] =
-    isValidDateFormat(s) match {
-      case true  =>
-        checkNumberOfDaysInMonth(s) match {
-          case None    => Success(s)
-          case Some(m) => Failure( new Exception(s"Date($s) is invalid. $m") )
-        }
-      case false => Failure( new Exception(dateFormatErr(s)) )
-    }
+  /**
+    * Checks the Date and returns the raw value
+    * @param s - The Date as string
+    * @return A failure if the format is invalid
+    */
+  def checkDateFormat(s: String): Try[String] = checkDate(s) match {
+    case None    => Success(s)
+    case Some(m) => Failure( new Exception(m) )
+  }
 
-  def checkDateTimeFormat(s: String): Try[String] =
-    isValidDateTimeFormat(s) match {
-      case true  =>
-        checkNumberOfDaysInMonth( s take 8 ) match {
-          case None    => Success(s)
-          case Some(m) => Failure( new Exception(s"DateTime($s) is invalid. $m") )
-        }
-      case false => Failure( new Exception(dateTimeFormatErr(s)) )
-    }
+  /**
+    * Checks the DateTime and returns the raw value
+    * @param s - The DateTime as string
+    * @return A failure if the format is invalid
+    */
+  def checkDateTimeFormat(s: String) = checkDateTime(s) match {
+    case None    => Success(s)
+    case Some(m) => Failure( new Exception(m) )
+  }
 
+  /**
+    * Checks the Time and returns the raw value
+    * @param s - The Time as string
+    * @return A failure if the format is invalid
+    */
   def checkTimeFormat(s: String): Try[String] =
-    isValidTimeFormat(s) match {
-      case true  => Success(s)
-      case false => Failure( new Exception(timeFormatErr(s)) )
-    }
+    if( isValidTimeFormat(s) )  Success(s)
+    else Failure( new Exception(timeFormatErr(s)) )
 
+  /**
+    * Checks the TimeZone and returns the raw value
+    * @param s - The TimeZone as string
+    * @return A failure if the format is invalid
+    */
   def checkTimeZoneFormat(s: String): Try[String] =
     if( isValidTimeZone(s) ) Success(s)
     else Failure( new Exception(timeZoneFormatErr(s)) )
@@ -172,29 +167,27 @@ object ValueFormatCheckers {
     val m = s drop 4 take 2
     val d = s drop 6 take 2
     if ("02" == m && (d == "30" || d == "31") )
-      Some(s"$s is not a valid Date. February cannot have $d days")
+      Some(s"$s is not a valid Date. February cannot have $d days.")
     else if (d == "29" && y.toInt % 4 != 0)
-      Some(s"$s is not a valid Date. February cannot have 29 days since $y is not a leap year")
+      Some(s"$s is not a valid Date. February cannot have 29 days since $y is not a leap year.")
     else if (d == "31" && ("04" == m || "06" == m || "09" == m || "11" == m))
-      Some(s"$s is not a valid Date. The month $m cannot have 31 days")
+      Some(s"$s is not a valid Date. The month $m cannot have 31 days.")
     else None
   }
 
-  //============================================================================
-
-  def numberFormatErr(s: String): String =
+  private def numberFormatErr(s: String): String =
     s"$s is not a valid Number. The format should be: [+|-]digits[.digits]"
 
-  def dateFormatErr(s: String): String =
+  private def dateFormatErr(s: String): String =
     s"$s is not a valid Date. The format should be: YYYY[MM[DD]]"
 
-  def timeFormatErr(s: String): String =
+  private def timeFormatErr(s: String): String =
     s"$s is not a valid Time. The format should be: HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]"
 
-  def dateTimeFormatErr(s: String): String =
+  private def dateTimeFormatErr(s: String): String =
     s"$s is not a valid DateTime. The format should be: YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ]"
 
-  def timeZoneFormatErr(s: String): String =
+  private def timeZoneFormatErr(s: String): String =
     s"$s is not a valid TimeZone. The format should be: +/-HHMM"
 
 }

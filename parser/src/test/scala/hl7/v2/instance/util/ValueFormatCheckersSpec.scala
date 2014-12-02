@@ -52,8 +52,46 @@ class ValueFormatCheckersSpec extends Specification {
     }
   }
 
-  //TODO Implement TimeZone format tests
+  "isValidTimeZone" should {
+    val valids = Seq("+0000", "-0000","+2300")
+    s"returns true for ${valids.mkString("{'", "', '", "'}")}" in {
+      valids map { s => isValidTimeZone(s) === true }
+    }
+    val invalids = Seq("0000", "-000", "+00000", "+2400", "+2360", " +0000", "+0000 ", "+ 0000")
+    s"returns false for ${invalids.mkString("{'", "', '", "'}")}" in {
+      invalids map { s => isValidTimeZone(s) === false }
+    }
+  }
 
-  //TODO Implement test for checkXXX
+  "Checking number of days in a Date/DateTime" should {
+
+    val invalidDaysInMonth = Seq("20140431", "20140631", "20140931", "20141131")
+
+    s"returns an error for ${ invalidDaysInMonth.mkString("{", ", ", "}") }" in {
+      invalidDaysInMonth map { s =>
+        val r = Some(s"$s is not a valid Date. The month ${
+          s drop 4 take 2} cannot have 31 days.")
+        checkDate(s) === r and checkDateTime(s) === r
+      }
+    }
+
+    val invalidDaysInFebruary = Seq("20140230", "20140231")
+
+    s"returns an error for ${ invalidDaysInFebruary.mkString("{", ", ", "}") }" in {
+      invalidDaysInFebruary map { s =>
+        val r = Some(s"$s is not a valid Date. February cannot have ${s drop 6} days.")
+        checkDate(s) === r and checkDateTime(s) === r
+      }
+    }
+
+    val d = "20150229"
+
+    s"returns an error for $d. It has 29 days but it is not a leap year." in {
+      val r = Some(s"$d is not a valid Date. " +
+        s"February cannot have 29 days since 2015 is not a leap year.")
+      checkDate(d) === r and checkDateTime(d) === r
+    }
+
+  }
 
 }
