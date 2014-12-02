@@ -8,6 +8,50 @@ package extension
 object ValueComparisonGuards {
 
   implicit class TextComparisonGuard(val o: Text) extends AnyVal {
+    def isComparableWith(v: Value) = true
+  }
+
+  implicit class FTextComparisonGuard(val o: FText) extends AnyVal {
+    def isComparableWith(v: Value) = true
+  }
+
+  implicit class NumberComparisonGuard(val o: Number) extends AnyVal {
+    def isComparableWith(v: Value) = v match {
+      case x: Number => true
+      case x: Text   => true
+      case x: FText  => true
+      case _         => false
+    }
+  }
+
+  implicit class DateComparisonGuard(val o: Date) extends AnyVal {
+    def isComparableWith(v: Value) = v match {
+      case x: Date  => true
+      case x: Text  => true
+      case x: FText => true
+      case _        => false
+    }
+  }
+
+  implicit class TimeComparisonGuard(val o: Time) extends AnyVal {
+    def isComparableWith(v: Value) = v match {
+      case x: Time  => true
+      case x: Text  => true
+      case x: FText => true
+      case _        => false
+    }
+  }
+
+  implicit class DateTimeComparisonGuard(val o: DateTime) extends AnyVal {
+    def isComparableWith(v: Value) = v match {
+      case x: DateTime => true
+      case x: Text     => true
+      case x: FText    => true
+      case _           => false
+    }
+  }
+
+  /*implicit class TextComparisonGuard(val o: Text) extends AnyVal {
     def isComparableWith(v: Text)     = true
     def isComparableWith(v: Number)   = true
     def isComparableWith(v: Date)     = true
@@ -59,6 +103,6 @@ object ValueComparisonGuards {
     def isComparableWith(v: Number)   = false
     def isComparableWith(v: Date)     = false
     def isComparableWith(v: Time)     = false
-  }
+  }*/
 
 }
