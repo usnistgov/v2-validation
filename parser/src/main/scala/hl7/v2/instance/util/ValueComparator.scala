@@ -4,7 +4,6 @@ package util
 import hl7.v2.instance.util.ValueConversionHelpers._
 import hl7.v2.instance.util.ValueFormatCheckers._
 
-import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
 object ValueComparator {
@@ -129,7 +128,7 @@ object ValueComparator {
   }
 
   /**
-    * Compares the values they both have a valid number format
+    * Compares the values they both have to have a valid number format
     */
   private def numberComparator(v1: Number, v2: Value): Try[Int] =
     for {
@@ -138,7 +137,7 @@ object ValueComparator {
     } yield n1.toDouble compareTo n2.toDouble
 
   /**
-    * Compares the values they both have a valid date format
+    * Compares the values they both have to have a valid date format
     */
   private def dateComparator(v1: Date, v2: Value): Try[Int] =
     for {
@@ -147,7 +146,7 @@ object ValueComparator {
     } yield x1 compareTo x2
 
   /**
-    * Compares the values they both have a valid time format
+    * Compares the values they both have to have a valid time format
     */
   private def timeComparator(v1: Time, v2: Value): Try[Int] =
     for {
@@ -158,38 +157,37 @@ object ValueComparator {
     } yield t1 compareTo t2
 
   /**
-    * Compares the values they both have a valid date time format
+    * Compares the values they both have to have a valid date time format
     */
   private def dateTimeComparator(v1: DateTime, v2: Value): Try[Int] =
     for {
       x1 <- checkDateTimeFormat(v1.raw)
       x2 <- checkDateTimeFormat(v2.raw)
-      (dtm1, tzs1) = x1 span( c => c != '+' && c != '-')
-      (dtm2, tzs2) = x2 span( c => c != '+' && c != '-')
-      tz1 <- defaultTZ(tzs1, v1.dtz)
-      tz2 <- defaultTZ(tzs2, v1.dtz)
+    } yield x1 compareTo x2  //FIXME We do textual comparison for now
+
+  /*
+  private def dateTimeComparator(v1: DateTime, v2: Value): Try[Int] =
+    for {
+      x1 <- checkDateTimeFormat(v1.raw)
+      x2 <- checkDateTimeFormat(v2.raw)
+      (dtm1, tzs1) = splitOnTZ(x1)
+      (dtm2, tzs2) = splitOnTZ(x2)
+      tz1 <- defaultTZ(tzs1, v1.dtz) //If no tz in DTM and no default set then fail
+      tz2 <- defaultTZ(tzs2, v1.dtz) //If no default tz and v2 is not DTM then fail
     } yield {
       dtm1 take 6 compareTo ( dtm2 take 6 ) match {
         case 0 => // we need to check the day
           val d1 = dtm1 drop 6 take 2 match { case "" => 0 case x => x.toInt }
           val d2 = dtm2 drop 6 take 2 match { case "" => 0 case x => x.toInt }
-          val t1 = dtm1 drop 8 match { case "" => 0 case x => x.toInt }
-          val t2 = dtm2 drop 8 match { case "" => 0 case x => x.toInt }
-          //( d1 + timeToDay(t1, tz1) ) compareTo ( d2 + timeToDay(t2, tz2) )
-          ??? //FIXME
+          val t1 = dtm1 drop 8 match { case "" => s"00$tz1" case x => s"$x$tz1" }
+          val t2 = dtm2 drop 8 match { case "" => s"00$tz2" case x => s"$x$tz2" }
+
+          val r1 = daysToMilliSeconds(d1) + timeToMilliSeconds(t1).get
+          val r2 = daysToMilliSeconds(d2) + timeToMilliSeconds(t2).get
+
+          r1 compareTo r2
         case x => x
       }
     }
-
-  private def defaultTZ(s: String, o: Option[TimeZone]): Try[String] =
-    (s, o) match {
-      case ("", None) => Failure(new Exception("Default Time Zone is not set."))
-      case ("", Some(x)) => Success(x.raw)
-      case ( x, _ )      => Success(x)
-    }
-
-
-  // Returns -1 if abs of tz is greater than s, 1 if s + tz > 24, 0 otherwise
-  private def timeToDay(t: Int, tz: String): Int = ???
-
+   */
 }
