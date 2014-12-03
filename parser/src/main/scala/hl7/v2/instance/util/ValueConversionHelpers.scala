@@ -45,6 +45,7 @@ object ValueConversionHelpers {
     * @param dtz - The default time zone
     * @return A Success or Failure if the time format is invalid
     */
+  //FIXME give dtz as string
   def timeToMilliSeconds(s: String, dtz: Option[TimeZone]): Try[Long] =
     checkTimeFormat(s) flatMap { ts =>
       val(tm, tzs) = splitOnTZ(ts)
@@ -58,7 +59,7 @@ object ValueConversionHelpers {
         val hh = (tm take 2).toLong
         val mm = tm drop 2 take 2 match { case "" => 0 case x => x.toLong }
         val ss = tm drop 4 take 2 match { case "" => 0 case x => x.toLong }
-        val ms = tm drop 7        match { case "" => 0 case x => x.toLong }
+        val ms = ( tm drop 7 padTo(4, '0') ).toLong
         val r  = ms + 1000 * (ss + 60 * mm + 3600 * hh)
         r + tz
       }
@@ -70,6 +71,7 @@ object ValueConversionHelpers {
     * @param dtz - The default time zone
     * @return A Success or a Failure if the date time is invalid
     */
+  //FIXME give dtz as string
   def dateTimeToMilliSeconds(s: String, dtz: Option[TimeZone]): Try[Long] =
     checkDateTimeFormat(s) flatMap { _ =>
       val(dtm, tz) = splitOnTZ(s)

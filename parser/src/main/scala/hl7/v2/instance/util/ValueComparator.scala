@@ -4,6 +4,7 @@ package util
 import hl7.v2.instance.util.ValueConversionHelpers._
 import hl7.v2.instance.util.ValueFormatCheckers._
 
+import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
 object ValueComparator {
@@ -163,8 +164,32 @@ object ValueComparator {
     for {
       x1 <- checkDateTimeFormat(v1.raw)
       x2 <- checkDateTimeFormat(v2.raw)
-      t1 <- dateTimeToMilliSeconds(x1, v1.dtz)
-      t2 <- dateTimeToMilliSeconds(x2, v1.dtz)
-    } yield t1 compareTo t2
+      (dtm1, tzs1) = x1 span( c => c != '+' && c != '-')
+      (dtm2, tzs2) = x2 span( c => c != '+' && c != '-')
+      tz1 <- defaultTZ(tzs1, v1.dtz)
+      tz2 <- defaultTZ(tzs2, v1.dtz)
+    } yield {
+      dtm1 take 6 compareTo ( dtm2 take 6 ) match {
+        case 0 => // we need to check the day
+          val d1 = dtm1 drop 6 take 2 match { case "" => 0 case x => x.toInt }
+          val d2 = dtm2 drop 6 take 2 match { case "" => 0 case x => x.toInt }
+          val t1 = dtm1 drop 8 match { case "" => 0 case x => x.toInt }
+          val t2 = dtm2 drop 8 match { case "" => 0 case x => x.toInt }
+          //( d1 + timeToDay(t1, tz1) ) compareTo ( d2 + timeToDay(t2, tz2) )
+          ??? //FIXME
+        case x => x
+      }
+    }
+
+  private def defaultTZ(s: String, o: Option[TimeZone]): Try[String] =
+    (s, o) match {
+      case ("", None) => Failure(new Exception("Default Time Zone is not set."))
+      case ("", Some(x)) => Success(x.raw)
+      case ( x, _ )      => Success(x)
+    }
+
+
+  // Returns -1 if abs of tz is greater than s, 1 if s + tz > 24, 0 otherwise
+  private def timeToDay(t: Int, tz: String): Int = ???
 
 }
