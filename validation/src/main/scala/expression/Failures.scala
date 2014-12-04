@@ -43,6 +43,17 @@ object Failures {
     Fail( sv -> reasons :: Nil )
   }
 
+  def pathValueFailure( pv: PathValue, s1: Simple, s2: Simple ) = {
+    val r = Reason(s1.location, s"${s1.value} is not ${pv.operator} ${s2.value}") :: Nil
+    Fail( pv -> r :: Nil )
+  }
+
+  def pathValueFailure( pv: PathValue, s: Simple, p: String) = {
+    val r = Reason(s.location, s"${s.location.path}(${s.location.desc
+                    }) is populated but not $p is missing") :: Nil
+    Fail( pv -> r :: Nil )
+  }
+
   def andFailure(e: AND, c: Element, f: Fail): Fail = 
     Fail( e -> List() :: f.stack )
 

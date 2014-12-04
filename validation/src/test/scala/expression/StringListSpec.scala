@@ -36,7 +36,7 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
   }
 
   // s0 is a simple element, querying it will fail
-  def stringListPathUnreachable = Seq(true, false) map { b =>
+  def stringListPathUnreachable = {
     val p = StringList("4[1]", Nil)
     eval( p, s0 ) === Inconclusive(p, s"Unreachable Path '${p.path}'":: Nil)
   }

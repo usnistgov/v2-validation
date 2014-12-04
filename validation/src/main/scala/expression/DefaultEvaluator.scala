@@ -141,7 +141,27 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Failure(e) => Inconclusive(sv, e.getMessage :: Nil)
     }
 
-  def pathValue(pv: PathValue, context: Element): EvalResult = ??? //FIXME
+  /**
+    * Evaluates the path value expression and returns the result
+    * @param pv      - The path value expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def pathValue(pv: PathValue, context: Element): EvalResult =
+    (queryAsSimple(context, pv.path1), queryAsSimple(context, pv.path2)) match {
+      case (Success(  Nil  ), Success(  Nil  )) => Pass
+      case (Success(x::Nil), Success(Nil)) => pathValueFailure(pv, x, pv.path2)
+      case (Success(Nil), Success(x::Nil)) => pathValueFailure(pv, x, pv.path1)
+      case (Success(x1::Nil), Success(x2::Nil)) =>
+        pv.operator.eval( x1.value, x2.value ) match {
+          case Success(true)  => Pass
+          case Success(false) => pathValueFailure(pv, x1, x2)
+          case Failure(e)     => Inconclusive(pv, e.getMessage::Nil)
+        }
+      case (Success(xs1), Success(xs2)) => Inconclusive(pv, pvErrMsgs(pv, xs1, xs2))
+      case ( Failure(e), _ )            => Inconclusive(pv, e.getMessage :: Nil)
+      case ( _, Failure(e) )            => Inconclusive(pv, e.getMessage :: Nil)
+    }
 
   /**
     * Evaluates the AND expression and returns the result
@@ -209,16 +229,6 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
     }
 
-  //FIXME: Using unescape in helpers functions make expression eval tight to HL7
-
-  /*
-   * Helper functions
-   *
-   * Notes:
-   *    1) The value of the simple element will be unescaped before the operation.
-   *    2) I can't see any good rational for un-escaping text in expression
-   */
-
   /**
     * Returns true if the unescaped value of 's' is not
     * equal to the unescaped 'text' depending on the case
@@ -261,4 +271,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         s"${loc(s.location)} ${s.value} ${sv.operator} ${sv.value} failed. Reason: $m"
       case _ => ???
     }
+
+  private def pvErrMsgs(pv: PathValue, xs1: List[Simple], xs2: List[Simple]) =
+    s"path1(${pv.path1}) and path2(${pv.path2
+    }) resolution returned respectively ${xs1.length} and ${xs1.length} elements." :: Nil
 }

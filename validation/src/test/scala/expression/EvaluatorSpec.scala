@@ -8,6 +8,7 @@ trait EvaluatorSpec
   with StringListSpec
   with NumberListSpec
   with SimpleValueSpec
+  with PathValueSpec
   with ANDSpec
   with ORSpec
   with NOTSpec
@@ -67,6 +68,16 @@ trait EvaluatorSpec
       SimpleValue should be inconclusive if at least one value is invalid           $simpleValueInvalidValue
       SimpleValue should pass if operator = < and path.value < value                $simpleValuePass
       SimpleValue should fail if operator = < and path.value > value                $simpleValueFail
+
+    PathValueSpec
+      PathValue should pass if both pass are not populated                         $pathValueBothPathNotPopulated
+      PathValue evaluation should be inconclusive if the path is complex           $pathValuePathComplex
+      PathValue evaluation should be inconclusive if the path is invalid           $pathValuePathInvalid
+      PathValue evaluation should be inconclusive if the path is unreachable       $pathValuePathUnreachable
+      PathValue should fail if only one path is populated                          $pathValueOnePathPopulated
+      PathValue should be inconclusive if path1 and path2 resolve to many elements $pathValueManyElems
+      PathValue should pass if operator = < and path1.value < path2.value          $pathValuePass
+      PathValue should fail if operator = < and path1.value > path2.value          $pathValueFail
 
     AND expression evaluation specifications
       AND should be inconclusive if the first expression is inconclusive            $andFirstInconclusive

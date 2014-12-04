@@ -39,7 +39,7 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
   }
 
   // s0 is a simple element, querying it will fail
-  def simpleValuePathUnreachable = Seq(true, false) map { b =>
+  def simpleValuePathUnreachable = {
     val p = SimpleValue("4[1]", Operator.LT, Text("xx"))
     eval( p, s0 ) === Inconclusive(p, s"Unreachable Path '${p.path}'":: Nil)
   }

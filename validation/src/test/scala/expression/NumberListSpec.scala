@@ -37,7 +37,7 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
   }
 
   // s0 is a simple element, querying it will fail
-  def numberListPathUnreachable = Seq(true, false) map { b =>
+  def numberListPathUnreachable = {
     val p = NumberList("4[1]", Nil)
     eval( p, s0 ) === Inconclusive(p, s"Unreachable Path '${p.path}'":: Nil)
   }
