@@ -90,7 +90,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
                 (implicit s: Separators): EvalResult =
     queryAsSimple(context, sl.path) match {
       case Success(ls)  =>
-        ls filter( x => notInList(x.value.raw, sl.csv, true) ) match {
+        ls filter( x => notInList(x.value.raw, sl.csv) ) match {
           case Nil => Pass
           case xs  => Failures.stringListFailure(sl, xs)
         }
@@ -230,11 +230,10 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
   /**
     * Returns true if the list does not contain 's'.
-    * The boolean 'b' dictates whether to un-escape the value or not.
     */
-  private def notInList(s: String, list: List[String], b: Boolean)
+  private def notInList(s: String, list: List[String])
                           (implicit separators: Separators): Boolean =
-    if( b ) !list.contains(unescape(s)) else !list.contains(s)
+    !list.contains(unescape(s))
 
   /**
     * Returns true if the list does not contain 'd'
