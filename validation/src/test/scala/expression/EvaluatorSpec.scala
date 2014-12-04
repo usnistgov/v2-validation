@@ -6,6 +6,7 @@ trait EvaluatorSpec
   with PlainTextSpec
   with FormatSpec
   with StringListSpec
+  with NumberListSpec
   with ANDSpec
   with ORSpec
   with NOTSpec
@@ -46,6 +47,15 @@ trait EvaluatorSpec
       StringList evaluation should be inconclusive if the path is unreachable      $stringListPathUnreachable
       StringList should pass if the values are in the list                         $stringListValueInList
       StringList should fail if the values are in the list                         $stringListValueNotInList
+
+    NumberListSpec
+      NumberList evaluation should succeed if the path is not populated            $numberListPathNotPopulated
+      NumberList evaluation should be inconclusive if the path is complex          $numberListPathComplex
+      NumberList evaluation should be inconclusive if the path is invalid          $numberListPathInvalid
+      NumberList evaluation should be inconclusive if the path is unreachable      $numberListPathUnreachable
+      NumberList should be inconclusive if at least one value is not a number      $numberListNaN
+      NumberList should pass if the values are in the list                         $numberListValueInList
+      NumberList should fail if the values are in the list                         $numberListValueNotInList
 
     AND expression evaluation specifications
       AND should be inconclusive if the first expression is inconclusive            $andFirstInconclusive

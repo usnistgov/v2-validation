@@ -80,8 +80,6 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Failure(e) => Inconclusive(f, e.getMessage :: Nil)
     }
 
-  def numberList(nl: NumberList, context: Element): EvalResult = ??? //FIXME
-
   /**
     * Evaluates the string list expression and returns the result
     * @param sl      - The string list expression
@@ -92,11 +90,33 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
                 (implicit s: Separators): EvalResult =
     queryAsSimple(context, sl.path) match {
       case Success(ls)  =>
-        ls filter( x => notInList(x, sl.csv, true) ) match {
+        ls filter( x => notInList(x.value.raw, sl.csv, true) ) match {
           case Nil => Pass
           case xs  => Failures.stringListFailure(sl, xs)
         }
       case Failure(e) => Inconclusive(sl, e.getMessage :: Nil)
+    }
+
+  /**
+    * Evaluates the number list expression and returns the result
+    * @param nl      - The number list expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def numberList(nl: NumberList, context: Element)
+                (implicit s: Separators): EvalResult =
+    queryAsSimple(context, nl.path) match {
+      case Success(ls)  =>
+        val(l1, l2) = ls partition( x => convertibleToDouble( x.value.raw ))
+        l2 match {
+          case Nil =>
+            l1 filter( x => notInList(x.value.raw.toDouble, nl.csv) ) match {
+              case Nil => Pass
+              case xs  => Failures.numberListFailure(nl, xs)
+            }
+          case xs  => Inconclusive(nl, xs map Failures.NaNErrMsg)
+        }
+      case Failure(e) => Inconclusive(nl, e.getMessage :: Nil)
     }
 
   def simpleValue(sv: SimpleValue, context: Element): EvalResult = ??? //FIXME
@@ -209,10 +229,21 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     !regex.r.pattern.matcher( unescape(s.value.raw) ).matches
 
   /**
-    * Returns true if the list does not contain the value of 's'.
+    * Returns true if the list does not contain 's'.
     * The boolean 'b' dictates whether to un-escape the value or not.
     */
-  private def notInList[T](s: Simple, list: List[T], b: Boolean)
+  private def notInList(s: String, list: List[String], b: Boolean)
                           (implicit separators: Separators): Boolean =
-    if( b ) !list.contains(unescape(s.value.raw)) else !list.contains(s.value.raw)
+    if( b ) !list.contains(unescape(s)) else !list.contains(s)
+
+  /**
+    * Returns true if the list does not contain 'd'
+    */
+  private def notInList(d: Double, list: List[Double]): Boolean = !list.contains(d)
+
+  /**
+    * Returns true if s can be converted to a Double
+    */
+  private def convertibleToDouble(s: String): Boolean =
+    try { s.toDouble; true } catch { case e: Throwable => false }
 }

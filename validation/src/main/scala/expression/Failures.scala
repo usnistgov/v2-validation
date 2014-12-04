@@ -1,8 +1,13 @@
 package expression
 
-import hl7.v2.instance.{Element, Simple}
+import hl7.v2.instance.{Location, Element, Simple}
 
 object Failures {
+
+  def loc(l: Location) = f"[line=${l.line}%03d, column=${l.column}%03d]"
+
+  def NaNErrMsg(s: Simple): String =
+    s"${loc(s.location)} '${s.value.raw}' is not a valid number."
 
   def presenceFailure(e: Presence, c: Element): Fail = {
     val path = s"${c.location.path}.${e.path}"
