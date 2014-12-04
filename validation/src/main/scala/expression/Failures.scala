@@ -36,6 +36,13 @@ object Failures {
   def numberListFailure(e: NumberList, xs: Seq[Simple]): Fail =
     listFailure(e, xs, e.csv)
 
+  def simpleValueFailure( sv: SimpleValue, xs: List[Simple] ) = {
+    val reasons = xs map { x =>
+      Reason(x.location, s"${x.value} is not ${sv.operator} ${sv.value}")
+    }
+    Fail( sv -> reasons :: Nil )
+  }
+
   def andFailure(e: AND, c: Element, f: Fail): Fail = 
     Fail( e -> List() :: f.stack )
 

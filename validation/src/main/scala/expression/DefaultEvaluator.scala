@@ -1,9 +1,10 @@
 package expression
 
+import expression.Failures._
 import hl7.v2.instance.Query._
-import hl7.v2.instance.{Separators, Element, EscapeSeqHandler, Simple}
+import hl7.v2.instance._
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
@@ -114,24 +115,31 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
               case Nil => Pass
               case xs  => Failures.numberListFailure(nl, xs)
             }
-          case xs  => Inconclusive(nl, xs map Failures.NaNErrMsg)
+          case xs => Inconclusive(nl, xs map Failures.NaNErrMsg)//FIXME IS this a failure or an error in the spec?
         }
       case Failure(e) => Inconclusive(nl, e.getMessage :: Nil)
     }
 
-  def simpleValue(sv: SimpleValue, context: Element): EvalResult = ??? //FIXME
-    /*queryAsSimple(context, sv.path) match {
+  /**
+    * Evaluates the simple value expression and returns the result
+    * @param sv      - The simple value expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def simpleValue(sv: SimpleValue, context: Element): EvalResult =
+    queryAsSimple(context, sv.path) match {
       case Success(ls) =>
-        var errors  = List[String](); var reasons = List[Reason]()
-        ls foreach { x =>
-          sv.operator.eval( x.value, sv.value ) match {
-            case Failure(e) => s"[line=${x.}, column=${s.column}] ${x.value} ${sv.operator} ${sv.value} failed. Reason: ${e.getMessage}" :: errors
-          }
+        val evs = ls map { s => s -> sv.operator.eval( s.value, sv.value ) }
+        evs partition { _._2.isFailure  } match {
+          case (Nil, xs) =>
+            xs filter { _._2 == Success(false) } match {
+              case Nil => Pass
+              case ys  => simpleValueFailure( sv, ys map { x => x._1 } )
+            }
+          case (xs, _) => Inconclusive(sv, valueComparisonErrors(xs, sv))
         }
-
-        ???
       case Failure(e) => Inconclusive(sv, e.getMessage :: Nil)
-    }*/
+    }
 
   def pathValue(pv: PathValue, context: Element): EvalResult = ??? //FIXME
 
@@ -245,4 +253,12 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     */
   private def convertibleToDouble(s: String): Boolean =
     try { s.toDouble; true } catch { case e: Throwable => false }
+
+  private def valueComparisonErrors(xs: List[(Simple, Try[Boolean])], sv: SimpleValue) =
+    xs map {
+      case(s, Failure(e)) =>
+        val m = e.getMessage
+        s"${loc(s.location)} ${s.value} ${sv.operator} ${sv.value} failed. Reason: $m"
+      case _ => ???
+    }
 }

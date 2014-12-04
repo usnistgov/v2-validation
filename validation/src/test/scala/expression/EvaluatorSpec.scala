@@ -7,6 +7,7 @@ trait EvaluatorSpec
   with FormatSpec
   with StringListSpec
   with NumberListSpec
+  with SimpleValueSpec
   with ANDSpec
   with ORSpec
   with NOTSpec
@@ -56,6 +57,16 @@ trait EvaluatorSpec
       NumberList should be inconclusive if at least one value is not a number      $numberListNaN
       NumberList should pass if the values are in the list                         $numberListValueInList
       NumberList should fail if the values are in the list                         $numberListValueNotInList
+
+    SimpleValueSpec
+      SimpleValue evaluation should succeed if the path is not populated            $simpleValuePathNotPopulated
+      SimpleValue evaluation should be inconclusive if the path is complex          $simpleValuePathComplex
+      SimpleValue evaluation should be inconclusive if the path is invalid          $simpleValuePathInvalid
+      SimpleValue evaluation should be inconclusive if the path is unreachable      $simpleValuePathUnreachable
+      SimpleValue should be inconclusive if the values are not comparable           $simpleValueNotComparable
+      SimpleValue should be inconclusive if at least one value is invalid           $simpleValueInvalidValue
+      SimpleValue should pass if operator = < and path.value < value                $simpleValuePass
+      SimpleValue should fail if operator = < and path.value > value                $simpleValueFail
 
     AND expression evaluation specifications
       AND should be inconclusive if the first expression is inconclusive            $andFirstInconclusive

@@ -7,6 +7,8 @@ trait Mocks {
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
 
+  implicit val dtz = Some( TimeZone("+0000") )
+
   trait Default {
     val reqs     = List[Req]()
     val location = Location("desc ...", "Path", -1, -1)
