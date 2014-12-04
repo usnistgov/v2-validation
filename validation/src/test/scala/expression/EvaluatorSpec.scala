@@ -5,6 +5,7 @@ trait EvaluatorSpec
   with PresenceSpec
   with PlainTextSpec
   with FormatSpec
+  with StringListSpec
   with ANDSpec
   with ORSpec
   with NOTSpec
@@ -38,7 +39,15 @@ trait EvaluatorSpec
       Format should pass if the value match the pattern                             $formatMatch
       Format should fail if the value doesn't match the pattern                     $formatNoMatch
 
-   AND expression evaluation specifications
+    StringListSpec
+      StringList evaluation should succeed if the path is not populated            $stringListPathNotPopulated
+      StringList evaluation should be inconclusive if the path is complex          $stringListPathComplex
+      StringList evaluation should be inconclusive if the path is invalid          $stringListPathInvalid
+      StringList evaluation should be inconclusive if the path is unreachable      $stringListPathUnreachable
+      StringList should pass if the values are in the list                         $stringListValueInList
+      StringList should fail if the values are in the list                         $stringListValueNotInList
+
+    AND expression evaluation specifications
       AND should be inconclusive if the first expression is inconclusive            $andFirstInconclusive
       AND should fail in the first expression fails                                 $andFirstFails
       If the first expression passes

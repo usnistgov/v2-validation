@@ -49,15 +49,21 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   private val `c1.3[1]`  = queryAsSimple(c1, "3[1]").get.head
   assert( `c1.3[1]`.value == Text("S3") )
 
+  private val `c2.4[1]` = queryAsSimple(c2, "4[1]").get.head
+  assert( `c2.4[1]`.value == Text("41\\F\\") )
+
   def plainTextSameValue = Seq(true, false) map { b =>
-    eval( PlainText("3[1]", "S3", b), c1 ) === Pass
+    eval( PlainText("3[1]", "S3", b), c1 ) === Pass and
+    eval( PlainText("4[1]", "41|", b), c2  ) === Pass
   }
 
   def plainTextSameValueIC = eval( PlainText("3[1]", "s3", true ), c1 ) === Pass
 
   def plainTextDifferentValue = Seq(true, false) map { b =>
-    val p = PlainText("3[1]", "X", b)
-    eval( p, c1 ) === Failures.plainTextFailure(p, `c1.3[1]`:: Nil)
+    val p1 = PlainText("3[1]", "X", b)
+    val p2 = PlainText("4[1]", "41\\F\\", b)
+    eval( p1, c1 ) === Failures.plainTextFailure(p1, `c1.3[1]`:: Nil) and
+    eval( p2, c2 ) === Failures.plainTextFailure(p2, `c2.4[1]`:: Nil)
   }
 
   def plainTextSameValueCNI = {

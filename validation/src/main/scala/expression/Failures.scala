@@ -4,27 +4,32 @@ import hl7.v2.instance.{Element, Simple}
 
 object Failures {
 
-  private def path(c: Element, p: String) = s"${c.location.path}.$p"
-
   def presenceFailure(e: Presence, c: Element): Fail = {
-    val reasons = Reason( c.location, s"${path(c, e.path)} is missing") :: Nil
+    val path = s"${c.location.path}.${e.path}"
+    val reasons = Reason( c.location, s"$path is missing") :: Nil
     Fail( e -> reasons :: Nil )
   }
 
   def plainTextFailure(e: PlainText, xs: Seq[Simple]): Fail = {
     val cs = if( e.ignoreCase ) "case insensitive" else "case sensitive"
     val reasons = xs.toList map { s =>
-      Reason(s.location, s"'${s.value.raw}' is different from '${e.text}' ($cs)") //FIXME escape both values?
+      Reason(s.location, s"'${s.value.raw}' is different from '${e.text}' ($cs)") //FIXME escape values?
     }
     Fail( e -> reasons :: Nil )
   }
 
   def formatFailure(e: Format, xs: Seq[Simple]): Fail = {
     val reasons = xs.toList map { s =>
-      Reason(s.location, s"'${s.value.raw}' doesn't match '${e.pattern}'") //FIXME escape both values?
+      Reason(s.location, s"'${s.value.raw}' doesn't match '${e.pattern}'") //FIXME escape values?
     }
     Fail( e -> reasons :: Nil )
   }
+
+  def stringListFailure(e: StringList, xs: Seq[Simple]): Fail =
+    listFailure(e, xs, e.csv)
+
+  def numberListFailure(e: NumberList, xs: Seq[Simple]): Fail =
+    listFailure(e, xs, e.csv)
 
   def andFailure(e: AND, c: Element, f: Fail): Fail = 
     Fail( e -> List() :: f.stack )
@@ -36,4 +41,13 @@ object Failures {
     val reasons = List(Reason(c.location, "The inner expression evaluation returned 'true'"))
     Fail( e -> reasons :: Nil )
   }
+
+  private def listFailure[T](e: Expression, xs: Seq[Simple], l: List[T]): Fail = {
+    val ls = l.mkString("{ '", "', '", "' }")
+    val reasons = xs.toList map { s =>
+      Reason(s.location, s"'${s.value.raw}' is not in the list $ls")
+    }
+    Fail( e -> reasons :: Nil )
+  }
+
 }

@@ -20,7 +20,7 @@ trait Mocks {
   case class C( position: Int, instance: Int, children: List[Element] )
     extends Complex with Default
 
-  val s0  = S( 4, 1, Text("41")   )
+  val s0  = S( 4, 1, Text("41\\F\\") )
   val s1  = S( 5, 1, Number("51") )
   val s2  = S( 5, 2, Text("52")   )
   val s3  = S( 5, 3, Number("S53"))
@@ -36,7 +36,7 @@ trait Mocks {
   val c2 = C(1,1, s0::s1::s2::c0::c1::Nil)
 
   def elementsDescription = 
-    """s0 -> Simple(4, 1, Text(41) )                           c1 -> Complex( position= 2, instance= 3)
+    """s0 -> Simple(4, 1, Text(41\F\) )                    c1 -> Complex( position= 2, instance= 3)
     s1 -> Simple(5, 1, Number(51) )                            1[1] -> Simple( value=Text(S11) )
     s2 -> Simple(5, 2, Text(52) )                              1[2] -> Simple( value=Text(S12) )
     s3 -> Simple(5, 3, Number("S53") )                         1[3] -> Simple( value=Text(S13) )

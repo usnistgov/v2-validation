@@ -82,9 +82,36 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
   def numberList(nl: NumberList, context: Element): EvalResult = ??? //FIXME
 
-  def stringList(nl: StringList, context: Element): EvalResult = ??? //FIXME
+  /**
+    * Evaluates the string list expression and returns the result
+    * @param sl      - The string list expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def stringList(sl: StringList, context: Element)
+                (implicit s: Separators): EvalResult =
+    queryAsSimple(context, sl.path) match {
+      case Success(ls)  =>
+        ls filter( x => notInList(x, sl.csv, true) ) match {
+          case Nil => Pass
+          case xs  => Failures.stringListFailure(sl, xs)
+        }
+      case Failure(e) => Inconclusive(sl, e.getMessage :: Nil)
+    }
 
   def simpleValue(sv: SimpleValue, context: Element): EvalResult = ??? //FIXME
+    /*queryAsSimple(context, sv.path) match {
+      case Success(ls) =>
+        var errors  = List[String](); var reasons = List[Reason]()
+        ls foreach { x =>
+          sv.operator.eval( x.value, sv.value ) match {
+            case Failure(e) => s"[line=${x.}, column=${s.column}] ${x.value} ${sv.operator} ${sv.value} failed. Reason: ${e.getMessage}" :: errors
+          }
+        }
+
+        ???
+      case Failure(e) => Inconclusive(sv, e.getMessage :: Nil)
+    }*/
 
   def pathValue(pv: PathValue, context: Element): EvalResult = ??? //FIXME
 
@@ -154,14 +181,24 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
     }
 
+  //FIXME: Using unescape in helpers functions make expression eval tight to HL7
+
+  /*
+   * Helper functions
+   *
+   * Notes:
+   *    1) The value of the simple element will be unescaped before the operation.
+   *    2) I can't see any good rational for un-escaping text in expression
+   */
+
   /**
     * Returns true if the unescaped value of 's' is not
     * equal to the unescaped 'text' depending on the case
     */
   private def notEqual(s: Simple, text: String, cs: Boolean)
                       (implicit separators: Separators): Boolean =
-    if( cs ) ! unescape(s.value.raw).equalsIgnoreCase( unescape(text) )
-    else unescape(s.value.raw) != unescape(text)
+    if( cs ) ! unescape(s.value.raw).equalsIgnoreCase( text )
+    else unescape(s.value.raw) != text
 
   /**
     * Returns true if the unescaped value of 's'
@@ -170,4 +207,12 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   private def notMatch(s: Simple, regex: String)
                       (implicit separators: Separators): Boolean =
     !regex.r.pattern.matcher( unescape(s.value.raw) ).matches
+
+  /**
+    * Returns true if the list does not contain the value of 's'.
+    * The boolean 'b' dictates whether to un-escape the value or not.
+    */
+  private def notInList[T](s: Simple, list: List[T], b: Boolean)
+                          (implicit separators: Separators): Boolean =
+    if( b ) !list.contains(unescape(s.value.raw)) else !list.contains(s.value.raw)
 }
