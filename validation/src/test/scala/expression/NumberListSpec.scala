@@ -51,7 +51,7 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
 
   def numberListNaN = {
     val p = NumberList("3[1]", List(1))
-    eval(p, c1) === Inconclusive(p, Failures.NaNErrMsg(`c1.3[1]`)::Nil)
+    eval(p, c1) === Failures.numberListNaNFailure(p, `c1.3[1]`::Nil)
   }
 
   def numberListValueInList = eval( NumberList("5[1]", List(51)), c2 ) === Pass

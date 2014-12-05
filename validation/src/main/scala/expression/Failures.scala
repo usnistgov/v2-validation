@@ -6,34 +6,38 @@ object Failures {
 
   def loc(l: Location) = f"[line=${l.line}%03d, column=${l.column}%03d]"
 
-  def NaNErrMsg(s: Simple): String =
-    s"${loc(s.location)} '${s.value.raw}' is not a valid number."
-
   def presenceFailure(e: Presence, c: Element): Fail = {
     val path = s"${c.location.path}.${e.path}"
     val reasons = Reason( c.location, s"$path is missing") :: Nil
     Fail( e -> reasons :: Nil )
   }
 
-  def plainTextFailure(e: PlainText, xs: Seq[Simple]): Fail = {
+  def plainTextFailure(e: PlainText, xs: List[Simple]): Fail = {
     val cs = if( e.ignoreCase ) "case insensitive" else "case sensitive"
-    val reasons = xs.toList map { s =>
+    val reasons = xs map { s =>
       Reason(s.location, s"'${s.value.raw}' is different from '${e.text}' ($cs)") //FIXME escape values?
     }
     Fail( e -> reasons :: Nil )
   }
 
-  def formatFailure(e: Format, xs: Seq[Simple]): Fail = {
-    val reasons = xs.toList map { s =>
+  def formatFailure(e: Format, xs: List[Simple]): Fail = {
+    val reasons = xs map { s =>
       Reason(s.location, s"'${s.value.raw}' doesn't match '${e.pattern}'") //FIXME escape values?
     }
     Fail( e -> reasons :: Nil )
   }
 
-  def stringListFailure(e: StringList, xs: Seq[Simple]): Fail =
+  def stringListFailure(e: StringList, xs: List[Simple]): Fail =
     listFailure(e, xs, e.csv)
 
-  def numberListFailure(e: NumberList, xs: Seq[Simple]): Fail =
+  def numberListNaNFailure(e: NumberList, xs: List[Simple]): Fail = {
+    val reasons = xs map { x =>
+      Reason(x.location, s"${x.value} cannot be treated as a number")
+    }
+    Fail( e -> reasons :: Nil )
+  }
+
+  def numberListFailure(e: NumberList, xs: List[Simple]): Fail =
     listFailure(e, xs, e.csv)
 
   def simpleValueFailure( sv: SimpleValue, xs: List[Simple] ) = {
@@ -65,9 +69,9 @@ object Failures {
     Fail( e -> reasons :: Nil )
   }
 
-  private def listFailure[T](e: Expression, xs: Seq[Simple], l: List[T]): Fail = {
+  private def listFailure[T](e: Expression, xs: List[Simple], l: List[T]): Fail = {
     val ls = l.mkString("{ '", "', '", "' }")
-    val reasons = xs.toList map { s =>
+    val reasons = xs map { s =>
       Reason(s.location, s"'${s.value.raw}' is not in the list $ls")
     }
     Fail( e -> reasons :: Nil )

@@ -115,7 +115,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
               case Nil => Pass
               case xs  => Failures.numberListFailure(nl, xs)
             }
-          case xs => Inconclusive(nl, xs map Failures.NaNErrMsg)//FIXME IS this a failure or an error in the spec?
+          case xs => Failures.numberListNaNFailure(nl, xs)
         }
       case Failure(e) => Inconclusive(nl, e.getMessage :: Nil)
     }
