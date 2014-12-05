@@ -1,8 +1,8 @@
 package expression
 
-import hl7.v2.instance.{Location, Element, Simple}
+import hl7.v2.instance._
 
-object Failures {
+object Failures extends EscapeSeqHandler {
 
   def loc(l: Location) = f"[line=${l.line}%03d, column=${l.column}%03d]"
 
@@ -12,17 +12,19 @@ object Failures {
     Fail( e -> reasons :: Nil )
   }
 
-  def plainTextFailure(e: PlainText, xs: List[Simple]): Fail = {
+  def plainTextFailure(e: PlainText, xs: List[Simple])
+                      (implicit s: Separators): Fail = {
     val cs = if( e.ignoreCase ) "case insensitive" else "case sensitive"
-    val reasons = xs map { s =>
-      Reason(s.location, s"'${s.value.raw}' is different from '${e.text}' ($cs)") //FIXME escape values?
+    val reasons = xs map { x =>
+      Reason(x.location, s"'${unescape(x.value.raw)}' is different from '${e.text}' ($cs)")
     }
     Fail( e -> reasons :: Nil )
   }
 
-  def formatFailure(e: Format, xs: List[Simple]): Fail = {
-    val reasons = xs map { s =>
-      Reason(s.location, s"'${s.value.raw}' doesn't match '${e.pattern}'") //FIXME escape values?
+  def formatFailure(e: Format, xs: List[Simple])
+                   (implicit s: Separators): Fail = {
+    val reasons = xs map { x =>
+      Reason(x.location, s"'${unescape(x.value.raw)}' doesn't match '${e.pattern}'")
     }
     Fail( e -> reasons :: Nil )
   }
