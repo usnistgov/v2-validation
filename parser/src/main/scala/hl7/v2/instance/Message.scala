@@ -10,6 +10,7 @@ case class Message(
     children: List[SegOrGroup],
     invalid: List[(Int, String)],
     unexpected: List[(Int, String)],
+    defaultTimeZone: Option[TimeZone],
     separators: Separators
 ) {
 

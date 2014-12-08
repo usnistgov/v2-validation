@@ -183,10 +183,10 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     */
   def checkFormat(l: Location, v: Value)(implicit s: Separators): Option[SEntry] =
     v match {
-      case Number(x)  => checkNumber(x) map { m => Format(l, m) }
-      case Date(x)    => checkDate(x)   map { m => Format(l, m) }
-      case Time(x, _) => checkTime(x)   map { m => Format(l, m) }
-      case DateTime(x, _) => checkDateTime(x) map { m => Format(l, m) }
+      case Number(x) => checkNumber(x) map { m => Format(l, m) }
+      case Date(x)   => checkDate(x)   map { m => Format(l, m) }
+      case Time(x)   => checkTime(x)   map { m => Format(l, m) }
+      case DateTime(x) => checkDateTime(x) map { m => Format(l, m) }
       case _ if containSeparators(v) => Some( UnescapedSeparators(l) )
       case _ => None
     }

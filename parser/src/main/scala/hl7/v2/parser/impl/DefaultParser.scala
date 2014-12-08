@@ -25,7 +25,8 @@ trait DefaultParser extends Parser {
       val PPR(valid, invalid, separators) = t
       implicit val s = separators
       val(children, unexpected) = processChildren( model.structure , valid)
-      Message( model, children.reverse, invalid, unexpected, s )
+      val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
+      Message( model, children.reverse, invalid, unexpected, tz, s )
     }
 
   // Type Aliases

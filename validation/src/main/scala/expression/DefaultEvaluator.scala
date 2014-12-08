@@ -14,10 +14,11 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param e - The expression to be evaluated
     * @param c - The context node
     * @param s - The message separators
+    * @param t - The default time zone
     * @return The evaluation result
     */
   def eval(e: Expression, c: Element)
-          (implicit  s: Separators): EvalResult = e match {
+          (implicit  s: Separators, t: Option[TimeZone]): EvalResult = e match {
     case x: Presence    => presence(x, c)
     case x: PlainText   => plainText(x, c)
     case x: Format      => format(x, c)
@@ -126,7 +127,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def simpleValue(sv: SimpleValue, context: Element): EvalResult =
+  def simpleValue(sv: SimpleValue, context: Element)
+                 (implicit dtz: Option[TimeZone]): EvalResult =
     queryAsSimple(context, sv.path) match {
       case Success(ls) =>
         val evs = ls map { s => s -> sv.operator.eval( s.value, sv.value ) }
@@ -147,7 +149,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def pathValue(pv: PathValue, context: Element): EvalResult =
+  def pathValue(pv: PathValue, context: Element)
+               (implicit dtz: Option[TimeZone]): EvalResult =
     (queryAsSimple(context, pv.path1), queryAsSimple(context, pv.path2)) match {
       case (Success(  Nil  ), Success(  Nil  )) => Pass
       case (Success(x::Nil), Success(Nil)) => pathValueFailure(pv, x, pv.path2)
@@ -169,7 +172,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def and(and: AND, context: Element)(implicit s: Separators): EvalResult =
+  def and(and: AND, context: Element)
+         (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
       case f: Fail         => Failures.andFailure(and, context, f)
@@ -186,7 +190,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def or(or: OR, context: Element)(implicit s: Separators): EvalResult =
+  def or(or: OR, context: Element)
+        (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
     eval( or.exp1, context ) match {
       case f1: Fail =>
         eval(or.exp2, context) match {
@@ -202,7 +207,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def not(not: NOT, context: Element)(implicit s: Separators): EvalResult =
+  def not(not: NOT, context: Element)
+         (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
     eval( not.exp, context ) match {
       case Pass    => Failures.notFailure( not, context)
       case f: Fail => Pass

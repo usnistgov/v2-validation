@@ -18,21 +18,21 @@ class ValueComparatorSpec extends Specification with ScalaCheck { def is = s2"""
 
 """
 
-  val dtz = Some( TimeZone("+0000") )
+  implicit val dtz = Some( TimeZone("+0000") )
 
   def n1 = compareTo(Number("1"), Date("2014")) must
     beFailedTry.withThrowable[Exception]{
       "\\QNumber(1) is not comparable to Date(2014).\\E"
     }
 
-  def n2 = compareTo(Number("1"), Time("00", dtz)) must
+  def n2 = compareTo(Number("1"), Time("00")) must
     beFailedTry.withThrowable[Exception]{
-      s"\\QNumber(1) is not comparable to ${Time("00", dtz)}.\\E"
+      s"\\QNumber(1) is not comparable to ${Time("00")}.\\E"
     }
 
-  def n3 = compareTo(Number("1"), DateTime("2014", dtz)) must
+  def n3 = compareTo(Number("1"), DateTime("2014")) must
     beFailedTry.withThrowable[Exception]{
-      s"\\QNumber(1) is not comparable to ${DateTime("2014", dtz)}.\\E"
+      s"\\QNumber(1) is not comparable to ${DateTime("2014")}.\\E"
     }
 
   def n4 = compareTo(Number("1"), Number("1.0E2")) must

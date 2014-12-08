@@ -19,12 +19,12 @@ sealed trait Value extends {
   def isNull: Boolean = raw == Value.NULL
 }
 
-case class Number(raw: String) extends Value
-case class Date(raw: String)   extends Value
-case class Text(raw: String)   extends Value
-case class FText(raw: String)  extends Value
-case class Time(raw: String, dtz: Option[TimeZone])     extends Value
-case class DateTime(raw: String, dtz: Option[TimeZone]) extends Value
+case class Number(raw: String)  extends Value
+case class Date(raw: String)     extends Value
+case class Text(raw: String)     extends Value
+case class FText(raw: String)    extends Value
+case class Time(raw: String)     extends Value
+case class DateTime(raw: String) extends Value
 
 case class TimeZone(raw: String) extends AnyVal
 
@@ -39,13 +39,12 @@ object Value {
     * Create the value from string depending on the data type
     */
   //TODO: Update make this generic so the proper type will be returned
-  def apply(datatype: Primitive, raw: String)
-           (implicit dtz: Option[TimeZone]): Value =
+  def apply(datatype: Primitive, raw: String): Value =
     datatype.name match {
       case "NM" => Number(raw)
       case "DT" => Date(raw)
-      case "TM" => Time(raw, dtz)
-      case "DTM"=> DateTime(raw, dtz)
+      case "TM" => Time(raw)
+      case "DTM"=> DateTime(raw)
       case "FT" => FText(raw)
       case _    => Text(raw)
     }

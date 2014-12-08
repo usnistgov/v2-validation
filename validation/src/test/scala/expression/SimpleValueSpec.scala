@@ -60,7 +60,7 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
 
   def simpleValueNotComparable = {
     val o = Operator.LT
-    val v = Time("00", dtz)
+    val v = Time("00")
     val p = SimpleValue("5[1]", o, v)
     val s = `c2.5[1]`
     val reason = s"${s.value} is not comparable to $v."

@@ -8,6 +8,8 @@ import scala.util.{Failure, Success, Try}
 
 object ValueComparator {
 
+  type TZ = Option[TimeZone]
+
   /**
     * Compares the values v1 and v2 and returns :
     *   A Success( 1 ) if 'v1' is greater that 'v2'
@@ -17,7 +19,7 @@ object ValueComparator {
     *     'v1' and 'v2' are not comparable
     *     'v1' or 'v2' is invalid according to the conversion target type
     */
-  def compareTo(v1: Value, v2: Value): Try[Int] = v1 match {
+  def compareTo(v1: Value, v2: Value)(implicit dtz: TZ): Try[Int] = v1 match {
     case x: Text   => textComparison(x, v2)
     case x: Number => numberComparison(x, v2)
     case x: Date   => dateComparison(x, v2)
@@ -41,25 +43,26 @@ object ValueComparator {
   /**
     * Compares the time v1 to the value v2
     */
-  def timeComparison(v1: Time, v2: Value): Try[Int] =
-    checkAndCompare(v1, v2, timeComparisonGuard, timeComparator)
+  def timeComparison(v1: Time, v2: Value)(implicit dtz: TZ): Try[Int] =
+    checkAndCompare(v1, v2, timeComparisonGuard, timeComparator(dtz))
 
   /**
     * Compares the date time v1 to the value v2
     */
-  def dateTimeComparison(v1: DateTime, v2: Value): Try[Int] =
-    checkAndCompare(v1, v2, dateTimeComparisonGuard, dateTimeComparator)
+  def dateTimeComparison(v1: DateTime, v2: Value)(implicit dtz: TZ): Try[Int] =
+    checkAndCompare(v1, v2, dateTimeComparisonGuard, dateTimeComparator(dtz))
 
   /**
     * Compares the text v1 to the value v2
     */
-  def textComparison(v1: Value, v2: Value): Try[Int] = v2 match {
-    case x: Number   =>   numberComparison(x, v1) map ( - _)
-    case x: Date     =>     dateComparison(x, v1) map ( - _)
-    case x: Time     =>     timeComparison(x, v1) map ( - _)
-    case x: DateTime => dateTimeComparison(x, v1) map ( - _)
-    case _           => Success( v1.raw compareTo v2.raw )
-  }
+  def textComparison(v1: Value, v2: Value)(implicit dtz: TZ): Try[Int] =
+    v2 match {
+      case x: Number   =>   numberComparison(x, v1) map ( - _)
+      case x: Date     =>     dateComparison(x, v1) map ( - _)
+      case x: Time     =>     timeComparison(x, v1) map ( - _)
+      case x: DateTime => dateTimeComparison(x, v1) map ( - _)
+      case _           => Success( v1.raw compareTo v2.raw )
+    }
 
   /**
     * Compares v1 and v2 if they are comparable.
@@ -148,18 +151,18 @@ object ValueComparator {
   /**
     * Compares the values they both have to have a valid time format
     */
-  private def timeComparator(v1: Time, v2: Value): Try[Int] =
+  private def timeComparator(dtz: TZ)(v1: Time, v2: Value): Try[Int] =
     for {
       x1 <- checkTimeFormat(v1.raw)
       x2 <- checkTimeFormat(v2.raw)
-      t1 <- timeToMilliSeconds(x1, v1.dtz)
-      t2 <- timeToMilliSeconds(x2, v1.dtz)
+      t1 <- timeToMilliSeconds(x1, dtz)
+      t2 <- timeToMilliSeconds(x2, dtz)
     } yield t1 compareTo t2
 
   /**
     * Compares the values they both have to have a valid date time format
     */
-  private def dateTimeComparator(v1: DateTime, v2: Value): Try[Int] =
+  private def dateTimeComparator(dtz: TZ)(v1: DateTime, v2: Value): Try[Int] =
     for {
       x1 <- checkDateTimeFormat(v1.raw)
       x2 <- checkDateTimeFormat(v2.raw)

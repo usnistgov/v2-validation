@@ -9,7 +9,7 @@ import Operator.LE
 import Operator.LT
 import Operator.NE
 
-import hl7.v2.instance.Number
+import hl7.v2.instance.{Number, TimeZone}
 
 class OperatorSpec extends Specification { def is = s2"""
   Operator specification
@@ -21,6 +21,8 @@ class OperatorSpec extends Specification { def is = s2"""
     Number( "1" ) EQ Number( "1" ) should be true  $e5
     Number( "1" ) NE Number( "2" ) should be true  $e6
   """
+
+  implicit val dtz: Option[TimeZone] = None
 
   def e1 = LT.eval( Number( "1" ), Number( "2" ) ) must beSuccessfulTry.withValue(true)
 
