@@ -1,6 +1,8 @@
 package hl7.v2.validation.structure
 
 import hl7.v2.instance._
+import hl7.v2.instance.util.{ ValueFormatCheckers => VFC }
+import VFC.{ checkDate, checkDateTime, checkNumber, checkTime }
 import hl7.v2.profile.{Range, Req, Usage}
 import hl7.v2.validation.report._
 
@@ -48,8 +50,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @return A list of problems found
     */
   def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
-    //FIXME: Check the format of the value and may be highlight commands in Formatted Text (FT and cousins ...)
-    checkUnescapedSeps( ss ) ::: checkLength( ss, req.length )
+    checkValue(ss.location, ss.value, req.length)
 
   /**
     * Checks the children of the complex element against their requirements
@@ -142,24 +143,53 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     }
 
   /**
-    * Returns a length entry if the length is not in range Nil otherwise.
-    * This assumes that the underlining string has been properly escaped.
+    * If the value is not Null then checks the length, the format
+    * and the presence of separators if the value is not Null
+    * @param l  - The location of the value
+    * @param v  - The value
+    * @param lc - The length constraint
+    * @param s  - The separators
+    * @return The list of violations
     */
-  def checkLength(s: Simple, range: Range)
-                 (implicit sep: Separators): List[SEntry] = {
-    val v = unescape( s.value.raw )
-    if (inRange(v.length, range)) Nil else Length(s.location, v, range) :: Nil
-  }
-
-  private def checkLength(s: Simple, or: Option[Range])
-                         (implicit sep: Separators): List[SEntry] =
-    or match {
-      case Some(r) => checkLength(s, r)
-      case None    => Nil
+  def checkValue(l: Location, v: Value, lc: Option[Range])
+                (implicit s: Separators): List[SEntry] =
+    v.isNull match {
+      case true  => Nil
+      case false => checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
     }
 
-  private def checkUnescapedSeps(ss: Simple)(implicit s: Separators) =
-    if(containSeparators(ss.value)) UnescapedSeparators(ss.location):: Nil else Nil
+  /**
+    * Checks the length and returns the error if any
+    * @param l  - The location
+    * @param v  - The value
+    * @param lc - The length constraint
+    * @param s  - The separators
+    * @return The error or None
+    */
+  def checkLength(l: Location, v: Value, lc: Option[Range])
+                 (implicit s: Separators): Option[Length] =
+    lc flatMap { range =>
+      val raw = unescape( v.raw )
+      if (inRange(raw.length, range)) None else Some( Length(l, raw, range) )
+    }
+
+  /**
+    * Checks the format including the presence of separator
+    * and returns the error if any
+    * @param l - The location
+    * @param v - The value
+    * @param s - The separators
+    * @return The error or None
+    */
+  def checkFormat(l: Location, v: Value)(implicit s: Separators): Option[SEntry] =
+    v match {
+      case Number(x)  => checkNumber(x) map { m => Format(l, m) }
+      case Date(x)    => checkDate(x)   map { m => Format(l, m) }
+      case Time(x, _) => checkTime(x)   map { m => Format(l, m) }
+      case DateTime(x, _) => checkDateTime(x) map { m => Format(l, m) }
+      case _ if containSeparators(v) => Some( UnescapedSeparators(l) )
+      case _ => None
+    }
 
   /**
     * Returns true if the value contain unescaped field,

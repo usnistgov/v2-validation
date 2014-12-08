@@ -19,18 +19,19 @@ object PrettyPrint {
   }
 
   private def asString(e: Entry): String = e match {
-    case x: RUsage    => rusage(x)
-    case x: XUsage    => xusage(x)
-    case x: WUsage    => wusage(x)
-    case x: MinCard   => mincard(x)
-    case x: MaxCard   => maxcard(x)
-    case x: Length    => length(x)
+    case x: RUsage  => rusage(x)
+    case x: XUsage  => xusage(x)
+    case x: WUsage  => wusage(x)
+    case x: MinCard => mincard(x)
+    case x: MaxCard => maxcard(x)
+    case x: Length  => length(x)
+    case x: Format  => format(x)
+    case x: UnescapedSeparators => unescapedSep(x)
     case x: Success   => success(x)
     case x: Failure   => failure(x)
     case x: SpecError => specErr(x)
     case x: InvalidLines => invalid(x)
     case x: UnexpectedLines => unexpected(x)
-    case x: UnescapedSeparators => unescapedSep(x)
     case _ => ???
   }
 
@@ -71,6 +72,8 @@ object PrettyPrint {
     println("\n>>>>> Unexpected segment(s)")
     e.list.map(l => s"\t[${l._1}, 1]\t'${l._2.take(70)}'").mkString("\n")
   }
+
+  private def format(e: Format) = s"${loc(e.location)}\t${e.details}"
 
   private def unescapedSep(e: UnescapedSeparators) =
     s"${loc(e.location)}\tUnescaped separators in primitive element."

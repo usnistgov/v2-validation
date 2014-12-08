@@ -23,3 +23,5 @@ case class Extra( location: Location ) extends SEntry
 
 case class UnescapedSeparators( location: Location ) extends SEntry
 
+case class Format(location: Location, details: String) extends SEntry
+
