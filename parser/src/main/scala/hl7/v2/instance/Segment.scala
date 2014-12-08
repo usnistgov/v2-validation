@@ -18,6 +18,8 @@ case class Segment (
   */
 object Segment extends EscapeSeqHandler {
 
+  //FIXME: Handle Dynamic Mapping
+
   /**
     * Creates and returns a segment
     * @param m - The segment model
