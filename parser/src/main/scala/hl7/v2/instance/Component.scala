@@ -1,14 +1,15 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Component => CM, Primitive, Composite}
+import hl7.v2.profile.{Datatype, Req, Primitive, Composite}
 
 /**
   * Trait representing a component
   */
 sealed trait Component extends Element {
-  def model: CM
+  def datatype: Datatype
+  def req: Req
   def location: Location
-  def position = model.req.position
+  def position = req.position
   val instance = 1
 }
 
@@ -16,25 +17,22 @@ sealed trait Component extends Element {
   * Class representing a simple component
   */
 case class SimpleComponent(
-    model: CM,
+    datatype: Primitive,
+    req: Req,
     location: Location,
     value: Value
-) extends Component with Simple {
-
-  require( model.datatype.isInstanceOf[Primitive] )
-}
+) extends Component with Simple
 
 /**
   * Class representing a complex component
   */
 case class ComplexComponent (
-    model: CM,
+    datatype: Composite,
+    req: Req,
     location: Location,
     children: List[SimpleComponent],
     hasExtra: Boolean
 ) extends Component with Complex {
 
-  require( model.datatype.isInstanceOf[Composite] )
-
-  def reqs = model.datatype.asInstanceOf[Composite].reqs
+  def reqs = datatype.reqs
 }

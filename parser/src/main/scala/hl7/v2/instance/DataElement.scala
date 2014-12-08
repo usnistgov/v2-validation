@@ -1,48 +1,52 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{ Field => FM, Component => CM, Composite, Primitive }
+import hl7.v2.profile.{Component => CM, Req, Datatype, Composite, Primitive}
 
 object DataElement {
 
-  implicit val dtz: Option[TimeZone] = None //FIXME Get the default from MSH
-
   /**
-    * Creates and returns a field object
-    * @param m - The field model
-    * @param v - The value as string
+    * Creates and returns a component object
+    * @param d - The datatype
+    * @param r - The requirement
     * @param l - The location
-    * @param i - The instance (repetition) number
-    * @return A field object
+    * @param v - The value
+    * @param i - The instance number
+    * @return A component object
     */
-  def apply(m: FM, v: String, l: Location, i: Int)
+  def field(d: Datatype, r: Req, l: Location, v: String, i: Int)
            (implicit s: Separators): Option[Field] =
-    if( v matches emptyField( cs, ss) ) None
-    else Some {
-      m.datatype match {
-        case p: Primitive => SimpleField(m, l, i, Value(p, v))
-        case c: Composite =>
-          val(hasExtra, components) = children(l, c.components, v, s.cs)
-          ComplexField(m, l, i, components, hasExtra)
+    v matches emptyField(s.cs, s.ss) match {
+      case true  => None
+      case false => Some {
+        d match {
+          case p: Primitive => SimpleField(p, r, l, i, Value(p, v))
+          case c: Composite =>
+            val (hasExtra, components) = children(l, c.components, v, s.cs)
+            ComplexField(c, r, l, i, components, hasExtra)
+        }
       }
     }
 
   /**
     * Creates and returns a component object
-    * @param m - The component model
-    * @param v - The value as string
+    * @param d - The datatype
+    * @param r - The requirement
     * @param l - The location
+    * @param v - The value
     * @return A component object
     */
-  def apply(m: CM, v: String, l: Location)
-           (implicit s: Separators): Option[Component] =
-    if( v matches emptyComponent( s.ss ) ) None
-    else Some {
-      m.datatype match {
-        case p: Primitive => SimpleComponent(m, l, Value(p, v))
-        case c: Composite =>
-          val(hasExtra, r) = children(l, c.components, v, s.ss)
-          val components  = r.asInstanceOf[List[SimpleComponent]]
-          ComplexComponent(m, l, components, hasExtra)
+  def component(d: Datatype, r: Req, l: Location, v: String)
+                       (implicit s: Separators): Option[Component] =
+    v matches emptyComponent( s.ss ) match {
+      case true  => None
+      case false => Some {
+        d match {
+          case p: Primitive => SimpleComponent(p, r, l, Value(p, v))
+          case c: Composite =>
+            val (hasExtra, x) = children(l, c.components, v, s.ss)
+            val components = x.asInstanceOf[List[SimpleComponent]]
+            ComplexComponent(c, r, l, components, hasExtra)
+        }
       }
     }
 
@@ -58,7 +62,7 @@ object DataElement {
       val (m, (col, vv)) = t
       val pos = m.req.position
       val loc = l.copy( desc=m.name, path=s"${l.path}.$pos[1]", column=col )
-      apply(m, vv, loc)
+      component( m.datatype, m.req, loc, vv )
     }
     (hasExtra, _children.flatten)
   }

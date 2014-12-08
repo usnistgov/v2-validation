@@ -1,14 +1,15 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Field => FM, Composite, Primitive}
+import hl7.v2.profile.{Datatype, Req, Composite, Primitive}
 
 /**
   * Trait representing a field
   */
 sealed trait Field extends Element {
-  def model: FM
+  def datatype: Datatype
+  def req: Req
   def location: Location
-  def position = model.req.position
+  def position = req.position
   def instance: Int
 }
 
@@ -16,27 +17,24 @@ sealed trait Field extends Element {
   * Class representing a simple field
   */
 case class SimpleField(
-    model: FM,
+    datatype: Primitive,
+    req: Req,
     location: Location,
     instance: Int,
     value: Value
-) extends Field with Simple {
-
-  require( model.datatype.isInstanceOf[Primitive] )
-}
+) extends Field with Simple
 
 /**
   * Class representing a complex field
   */
 case class ComplexField(
-    model: FM,
+    datatype: Composite,
+    req: Req,
     location: Location,
     instance: Int,
     children: List[Component],
     hasExtra: Boolean
 ) extends Field with Complex {
 
-  require( model.datatype.isInstanceOf[Composite] )
-
-  def reqs = model.datatype.asInstanceOf[Composite].reqs
+  def reqs = datatype.reqs
 }

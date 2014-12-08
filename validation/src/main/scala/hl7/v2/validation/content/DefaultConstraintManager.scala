@@ -23,8 +23,8 @@ class DefaultConstraintManager (
     * the specified element.
     */
   def constraintsFor(e: Element): List[Constraint] = e match {
-    case c: Component => datatypeConstraints( c.model.datatype )
-    case f: Field     => datatypeConstraints( f.model.datatype )
+    case c: Component => datatypeConstraints( c.datatype )
+    case f: Field     => datatypeConstraints( f.datatype )
     case s: Segment   => segmentConstraints( s.model.ref )
     case g: Group     => groupConstraints( g.model )
   }

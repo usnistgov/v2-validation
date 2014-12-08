@@ -69,9 +69,10 @@ object Segment extends EscapeSeqHandler {
     * @return A field
     */
   private def field(l: Location, m: FM, v: String, i: Int, c: Int)
-                   (implicit s: Separators) =
-    DataElement(m, v, location(l, m.name, m.req.position, i, c), i)
-
+                   (implicit s: Separators) = {
+    val loc = location(l, m.name, m.req.position, i, c)
+    DataElement.field(m.datatype, m.req, loc, v, i)
+  }
   /**
     * Creates and returns a list representing a repetition of a field
     * @param m - The field model
