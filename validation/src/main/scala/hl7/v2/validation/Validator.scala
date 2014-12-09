@@ -4,7 +4,7 @@ import expression.{Plugin, EvalResult}
 import hl7.v2.instance.{Separators, Element}
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
-import hl7.v2.validation.report.Report
+import hl7.v2.validation.report.{JReport, Report}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -65,3 +65,35 @@ class HL7Validator(
     with content.DefaultValidator
     with vs.EmptyValidator
     with expression.DefaultEvaluator
+
+
+
+/**
+  * A Java friendly HL7 message validator which uses an empty value set
+  * validator  and the default implementation of the  parser,
+  * structure validator, content validator and expression evaluator.
+  */
+class JHL7Validator(
+    val profile: Profile,
+    val constraintManager: content.ConstraintManager,
+    val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
+  ) extends Validator
+    with hl7.v2.parser.impl.DefaultParser
+    with structure.DefaultValidator
+    with content.DefaultValidator
+    with vs.EmptyValidator
+    with expression.DefaultEvaluator {
+
+  import scala.concurrent.Await
+  import scala.concurrent.duration._
+  import scala.collection.JavaConversions._
+
+  @throws[Exception]
+  def check(message: String, id: String): JReport = {
+    val r = Await.result(validate(message, id), 2.second)
+    JReport( r.structure, r.content, r.vs )
+  }
+
+}
+
+

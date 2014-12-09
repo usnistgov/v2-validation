@@ -34,9 +34,9 @@ object BuildSettings {
         publishTo         := {
           val nexus = "http://vm-070.nist.gov:8081/"
           if (version.value.trim.endsWith("SNAPSHOT"))
-            Some("snapshots" at nexus + "content/repositories/snapshots")
+            Some("snapshots" at nexus + "nexus/content/repositories/snapshots")
           else
-            Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+            Some("releases"  at nexus + "nexus/content/repositories/releases")
         }
       )
 

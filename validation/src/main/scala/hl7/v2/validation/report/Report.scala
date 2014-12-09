@@ -25,3 +25,8 @@ trait VSEntry extends Entry
   * Class representing a validation report
   */
 case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry])
+
+
+import java.util.{List => JList}
+
+case class JReport(structure: JList[SEntry], content: JList[CEntry], vs: JList[VSEntry])
