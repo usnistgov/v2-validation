@@ -16,6 +16,8 @@ object PrettyPrint {
 
     println(s"\n\n########  Value set check: ${r.vs.size} problem(s) detected.")
     r.vs foreach { e => println(asString(e)) }
+
+    println("\n")
   }
 
   private def asString(e: Entry): String = e match {

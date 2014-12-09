@@ -50,7 +50,11 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
 
   val pluginMap = Map[String, (Plugin, Element, Separators) => EvalResult]()
 
-  val validtor = new HL7Validator(profile, content.EmptyConstraintManager, pluginMap)
+  val confContext = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
+
+  val constraintManager = content.DefaultConstraintManager( confContext ).get
+
+  val validtor = new HL7Validator(profile, constraintManager, pluginMap)
 
   1 to 1 foreach { i =>
     time {
