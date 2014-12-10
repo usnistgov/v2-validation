@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  =============================================================================================================
 	
-	HL7 Conformance Profile Schema version xxx
+	  HL7 Conformance Profile Schema version xxx
 	
-	Developed by the National Institute of Standards and Technology (NIST) and Prometheus Computing
-	
-	==  Authors:
-	Robert D. Snelick             -        NIST                        -        robert.snelick@nist.gov
-	Salifou Sidi M. Malick        -        Prometheus Computing        -        s.malick@prometheuscomputing.com
-	============================================================================================================= -->
+	  Salifou Sidi M. Malick        -        Prometheus Computing        -        s.malick@prometheuscomputing.com
+	  ============================================================================================================= -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"> 
 	
@@ -146,6 +142,7 @@
 			<!-- #FIXME# Not sure if we need these -->
 			<xs:enumeration value="B"/>
 			<xs:enumeration value="W"/>
+			<xs:enumeration value="CE"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -362,8 +359,8 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
-		<xs:attribute name="Type" use="required">
+		<xs:attribute name="ID" type="NonEmptyString" use="optional"/>
+		<xs:attribute name="Type" use="optional">
 			<xs:simpleType>
 				<xs:annotation>
 					<xs:documentation>
@@ -379,7 +376,7 @@
 				</xs:restriction>
 			</xs:simpleType>
 		</xs:attribute>
-		<xs:attribute name="HL7Version" use="required">
+		<xs:attribute name="HL7Version" use="optional">
 			<xs:simpleType>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="2.0"/>
@@ -397,7 +394,7 @@
 			</xs:simpleType>			
 		</xs:attribute>
 		<!-- Need to review the schema versions values -->
-		<xs:attribute name="SchemaVersion" use="required">
+		<xs:attribute name="SchemaVersion" use="optional">
 			<xs:simpleType>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="1.0"/>

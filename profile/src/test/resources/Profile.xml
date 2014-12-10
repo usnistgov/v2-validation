@@ -9,7 +9,7 @@ Changes:
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/hl7-tools/v2-tools/profile/src/test/resources/Profile.xsd"
+	xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/hl7-tools/v2-tools/profile/src/main/resources/Profile.xsd"
 	>
 	
 	<Encodings>
