@@ -1,9 +1,9 @@
 package hl7.v2.validation.structure
 
-import hl7.v2.instance.util.ValueFormatCheckers._
 import hl7.v2.instance._
+import hl7.v2.instance.util.ValueFormatCheckers._
 import hl7.v2.profile.Range
-import hl7.v2.validation.report.{UnescapedSeparators, Format, Length, SEntry}
+import hl7.v2.validation.report.{Format, Length, SEntry, UnescapedSeparators}
 
 object ValueValidation extends EscapeSeqHandler  {
 

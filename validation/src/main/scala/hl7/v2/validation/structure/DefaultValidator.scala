@@ -1,8 +1,6 @@
 package hl7.v2.validation.structure
 
 import hl7.v2.instance._
-import hl7.v2.instance.util.{ ValueFormatCheckers => VFC }
-import VFC.{ checkDate, checkDateTime, checkNumber, checkTime }
 import hl7.v2.profile.{Range, Req, Usage}
 import hl7.v2.validation.report._
 
@@ -50,7 +48,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @return A list of problems found
     */
   def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
-    checkValue(ss.location, ss.value, req.length)
+    ValueValidation.checkValue(ss.value, req.length, ss.location)
 
   /**
     * Checks the children of the complex element against their requirements
@@ -82,7 +80,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     }
 
     // Check for extra children and return the result
-    checkExtra( c ) ::: r
+    if( c.hasExtra ) Extra( c.location ) :: r else r
   }
 
   /**
@@ -117,23 +115,14 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     if( l.isEmpty ) Nil
     else {
       // The only reason this is needed is because of field repetition
-      val highestRep = l maxBy instance
-      val i = instance( highestRep )
+      val highestRep = l maxBy ( e => e.instance )
+      val i = highestRep.instance
       if( i < range.min ) MinCard( highestRep.location, i, range ) :: Nil
       else
-        l filter { e => afterRange( instance(e), range ) } map { e =>
-          MaxCard(e.location, instance(e), range)
+        l filter { e => range.isBefore( e.instance ) } map { e =>
+          MaxCard(e.location, e.instance, range)
         }
     }
-
-  /**
-    * Returns a list containing an extra entry
-    * if the complex element has extra children.
-    * @param c - The complex element
-    * @return A list of report entries
-    */
-  def checkExtra(c: Complex): List[SEntry] =
-    if( c.hasExtra ) Extra( c.location ) :: Nil else Nil
 
   private
   def checkCardinality(l: List[Element], or: Option[Range]): List[SEntry] =
@@ -141,76 +130,5 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       case Some(r) => checkCardinality(l, r)
       case None    => Nil
     }
-
-  /**
-    * If the value is not Null then checks the length, the format
-    * and the presence of separators if the value is not Null
-    * @param l  - The location of the value
-    * @param v  - The value
-    * @param lc - The length constraint
-    * @param s  - The separators
-    * @return The list of violations
-    */
-  def checkValue(l: Location, v: Value, lc: Option[Range])
-                (implicit s: Separators): List[SEntry] =
-    v.isNull match {
-      case true  => Nil
-      case false => checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
-    }
-
-  /**
-    * Checks the length and returns the error if any
-    * @param l  - The location
-    * @param v  - The value
-    * @param lc - The length constraint
-    * @param s  - The separators
-    * @return The error or None
-    */
-  def checkLength(l: Location, v: Value, lc: Option[Range])
-                 (implicit s: Separators): Option[Length] =
-    lc flatMap { range =>
-      val raw = unescape( v.raw )
-      if (inRange(raw.length, range)) None else Some( Length(l, raw, range) )
-    }
-
-  /**
-    * Checks the format including the presence of separator
-    * and returns the error if any
-    * @param l - The location
-    * @param v - The value
-    * @param s - The separators
-    * @return The error or None
-    */
-  def checkFormat(l: Location, v: Value)(implicit s: Separators): Option[SEntry] =
-    v match {
-      case Number(x) => checkNumber(x) map { m => Format(l, m) }
-      case Date(x)   => checkDate(x)   map { m => Format(l, m) }
-      case Time(x)   => checkTime(x)   map { m => Format(l, m) }
-      case DateTime(x) => checkDateTime(x) map { m => Format(l, m) }
-      case _ if containSeparators(v) => Some( UnescapedSeparators(l) )
-      case _ => None
-    }
-
-  /**
-    * Returns true if the value contain unescaped field,
-    * component, sub-component or repetition separators
-    */
-  private def containSeparators(v: Value)(implicit s: Separators): Boolean =
-    v.raw exists { c => c == s.fs || c == s.cs || c == s.ss || c == s.rs }
-
-  /**
-    * Returns the instance number of the element
-    */
-  private def instance(e: Element) = e.instance
-
-  /**
-    * Returns true if i is in the range
-    */
-  def inRange(i: Int, r: Range) = i >= r.min && (r.max == "*" || i <= r.max.toInt)
-
-  /**
-    * Returns true is i > Range.max
-    */
-  def afterRange(i: Int, r: Range) = if(r.max == "*") false else i > r.max.toInt
 
 }
