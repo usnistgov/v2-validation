@@ -29,6 +29,7 @@ object Build extends Build {
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++=
         compile(`xml-util`) ++
+        compile(json4sJackson) ++
         test( spec2 )
     )
 
@@ -45,8 +46,5 @@ object Build extends Build {
     .dependsOn( parser % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
-    .settings( libraryDependencies ++=
-        test(json4sJackson) //FIXME This is only used for testing report serialization
-    )
 
 }

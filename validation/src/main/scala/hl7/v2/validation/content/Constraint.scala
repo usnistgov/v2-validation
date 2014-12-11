@@ -15,9 +15,9 @@ case class Reference( chapter: String, section: String, page: Int, url: String )
   * A constraint describes an assertion that shall always be verified
   */
 case class Constraint( 
-    id: String,
-    tag: ConstraintTag,
+    id: Option[String],
+    tag: Option[ConstraintTag],
     reference: Option[Reference],
-    description: String,
+    description: Option[String],
     assertion: Expression
 )
