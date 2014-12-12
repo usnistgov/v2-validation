@@ -64,7 +64,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
 
           //println( asJson(report, false) )
 
-          import hl7.v2.validation.report.extension.JsonSerialization._
+          import hl7.v2.validation.report.extension.ReportAsJson._
           println( toJson(report) )
 
         case Failure( e )      =>

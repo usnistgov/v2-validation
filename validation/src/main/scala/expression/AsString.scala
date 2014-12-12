@@ -4,8 +4,6 @@ import hl7.v2.instance.Element
 
 object AsString {
 
-  def path(c: Element, p: String) = s"${c.location.path}.$p"
-
   def expression(e: Expression, context: Element): String = e match {
     case e: Presence    => presence(e, context)
     case e: PlainText   => plainText(e, context)
@@ -21,45 +19,66 @@ object AsString {
     case e: IMPLY       => imply(e, context)
     case e: EXIST       => exist(e, context)
     case e: FORALL      => forall(e, context)
-    case e: Plugin      => ???
+    case e: Plugin      => plugin(e, context)
   }
 
-  def presence(e: Presence, c: Element) = s"${ path(c, e.path) } SHALL be present"
+  private def path(c: Element, p: String) = s"${c.location.path}.$p"
 
-  def plainText(e: PlainText, c: Element) = 
-      s"${ path(c, e.path) } SHALL be equal to '${e.text}' ${ if(e.ignoreCase) "(case insensitive)" }"
+  private def presence(e: Presence, c: Element) =
+    s"${ path(c, e.path) } SHALL be present"
 
-  def format(e: Format, c: Element) = s"${ path(c, e.path) } SHALL match '${e.pattern}'"
+  private def plainText(e: PlainText, c: Element) = {
+    val cs = if (e.ignoreCase) "(case insensitive)"
+    s"${path(c, e.path)} SHALL be equal to '${e.text}' $cs"
+  }
 
-  def numberList(e: NumberList, c: Element) = 
-      s"${ path(c, e.path) } SHALL be one of '${e.csv.mkString("[", ", ", "]")}'" 
+  private def format(e: Format, c: Element) =
+    s"${ path(c, e.path) } SHALL match '${e.pattern}' regular expression"
 
-  def stringList(e: StringList, c: Element) = 
-      s"${ path(c, e.path) } SHALL be one of '${e.csv.mkString("[", ", ", "]")}'"
+  private def numberList(e: NumberList, c: Element) =
+    s"${ path(c, e.path) } SHALL be one of ${e.csv.mkString("{", ", ", "}")}"
 
-  def simpleValue(e: SimpleValue, c: Element) =
+  private def stringList(e: StringList, c: Element) =
+    s"${ path(c, e.path) } SHALL be one of ${e.csv.mkString("{", ", ", "}")}"
+
+  private def simpleValue(e: SimpleValue, c: Element) =
     s"${ path(c, e.path) } SHALL be ${e.operator} '${e.value}'"
 
-  def pathValue(e: PathValue, c: Element) =
+  private def pathValue(e: PathValue, c: Element) =
     s"${ path(c, e.path1) } SHALL be ${e.operator} ${ path(c, e.path2) }"
 
-  def and(e: AND, c: Element) =
-    s"( ${ expression(e.exp1, c) } and ${ expression(e.exp2, c) } )"
+  private def and(e: AND, c: Element) =
+    s"${ expression(e.exp1, c) } AND ${ expression(e.exp2, c) }"
 
-  def or(e: OR, c: Element) =
-    s"( ${ expression(e.exp1, c) } or ${ expression(e.exp2, c) } )"
+  private def or(e: OR, c: Element) =
+    s"${ expression(e.exp1, c) } OR ${ expression(e.exp2, c) }"
 
-  def not(e: NOT, c: Element) = s"not ( ${ expression(e.exp, c) } )"
+  private def not(e: NOT, c: Element) = negate(e.exp, c)
 
-  def xor(e: XOR, c: Element) =
-    s"either ${ expression(e.exp1, c) } or ${ expression(e.exp2, c) } but not both"
+  private def xor(e: XOR, c: Element) =
+    s"Either ${ expression(e.exp1, c) } OR ${ expression(e.exp2, c) } BUT NOT BOTH"
 
-  def imply(e: IMPLY, c: Element) =
-    s"if ${ expression(e.exp1, c) } then ${ expression(e.exp2, c) }"
+  private def imply(e: IMPLY, c: Element) =
+    s"If ${ expression(e.exp1, c) } Then ${ expression(e.exp2, c) }"
 
-  def exist(e: EXIST, c: Element) = ??? //FIXME //s"one of ${ e.list map { ee => expression(ee, c) }   } must be true)"
+  private def exist(e: EXIST, c: Element) = e.list.map( expression(_, c) ).mkString("OR")
 
-  def forall(e: FORALL, c: Element) = ??? //FIXME
+  private def forall(e: FORALL, c: Element) = e.list.map( expression(_, c) ).mkString("AND")
 
-  def plugin(e: Plugin, c: Element) = s"Plugin '${e.id}'"
+  private def plugin(e: Plugin, c: Element) = s"Plugin '${e.id}'"
+
+  // De Morgan's laws
+  // not (A and B) === (not A) or (not B)
+  // not (A or B) === (not A) and (not B)
+  private def negate(e: Expression, c: Element): String = e match {
+    case x: AND => s"${expression(NOT(x.exp1), c)} OR ${expression(NOT(x.exp2), c)}"
+    case x: OR  => s"${expression(NOT(x.exp1), c)} AND ${expression(NOT(x.exp2), c)}"
+    case x: NOT => expression(e, c)
+    case x: XOR    => throw new Exception("Invalid use of NOT expression")
+    case x: Plugin => throw new Exception("Invalid use of NOT expression")
+    case x: IMPLY  => throw new Exception("Invalid use of NOT expression")
+    case x: EXIST  => throw new Exception("Invalid use of NOT expression")
+    case x: FORALL => throw new Exception("Invalid use of NOT expression")
+    case x  => expression(x, c).replaceAllLiterally("SHALL", "SHALL not")
+  }
 }

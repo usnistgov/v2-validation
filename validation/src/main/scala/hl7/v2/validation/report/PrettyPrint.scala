@@ -28,6 +28,7 @@ object PrettyPrint {
     case x: MaxCard => maxcard(x)
     case x: Length  => length(x)
     case x: Format  => format(x)
+    case x: Extra   => extra(x)
     case x: UnescapedSeparators => unescapedSep(x)
     case x: Success   => success(x)
     case x: Failure   => failure(x)
@@ -76,6 +77,8 @@ object PrettyPrint {
   }
 
   private def format(e: Format) = s"${loc(e.location)}\t${e.details}"
+
+  private def extra(e: Extra) = s"${loc(e.location)}"
 
   private def unescapedSep(e: UnescapedSeparators) =
     s"${loc(e.location)}\tUnescaped separators in primitive element."
