@@ -1,6 +1,9 @@
 package hl7.v2.validation.report
 package extension
 
+/**
+  * Provides function to convert a report to Json
+  */
 object ReportAsJson {
 
   /**
@@ -9,7 +12,7 @@ object ReportAsJson {
     * @return The Json string
     */
   def toJson(r: Report): String = {
-    val structure = "{}"//r.structure map SEntryAsJson.toJson mkString("[", ",", "]")
+    val structure = r.structure map SEntryAsJson.toJson mkString("[", ",", "]")
     val content   = r.content   map CEntryAsJson.toJson mkString("[", ",", "]")
 
     s"""{"structure":$structure,"content":$content}"""

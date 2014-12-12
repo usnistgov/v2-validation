@@ -4,7 +4,7 @@ import hl7.v2.instance._
 
 object Failures extends EscapeSeqHandler {
 
-  def loc(l: Location) = f"[line=${l.line}%03d, column=${l.column}%03d]"
+  def loc(l: Location) = s"[line=${l.line}, column=${l.column}]"
 
   def presenceFailure(e: Presence, c: Element): Fail = {
     val path = s"${c.location.path}.${e.path}"

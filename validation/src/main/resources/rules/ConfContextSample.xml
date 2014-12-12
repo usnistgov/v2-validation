@@ -21,12 +21,12 @@
 				</Assertion>
 			</Constraint>
 			
-			<!--<Constraint ID="Path Value">
+			<Constraint ID="Path Value">
 				<Description>Path Value</Description>
 				<Assertion>
 					<PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/>
 				</Assertion>
-			</Constraint> -->
+			</Constraint>
 			
 			<!-- Value Expressions -->
 			
@@ -37,7 +37,6 @@
 				</Assertion>
 			</Constraint>
 
-            <!--
 			<Constraint ID="Format">
 				<Description>Format</Description>
 				<Assertion> 
@@ -71,7 +70,7 @@
 				<Assertion>
 					<SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/>
 				</Assertion>
-			</Constraint> -->
+			</Constraint>
 			
 			<!-- Combination Expressions -->
 			
@@ -101,6 +100,27 @@
 					<NOT>
 						<Presence Path="1[1]"/>
 					</NOT>
+				</Assertion>
+			</Constraint>
+			
+			
+			<Constraint ID="NOT">
+				<Assertion>
+					<NOT>
+						<AND>
+							<Presence Path="1[1]"/>
+							<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+						</AND>
+					</NOT>
+				</Assertion>
+			</Constraint>
+			
+			<Constraint ID="NOT">
+				<Assertion>
+					<XOR>
+						<NOT><Presence Path="1[1]"/></NOT>
+						<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+					</XOR>
 				</Assertion>
 			</Constraint>
 			

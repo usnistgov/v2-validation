@@ -4,8 +4,8 @@
 	<xs:include schemaLocation="Commons.xsd"/>
 	
 	<!--  =============================================================================================================
-        =========================       Simple Types Definition               =======================================
-        ============================================================================================================= -->
+          =========================       Simple Types Definition               =======================================
+          ============================================================================================================= -->
 	
 	<xs:simpleType name="PathType">
 		<xs:annotation>
@@ -84,8 +84,8 @@
 	</xs:simpleType>
 	
 	<!--  =============================================================================================================
-        =========================       Generic Expressions                   =======================================
-        ============================================================================================================= -->
+          =========================       Generic Expressions                   =======================================
+          ============================================================================================================= -->
 	
 	<xs:complexType name="PresenceType">
 		<xs:attribute name="Path" type="PathType" use="required"/>
@@ -112,8 +112,8 @@
 	</xs:complexType> -->
 	
 	<!--  =============================================================================================================
-        =========================       Value Expressions                     =======================================
-        ============================================================================================================= -->
+          =========================       Value Expressions                     =======================================
+          ============================================================================================================= -->
 	
 	<xs:complexType name="PlainTextType">
 		<xs:attribute name="Path" type="PathType" use="required"/>
@@ -144,38 +144,38 @@
 	</xs:complexType>
 	
 	<!--  =============================================================================================================
-        =========================       Combination Expressions               =======================================
-        ============================================================================================================= -->
+       	  =========================       Combination Expressions               =======================================
+          ============================================================================================================= -->
 	
 	<xs:complexType name="NOTType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="1" maxOccurs="1"/>
+		<xs:group ref="ExpressionGroup" minOccurs="1" maxOccurs="1"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ANDType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2"/>
+		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="2"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ORType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2"/>
+		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="2"/>
 	</xs:complexType>
 	
 	<xs:complexType name="XORType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2"/>
+		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="2"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ImplyType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2"/>
+		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="2"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ForallType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
+		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ExistType">
-		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
+		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
 	</xs:complexType>
 	
-	<xs:group name="AnyExpressionGroup">
+	<xs:group name="ExpressionGroup">
 		<xs:choice>
 			<xs:element name="Presence" type="PresenceType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="PathValue" type="PathValueType" minOccurs="1" maxOccurs="1"/>
@@ -187,6 +187,12 @@
 			<xs:element name="NOT" type="NOTType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="AND" type="ANDType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="OR" type="ORType" minOccurs="1" maxOccurs="1"/>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:group name="AnyExpressionGroup">
+		<xs:choice>
+			<xs:group ref="ExpressionGroup"/>
 			<xs:element name="XOR" type="XORType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="IMPLY" type="ImplyType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="FORALL" type="ForallType" minOccurs="1" maxOccurs="1"/>

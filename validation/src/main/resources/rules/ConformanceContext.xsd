@@ -4,8 +4,8 @@
 	<xs:include schemaLocation="Expressions.xsd"/>
 	
 	<!--  =============================================================================================================
-        =========================       MetaData Definition                   =======================================
-        ============================================================================================================= -->
+          =========================       MetaData Definition                   =======================================
+          ============================================================================================================= -->
 	
 	<xs:complexType name="Author">
 		<xs:attribute name="FirstName" type="NonEmptyString" use="required"/>
@@ -47,8 +47,8 @@
 	</xs:complexType>
 	
 	<!--  =============================================================================================================
-        =========================       Constraint Definition                 =======================================
-        ============================================================================================================= -->
+          =========================       Constraint Definition                 =======================================
+          ============================================================================================================= -->
 
 	<xs:complexType name="AssertionType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="1" maxOccurs="1"/>
@@ -57,11 +57,11 @@
 	<xs:complexType name="ConstraintType">
 		<xs:sequence>
 			<xs:element name="Reference" type="ReferenceType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="Description" type="NonEmptyString" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Description" type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Assertion" type="AssertionType" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
-		<xs:attribute name="Tag" type="ConstraintTagType" default="ConfStatement"/>
+		<xs:attribute name="Tag" type="ConstraintTagType" use="optional"/>
 	</xs:complexType>
 	
 	<xs:simpleType name="ConstraintTagType">
@@ -72,8 +72,8 @@
 	</xs:simpleType>
 	
 	<!--  =============================================================================================================
-        =========================       Context Definition                    =======================================
-        ============================================================================================================= -->
+          =========================       Context Definition                    =======================================
+          ============================================================================================================= -->
 	
 	<xs:complexType name="ContextType">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -98,12 +98,12 @@
 	
 	
 	<!--  =============================================================================================================
-        =========================       Conformance Context Definition        =======================================
-        ============================================================================================================= -->
+          =========================       Conformance Context Definition        =======================================
+          ============================================================================================================= -->
 	
 	<xs:complexType name="ConformanceContextType">
 		<xs:sequence>
-			<xs:element name="MetaData" type="MetaDataType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="MetaData" type="MetaDataType" minOccurs="0" maxOccurs="1"/>
 			
 			<xs:element name="Datatype" type="ContextType" minOccurs="1" maxOccurs="1">
 				<!--  The Name attribute of a by-name context must be unique -->

@@ -44,7 +44,7 @@ object CEntryAsJson {
     val context    = toJson(x.context)
     val constraint = toJson(x.constraint, x.context)
     val exp = s""""expression":"${expAsString(x.expression, x.context)}""""
-    val details    = s""""details":${x.details map escape mkString("[", ",", "]")}"""
+    val details = s""""details":${x.details map (s => s""""${escape(s)}"""") mkString("[", ",", "]")}"""
     s"""{"SpecError":{$context,$constraint,$exp,$details}}"""
   }
 
