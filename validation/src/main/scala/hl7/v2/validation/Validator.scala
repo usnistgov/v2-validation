@@ -1,10 +1,10 @@
 package hl7.v2.validation
 
-import expression.{Plugin, EvalResult}
-import hl7.v2.instance.{Separators, Element}
+import expression.{EvalResult, Plugin}
+import hl7.v2.instance.{Element, Separators}
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
-import hl7.v2.validation.report.{JReport, Report}
+import hl7.v2.validation.report.Report
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -66,7 +66,7 @@ class HL7Validator(
     with vs.EmptyValidator
     with expression.DefaultEvaluator
 
-
+/*
 
 /**
   * A Java friendly HL7 message validator which uses an empty value set
@@ -95,5 +95,5 @@ class JHL7Validator(
   }
 
 }
-
+*/
 

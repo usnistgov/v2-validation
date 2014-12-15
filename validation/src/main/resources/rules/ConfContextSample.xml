@@ -115,14 +115,14 @@
 				</Assertion>
 			</Constraint>
 			
-			<Constraint ID="NOT">
+			<!--<Constraint ID="XOR">
 				<Assertion>
 					<XOR>
 						<NOT><Presence Path="1[1]"/></NOT>
 						<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
 					</XOR>
 				</Assertion>
-			</Constraint>
+			</Constraint>-->
 			
 		</ByName>
 
