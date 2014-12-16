@@ -10,7 +10,7 @@ case class Message(
     children: List[SegOrGroup],
     invalid: List[(Int, String)],
     unexpected: List[(Int, String)],
-    defaultTimeZone: Option[TimeZone],
+    defaultTimeZone: Option[TimeZone],//FIXME: Get this from MSH.7 ?
     separators: Separators
 ) {
 

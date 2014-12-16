@@ -66,13 +66,13 @@ case class Format(location: Location, details: String) extends SEntry
 //==============================================================================
 
 /**
- * Class representing a successful constraint checking result
- */
+  * Class representing a successful constraint checking result
+  */
 case class Success(context: Element, constraint: Constraint) extends CEntry
 
 /**
- * Class representing a failed constraint checking result
- */
+  * Class representing a failed constraint checking result
+  */
 case class Failure(
     context   : Element,
     constraint: Constraint,
@@ -80,8 +80,8 @@ case class Failure(
 ) extends CEntry
 
 /**
- * Class representing an inconclusive constraint checking result
- */
+  * Class representing an inconclusive constraint checking result
+  */
 case class SpecError(
     context   : Element,
     constraint: Constraint,
