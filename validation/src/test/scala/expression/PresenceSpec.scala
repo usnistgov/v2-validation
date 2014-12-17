@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.Pass
 import hl7.v2.instance.{Element, Query}
 import Query.query
 import org.specs2.Specification
@@ -18,12 +19,12 @@ trait PresenceSpec extends Specification with Evaluator with Mocks {
 
   def presencePathInvalid = {
     val p = Presence("1")
-    eval( p, c0) === Inconclusive( p, "Invalid Path '1'" :: Nil )
+    eval( p, c0) === inconclusive( p, c0.location, "Invalid Path '1'")
   }
 
   def presencePathUnreachable = {
     val p = Presence("2[2]")
-    eval( p, s0 ) === Inconclusive( p, "Unreachable Path '2[2]'" :: Nil )
+    eval( p, s0 ) === inconclusive(p, s0.location, "Unreachable Path '2[2]'")
   }
 
   def presencePathPopulated = {
@@ -33,7 +34,7 @@ trait PresenceSpec extends Specification with Evaluator with Mocks {
 
   def presencePathNotPopulated = {
     assert(!isPopulated(c2, "2[2]"))
-    eval(Presence("2[2]"), c2) === Failures.presenceFailure(Presence("2[2]"), c2)
+    eval(Presence("2[2]"), c2) === Failures.presence(c2, Presence("2[2]"))
   }
 
   private def isPopulated(c: Element, path: String): Boolean =

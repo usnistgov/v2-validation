@@ -1,8 +1,7 @@
 package expression
 
+import expression.EvalResult.{Inconclusive, Fail, Pass}
 import org.specs2.Specification
-
-import scala.util.Random
 
 trait ORSpec
   extends Specification
@@ -28,7 +27,7 @@ trait ORSpec
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
   def orFirstInconclusive = Seq(exp1, exp2, exp3) map { e => 
-    eval( OR(exp3, e), c2 ) === Inconclusive(exp3, "Invalid Path '1'" :: Nil)
+    eval( OR(exp3, e), c2 ) === inconclusive(exp3, c2.location, "Invalid Path '1'")
   }
 
   def orFirstPasses = Seq(exp1, exp2, exp3) map { e => 
@@ -36,12 +35,12 @@ trait ORSpec
   }
 
   def orFirstFailsSecondInconclusive = eval( OR(exp2, exp3), c2 ) ===
-    Inconclusive(exp3, "Invalid Path '1'" :: Nil)
+    inconclusive(exp3, c2.location, "Invalid Path '1'")
 
   def orFirstFailsSecondPasses = eval( OR(exp2, exp1), c2 ) === Pass
 
   def orFirstFailsSecondFails = eval( OR(exp2, exp2), c2 ) === {
     val f = eval(exp2, c2).asInstanceOf[Fail]
-    Failures.orFailure(OR(exp2, exp2), c2, f, f)
+    Failures.or(OR(exp2, exp2), c2, f, f)
   }
 }

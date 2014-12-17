@@ -1,9 +1,8 @@
 package hl7.v2.validation.report
 
 import expression.AsString.{expression => exp}
-import expression.{Expression, Reason}
+import expression.EvalResult.{Trace, Reason}
 import hl7.v2.instance.{Element, Location}
-
 
 object PrettyPrint {
 
@@ -40,8 +39,6 @@ object PrettyPrint {
 
   private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
 
-  //private def desc(l: Location) = s"${l.path}(${l.desc})"
-
   // Usage problems
   private def usage(e: RUsage) = s"${loc(e.location)}\tR-Usage (required but missing)."
 
@@ -50,7 +47,6 @@ object PrettyPrint {
   private def usage(e: XUsage) = s"${loc(e.location)}\tX-Usage (not supported but present)."
 
   private def usage(e: WUsage) = s"${loc(e.location)}\tW-Usage (withdrawn but present)."
-
 
   // Cardinality problems
   private def cardinality(e: MinCard) = {
@@ -86,29 +82,24 @@ object PrettyPrint {
   //============================================================================
 
   private def success(e: Success) = s"[Success] ${loc(e.context.location)} ${
-    e.constraint.id} - ${ exp(e.constraint.assertion, e.context) }"
+    e.constraint.id.getOrElse("")} - ${ exp(e.constraint.assertion, e.context) }\n"
 
   private def failure(e: Failure) = s"[Failure] ${loc(e.context.location)} ${
-    e.constraint.id} - ${ exp(e.constraint.assertion, e.context) } \n ${
-    stackTrace(e.context, e.stack)} "
+    e.constraint.id.getOrElse("")} - ${ exp(e.constraint.assertion, e.context) } \n ${stack(e.context, e.stack, "\t")}\n"
 
   private def specErr(e: SpecError) = {
-    val details = s"\t${exp(e.expression, e.context)} \n ${ e.details.mkString("\n\t\t") }"
-    s"[Spec Error] ${loc(e.context.location)} ${e.constraint.id} - ${exp(e.constraint.assertion, e.context)} \n $details"
+    val details = trace(e.context, e.trace, "\t")
+    s"[Spec Error] ${loc(e.context.location)} ${e.constraint.id.getOrElse("")} - ${exp(e.constraint.assertion, e.context)} \n $details\n"
   }
 
-  type EStack = List[(Expression, List[Reason])]
-  //FIXME this is just for testing ... need to be reimplemented
-  private def stackTrace(context: Element, stack: EStack): String = {
-    var i = 0
-    stack.map { x =>
-      i = i + 1
-      val reasons = x._2.map { r =>
-        s"${"\t"*(i + 1)}Reason: [${r.location.line}, ${r.location.column}] ${r.msg}"
-      }.mkString("\n")
+  private def stack(c: Element, l: List[Trace], tab: String)=
+    Stream.from(1).zip(l).map( t => s"${trace(c, t._2, tab * t._1)}").mkString("\n")
 
-      s"${"\t" * i }[Failed] ${ exp(x._1, context) }\n${ reasons }"
-
-    }.mkString("\n")
+  private def trace(c: Element, t: Trace, tab: String) = {
+    val rs = t.reasons.map( r => s"$tab\t${reason(r)}" ).mkString("\n")
+    s"$tab[Failed] ${exp(t.expression, c)} \n $rs "
   }
+
+  private def reason(r: Reason) =
+    s"Reason: [${r.location.line}, ${r.location.column}] ${r.message}"
 }

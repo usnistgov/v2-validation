@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.Pass
 import hl7.v2.instance.Query._
 import hl7.v2.instance.Text
 import org.specs2.Specification
@@ -27,6 +28,6 @@ trait FormatSpec extends Specification with Evaluator with Mocks {
 
   def formatNoMatch = {
     val e = Format("3[1]", "[a-z0-9]+")
-    eval( e, c1 ) === Failures.formatFailure(e, `c1.3[1]` :: Nil )
+    eval( e, c1 ) === Failures.format(e, `c1.3[1]` :: Nil )
   }
 }

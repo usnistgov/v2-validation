@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.Pass
 import hl7.v2.instance.Query
 import Query.queryAsSimple
 import hl7.v2.instance.Text
@@ -30,19 +31,19 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   // c1.2[3] is complex
   def plainTextPathComplex = Seq(true, false) map { b =>
     val p2 = PlainText("2[3]", "", b)
-    eval( p2, c2 ) === Inconclusive(p2, "Path resolution returned at least one complex element"::Nil)
+    eval( p2, c2 ) === inconclusive(p2, c2.location, "Path resolution returned at least one complex element")
   }
 
   // 4 is an invalid path
   def plainTextPathInvalid = Seq(true, false) map { b =>
     val p3 = PlainText("4", "", b)
-    eval( p3, c0 ) === Inconclusive(p3, s"Invalid Path '${p3.path}'"::Nil)
+    eval( p3, c0 ) === inconclusive(p3, c0.location, s"Invalid Path '${p3.path}'")
   }
 
   // s0 is a simple element, querying it will fail
   def plainTextPathUnreachable = Seq(true, false) map { b =>
     val p4 = PlainText("4[1]", "", b)
-    eval( p4, s0 ) === Inconclusive(p4, s"Unreachable Path '${p4.path}'":: Nil)
+    eval( p4, s0 ) === inconclusive(p4, s0.location, s"Unreachable Path '${p4.path}'")
   }
 
   // The following value will be used in the next tests
@@ -62,12 +63,12 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   def plainTextDifferentValue = Seq(true, false) map { b =>
     val p1 = PlainText("3[1]", "X", b)
     val p2 = PlainText("4[1]", "41\\F\\", b)
-    eval( p1, c1 ) === Failures.plainTextFailure(p1, `c1.3[1]`:: Nil) and
-    eval( p2, c2 ) === Failures.plainTextFailure(p2, `c2.4[1]`:: Nil)
+    eval( p1, c1 ) === Failures.plainText(p1, `c1.3[1]`:: Nil) and
+    eval( p2, c2 ) === Failures.plainText(p2, `c2.4[1]`:: Nil)
   }
 
   def plainTextSameValueCNI = {
     val p = PlainText("3[1]", "s3", false)
-    eval( p, c1 ) === Failures.plainTextFailure(p, `c1.3[1]`::Nil)
+    eval( p, c1 ) === Failures.plainText(p, `c1.3[1]`::Nil)
   }
 }

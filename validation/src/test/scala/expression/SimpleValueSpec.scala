@@ -1,6 +1,6 @@
 package expression
 
-import expression.Failures._
+import expression.EvalResult.{Trace, Reason, Inconclusive, Pass}
 import hl7.v2.instance.Query._
 import hl7.v2.instance.{Number, Text, Time}
 import org.specs2.Specification
@@ -29,19 +29,19 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
   def simpleValuePathComplex = {
     val p = SimpleValue("2[3]", Operator.LT, Text("xx"))
     eval( p, c2 ) ===
-      Inconclusive(p, "Path resolution returned at least one complex element"::Nil)
+      inconclusive(p, c2.location, "Path resolution returned at least one complex element")
   }
 
   // 4 is an invalid path
   def simpleValuePathInvalid = Seq(true, false) map { b =>
     val p = SimpleValue("4", Operator.LT, Text("xx"))
-    eval( p, c0 ) === Inconclusive(p, s"Invalid Path '${p.path}'"::Nil)
+    eval( p, c0 ) === inconclusive(p, c0.location, s"Invalid Path '${p.path}'")
   }
 
   // s0 is a simple element, querying it will fail
   def simpleValuePathUnreachable = {
     val p = SimpleValue("4[1]", Operator.LT, Text("xx"))
-    eval( p, s0 ) === Inconclusive(p, s"Unreachable Path '${p.path}'":: Nil)
+    eval( p, s0 ) === inconclusive(p, s0.location, s"Unreachable Path '${p.path}'")
   }
 
   // The following value will be used in the next tests
@@ -55,7 +55,7 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
 
   def simpleValueFail = {
     val p = SimpleValue("5[1]", Operator.LT, Number("50"))
-    eval( p, c2 ) === Failures.simpleValueFailure(p, `c2.5[1]`::Nil)
+    eval( p, c2 ) === Failures.simpleValue(p, `c2.5[1]`::Nil)
   }
 
   def simpleValueNotComparable = {
@@ -63,9 +63,9 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
     val v = Time("00")
     val p = SimpleValue("5[1]", o, v)
     val s = `c2.5[1]`
-    val reason = s"${s.value} is not comparable to $v."
-    val error  = s"${loc(s.location)} ${s.value} $o $v failed. Reason: $reason"
-    eval( p, c2 ) === Inconclusive(p, error:: Nil )
+    val reasons = Reason( s.location, s"${s.value} is not comparable to $v." ) :: Nil
+    //val error  = s"${loc(s.location)} ${s.value} $o $v failed. Reason: $reason"
+    eval( p, c2 ) === Inconclusive( Trace(p, reasons) )
   }
 
   def simpleValueInvalidValue = {
@@ -73,9 +73,8 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
     val v = Number("xx")
     val p = SimpleValue("5[1]", o, v)
     val s = `c2.5[1]`
-    val reason = s"${v.raw} is not a valid Number. The format should be: [+|-]digits[.digits]"
-    val error  = s"${loc(s.location)} ${s.value} $o $v failed. Reason: $reason"
-    eval( p, c2 ) === Inconclusive(p, error:: Nil )
+    val reason = Reason(s.location, s"${v.raw} is not a valid Number. The format should be: [+|-]digits[.digits]")
+    eval( p, c2 ) === Inconclusive( Trace(p, reason:: Nil) )
   }
 
 }

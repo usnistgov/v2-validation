@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.Pass
 import hl7.v2.instance.Query._
 import hl7.v2.instance.{Number, Text}
 import org.specs2.Specification
@@ -27,19 +28,19 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
   def numberListPathComplex = {
     val p = NumberList("2[3]", Nil)
     eval( p, c2 ) ===
-      Inconclusive(p, "Path resolution returned at least one complex element"::Nil)
+      inconclusive(p, c2.location, "Path resolution returned at least one complex element")
   }
 
   // 4 is an invalid path
   def numberListPathInvalid = Seq(true, false) map { b =>
     val p = NumberList("4", Nil)
-    eval( p, c0 ) === Inconclusive(p, s"Invalid Path '${p.path}'"::Nil)
+    eval( p, c0 ) === inconclusive(p, c0.location, s"Invalid Path '${p.path}'")
   }
 
   // s0 is a simple element, querying it will fail
   def numberListPathUnreachable = {
     val p = NumberList("4[1]", Nil)
-    eval( p, s0 ) === Inconclusive(p, s"Unreachable Path '${p.path}'":: Nil)
+    eval( p, s0 ) === inconclusive(p, s0.location, s"Unreachable Path '${p.path}'")
   }
 
   // The following value will be used in the next tests
@@ -51,14 +52,14 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
 
   def numberListNaN = {
     val p = NumberList("3[1]", List(1))
-    eval(p, c1) === Failures.numberListNaNFailure(p, `c1.3[1]`::Nil)
+    eval(p, c1) === Failures.numberListNaN(p, `c1.3[1]`::Nil)
   }
 
   def numberListValueInList = eval( NumberList("5[1]", List(51)), c2 ) === Pass
 
   def numberListValueNotInList = {
     val p = NumberList("5[1]", List(52, 53))
-    eval(p, c2 ) === Failures.numberListFailure(p, `c2.5[1]`::Nil)
+    eval(p, c2 ) === Failures.numberList(p, `c2.5[1]`::Nil)
   }
 
 }

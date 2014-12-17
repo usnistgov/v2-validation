@@ -1,6 +1,6 @@
 package hl7.v2.validation.content
 
-import expression.{Inconclusive, Fail, Pass}
+import expression.EvalResult.{Inconclusive, Fail, Pass}
 import hl7.v2.instance._
 import hl7.v2.validation.report.{CEntry, Failure, SpecError, Success}
 
@@ -46,8 +46,8 @@ trait DefaultValidator extends Validator with expression.Evaluator {
   private def check(e: Element, c: Constraint)
                    (implicit s: Separators, dtz: Option[TimeZone]): CEntry =
     eval(c.assertion, e) match {
-      case Pass        => Success(e, c)
-      case Fail(stack) => Failure(e, c, stack)
-      case Inconclusive(exp, details) => SpecError(e, c, exp, details)
+      case Pass                => Success(e, c)
+      case Fail(stack)         => Failure(e, c, stack)
+      case Inconclusive(trace) => SpecError(e, c, trace)
     }
 }

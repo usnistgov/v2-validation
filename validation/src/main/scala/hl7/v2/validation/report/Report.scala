@@ -1,6 +1,6 @@
 package hl7.v2.validation.report
 
-import expression.{Expression, Reason}
+import expression.EvalResult.Trace
 import hl7.v2.instance.{Element, Location}
 import hl7.v2.profile.Range
 import hl7.v2.validation.content.Constraint
@@ -75,21 +75,15 @@ case class Success(context: Element, constraint: Constraint) extends CEntry
 /**
   * Class representing a failed constraint checking result
   */
-case class Failure(
-    context   : Element,
-    constraint: Constraint,
-    stack     : List[(Expression, List[Reason])]
-) extends CEntry
+case class Failure(context: Element, constraint: Constraint, stack: List[Trace]) extends CEntry
 
 /**
   * Class representing an inconclusive constraint checking result
   */
-case class SpecError(
-    context   : Element,
-    constraint: Constraint,
-    expression: Expression,  // The expression that can't be evaluated
-    details   : List[String] // The list of problems found
-) extends CEntry
+case class SpecError(context: Element, constraint: Constraint, trace: Trace) extends CEntry
+
+
+//==============================================================================
 
 //==============================================================================
 //    Value Set problem report entries

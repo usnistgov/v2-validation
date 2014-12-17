@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.{Inconclusive, Pass, Fail}
 import org.specs2.Specification
 
 trait ANDSpec
@@ -26,21 +27,21 @@ trait ANDSpec
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
   def andFirstInconclusive = Seq(exp1, exp2, exp3) map { e => 
-    eval( AND(exp3, e), c2 ) === Inconclusive(Presence("1"), "Invalid Path '1'" :: Nil)
+    eval( AND(exp3, e), c2 ) === inconclusive(Presence("1"), c2.location, "Invalid Path '1'")
   }
 
   def andFirstFails = Seq(exp1, exp2, exp3) map { e => 
     val f = eval(exp2, c2).asInstanceOf[Fail]
-    eval( AND(exp2, e), c2 ) === Failures.andFailure(AND(exp2, e), c2, f)
+    eval( AND(exp2, e), c2 ) === Failures.and(AND(exp2, e), c2, f)
   }
 
   def andFirstPassesSecondInconclusive = eval( AND(exp1, exp3), c2 ) === 
-    Inconclusive(Presence("1"), "Invalid Path '1'" :: Nil)
+    inconclusive(Presence("1"), c2.location, "Invalid Path '1'")
 
   def andFirstPassesSecondPasses = eval( AND(exp1, exp1), c2 ) === Pass
 
   def andFirstPassesSecondFails = {
     val f = eval(exp2, c2).asInstanceOf[Fail]
-    eval( AND(exp1, exp2), c2 ) === Failures.andFailure(AND(exp1, exp2), c2, f)
+    eval( AND(exp1, exp2), c2 ) === Failures.and(AND(exp1, exp2), c2, f)
   }
 }

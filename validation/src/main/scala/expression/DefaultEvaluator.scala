@@ -1,6 +1,6 @@
 package expression
 
-import expression.Failures._
+import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
 
@@ -44,9 +44,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     */
   def presence(p: Presence, context: Element): EvalResult =
     query(context, p.path) match {
-      case Success(Nil) => Failures.presenceFailure(p, context)
+      case Success(Nil) => Failures.presence(context, p)
       case Success(_)   => Pass
-      case Failure(e)   => Inconclusive(p, e.getMessage :: Nil)
+      case Failure(e)   => inconclusive(p, context.location, e)
     }
 
   /**
@@ -61,9 +61,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(ls)  =>
         ls filter( x => notEqual(x, p.text, p.ignoreCase) ) match {
           case Nil => Pass
-          case xs  => Failures.plainTextFailure(p, xs)
+          case xs  => Failures.plainText(p, xs)
         }
-      case Failure(e) => Inconclusive(p, e.getMessage :: Nil)
+      case Failure(e) => inconclusive(p, context.location, e)
     }
 
   /**
@@ -77,9 +77,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(ls)  =>
         ls filter( x => notMatch(x, f.pattern) ) match {
           case Nil => Pass
-          case xs  => Failures.formatFailure(f, xs)
+          case xs  => Failures.format(f, xs)
         }
-      case Failure(e) => Inconclusive(f, e.getMessage :: Nil)
+      case Failure(e) => inconclusive(f, context.location, e)
     }
 
   /**
@@ -94,9 +94,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(ls)  =>
         ls filter( x => notInList(x.value.raw, sl.csv) ) match {
           case Nil => Pass
-          case xs  => Failures.stringListFailure(sl, xs)
+          case xs  => Failures.stringList(sl, xs)
         }
-      case Failure(e) => Inconclusive(sl, e.getMessage :: Nil)
+      case Failure(e) => inconclusive(sl, context.location, e)
     }
 
   /**
@@ -114,11 +114,11 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Nil =>
             l1 filter( x => notInList(x.value.raw.toDouble, nl.csv) ) match {
               case Nil => Pass
-              case xs  => Failures.numberListFailure(nl, xs)
+              case xs  => Failures.numberList(nl, xs)
             }
-          case xs => Failures.numberListNaNFailure(nl, xs)
+          case xs => Failures.numberListNaN(nl, xs)
         }
-      case Failure(e) => Inconclusive(nl, e.getMessage :: Nil)
+      case Failure(e) => inconclusive(nl, context.location, e)
     }
 
   /**
@@ -136,11 +136,11 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case (Nil, xs) =>
             xs filter { _._2 == Success(false) } match {
               case Nil => Pass
-              case ys  => simpleValueFailure( sv, ys map { x => x._1 } )
+              case ys  => Failures.simpleValue( sv, ys map { x => x._1 } )
             }
-          case (xs, _) => Inconclusive(sv, valueComparisonErrors(xs, sv))
+          case (xs, _) => inconclusive(sv, xs)
         }
-      case Failure(e) => Inconclusive(sv, e.getMessage :: Nil)
+      case Failure(e)  => inconclusive(sv, context.location, e)
     }
 
   /**
@@ -153,17 +153,17 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
                (implicit dtz: Option[TimeZone]): EvalResult =
     (queryAsSimple(context, pv.path1), queryAsSimple(context, pv.path2)) match {
       case (Success(  Nil  ), Success(  Nil  )) => Pass
-      case (Success(x::Nil), Success(Nil)) => pathValueFailure(pv, x, pv.path2)
-      case (Success(Nil), Success(x::Nil)) => pathValueFailure(pv, x, pv.path1)
+      case (Success(x::Nil), Success(Nil)) => Failures.pathValue(pv, x, pv.path2)
+      case (Success(Nil), Success(x::Nil)) => Failures.pathValue(pv, x, pv.path1)
       case (Success(x1::Nil), Success(x2::Nil)) =>
         pv.operator.eval( x1.value, x2.value ) match {
           case Success(true)  => Pass
-          case Success(false) => pathValueFailure(pv, x1, x2)
-          case Failure(e)     => Inconclusive(pv, e.getMessage::Nil)
+          case Success(false) => Failures.pathValue(pv, x1, x2)
+          case Failure(e)     => inconclusive(pv, context.location, e)
         }
-      case (Success(xs1), Success(xs2)) => Inconclusive(pv, pvErrMsgs(pv, xs1, xs2))
-      case ( Failure(e), _ )            => Inconclusive(pv, e.getMessage :: Nil)
-      case ( _, Failure(e) )            => Inconclusive(pv, e.getMessage :: Nil)
+      case (Success(xs1), Success(xs2)) => inconclusive(pv, context, xs1, xs2)
+      case ( Failure(e), _ )            => inconclusive(pv, context.location, e)
+      case ( _, Failure(e) )            => inconclusive(pv, context.location, e)
     }
 
   /**
@@ -176,10 +176,10 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
          (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
-      case f: Fail         => Failures.andFailure(and, context, f)
+      case f: Fail         => Failures.and(and, context, f)
       case Pass            =>
         eval( and.exp2, context ) match {
-          case f: Fail => Failures.andFailure(and, context, f)
+          case f: Fail => Failures.and(and, context, f)
           case x       => x
         }
     }
@@ -195,7 +195,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     eval( or.exp1, context ) match {
       case f1: Fail =>
         eval(or.exp2, context) match {
-          case f2: Fail => Failures.orFailure(or, context, f1, f2)
+          case f2: Fail => Failures.or(or, context, f1, f2)
           case x        => x
         }
       case x => x
@@ -210,7 +210,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def not(not: NOT, context: Element)
          (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
     eval( not.exp, context ) match {
-      case Pass    => Failures.notFailure( not, context)
+      case Pass    => Failures.not( not, context)
       case f: Fail => Pass
       case i: Inconclusive => i
     }
@@ -232,7 +232,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def plugin(e: Plugin, context: Element)(implicit s: Separators): EvalResult =
     pluginMap.get( e.id ) match {
       case Some( f ) => f( e, context, s )
-      case None => Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
+      case None => inconclusive(e, context.location, s"Plugin '${e.id}' not found")
     }
 
   /**
@@ -270,15 +270,32 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   private def convertibleToDouble(s: String): Boolean =
     try { s.toDouble; true } catch { case e: Throwable => false }
 
-  private def valueComparisonErrors(xs: List[(Simple, Try[Boolean])], sv: SimpleValue) =
-    xs map {
-      case(s, Failure(e)) =>
-        val m = e.getMessage
-        s"${loc(s.location)} ${s.value} ${sv.operator} ${sv.value} failed. Reason: $m"
-      case _ => ???
-    }
+  /**
+    * Creates an inconclusive result from a message
+    */
+  private def inconclusive(e: Expression, l: Location, m: String): Inconclusive =
+    Inconclusive( Trace( e, Reason( l, m) :: Nil ) )
 
-  private def pvErrMsgs(pv: PathValue, xs1: List[Simple], xs2: List[Simple]) =
-    s"path1(${pv.path1}) and path2(${pv.path2
-    }) resolution returned respectively ${xs1.length} and ${xs1.length} elements." :: Nil
+  /**
+    * Creates an inconclusive result from a throwable
+    */
+  private def inconclusive(e: Expression, l: Location, t: Throwable): Inconclusive =
+    inconclusive( e, l, t.getMessage )
+
+  private def inconclusive(sv: SimpleValue, xs: List[(Simple, Try[Boolean])]) = {
+    val reasons = xs map {
+      case (s, Failure(e)) => Reason( s.location, e.getMessage )
+      case _ => ??? //Not gonna happens
+    }
+    Inconclusive( Trace(sv, reasons) )
+  }
+
+  private def inconclusive(pv: PathValue, c: Element, xs1: List[Simple], xs2: List[Simple]) = {
+    val p1 = s"${c.location.path}.${pv.path1}"
+    val p2 = s"${c.location.path}.${pv.path2}"
+    val m = s"path1($p1) and path2($p2) resolution returned respectively ${xs1.length} and ${xs1.length} elements."
+    val reasons = Reason( c.location, m ) :: Nil
+    Inconclusive( Trace(pv, reasons) )
+  }
+
 }

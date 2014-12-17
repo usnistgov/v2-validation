@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult._
 import org.specs2.Specification
 
 trait PluginSpec extends Specification with Evaluator with Mocks {
@@ -15,7 +16,7 @@ trait PluginSpec extends Specification with Evaluator with Mocks {
   def pluginNoFunction = {
     assert( !(pluginMap contains "xxx") )
     val e = Plugin( "xxx", Map[String, String]() )
-    eval( e, c1 ) === Inconclusive(e, s"Plugin '${e.id}' not found" :: Nil)
+    eval( e, c1 ) === inconclusive(e, c1.location, s"Plugin '${e.id}' not found")
   }
 
   def pluginPass = {
@@ -30,7 +31,7 @@ trait PluginSpec extends Specification with Evaluator with Mocks {
     assert( pluginMap contains "P2" )
     val p = Plugin( "P2", Map[String, String]() )
     val reasons = Reason(c1.location, s"$p execution failed") :: Nil
-    val expected = Fail( p -> reasons :: Nil)
+    val expected = Fail( Trace(p, reasons) :: Nil )
     assert( pluginMap("P2")(p, c1, separators) === expected)
     eval( p, c1 ) === expected
   }
@@ -38,9 +39,9 @@ trait PluginSpec extends Specification with Evaluator with Mocks {
   def pluginInconclusive = {
     assert( pluginMap contains "P3" )
     val p = Plugin( "P3", Map[String, String]() )
-    val expected = Inconclusive(p, Nil)
+    val expected = Inconclusive( Trace(p, Nil) )
     assert( pluginMap("P3")(p, c1, separators) === expected)
-    eval( p, c1 ) === Inconclusive(p, Nil)
+    eval( p, c1 ) === expected
   }
 
 }

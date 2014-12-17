@@ -1,7 +1,8 @@
 package hl7.v2.validation.report
 package extension
 
-import expression.{AsString, Expression, Reason}
+import expression.{AsString, Expression}
+import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.Element
 import hl7.v2.validation.content.Constraint
 
@@ -43,9 +44,8 @@ object CEntryAsJson {
   private def toJson(x: SpecError): String = {
     val context    = toJson(x.context)
     val constraint = toJson(x.constraint, x.context)
-    val exp = s""""expression":"${expAsString(x.expression, x.context)}""""
-    val details = s""""details":${x.details map (s => s""""${escape(s)}"""") mkString("[", ",", "]")}"""
-    s"""{"SpecError":{$context,$constraint,$exp,$details}}"""
+    val trace = s""""trace":${toJson(x.context, x.trace)}"""
+    s"""{"SpecError":{$context,$constraint,$trace}}"""
   }
 
   /**
@@ -69,22 +69,27 @@ object CEntryAsJson {
   }
 
   /**
+    * Creates a JSON string from a failure stack traces
+    */
+  private def toJson(c: Element, stack: List[Trace]): String = {
+    val s = stack.map { toJson(c, _) }.mkString("[", ",", "]")
+    s""""stack":$s"""
+  }
+
+  /**
+    * Creates a JSON string from a stack trace
+    */
+  private def toJson(c: Element, t: Trace): String = {
+    val exp = expAsString(t.expression, c)
+    val reasons = t.reasons map toJson mkString("[", ",", "]" )
+    s"""{"expression":"$exp", "reasons":$reasons}"""
+  }
+
+  /**
     * Creates a JSON string from a failure reason
     */
   private def toJson(r: Reason): String =
-    s"""{${extension.toJson(r.location)},"msg":"${escape(r.msg)}"}"""
-
-  /**
-    * Creates a JSON string from a failure stack
-    */
-  private def toJson(c: Element, stack: List[(Expression,List[Reason])]): String = {
-    val s = stack.map { t =>
-      val exp = expAsString(t._1, c)
-      val reasons = t._2 map toJson mkString("[", ",", "]" )
-      s"""{"expression":"$exp", "reasons":$reasons}"""
-    }.mkString("[", ",", "]")
-    s""""stack":$s"""
-  }
+    s"""{${extension.toJson(r.location)},"msg":"${escape(r.message)}"}"""
 
   private def expAsString(e: Expression, c: Element): String =
     escape( AsString.expression(e, c) )

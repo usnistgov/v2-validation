@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.Pass
 import hl7.v2.instance.Text
 import hl7.v2.instance.Query._
 import org.specs2.Specification
@@ -26,19 +27,19 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
   def stringListPathComplex = {
     val p = StringList("2[3]", Nil)
     eval( p, c2 ) ===
-      Inconclusive(p, "Path resolution returned at least one complex element"::Nil)
+      inconclusive(p, c2.location, "Path resolution returned at least one complex element")
   }
 
   // 4 is an invalid path
   def stringListPathInvalid = Seq(true, false) map { b =>
     val p = StringList("4", Nil)
-    eval( p, c0 ) === Inconclusive(p, s"Invalid Path '${p.path}'"::Nil)
+    eval( p, c0 ) === inconclusive(p, c0.location, s"Invalid Path '${p.path}'")
   }
 
   // s0 is a simple element, querying it will fail
   def stringListPathUnreachable = {
     val p = StringList("4[1]", Nil)
-    eval( p, s0 ) === Inconclusive(p, s"Unreachable Path '${p.path}'":: Nil)
+    eval( p, s0 ) === inconclusive(p, s0.location, s"Unreachable Path '${p.path}'")
   }
 
   // The following value will be used in the next tests
@@ -54,7 +55,7 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
 
   def stringListValueNotInList = {
     val p = StringList("3[1]", List("s3"))
-    eval( p, c1 ) === Failures.stringListFailure(p, `c1.3[1]`::Nil)
+    eval( p, c1 ) === Failures.stringList(p, `c1.3[1]`::Nil)
   }
 
 }

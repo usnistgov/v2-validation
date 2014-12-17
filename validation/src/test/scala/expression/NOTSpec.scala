@@ -1,5 +1,6 @@
 package expression
 
+import expression.EvalResult.{Inconclusive, Fail, Pass}
 import org.specs2.Specification
 
 trait NOTSpec
@@ -23,9 +24,9 @@ trait NOTSpec
   assert( eval(exp3, c2).isInstanceOf[Inconclusive] )
 
   def notInconclusive = eval( NOT(exp3), c2 ) ===
-    Inconclusive(Presence("1"), "Invalid Path '1'" :: Nil)
+    inconclusive(Presence("1"), c2.location, "Invalid Path '1'")
 
   def notPass = eval( NOT(exp2), c2 ) === Pass
 
-  def notFail = eval( NOT(exp1), c2 ) === Failures.notFailure( NOT(exp1), c2 )
+  def notFail = eval( NOT(exp1), c2 ) === Failures.not( NOT(exp1), c2 )
 }
