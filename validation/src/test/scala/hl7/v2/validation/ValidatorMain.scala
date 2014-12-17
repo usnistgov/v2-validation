@@ -60,12 +60,12 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     time {
       validtor.validate( m, "ORU_R01" ) onComplete {
         case Success( report ) =>
-          //PrettyPrint.prettyPrint( report )
+          PrettyPrint.prettyPrint( report )
 
           //println( asJson(report, false) )
 
-          import hl7.v2.validation.report.extension.ReportAsJson._
-          println( toJson(report) )
+          //import hl7.v2.validation.report.extension.ReportAsJson._
+          //println( toJson(report) )
 
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
@@ -81,7 +81,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     }
   }*/
 
-  private def asJson(report: Report, compact: Boolean): String = {
+  /*private def asJson(report: Report, compact: Boolean): String = {
     import org.json4s._
     import org.json4s.jackson.Serialization
     import org.json4s.jackson.Serialization.{write, writePretty}
@@ -89,6 +89,6 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     implicit val formats = Serialization.formats( ShortTypeHints(List(classOf[NOT])) )
 
     if( compact ) write(report) else writePretty(report)
-  }
+  }*/
 
 }

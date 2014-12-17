@@ -21,21 +21,21 @@ object PrettyPrint {
   }
 
   private def asString(e: Entry): String = e match {
-    case x: RUsage  => rusage(x)
-    case x: XUsage  => xusage(x)
-    case x: WUsage  => wusage(x)
-    case x: MinCard => mincard(x)
-    case x: MaxCard => maxcard(x)
-    case x: Length  => length(x)
-    case x: Format  => format(x)
-    case x: Extra   => extra(x)
+    case x: RUsage   => usage(x)
+    case x: REUsage  => usage(x)
+    case x: XUsage   => usage(x)
+    case x: WUsage   => usage(x)
+    case x: MinCard  => cardinality(x)
+    case x: MaxCard  => cardinality(x)
+    case x: Length   => length(x)
+    case x: Format   => format(x)
+    case x: Extra    => extra(x)
     case x: UnescapedSeparators => unescapedSep(x)
     case x: Success   => success(x)
     case x: Failure   => failure(x)
     case x: SpecError => specErr(x)
     case x: InvalidLines => invalid(x)
     case x: UnexpectedLines => unexpected(x)
-    case _ => ???
   }
 
   private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -43,20 +43,22 @@ object PrettyPrint {
   //private def desc(l: Location) = s"${l.path}(${l.desc})"
 
   // Usage problems
-  private def rusage(e: RUsage) = s"${loc(e.location)}\tR-Usage (required but missing)."
+  private def usage(e: RUsage) = s"${loc(e.location)}\tR-Usage (required but missing)."
 
-  private def xusage(e: XUsage) = s"${loc(e.location)}\tX-Usage (not supported but present)."
+  private def usage(e: REUsage) = s"${loc(e.location)}\tRE-Usage"
 
-  private def wusage(e: WUsage) = s"${loc(e.location)}\tW-Usage (withdrawn but present)."
+  private def usage(e: XUsage) = s"${loc(e.location)}\tX-Usage (not supported but present)."
+
+  private def usage(e: WUsage) = s"${loc(e.location)}\tW-Usage (withdrawn but present)."
 
 
   // Cardinality problems
-  private def mincard(e: MinCard) = {
+  private def cardinality(e: MinCard) = {
     val expectation = s"Expected ${e.range}, found ${e.instance} repetitions"
     s"${loc(e.location)}\tMinimum cardinality violated. $expectation"
   }
 
-  private def maxcard(e: MaxCard) = {
+  private def cardinality(e: MaxCard) = {
     val expectation = s"Expected ${e.range}, found ${e.instance} repetitions"
     s"${loc(e.location)}\tMaximum cardinality violated. $expectation"
   }

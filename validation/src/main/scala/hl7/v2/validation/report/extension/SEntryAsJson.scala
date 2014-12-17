@@ -15,14 +15,15 @@ object SEntryAsJson {
     * @return The Json string
     */
   def toJson(s: SEntry): String = s match {
-    case x: RUsage  => toJson(x)
-    case x: XUsage  => toJson(x)
-    case x: WUsage  => toJson(x)
-    case x: MinCard => toJson(x)
-    case x: MaxCard => toJson(x)
-    case x: Length  => toJson(x)
-    case x: Format  => toJson(x)
-    case x: Extra   => toJson(x)
+    case x: RUsage   => toJson(x)
+    case x: REUsage  => toJson(x)
+    case x: XUsage   => toJson(x)
+    case x: WUsage   => toJson(x)
+    case x: MinCard  => toJson(x)
+    case x: MaxCard  => toJson(x)
+    case x: Length   => toJson(x)
+    case x: Format   => toJson(x)
+    case x: Extra    => toJson(x)
     case x: UnexpectedLines => toJson(x)
     case x: InvalidLines    => toJson(x)
     case x: UnescapedSeparators => toJson(x)
@@ -39,6 +40,11 @@ object SEntryAsJson {
     * Creates and returns a Json string from an RUsage report entry
     */
   private def toJson(x: RUsage): String = s"""{"RUsage":{${toJson(x.location)}}}"""
+
+  /**
+   * Creates and returns a Json string from an RUsage report entry
+   */
+  private def toJson(x: REUsage): String = s"""{"REUsage":{${toJson(x.location)}}}"""
 
   /**
     * Creates and returns a Json string from an XUsage report entry

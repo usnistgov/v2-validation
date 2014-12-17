@@ -96,10 +96,11 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     */
   def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
     (u, l) match {
-      case (Usage.R, Nil) => RUsage(dl) :: Nil
-      case (Usage.X, xs ) => xs map { e => XUsage( e.location ) }
-      case (Usage.W, xs ) => xs map { e => WUsage( e.location ) }
-      case _              => Nil
+      case (Usage.R,  Nil) => RUsage(dl) :: Nil
+      case (Usage.RE, Nil) => REUsage(dl) :: Nil
+      case (Usage.X,  xs ) => xs map { e => XUsage( e.location ) }
+      case (Usage.W,  xs ) => xs map { e => WUsage( e.location ) }
+      case _               => Nil
     }
 
   /**

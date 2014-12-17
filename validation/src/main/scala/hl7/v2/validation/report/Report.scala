@@ -41,6 +41,8 @@ case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry]
 
 case class RUsage(location: Location) extends SEntry
 
+case class REUsage(location: Location) extends SEntry
+
 case class XUsage(location: Location) extends SEntry
 
 case class WUsage(location: Location) extends SEntry
