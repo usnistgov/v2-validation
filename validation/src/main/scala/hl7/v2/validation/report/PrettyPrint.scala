@@ -34,8 +34,8 @@ object PrettyPrint {
     case x: Success   => success(x)
     case x: Failure   => failure(x)
     case x: SpecError => specErr(x)
-    case x: InvalidLines => invalid(x)
-    case x: UnexpectedLines => unexpected(x)
+    case x: InvalidLine => invalid(x)
+    case x: UnexpectedLine => unexpected(x)
   }
 
   private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -68,22 +68,22 @@ object PrettyPrint {
     s"${loc(e.location)}\tLength violated. $expectation"
   }
 
-  private def invalid(e: InvalidLines) = {
-    println("\n>>>>> Invalid line(s)")
-    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2.take(70)}'").mkString("\n")
-  }
-
-  private def unexpected(e: UnexpectedLines) = {
-    println("\n>>>>> Unexpected segment(s)")
-    e.list.map(l => s"\t[${l._1}, 1]\t'${l._2.take(70)}'").mkString("\n")
-  }
-
   private def format(e: Format) = s"${loc(e.location)}\t${e.details}"
 
   private def extra(e: Extra) = s"${loc(e.location)}"
 
   private def unescapedSep(e: UnescapedSeparators) =
     s"${loc(e.location)}\tUnescaped separators in primitive element."
+
+  private def invalid(e: InvalidLine) =
+    s"[line=${e.line}, column=1] Invalid line: ${e.value}"
+
+  private def unexpected(e: UnexpectedLine) =
+    s"[line=${e.line}, column=1] Unexpected line: ${e.value}"
+
+  //============================================================================
+  // Content
+  //============================================================================
 
   private def success(e: Success) = s"[Success] ${loc(e.context.location)} ${
     e.constraint.id} - ${ exp(e.constraint.assertion, e.context) }"

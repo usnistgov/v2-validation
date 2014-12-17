@@ -24,8 +24,8 @@ object SEntryAsJson {
     case x: Length   => toJson(x)
     case x: Format   => toJson(x)
     case x: Extra    => toJson(x)
-    case x: UnexpectedLines => toJson(x)
-    case x: InvalidLines    => toJson(x)
+    case x: UnexpectedLine => toJson(x)
+    case x: InvalidLine    => toJson(x)
     case x: UnescapedSeparators => toJson(x)
   }
 
@@ -92,17 +92,15 @@ object SEntryAsJson {
     s"""{"UnescapedSeparators":{${toJson(x.location)}}}"""
 
   /**
-    * Creates and returns a Json string from the list of invalid lines
-    */
-  private def toJson(x: InvalidLines): String = {
-    val l = x.list.map(l => s"""{"line":"${l._1}","value":"${escape(l._2)}"}""").mkString("[", ",", "]")
-    s"""{"InvalidLines":{"list":$l}}"""
-  }
+   * Creates and returns a Json string from the InvalidLine
+   */
+  private def toJson(x: InvalidLine): String =
+    s"""{"InvalidLine":{"line":"${x.line}","value":"${escape(x.value)}"}}"""
+
   /**
-    * Creates and returns a Json string from the list of unexpected segments
-    */
-  private def toJson(x: UnexpectedLines): String = {
-    val l = x.list.map(l => s"""{"line":"${l._1}","value":"${escape(l._2)}"}""").mkString("[", ",", "]")
-    s"""{"UnexpectedLines":{"list":$l}}"""
-  }
+   * Creates and returns a Json string from the UnexpectedLine
+   */
+  private def toJson(x: UnexpectedLine): String =
+    s"""{"UnexpectedLine":{"line":"${x.line}","value":"${escape(x.value)}"}}"""
+
 }

@@ -157,7 +157,9 @@ trait StructValidationSpec
               /UAC
               /PID!
               /UAC""".stripMargin('/')
-    val expected = List( InvalidLines(List(1 -> "sss", 4 -> "xzsas", 6 -> "PID!")) )
+    val expected = List(1 -> "sss", 4 -> "xzsas", 6 -> "PID!") map { x =>
+      InvalidLine( x._1, x._2 )
+    }//List( InvalidLines(List(1 -> "sss", 4 -> "xzsas", 6 -> "PID!")) )
 
     validate(m) must containTheSameElementsAs( expected )
   }
@@ -175,7 +177,7 @@ trait StructValidationSpec
                /UAC
                /UAC
                /PDQ|1""".stripMargin('/')
-    val expected = List( UnexpectedLines( List(5 -> "PDQ|1") ) )
+    val expected = UnexpectedLine(5, "PDQ|1") :: Nil //List( UnexpectedLines( List(5 -> "PDQ|1") ) )
 
     validate(m) must containTheSameElementsAs( expected )
   }

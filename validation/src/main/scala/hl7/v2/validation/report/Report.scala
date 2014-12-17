@@ -53,15 +53,15 @@ case class MaxCard(location: Location, instance: Int, range: Range) extends SEnt
 
 case class Length(location: Location, value: String, range: Range) extends SEntry
 
-case class UnexpectedLines( list: List[(Int, String)] ) extends SEntry
-
-case class InvalidLines( list: List[(Int, String)] ) extends SEntry
-
 case class Extra( location: Location ) extends SEntry
 
 case class UnescapedSeparators( location: Location ) extends SEntry
 
 case class Format(location: Location, details: String) extends SEntry
+
+case class UnexpectedLine( line: Int, value: String ) extends SEntry
+
+case class InvalidLine( line: Int, value: String  ) extends SEntry
 
 //==============================================================================
 //    Content problem report entries
