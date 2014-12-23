@@ -184,6 +184,7 @@
 							<xs:complexType>
 								<xs:attribute name="Value" type="NonEmptyString" use="required"/>
 								<xs:attribute name="Datatype" type="DatatypeNameType" use="required"/>
+                                <!--FIXME Allow Usage, Cardinality, Length and Value Set -->
 							</xs:complexType>
 						</xs:element>
 					</xs:sequence>

@@ -33,7 +33,13 @@ sealed trait VSEntry extends Entry
 /**
   * Class representing the validation report
   */
-case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry])
+case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry]){
+
+  /**
+    * Returns the report as Json string
+    */
+  def toJson: String = extension.ReportAsJson.toJson(this)
+}
 
 //==============================================================================
 //    Structure problem report entries
@@ -81,9 +87,6 @@ case class Failure(context: Element, constraint: Constraint, stack: List[Trace])
   * Class representing an inconclusive constraint checking result
   */
 case class SpecError(context: Element, constraint: Constraint, trace: Trace) extends CEntry
-
-
-//==============================================================================
 
 //==============================================================================
 //    Value Set problem report entries

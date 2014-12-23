@@ -11,7 +11,7 @@ object Dependencies {
   def container (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "container")
 
   val `xml-util`     = "gov.nist"            %  "xml-util"         % "1.0.0"
-  val json4sJackson  = "org.json4s"          %% "json4s-jackson"   % "3.2.11"
+  //val json4sJackson  = "org.json4s"          %% "json4s-jackson"   % "3.2.11"
   //val sprayJson      = "io.spray"            %% "spray-json"       % "1.3.1"
   //val joda           = "joda-time"            %   "joda-time"        % "2.6"
   //val `joda-convert` = "org.joda"             %   "joda-convert"     % "1.7"

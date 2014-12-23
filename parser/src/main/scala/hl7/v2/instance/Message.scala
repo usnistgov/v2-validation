@@ -17,4 +17,6 @@ case class Message(
   lazy val asGroup = Group( model.asGroup, 1, children)
 
   lazy val location = asGroup.location
+
+  val tree = serializer.Tree.message(this)
 }

@@ -29,7 +29,6 @@ object Build extends Build {
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++=
         compile(`xml-util`) ++
-        compile(json4sJackson) ++
         test( spec2 )
     )
 
@@ -37,12 +36,8 @@ object Build extends Build {
     .dependsOn( profile % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
-    /*.settings( libraryDependencies ++=
-      compile(joda) ++
-      compile(`joda-convert`)
-    )*/
 
-  lazy val `validation` = Project("hl7-v2-validation", file("validation"))
+  lazy val validation = Project("hl7-v2-validation", file("validation"))
     .dependsOn( parser % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)

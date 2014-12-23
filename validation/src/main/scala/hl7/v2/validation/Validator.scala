@@ -66,14 +66,13 @@ class HL7Validator(
     with vs.EmptyValidator
     with expression.DefaultEvaluator
 
-/*
 
 /**
-  * A Java friendly HL7 message validator which uses an empty value set
+  * A synchronous HL7 message validator which uses an empty value set
   * validator  and the default implementation of the  parser,
   * structure validator, content validator and expression evaluator.
   */
-class JHL7Validator(
+class SyncHL7Validator(
     val profile: Profile,
     val constraintManager: content.ConstraintManager,
     val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
@@ -86,14 +85,9 @@ class JHL7Validator(
 
   import scala.concurrent.Await
   import scala.concurrent.duration._
-  import scala.collection.JavaConversions._
 
   @throws[Exception]
-  def check(message: String, id: String): JReport = {
-    val r = Await.result(validate(message, id), 2.second)
-    JReport( r.structure, r.content, r.vs )
-  }
+  def check(message: String, id: String): Report =
+    Await.result(validate(message, id), 2.second)
 
 }
-*/
-

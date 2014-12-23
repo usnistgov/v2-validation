@@ -55,7 +55,10 @@ object Main extends App with DefaultParser {
     time {
       parse( m , mm ) match {
         case Failure( e ) => e.printStackTrace()
-        case Success( r ) => println( Serializer.toXML(r) )
+        case Success( r ) =>
+          println( Serializer.toXML(r) )
+
+          println( r.tree )
       }
     }
   }
