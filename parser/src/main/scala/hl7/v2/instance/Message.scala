@@ -8,8 +8,8 @@ import hl7.v2.profile.{Message => MM}
 case class Message(
     model: MM,
     children: List[SegOrGroup],
-    invalid: List[(Int, String)],
-    unexpected: List[(Int, String)],
+    invalid: List[Line],
+    unexpected: List[Line],
     defaultTimeZone: Option[TimeZone],//FIXME: Get this from MSH.7 ?
     separators: Separators
 ) {
@@ -18,5 +18,4 @@ case class Message(
 
   lazy val location = asGroup.location
 
-  val tree = serializer.Tree.message(this)
 }

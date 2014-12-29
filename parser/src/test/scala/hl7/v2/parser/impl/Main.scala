@@ -58,7 +58,6 @@ object Main extends App with DefaultParser {
         case Success( r ) =>
           println( Serializer.toXML(r) )
 
-          println( r.tree )
       }
     }
   }

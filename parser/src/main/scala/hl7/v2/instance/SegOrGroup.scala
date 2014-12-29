@@ -7,6 +7,6 @@ import hl7.v2.profile.SegRefOrGroup
   */
 trait SegOrGroup extends Complex {
   def model: SegRefOrGroup
-  def position = model.req.position
+  def req  = model.req
   def reqs = model.reqs
 }

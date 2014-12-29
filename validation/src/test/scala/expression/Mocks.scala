@@ -1,7 +1,7 @@
 package expression
 
 import hl7.v2.instance._
-import hl7.v2.profile.Req
+import hl7.v2.profile.{Usage, Req}
 
 trait Mocks {
 
@@ -14,12 +14,13 @@ trait Mocks {
     val location = Location("desc ...", "Path", -1, -1)
     /*val qProps   = QProps(QType.DT, "id", "name")*/
     val hasExtra = false
+    val req = Req(-1, Usage.O, None, None, None, None)
   }
 
-  case class S( position: Int, instance: Int, value: Value)
+  case class S(override val position: Int, instance: Int, value: Value)
     extends Simple  with Default
 
-  case class C( position: Int, instance: Int, children: List[Element] )
+  case class C(override val position: Int, instance: Int, children: List[Element])
     extends Complex with Default
 
   val s0  = S( 4, 1, Text("41\\F\\") )

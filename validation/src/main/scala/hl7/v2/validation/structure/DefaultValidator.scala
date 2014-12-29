@@ -20,9 +20,14 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     */
   def checkStructure(m: Message): Future[List[SEntry]] = Future {
     implicit val s = m.separators
-    val invalid    = m.invalid map    { x => InvalidLine( x._1, x._2 )    }
-    val unexpected = m.unexpected map { x => UnexpectedLine( x._1, x._2 ) }
-    invalid ::: unexpected ::: check(m.asGroup)
+    (m.invalid, m.unexpected) match {
+      case (Nil, Nil) => check(m.asGroup)
+      case (xs, Nil ) => InvalidLines( m.invalid ) :: check(m.asGroup)
+      case (Nil, xs ) => UnexpectedLines( m.unexpected ) :: check(m.asGroup)
+      case (xs , ys ) => InvalidLines( m.invalid ) ::
+                         UnexpectedLines( m.unexpected ) ::
+                         check(m.asGroup)
+    }
   }
 
   /**

@@ -1,7 +1,7 @@
 package hl7.v2.validation.report
 
 import expression.EvalResult.Trace
-import hl7.v2.instance.{Element, Location}
+import hl7.v2.instance.{Element, Line, Location}
 import hl7.v2.profile.Range
 import hl7.v2.validation.content.Constraint
 
@@ -65,9 +65,9 @@ case class UnescapedSeparators( location: Location ) extends SEntry
 
 case class Format(location: Location, details: String) extends SEntry
 
-case class UnexpectedLine( line: Int, value: String ) extends SEntry
+case class UnexpectedLines( list: List[Line] ) extends SEntry
 
-case class InvalidLine( line: Int, value: String  ) extends SEntry
+case class InvalidLines( list: List[Line]  ) extends SEntry
 
 //==============================================================================
 //    Content problem report entries

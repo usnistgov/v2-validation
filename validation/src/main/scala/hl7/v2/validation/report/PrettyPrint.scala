@@ -33,8 +33,8 @@ object PrettyPrint {
     case x: Success   => success(x)
     case x: Failure   => failure(x)
     case x: SpecError => specErr(x)
-    case x: InvalidLine => invalid(x)
-    case x: UnexpectedLine => unexpected(x)
+    case x: InvalidLines => invalid(x)
+    case x: UnexpectedLines => unexpected(x)
   }
 
   private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -71,11 +71,16 @@ object PrettyPrint {
   private def unescapedSep(e: UnescapedSeparators) =
     s"${loc(e.location)}\tUnescaped separators in primitive element."
 
-  private def invalid(e: InvalidLine) =
-    s"[line=${e.line}, column=1] Invalid line: ${e.value}"
+  private def invalid(e: InvalidLines) = {
+    val ls = e.list.map(l => s"[line=${l.number}, column=1] : ${l.content}")
+    s"### Invalid Lines: ${ ls.mkString("\n\t","\n\t", "\n") }"
+  }
 
-  private def unexpected(e: UnexpectedLine) =
-    s"[line=${e.line}, column=1] Unexpected line: ${e.value}"
+
+  private def unexpected(e: UnexpectedLines) = {
+    val ls = e.list.map(l => s"[line=${l.number}, column=1] : ${l.content}")
+    s"### Unexpected Lines: ${ ls.mkString("\n\t","\n\t", "\n") }"
+  }
 
   //============================================================================
   // Content

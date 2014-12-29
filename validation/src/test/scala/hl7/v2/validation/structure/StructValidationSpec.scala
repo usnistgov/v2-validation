@@ -1,6 +1,6 @@
 package hl7.v2.validation.structure
 
-import hl7.v2.instance.Location
+import hl7.v2.instance.{Line, Location}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{Range, XMLDeserializer}
 import hl7.v2.validation.report._
@@ -157,9 +157,7 @@ trait StructValidationSpec
               /UAC
               /PID!
               /UAC""".stripMargin('/')
-    val expected = List(1 -> "sss", 4 -> "xzsas", 6 -> "PID!") map { x =>
-      InvalidLine( x._1, x._2 )
-    }//List( InvalidLines(List(1 -> "sss", 4 -> "xzsas", 6 -> "PID!")) )
+    val expected = List( InvalidLines( List( Line(1, "sss"), Line(4, "xzsas"), Line(6,"PID!")) ) )
 
     validate(m) must containTheSameElementsAs( expected )
   }
@@ -177,7 +175,7 @@ trait StructValidationSpec
                /UAC
                /UAC
                /PDQ|1""".stripMargin('/')
-    val expected = UnexpectedLine(5, "PDQ|1") :: Nil //List( UnexpectedLines( List(5 -> "PDQ|1") ) )
+    val expected = List( UnexpectedLines( Line(5, "PDQ|1") :: Nil ) )//UnexpectedLine(5, "PDQ|1") :: Nil
 
     validate(m) must containTheSameElementsAs( expected )
   }

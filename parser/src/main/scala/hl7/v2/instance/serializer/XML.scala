@@ -73,10 +73,10 @@ object XML {
             }}
           </Structure>
           <Invalid>
-            { m.invalid map( l => <Line>{ l._1} # {l._2} </Line> ) }
+            { m.invalid map( l => <Line>{ l.number} # {l.content} </Line> ) }
           </Invalid>
           <Unexpected>
-            { m.unexpected map( l => <Line>{ l._1} # {l._2} </Line> ) }
+            { m.unexpected map( l => <Line>{ l.number} # {l.content} </Line> ) }
           </Unexpected>
       }</Message>
   }

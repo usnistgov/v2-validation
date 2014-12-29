@@ -9,7 +9,6 @@ sealed trait Component extends Element {
   def datatype: Datatype
   def req: Req
   def location: Location
-  def position = req.position
   val instance = 1
 }
 

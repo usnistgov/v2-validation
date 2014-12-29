@@ -2,7 +2,7 @@ package hl7.v2.validation.report
 package extension
 
 import hl7.v2.profile.Range
-import hl7.v2.instance.Location
+import hl7.v2.instance.{Line, Location}
 
 /**
   * Provides functions to convert a structure report entry (SEntry) to Json
@@ -24,8 +24,8 @@ object SEntryAsJson {
     case x: Length   => toJson(x)
     case x: Format   => toJson(x)
     case x: Extra    => toJson(x)
-    case x: UnexpectedLine => toJson(x)
-    case x: InvalidLine    => toJson(x)
+    case x: UnexpectedLines => toJson(x)
+    case x: InvalidLines    => toJson(x)
     case x: UnescapedSeparators => toJson(x)
   }
 
@@ -94,13 +94,16 @@ object SEntryAsJson {
   /**
    * Creates and returns a Json string from the InvalidLine
    */
-  private def toJson(x: InvalidLine): String =
-    s"""{"InvalidLine":{"line":"${x.line}","value":"${escape(x.value)}"}}"""
+  private def toJson(x: InvalidLines): String =
+    s"""{"InvalidLines":${ x.list map toJson mkString("[", ",", "]" )}}"""
 
   /**
    * Creates and returns a Json string from the UnexpectedLine
    */
-  private def toJson(x: UnexpectedLine): String =
-    s"""{"UnexpectedLine":{"line":"${x.line}","value":"${escape(x.value)}"}}"""
+  private def toJson(x: UnexpectedLines): String =
+    s"""{"UnexpectedLines":${ x.list map toJson mkString("[", ",", "]" )}}"""
+
+  private def toJson(l: Line): String =
+    s"""{"number":"${l.number}","content":"${escape(l.content)}"}"""
 
 }

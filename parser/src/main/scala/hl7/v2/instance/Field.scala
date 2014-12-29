@@ -9,7 +9,6 @@ sealed trait Field extends Element {
   def datatype: Datatype
   def req: Req
   def location: Location
-  def position = req.position
   def instance: Int
 }
 

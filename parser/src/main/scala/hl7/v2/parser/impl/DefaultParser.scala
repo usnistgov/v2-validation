@@ -26,7 +26,9 @@ trait DefaultParser extends Parser {
       implicit val s = separators
       val(children, unexpected) = processChildren( model.structure , valid)
       val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
-      Message( model, children.reverse, invalid, unexpected, tz, s )
+      val ils = invalid map ( x => Line( x._1, x._2 ) ) //FIXME Update PreProcessor to use Line
+      val uls = unexpected map ( x => Line( x._1, x._2 ) ) //FIXME Update PreProcessor to use Line
+      Message( model, children.reverse, ils, uls, tz, s )
     }
 
   // Type Aliases
