@@ -77,7 +77,7 @@
 	<xs:attributeGroup name="DataElementProperties">
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Usage" type="UsageType" use="required"/>
-		<xs:attribute name="Datatype" type="DatatypeNameType" use="required">
+		<xs:attribute name="Datatype" type="NonEmptyString" use="required">
 			<xs:annotation>
 				<xs:documentation>The datatype of the data element.</xs:documentation>
 			</xs:annotation>
