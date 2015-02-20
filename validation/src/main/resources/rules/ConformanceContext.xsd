@@ -61,13 +61,27 @@
 			<xs:element name="Assertion" type="AssertionType" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
-		<xs:attribute name="Tag" type="ConstraintTagType" use="optional"/>
+		<xs:attribute name="Target" type="PathType" use="optional"/>
 	</xs:complexType>
 	
-	<xs:simpleType name="ConstraintTagType">
+	<xs:complexType name="PredicateType">
+		<xs:sequence>
+			<xs:element name="Reference" type="ReferenceType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Description" type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Condition" type="AssertionType" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="ID" type="NonEmptyString" use="optional"/>
+		<xs:attribute name="Target" type="PathType" use="required"/>
+		<xs:attribute name="TrueUsage"  type="UsageType" use="required"/>
+		<xs:attribute name="FalseUsage" type="UsageType" use="required"/>
+	</xs:complexType>
+	
+	<xs:simpleType name="UsageType">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="Predicate"/>
-			<xs:enumeration value="ConfStatement"/>
+			<xs:enumeration value="R"/>
+			<xs:enumeration value="RE"/>
+			<xs:enumeration value="X"/>
+			<xs:enumeration value="O"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -83,16 +97,18 @@
 	</xs:complexType>
 	
 	<xs:complexType name="ByNameContexType">
-		<xs:sequence>
-			<xs:element name="Constraint" type="ConstraintType" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="Constraint" type="ConstraintType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Predicate" type="PredicateType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ByIDContexType">
-		<xs:sequence>
-			<xs:element name="Constraint" type="ConstraintType" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="Constraint" type="ConstraintType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Predicate" type="PredicateType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 	</xs:complexType>
 	

@@ -12,9 +12,16 @@
 		
 		<ByName Name="HD">
 			
+			<Predicate Target="1[1]" TrueUsage="R" FalseUsage="X">
+				<Description>If HD.2 is valued 'XX'</Description>
+				<Condition>
+					<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
+				</Condition>
+			</Predicate>
+			
 			<!-- Generic Expressions -->
 			
-			<Constraint ID="Presence">
+			<Constraint ID="Presence" Target="1[1]">
 				<Description>Presence</Description>
 				<Assertion>
 					<Presence Path="1[1]"/>
@@ -36,6 +43,8 @@
 					<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
 				</Assertion>
 			</Constraint>
+			
+			
 
 			<Constraint ID="Format">
 				<Description>Format</Description>
@@ -114,7 +123,16 @@
 					</NOT>
 				</Assertion>
 			</Constraint>
-			
+
+            <!--<Constraint ID="IMPLY">
+                <Assertion>
+                    <IMPLY>
+                        <Presence Path="1[1]"/>
+                        <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+                    </IMPLY>
+                </Assertion>
+            </Constraint>-->
+
 			<!--<Constraint ID="XOR">
 				<Assertion>
 					<XOR>
