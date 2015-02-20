@@ -8,123 +8,138 @@
 		<Description>Conformance context sample</Description>
 	</MetaData>
 	 
-	<Datatype>
+	 <!-- 
+	 
+	 -->
+	  
+	<Predicates>
+		<Datatype>
+			
+			<ByName Name="HD">
+				<Predicate Target="1[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If HD.2 is valued 'XX'</Description>
+					<Condition>
+						<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
+					</Condition>
+				</Predicate>
+			</ByName>
+			
+		</Datatype>
 		
-		<ByName Name="HD">
+		
+	</Predicates>
+	
+	<Constraints>
+		<Datatype>
 			
-			<Predicate Target="1[1]" TrueUsage="R" FalseUsage="X">
-				<Description>If HD.2 is valued 'XX'</Description>
-				<Condition>
-					<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
-				</Condition>
-			</Predicate>
-			
-			<!-- Generic Expressions -->
-			
-			<Constraint ID="Presence" Target="1[1]">
-				<Description>Presence</Description>
-				<Assertion>
-					<Presence Path="1[1]"/>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="Path Value">
-				<Description>Path Value</Description>
-				<Assertion>
-					<PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/>
-				</Assertion>
-			</Constraint>
-			
-			<!-- Value Expressions -->
-			
-			<Constraint ID="PlainText">
-				<Description>Plain Text</Description>
-				<Assertion> 
-					<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
-				</Assertion>
-			</Constraint>
-			
-			
-
-			<Constraint ID="Format">
-				<Description>Format</Description>
-				<Assertion> 
-					<Format Path="1[1]" Regex="XX"/>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="NumberList">
-				<Description>Number List</Description>
-				<Assertion>
-					<NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="String List">
-				<Description>String List</Description>
-				<Assertion> 
-					<StringList Path="1[1]" CSV="1,2"/>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="Simple Value">
-				<Description>Simple Value</Description>
-				<Assertion>
-					<SimpleValue Path="1[1]" Operator="NE" Value="XX"/>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="Simple Value">
-				<Description>Simple Value</Description>
-				<Assertion>
-					<SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/>
-				</Assertion>
-			</Constraint>
-			
-			<!-- Combination Expressions -->
-			
-			<Constraint ID="AND">
-				<Description>AND</Description>
-				<Assertion>
-					<AND>
+			<ByName Name="HD">
+								
+				<!-- Generic Expressions -->
+				
+				<Constraint ID="Presence" Target="1[1]">
+					<Description>Presence</Description>
+					<Assertion>
 						<Presence Path="1[1]"/>
-						<Presence Path="2[2]"/>
-					</AND>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="OR">
-				<Description>OR</Description>
-				<Assertion>
-					<OR>
-						<Presence Path="1[1]"/>
-						<Presence Path="2[2]"/>
-					</OR>
-				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="NOT">
-				<Description>NOT</Description>
-				<Assertion>
-					<NOT>
-						<Presence Path="1[1]"/>
-					</NOT>
-				</Assertion>
-			</Constraint>
-			
-			
-			<Constraint ID="NOT">
-				<Assertion>
-					<NOT>
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="Path Value">
+					<Description>Path Value</Description>
+					<Assertion>
+						<PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/>
+					</Assertion>
+				</Constraint>
+				
+				<!-- Value Expressions -->
+				
+				<Constraint ID="PlainText">
+					<Description>Plain Text</Description>
+					<Assertion> 
+						<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+					</Assertion>
+				</Constraint>
+				
+				
+				
+				<Constraint ID="Format">
+					<Description>Format</Description>
+					<Assertion> 
+						<Format Path="1[1]" Regex="XX"/>
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="NumberList">
+					<Description>Number List</Description>
+					<Assertion>
+						<NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/>
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="String List">
+					<Description>String List</Description>
+					<Assertion> 
+						<StringList Path="1[1]" CSV="1,2"/>
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="Simple Value">
+					<Description>Simple Value</Description>
+					<Assertion>
+						<SimpleValue Path="1[1]" Operator="NE" Value="XX"/>
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="Simple Value">
+					<Description>Simple Value</Description>
+					<Assertion>
+						<SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/>
+					</Assertion>
+				</Constraint>
+				
+				<!-- Combination Expressions -->
+				
+				<Constraint ID="AND">
+					<Description>AND</Description>
+					<Assertion>
 						<AND>
 							<Presence Path="1[1]"/>
-							<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+							<Presence Path="2[2]"/>
 						</AND>
-					</NOT>
-				</Assertion>
-			</Constraint>
-
-            <!--<Constraint ID="IMPLY">
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="OR">
+					<Description>OR</Description>
+					<Assertion>
+						<OR>
+							<Presence Path="1[1]"/>
+							<Presence Path="2[2]"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				
+				<Constraint ID="NOT">
+					<Description>NOT</Description>
+					<Assertion>
+						<NOT>
+							<Presence Path="1[1]"/>
+						</NOT>
+					</Assertion>
+				</Constraint>
+				
+				
+				<Constraint ID="NOT">
+					<Assertion>
+						<NOT>
+							<AND>
+								<Presence Path="1[1]"/>
+								<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+							</AND>
+						</NOT>
+					</Assertion>
+				</Constraint>
+				
+				<!--<Constraint ID="IMPLY">
                 <Assertion>
                     <IMPLY>
                         <Presence Path="1[1]"/>
@@ -132,8 +147,8 @@
                     </IMPLY>
                 </Assertion>
             </Constraint>-->
-
-			<!--<Constraint ID="XOR">
+				
+				<!--<Constraint ID="XOR">
 				<Assertion>
 					<XOR>
 						<NOT><Presence Path="1[1]"/></NOT>
@@ -141,10 +156,10 @@
 					</XOR>
 				</Assertion>
 			</Constraint>-->
+				
+			</ByName>
 			
-		</ByName>
-
-        <!--
+			<!--
 		<ByID ID="_XX_">
 			<Constraint ID="XOR">
 				<Description>XOR</Description>
@@ -188,41 +203,42 @@
 				</Assertion>
 			</Constraint>
 		</ByID> -->
+			
+		</Datatype>
 		
-	</Datatype>
-	
-	<Segment>
+		<Segment>
+			
+			<ByName Name="PID">
+				<Constraint ID="XX_1">
+					<Description>Test</Description>
+					<Assertion>
+						<Presence Path="1[1]"/>
+					</Assertion>
+				</Constraint>
+			</ByName>
+			
+			<ByName Name="XXX">
+				<Constraint ID="XX_1">
+					<Description>Test</Description>
+					<Assertion>
+						<Presence Path="1[1]"/>
+					</Assertion>
+				</Constraint>
+			</ByName>
+			
+			<ByID ID="YYY">
+				<Constraint ID="XX_1">
+					<Description>Test</Description>
+					<Assertion>
+						<Presence Path="1[1]"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			
+			
+		</Segment>
 		
-		<ByName Name="PID">
-			<Constraint ID="XX_1">
-				<Description>Test</Description>
-				<Assertion>
-					<Presence Path="1[1]"/>
-				</Assertion>
-			</Constraint>
-		</ByName>
-		
-		<ByName Name="XXX">
-			<Constraint ID="XX_1">
-				<Description>Test</Description>
-				<Assertion>
-					<Presence Path="1[1]"/>
-				</Assertion>
-			</Constraint>
-		</ByName>
-		
-		<ByID ID="YYY">
-			<Constraint ID="XX_1">
-				<Description>Test</Description>
-				<Assertion>
-					<Presence Path="1[1]"/>
-				</Assertion>
-			</Constraint>
-		</ByID>
-		
-		
-	</Segment>
-	
-	<Group/> 
+		<Group/>
+	</Constraints>
 	
 </ConformanceContext>

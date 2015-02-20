@@ -50,18 +50,18 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
 
   val confContext = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
 
-  val constraintManager = content.DefaultConstraintManager( confContext ).get
+  val conformanceContext = content.DefaultConformanceContext( confContext ).get
 
-  val validtor = new HL7Validator(profile, constraintManager, pluginMap)
+  val validator = new HL7Validator(profile, conformanceContext, pluginMap)
 
   1 to 1 foreach { i =>
     time {
-      validtor.validate( m, "ORU_R01" ) onComplete {
+      validator.validate( m, "ORU_R01" ) onComplete {
         case Success( report ) =>
           PrettyPrint.prettyPrint( report )
 
-          import hl7.v2.validation.report.extension.ReportAsJson._
-          println( toJson(report) )
+          //import hl7.v2.validation.report.extension.ReportAsJson._
+          //println( toJson(report) )
 
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")

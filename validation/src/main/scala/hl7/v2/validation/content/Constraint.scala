@@ -13,3 +13,26 @@ case class Constraint(
     description: Option[String],
     assertion: Expression
 )
+
+/**
+  * Class representing a predicate.
+  */
+case class Predicate(
+    target: String,
+    trueUsage: PredicateUsage,
+    falseUsage: PredicateUsage,
+    reference: Option[Reference],
+    description: Option[String],
+    condition: Expression
+)
+
+/**
+  * Trait representing allowed values for predicate true and false attributes
+  */
+sealed trait PredicateUsage
+object PredicateUsage {
+  case object R  extends PredicateUsage
+  case object RE extends PredicateUsage
+  case object X  extends PredicateUsage
+  case object O  extends PredicateUsage
+}

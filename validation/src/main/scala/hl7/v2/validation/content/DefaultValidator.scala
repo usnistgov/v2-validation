@@ -29,7 +29,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     */
   private def check(e: Element)
                    (implicit s: Separators, dtz: Option[TimeZone]): List[CEntry] = {
-    val cl: List[Constraint] = constraintManager.constraintsFor(e)
+    val cl: List[Constraint] = conformanceContext.constraintsFor(e)
     val r = cl map { check(e, _)  }
     e match {
       case c: Complex => c.children.foldLeft(r){ (acc, cc) => acc ::: check(cc) }

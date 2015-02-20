@@ -89,6 +89,7 @@
           =========================       Context Definition                    =======================================
           ============================================================================================================= -->
 	
+	<!-- Constraint context -->
 	<xs:complexType name="ContextType">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
 			<xs:element name="ByName" type="ByNameContexType" minOccurs="1" maxOccurs="1"/>
@@ -97,31 +98,22 @@
 	</xs:complexType>
 	
 	<xs:complexType name="ByNameContexType">
-		<xs:choice minOccurs="1" maxOccurs="unbounded">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="Constraint" type="ConstraintType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="Predicate" type="PredicateType" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:choice>
+		</xs:sequence>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ByIDContexType">
-		<xs:choice minOccurs="1" maxOccurs="unbounded">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
 			<xs:element name="Constraint" type="ConstraintType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="Predicate" type="PredicateType" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:choice>
+		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 	</xs:complexType>
 	
-	
-	<!--  =============================================================================================================
-          =========================       Conformance Context Definition        =======================================
-          ============================================================================================================= -->
-	
-	<xs:complexType name="ConformanceContextType">
+	<xs:complexType name="ConstraintsType">
 		<xs:sequence>
-			<xs:element name="MetaData" type="MetaDataType" minOccurs="0" maxOccurs="1"/>
-			
-			<xs:element name="Datatype" type="ContextType" minOccurs="1" maxOccurs="1">
+			<xs:element name="Datatype" type="ContextType" minOccurs="0" maxOccurs="1">
 				<!--  The Name attribute of a by-name context must be unique -->
 				<xs:key name="DTByNameContextTypeKey">
 					<xs:selector xpath="./ByName"></xs:selector>
@@ -134,7 +126,7 @@
 				</xs:key>
 			</xs:element>
 			
-			<xs:element name="Segment" type="ContextType" minOccurs="1" maxOccurs="1">
+			<xs:element name="Segment" type="ContextType" minOccurs="0" maxOccurs="1">
 				<!--  The Name attribute of a by-name context must be unique -->
 				<xs:key name="SegByNameContextTypeKey">
 					<xs:selector xpath="./ByName"></xs:selector>
@@ -147,7 +139,7 @@
 				</xs:key>
 			</xs:element>
 			
-			<xs:element name="Group" type="ContextType" minOccurs="1" maxOccurs="1">
+			<xs:element name="Group" type="ContextType" minOccurs="0" maxOccurs="1">
 				<!--  The Name attribute of a by-name context must be unique -->
 				<xs:key name="GroupByNameContextTypeKey">
 					<xs:selector xpath="./ByName"></xs:selector>
@@ -159,17 +151,96 @@
 					<xs:field xpath="@ID"></xs:field>
 				</xs:key>
 			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- Predicate context -->
+	<xs:complexType name="PredicateContextType">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="ByName" type="PredicateByNameContexType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ByID" type="PredicateByIDContexType"  minOccurs="1" maxOccurs="1"/>
+		</xs:choice>
+	</xs:complexType>
+	
+	<xs:complexType name="PredicateByNameContexType">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="Predicate" type="PredicateType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="PredicateByIDContexType">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="Predicate" type="PredicateType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="PredicatesType">
+		<xs:sequence>
 			
+			<xs:element name="Datatype" type="PredicateContextType" minOccurs="0" maxOccurs="1">
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PDTByNameContextTypeKey">
+					<xs:selector xpath="./ByName"></xs:selector>
+					<xs:field xpath="@Name"></xs:field>
+				</xs:key>
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PDTByIDContextTypeKey">
+					<xs:selector xpath="./ByID"></xs:selector>
+					<xs:field xpath="@ID"></xs:field>
+				</xs:key>
+			</xs:element>
+			
+			<xs:element name="Segment" type="PredicateContextType" minOccurs="0" maxOccurs="1">
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PSegByNameContextTypeKey">
+					<xs:selector xpath="./ByName"></xs:selector>
+					<xs:field xpath="@Name"></xs:field>
+				</xs:key>
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PSegByIDContextTypeKey">
+					<xs:selector xpath="./ByID"></xs:selector>
+					<xs:field xpath="@ID"></xs:field>
+				</xs:key>
+			</xs:element>
+			
+			<xs:element name="Group" type="PredicateContextType" minOccurs="0" maxOccurs="1">
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PGroupByNameContextTypeKey">
+					<xs:selector xpath="./ByName"></xs:selector>
+					<xs:field xpath="@Name"></xs:field>
+				</xs:key>
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PGroupByIDContextTypeKey">
+					<xs:selector xpath="./ByID"></xs:selector>
+					<xs:field xpath="@ID"></xs:field>
+				</xs:key>
+			</xs:element>
+			
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--  =============================================================================================================
+          =========================       Conformance Context Definition        =======================================
+          ============================================================================================================= -->
+	
+	
+	<xs:complexType name="ConformanceContextType">
+		<xs:sequence>
+			<xs:element name="MetaData" type="MetaDataType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Predicates" type="PredicatesType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Constraints" type="ConstraintsType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="UUID" type="NonEmptyString" use="required"/>
 	</xs:complexType>
 	
 	<xs:element name="ConformanceContext" type="ConformanceContextType">
 		<!--  The context type must be unique -->
-		<xs:key name="ContextTypeKey">
+		<!--<xs:key name="ContextTypeKey">
 			<xs:selector xpath="./Context"></xs:selector>
 			<xs:field xpath="@Type"></xs:field>
-		</xs:key>
+		</xs:key>-->
 	</xs:element>
 		
 </xs:schema>

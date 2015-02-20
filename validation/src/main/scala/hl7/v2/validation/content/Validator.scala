@@ -14,9 +14,9 @@ import hl7.v2.validation.report.CEntry
 trait Validator {
 
   /**
-    * The constraint manager used by this validator.
+    * The conformance context used by this validator.
     */
-  val constraintManager: ConstraintManager
+  val conformanceContext: ConformanceContext
 
   /**
     * Check the message against the constraints defined

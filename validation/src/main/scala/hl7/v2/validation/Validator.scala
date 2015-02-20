@@ -57,7 +57,7 @@ trait Validator { this: Parser with structure.Validator
   */
 class HL7Validator(
     val profile: Profile,
-    val constraintManager: content.ConstraintManager,
+    val conformanceContext: content.ConformanceContext,
     val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
@@ -74,7 +74,7 @@ class HL7Validator(
   */
 class SyncHL7Validator(
     val profile: Profile,
-    val constraintManager: content.ConstraintManager,
+    val conformanceContext: content.ConformanceContext,
     val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
