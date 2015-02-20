@@ -59,7 +59,6 @@ object CEntryAsJson {
   private def toJson(c: Constraint, ctx: Element): String = {
     val l = List (
       c.id map ( x => s""""id":"${escape(x)}"""" ),
-      c.tag map ( x => s""""tag":"$x"""" ),
       c.description match {
         case Some(x) => Some(s""""description":"${escape(x)}"""")
         case None    => Some(s""""description":"${expAsString(c.assertion, ctx)}"""")

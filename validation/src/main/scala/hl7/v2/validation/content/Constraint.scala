@@ -2,13 +2,6 @@ package hl7.v2.validation.content
 
 import expression.Expression
 
-sealed trait ConstraintTag
-
-object ConstraintTag {
-  case object Predicate extends ConstraintTag
-  case object ConfStmt  extends ConstraintTag
-}
-
 case class Reference( chapter: String, section: String, page: Int, url: String )
 
 /**
@@ -16,7 +9,6 @@ case class Reference( chapter: String, section: String, page: Int, url: String )
   */
 case class Constraint( 
     id: Option[String],
-    tag: Option[ConstraintTag],
     reference: Option[Reference],
     description: Option[String],
     assertion: Expression

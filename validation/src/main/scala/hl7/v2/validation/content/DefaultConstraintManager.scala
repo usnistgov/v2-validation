@@ -119,26 +119,13 @@ object DefaultConstraintManager {
     val id   = e.attribute("ID") match { case "" => None case x => Some(x) }
     val ref  = reference( e.getFirstChildElement("Reference") )
     val desc = description( e.getFirstChildElement("Description") )
-    Constraint(id, constraintTag(e), ref, desc, assertion(e) )
+    Constraint(id, ref, desc, assertion(e) )
   }
 
   private def description(e: nu.xom.Element): Option[String] =
     if( e != null ) Some( e.getValue ) else None
 
   private def reference(e: nu.xom.Element): Option[Reference] = None //FIXME
-
-  /**
-    * Creates a constraint tag from a nu.xom.Element
-    * @param e - The nu.xom.Element
-    * @return An instance of constraint tag
-    */
-  private def constraintTag( e: nu.xom.Element ): Option[ConstraintTag] =
-    e.attribute("Tag") match {
-      case ""              => None
-      case "ConfStatement" => Some( ConstraintTag.ConfStmt )
-      case "Predicate"     => Some( ConstraintTag.Predicate )
-      case x => throw new Error(s"[Error] Unknown constraint tag '$x'")
-    }
 
   /**
     * Create an expression object from a nu.xom.Element.
