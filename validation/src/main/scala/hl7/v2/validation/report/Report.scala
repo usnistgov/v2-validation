@@ -3,7 +3,7 @@ package hl7.v2.validation.report
 import expression.EvalResult.Trace
 import hl7.v2.instance.{Element, Line, Location}
 import hl7.v2.profile.Range
-import hl7.v2.validation.content.Constraint
+import hl7.v2.validation.content.{Predicate, Constraint}
 
 /**
   * Trait representing a report entry
@@ -87,6 +87,24 @@ case class Failure(context: Element, constraint: Constraint, stack: List[Trace])
   * Class representing an inconclusive constraint checking result
   */
 case class SpecError(context: Element, constraint: Constraint, trace: Trace) extends CEntry
+
+
+
+/**
+ * Class representing a successful constraint checking result
+ */
+case class PredicateSuccess(context: Element, predicate: Predicate) extends CEntry
+
+/**
+ * Class representing a failed constraint checking result
+ */
+case class PredicateFailure(context: Element, predicate: Predicate, stack: List[Trace]) extends CEntry
+
+/**
+ * Class representing an inconclusive constraint checking result
+ */
+case class PredicateSpecError(context: Element, predicate: Predicate, trace: Trace) extends CEntry
+
 
 //==============================================================================
 //    Value Set problem report entries
