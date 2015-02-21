@@ -4,7 +4,7 @@ package extension
 import expression.{AsString, Expression}
 import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.Element
-import hl7.v2.validation.content.Constraint
+import hl7.v2.validation.content.{Predicate, Constraint}
 
 /**
   * Provides functions to convert a content report entry (CEntry) to Json
@@ -17,9 +17,12 @@ object CEntryAsJson {
     * @return The Json string
     */
   def toJson(c: CEntry): String = c match {
-    case x: Success => toJson(x)
-    case x: Failure => toJson(x)
+    case x: Success   => toJson(x)
+    case x: Failure   => toJson(x)
     case x: SpecError => toJson(x)
+    case x: PredicateSuccess   => toJson(x)
+    case x: PredicateFailure   => toJson(x)
+    case x: PredicateSpecError => toJson(x)
   }
 
   /**
@@ -27,6 +30,12 @@ object CEntryAsJson {
     */
   private def toJson(x: Success): String =
     s"""{"Success":{${toJson(x.context)},${toJson(x.constraint, x.context)}}}"""
+
+  /**
+    * Creates a JSON string from a successful predicate check result
+    */
+  private def toJson(x: PredicateSuccess): String =
+    s"""{"PredicateSuccess":{${toJson(x.context)},${toJson(x.predicate, x.context)}}}"""
 
   /**
     * Creates a JSON string from a failed constraint check result
@@ -39,6 +48,16 @@ object CEntryAsJson {
   }
 
   /**
+    * Creates a JSON string from a failed predicate check result
+    */
+  private def toJson(x: PredicateFailure): String = {
+    val context    = toJson(x.context)
+    val predicate  = toJson(x.predicate, x.context)
+    val stack      = toJson(x.context, x.stack)
+    s"""{"PredicateFailure":{$context,$predicate,$stack}}"""
+  }
+
+  /**
     * Creates a JSON string from an inconclusive constraint check result
     */
   private def toJson(x: SpecError): String = {
@@ -46,6 +65,16 @@ object CEntryAsJson {
     val constraint = toJson(x.constraint, x.context)
     val trace = s""""trace":${toJson(x.context, x.trace)}"""
     s"""{"SpecError":{$context,$constraint,$trace}}"""
+  }
+
+  /**
+    * Creates a JSON string from an inconclusive predicate check result
+    */
+  private def toJson(x: PredicateSpecError): String = {
+    val context    = toJson(x.context)
+    val predicate  = toJson(x.predicate, x.context)
+    val trace = s""""trace":${toJson(x.context, x.trace)}"""
+    s"""{"PredicateSpecError":{$context,$predicate,$trace}}"""
   }
 
   /**
@@ -65,6 +94,17 @@ object CEntryAsJson {
       }
     )
     s""""constraint":{${ l.flatten.mkString(",") }}"""
+  }
+
+  /**
+    * Creates a JSON string from a predicate
+    */
+  private def toJson(p: Predicate, ctx: Element): String = {
+    val t = s""""target":"${p.target}""""
+    val u = s""""usage":"C(${p.trueUsage}/${p.falseUsage})""""
+    val d = s""""description":"${p.description}""""
+    val c = s""" "condition":"${expAsString(p.condition, ctx)}""""
+    s""""predicate":{$t,$u,$d,$c}"""
   }
 
   /**

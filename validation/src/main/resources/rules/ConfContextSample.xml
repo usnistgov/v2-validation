@@ -7,11 +7,7 @@
 	<MetaData>
 		<Description>Conformance context sample</Description>
 	</MetaData>
-	 
-	 <!-- 
-	 
-	 -->
-	  
+
 	<Predicates>
 		<Datatype>
 			

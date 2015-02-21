@@ -145,8 +145,8 @@ object DefaultConformanceContext {
     val target = e.attribute("Target")
     val tusage = usage( e.attribute("TrueUsage") )
     val fusage = usage( e.attribute("FalseUsage") )
-    val ref  = reference( e.getFirstChildElement("Reference") )
-    val desc = description( e.getFirstChildElement("Description") )
+    val ref    = reference( e.getFirstChildElement("Reference") )
+    val desc   = e.getFirstChildElement("Description").getValue
     Predicate(target, tusage, fusage, ref, desc, condition(e))
   }
 

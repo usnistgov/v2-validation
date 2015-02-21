@@ -3,6 +3,7 @@ package hl7.v2.validation.report
 import expression.AsString.{expression => exp}
 import expression.EvalResult.{Trace, Reason}
 import hl7.v2.instance.{Element, Location}
+import hl7.v2.validation.content.Predicate
 
 object PrettyPrint {
 
@@ -35,6 +36,9 @@ object PrettyPrint {
     case x: SpecError => specErr(x)
     case x: InvalidLines => invalid(x)
     case x: UnexpectedLines => unexpected(x)
+    case x: PredicateSuccess   => success(x)
+    case x: PredicateFailure   => failure(x)
+    case x: PredicateSpecError => specErr(x)
   }
 
   private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -85,6 +89,22 @@ object PrettyPrint {
   //============================================================================
   // Content
   //============================================================================
+
+
+  private def predicate(p: Predicate, c: Element) = {
+    val cond = exp(p.condition, c)
+    s"${loc(c.location)} Target: ${p.target} C(${p.trueUsage}/${p.falseUsage}) - $cond"
+  }
+  private def success(e: PredicateSuccess) =
+    s"[PSuccess] ${predicate(e.predicate, e.context)}\n"
+
+  private def failure(e: PredicateFailure) =
+    s"[PFailure] ${predicate(e.predicate, e.context)} \n ${stack(e.context, e.stack, "\t")}\n"
+
+  private def specErr(e: PredicateSpecError) = {
+    val details = trace(e.context, e.trace, "\t")
+    s"[PSpec Error] ${predicate(e.predicate, e.context)} \n $details\n"
+  }
 
   private def success(e: Success) = s"[Success] ${loc(e.context.location)} ${
     e.constraint.id.getOrElse("")} - ${ exp(e.constraint.assertion, e.context) }\n"

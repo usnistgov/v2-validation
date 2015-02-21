@@ -22,7 +22,7 @@ case class Predicate(
     trueUsage: PredicateUsage,
     falseUsage: PredicateUsage,
     reference: Option[Reference],
-    description: Option[String],
+    description: String,
     condition: Expression
 )
 

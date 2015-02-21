@@ -60,8 +60,8 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
         case Success( report ) =>
           PrettyPrint.prettyPrint( report )
 
-          //import hl7.v2.validation.report.extension.ReportAsJson._
-          //println( toJson(report) )
+          import hl7.v2.validation.report.extension.ReportAsJson._
+          println( toJson(report) )
 
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
