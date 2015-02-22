@@ -80,7 +80,6 @@ object PrettyPrint {
     s"### Invalid Lines: ${ ls.mkString("\n\t","\n\t", "\n") }"
   }
 
-
   private def unexpected(e: UnexpectedLines) = {
     val ls = e.list.map(l => s"[line=${l.number}, column=1] : ${l.content}")
     s"### Unexpected Lines: ${ ls.mkString("\n\t","\n\t", "\n") }"
@@ -90,31 +89,38 @@ object PrettyPrint {
   // Content
   //============================================================================
 
-
-  private def predicate(p: Predicate, c: Element) = {
-    val cond = exp(p.condition, c)
-    s"${loc(c.location)} Target: ${p.target} C(${p.trueUsage}/${p.falseUsage}) - $cond"
+  private def predicate(p: Predicate) = {
+    s"${p.description} Target: ${p.target} C(${p.trueUsage}/${p.falseUsage})"
   }
-  private def success(e: PredicateSuccess) =
-    s"[PSuccess] ${predicate(e.predicate, e.context)}\n"
+  private def success(e: PredicateSuccess) = s"[PSuccess] ${predicate(e.predicate)}\n"
 
-  private def failure(e: PredicateFailure) =
-    s"[PFailure] ${predicate(e.predicate, e.context)} \n ${stack(e.context, e.stack, "\t")}\n"
+  private def failure(e: PredicateFailure) = {
+
+    def violation(x: UsageEntry) =  x match {
+      case x:RUsage => usage(x)
+      case x:XUsage => usage(x)
+      case x        => throw new Exception(s"Invalid predicate violation '$x'")
+    }
+    val violations = (e.violations map violation).mkString("", "\t\t", "\n")
+    s"[PFailure] ${predicate(e.predicate)} \n $violations\n"
+  }
 
   private def specErr(e: PredicateSpecError) = {
-    val details = trace(e.context, e.trace, "\t")
-    s"[PSpec Error] ${predicate(e.predicate, e.context)} \n $details\n"
+    val rs = e.reasons.map( r => s"\t\t${reason(r)}" ).mkString("\n")
+    s"[PSpec Error] ${predicate(e.predicate)} \n $rs\n"
   }
 
   private def success(e: Success) = s"[Success] ${loc(e.context.location)} ${
     e.constraint.id.getOrElse("")} - ${ exp(e.constraint.assertion, e.context) }\n"
 
   private def failure(e: Failure) = s"[Failure] ${loc(e.context.location)} ${
-    e.constraint.id.getOrElse("")} - ${ exp(e.constraint.assertion, e.context) } \n ${stack(e.context, e.stack, "\t")}\n"
+    e.constraint.id.getOrElse("")} - ${ exp(e.constraint.assertion, e.context)
+    } \n ${stack(e.context, e.stack, "\t")}\n"
 
   private def specErr(e: SpecError) = {
     val details = trace(e.context, e.trace, "\t")
-    s"[Spec Error] ${loc(e.context.location)} ${e.constraint.id.getOrElse("")} - ${exp(e.constraint.assertion, e.context)} \n $details\n"
+    s"[Spec Error] ${loc(e.context.location)} ${e.constraint.id.getOrElse("")
+      } - ${exp(e.constraint.assertion, e.context)} \n $details\n"
   }
 
   private def stack(c: Element, l: List[Trace], tab: String)=

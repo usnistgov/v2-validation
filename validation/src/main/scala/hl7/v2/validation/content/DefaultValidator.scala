@@ -1,12 +1,14 @@
 package hl7.v2.validation.content
 
-import expression.EvalResult.{Inconclusive, Fail, Pass}
+import expression.EvalResult.{Reason, Inconclusive, Fail, Pass}
 import expression.{NOT, Presence}
 import hl7.v2.instance._
+import hl7.v2.validation.content.PredicateUsage.{X, R}
 import hl7.v2.validation.report._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
 trait DefaultValidator extends Validator with expression.Evaluator {
 
@@ -60,24 +62,25 @@ trait DefaultValidator extends Validator with expression.Evaluator {
   private def check(e: Element, p: Predicate)
                    (implicit s: Separators, dtz: Option[TimeZone]): CEntry =
     eval(p.condition, e) match {
-      case Pass                => checkUsage(e, p, p.trueUsage)
-      case Fail(stack)         => checkUsage(e, p, p.falseUsage)
-      case Inconclusive(trace) => PredicateSpecError(e, p, trace)
+      case Pass            => checkUsage(e, p, p.trueUsage)
+      case Fail(stack)     => checkUsage(e, p, p.falseUsage)
+      case Inconclusive(t) => PredicateSpecError(p, t.reasons)
     }
 
-  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage)
-                        (implicit s: Separators, dtz: Option[TimeZone]): CEntry = {
-    val path = p.target
-    val r = u match {
-      case PredicateUsage.R => eval(Presence(path), e)
-      case PredicateUsage.X => eval(NOT(Presence(path)), e)
-      case _ => PredicateSuccess(e, p)
+  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): CEntry =
+    try {
+      lazy val l = Query.query(e, p.target).get
+      u match {
+        case R if l.isEmpty  => PredicateFailure(p, RUsage(dl(e, p.target))::Nil )
+        case X if l.nonEmpty => PredicateFailure(p, l map {x => XUsage(x.location)})
+        case _ => PredicateSuccess(p)
+      }
+    } catch { case f: Throwable =>
+      val reasons = Reason(e.location, f.getMessage) :: Nil
+      PredicateSpecError(p, reasons)
     }
-    r match {
-      case Pass => PredicateSuccess(e, p)
-      case Fail(stack) => PredicateFailure(e, p, stack)
-      case Inconclusive(trace) => PredicateSpecError(e, p, trace)
-    }
-  }
+
+  private def dl(c: Element, p: String) =
+    c.location.copy(desc="...", path=s"${c.location.path}.$p")
 
 }

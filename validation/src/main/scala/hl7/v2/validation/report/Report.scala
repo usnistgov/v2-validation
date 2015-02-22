@@ -1,6 +1,6 @@
 package hl7.v2.validation.report
 
-import expression.EvalResult.Trace
+import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.{Element, Line, Location}
 import hl7.v2.profile.Range
 import hl7.v2.validation.content.{Predicate, Constraint}
@@ -45,13 +45,15 @@ case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry]
 //    Structure problem report entries
 //==============================================================================
 
-case class RUsage(location: Location) extends SEntry
+sealed trait UsageEntry extends SEntry { def location: Location }
 
-case class REUsage(location: Location) extends SEntry
+case class RUsage(location: Location) extends UsageEntry
 
-case class XUsage(location: Location) extends SEntry
+case class REUsage(location: Location) extends UsageEntry
 
-case class WUsage(location: Location) extends SEntry
+case class XUsage(location: Location) extends UsageEntry
+
+case class WUsage(location: Location) extends UsageEntry
 
 case class MinCard(location: Location, instance: Int, range: Range) extends SEntry
 
@@ -88,23 +90,20 @@ case class Failure(context: Element, constraint: Constraint, stack: List[Trace])
   */
 case class SpecError(context: Element, constraint: Constraint, trace: Trace) extends CEntry
 
-
+/**
+  * Class representing a successful predicate checking result
+  */
+case class PredicateSuccess(predicate: Predicate) extends CEntry
 
 /**
- * Class representing a successful constraint checking result
- */
-case class PredicateSuccess(context: Element, predicate: Predicate) extends CEntry
+  * Class representing a failed predicate checking result
+  */
+case class PredicateFailure(predicate: Predicate, violations: List[UsageEntry]) extends CEntry
 
 /**
- * Class representing a failed constraint checking result
- */
-case class PredicateFailure(context: Element, predicate: Predicate, stack: List[Trace]) extends CEntry
-
-/**
- * Class representing an inconclusive constraint checking result
- */
-case class PredicateSpecError(context: Element, predicate: Predicate, trace: Trace) extends CEntry
-
+  * Class representing an inconclusive predicate checking result
+  */
+case class PredicateSpecError(predicate: Predicate, reasons: List[Reason]) extends CEntry
 
 //==============================================================================
 //    Value Set problem report entries

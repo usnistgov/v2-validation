@@ -35,7 +35,7 @@ object CEntryAsJson {
     * Creates a JSON string from a successful predicate check result
     */
   private def toJson(x: PredicateSuccess): String =
-    s"""{"PredicateSuccess":{${toJson(x.context)},${toJson(x.predicate, x.context)}}}"""
+    s"""{"PredicateSuccess":{${toJson(x.predicate)}}}"""
 
   /**
     * Creates a JSON string from a failed constraint check result
@@ -51,10 +51,14 @@ object CEntryAsJson {
     * Creates a JSON string from a failed predicate check result
     */
   private def toJson(x: PredicateFailure): String = {
-    val context    = toJson(x.context)
-    val predicate  = toJson(x.predicate, x.context)
-    val stack      = toJson(x.context, x.stack)
-    s"""{"PredicateFailure":{$context,$predicate,$stack}}"""
+    val predicate  = toJson(x.predicate)
+    def violationAsJson(x: UsageEntry) = x match {
+      case x: RUsage => SEntryAsJson.toJson(x)
+      case x: XUsage => SEntryAsJson.toJson(x)
+      case _      => ???
+    }
+    val violations = (x.violations map violationAsJson).mkString("[", ",", "]")
+    s"""{"PredicateFailure":{$predicate,"violations":$violations}}"""
   }
 
   /**
@@ -71,10 +75,9 @@ object CEntryAsJson {
     * Creates a JSON string from an inconclusive predicate check result
     */
   private def toJson(x: PredicateSpecError): String = {
-    val context    = toJson(x.context)
-    val predicate  = toJson(x.predicate, x.context)
-    val trace = s""""trace":${toJson(x.context, x.trace)}"""
-    s"""{"PredicateSpecError":{$context,$predicate,$trace}}"""
+    val reasons    = x.reasons map toJson mkString("[", ",", "]" )
+    val predicate  = toJson(x.predicate)
+    s"""{"PredicateSpecError":{$predicate,"reasons":$reasons}}"""
   }
 
   /**
@@ -99,12 +102,13 @@ object CEntryAsJson {
   /**
     * Creates a JSON string from a predicate
     */
-  private def toJson(p: Predicate, ctx: Element): String = {
+  private def toJson(p: Predicate): String = {
     val t = s""""target":"${p.target}""""
     val u = s""""usage":"C(${p.trueUsage}/${p.falseUsage})""""
     val d = s""""description":"${p.description}""""
-    val c = s""" "condition":"${expAsString(p.condition, ctx)}""""
-    s""""predicate":{$t,$u,$d,$c}"""
+    //val c = s""" "condition":"${expAsString(p.condition, ctx)}""""
+    //s""""predicate":{$t,$u,$d,$c}"""
+    s""""predicate":{$t,$u,$d}"""
   }
 
   /**
