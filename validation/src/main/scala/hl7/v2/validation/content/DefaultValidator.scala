@@ -1,14 +1,12 @@
 package hl7.v2.validation.content
 
-import expression.EvalResult.{Reason, Inconclusive, Fail, Pass}
-import expression.{NOT, Presence}
+import expression.EvalResult.{Fail, Inconclusive, Pass, Reason}
 import hl7.v2.instance._
-import hl7.v2.validation.content.PredicateUsage.{X, R}
+import hl7.v2.validation.content.PredicateUsage.{R, X}
 import hl7.v2.validation.report._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Try
 
 trait DefaultValidator extends Validator with expression.Evaluator {
 
@@ -67,6 +65,9 @@ trait DefaultValidator extends Validator with expression.Evaluator {
       case Inconclusive(t) => PredicateSpecError(p, t.reasons)
     }
 
+  /**
+    * Checks if the target path of the predicate satisfy the usage 'u'
+    */
   private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): CEntry =
     try {
       lazy val l = Query.query(e, p.target).get
@@ -80,7 +81,10 @@ trait DefaultValidator extends Validator with expression.Evaluator {
       PredicateSpecError(p, reasons)
     }
 
-  private def dl(c: Element, p: String) =
-    c.location.copy(desc="...", path=s"${c.location.path}.$p")
+  /**
+    * Generates a location for the specified path
+    */
+  private def dl(context: Element, path: String) =
+    context.location.copy(desc="...", path=s"${context.location.path}.$path")
 
 }
