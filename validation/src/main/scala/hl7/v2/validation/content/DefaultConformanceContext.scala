@@ -44,12 +44,12 @@ class DefaultConformanceContext(
   }
 
   private def datatypeSpecs[T](d: Datatype, map: VMap[T]): List[T] =
-    map.datatypeByName.getOrElse( d.id, Nil) :::
-    map.datatypeByID.getOrElse( d.name, Nil)
+    map.datatypeByName.getOrElse( d.name, Nil) :::
+    map.datatypeByID.getOrElse( d.id, Nil)
 
   private def segmentSpecs[T](s: SM, map: VMap[T]): List[T] =
-    map.segmentByName.getOrElse( s.id, Nil) :::
-    map.segmentByID.getOrElse( s.name, Nil)
+    map.segmentByName.getOrElse( s.name, Nil) :::
+    map.segmentByID.getOrElse( s.id, Nil)
 
   private def groupSpecs[T](g: GM, map: VMap[T]): List[T] =
     map.groupByName.getOrElse( g.name, Nil )
