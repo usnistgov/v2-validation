@@ -70,7 +70,7 @@ object PrettyPrint {
 
   private def format(e: Format) = s"${loc(e.location)}\t${e.details}"
 
-  private def extra(e: Extra) = s"${loc(e.location)}"
+  private def extra(e: Extra) = s"${loc(e.location)} Extra children"
 
   private def unescapedSep(e: UnescapedSeparators) =
     s"${loc(e.location)}\tUnescaped separators in primitive element."
