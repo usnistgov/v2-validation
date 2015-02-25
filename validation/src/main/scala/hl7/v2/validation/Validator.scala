@@ -88,6 +88,6 @@ class SyncHL7Validator(
 
   @throws[Exception]
   def check(message: String, id: String): Report =
-    Await.result(validate(message, id), 2.second)
+    Await.result(validate(message, id), 10.second)
 
 }
