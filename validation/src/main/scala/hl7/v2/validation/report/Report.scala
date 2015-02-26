@@ -3,7 +3,8 @@ package hl7.v2.validation.report
 import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.{Element, Line, Location}
 import hl7.v2.profile.Range
-import hl7.v2.validation.content.{Predicate, Constraint}
+import hl7.v2.validation.content.{Constraint, Predicate}
+import hl7.v2.validation.vs.{BindingStrength, ValueSet}
 
 /**
   * Trait representing a report entry
@@ -71,6 +72,40 @@ case class UnexpectedLines( list: List[Line] ) extends SEntry
 
 case class InvalidLines( list: List[Line]  ) extends SEntry
 
+case class EVS (
+    location: Location,
+    value: String,
+    valueSet: ValueSet,
+    bindingStrength: BindingStrength
+) extends SEntry
+
+case class PVS (
+    location: Location,
+    value: String,
+    valueSet: ValueSet,
+    bindingStrength: BindingStrength
+) extends SEntry
+
+case class CodeNotFound(
+    location: Location,
+    value: String,
+    valueSet: ValueSet,
+    bindingStrength: BindingStrength
+) extends SEntry
+
+case class VSNotFound(
+    location: Location,
+    value: String,
+    valueSetId: String,
+    bindingStrength: BindingStrength
+) extends SEntry
+
+case class VSSpecError(
+    location: Location,
+    valueSetId: String,
+    msg: String
+) extends SEntry
+
 //==============================================================================
 //    Content problem report entries
 //==============================================================================
@@ -108,3 +143,5 @@ case class PredicateSpecError(predicate: Predicate, reasons: List[Reason]) exten
 //==============================================================================
 //    Value Set problem report entries
 //==============================================================================
+
+

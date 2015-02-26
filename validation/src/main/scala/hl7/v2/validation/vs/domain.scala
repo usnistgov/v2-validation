@@ -40,7 +40,7 @@ case class ValueSet(
     id: String,
     extensibility: Extensibility,
     stability: Stability,
-    codes: Set[Code]
+    codes: List[Code]
 )
 
 /**
