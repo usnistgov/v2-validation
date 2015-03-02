@@ -76,28 +76,28 @@ case class EVS (
     location: Location,
     value: String,
     valueSet: ValueSet,
-    bindingStrength: BindingStrength
+    bindingStrength: Option[BindingStrength]
 ) extends SEntry
 
 case class PVS (
     location: Location,
     value: String,
     valueSet: ValueSet,
-    bindingStrength: BindingStrength
+    bindingStrength: Option[BindingStrength]
 ) extends SEntry
 
 case class CodeNotFound(
     location: Location,
     value: String,
     valueSet: ValueSet,
-    bindingStrength: BindingStrength
+    bindingStrength: Option[BindingStrength]
 ) extends SEntry
 
 case class VSNotFound(
     location: Location,
     value: String,
     valueSetId: String,
-    bindingStrength: BindingStrength
+    bindingStrength: Option[BindingStrength]
 ) extends SEntry
 
 case class VSSpecError(

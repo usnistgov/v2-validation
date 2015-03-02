@@ -20,9 +20,9 @@ class ValueSetValidationSpec extends Specification { def is = s2"""
 
   val l = Location("", "", -1, -1)
 
-  val bs            = BindingStrength.R
-  val stability     = Stability.Static
-  val extensibility = Extensibility.Close
+  val bs            = Some(BindingStrength.R)
+  val stability     = Some(Stability.Static)
+  val extensibility = Some(Extensibility.Close)
 
   val vs1 = ValueSet("01", extensibility, stability, Nil)
   val vs2 = ValueSet("02", extensibility, stability, codes = List(

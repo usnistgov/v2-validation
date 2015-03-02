@@ -38,8 +38,8 @@ object Stability {
   */
 case class ValueSet(
     id: String,
-    extensibility: Extensibility,
-    stability: Stability,
+    extensibility: Option[Extensibility],
+    stability: Option[Stability],
     codes: List[Code]
 )
 

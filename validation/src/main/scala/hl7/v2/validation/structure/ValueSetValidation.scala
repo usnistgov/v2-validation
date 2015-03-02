@@ -16,7 +16,7 @@ object ValueSetValidation {
       case None       => None
       case Some(spec) =>
         val(id, bsp) = spec span ( _ != '#' )
-        val bs       = bsp drop 1
+        val bs       = bindingStrength(bsp drop 1)
         library get id match {
           case None     => Some( VSNotFound(l, v, id, bs) )
           case Some(vs) => checkValueSet(l, v, vs, bs)
@@ -26,7 +26,8 @@ object ValueSetValidation {
   /**
     * Checks if the value 'v' against the value set 'vs'
     */
-  def checkValueSet(l: Location, v: Value, vs: ValueSet, bs: String): Option[SEntry] =
+  def checkValueSet(l: Location, v: Value, vs: ValueSet,
+                    bs: Option[BindingStrength]): Option[SEntry] =
     vs.codes filter ( c => c.value == v.raw ) match {
       case Nil      => Some( CodeNotFound(l, v, vs, bs) )
       case x :: Nil => checkCodeUsage(x.usage, l, v, vs, bs)
@@ -37,7 +38,7 @@ object ValueSetValidation {
     * Returns a detection if the code usage is E or P
     */
   def checkCodeUsage(usage: CodeUsage, l: Location, v: Value, vs: ValueSet,
-                     bs: BindingStrength): Option[SEntry] = usage match {
+                    bs: Option[BindingStrength]): Option[SEntry] = usage match {
     case E => Some( EVS(l, v, vs, bs) )
     case P => Some( PVS(l, v, vs, bs) )
     case _ => None
@@ -50,11 +51,12 @@ object ValueSetValidation {
 
   implicit private def value(v: Value): String = v.raw
 
-  implicit private def bindingStrength(s: String): BindingStrength =
+  private def bindingStrength(s: String): Option[BindingStrength] =
     s match {
-      case "R" => BindingStrength.R
-      case "S" => BindingStrength.S
-      case "U" => BindingStrength.U
+      case ""  => None
+      case "R" => Some(BindingStrength.R)
+      case "S" => Some(BindingStrength.S)
+      case "U" => Some(BindingStrength.U)
       case _   => throw new Exception(s"Invalid Binding Strength '$s'")
     }
 }
