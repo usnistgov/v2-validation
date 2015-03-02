@@ -97,7 +97,7 @@
 				<xs:documentation>The minimum length an application must be able to handle.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="Table" type="NonEmptyString" use="optional"/>    	
+		<xs:attribute name="Table" type="TableType" use="optional"/>    	
 	</xs:attributeGroup>
 	
 	<!--  =============================================================================================================
@@ -143,6 +143,12 @@
 			<xs:enumeration value="B"/>
 			<xs:enumeration value="W"/>
 			<xs:enumeration value="CE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="TableType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[^#]+(#(R|S|U))?"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
