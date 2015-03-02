@@ -21,7 +21,7 @@ case class Code(value: String, description: String, usage: CodeUsage, codeSys: S
 sealed trait Extensibility
 object Extensibility {
   case object Open  extends Extensibility
-  case object Close extends Extensibility
+  case object Closed extends Extensibility
 }
 
 /**

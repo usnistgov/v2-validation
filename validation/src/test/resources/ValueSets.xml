@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2015 rel. 3 (x64) (http://www.altova.com) by ww (NIST) -->
+<TableLibrary 
+	Description="Automatically generated vacab for ACK"
+	Name="Vocab for ACK"
+	OrganizationName="HL7 NIST"
+	Status="Active"
+	TableLibraryIdentifier=""
+	TableLibraryVersion="1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ValueSet.xsd">
+	
+	<TableDefinition AlternateId="HL70003_IZ" Codesys="" Id="HL70003_IZ" Name="Event type" Oid="" Type="HL7" Version="1.5">
+		<TableElement Code="V04" Codesys="HL70003" DisplayName="V04" Source="Local"/>
+		<TableElement Code="K11" Codesys="HL70003" DisplayName="K11" Source="Local"/>
+		<TableElement Code="Q11" Codesys="HL70003" DisplayName="Q11" Source="Local"/>
+	</TableDefinition>
+	<TableDefinition AlternateId="HL70533_IZ" Codesys="" Id="HL70533_IZ" Name="Application Error Code" Oid="" Type="HL7" Version="1.5" Stability="Dynamic" Extensibility="Closed">
+		<TableElement Code="1" Codesys="HL70533" DisplayName="Illogical Date error" Source="Local" Usage="R"/>
+		<TableElement Code="2" Codesys="HL70533" DisplayName="Invalid Date" Source="Local" Usage="R"/>
+		<TableElement Code="3" Codesys="HL70533" DisplayName="Illogical Value error" Source="Local" Usage="R"/>
+		<TableElement Code="4" Codesys="HL70533" DisplayName="Invalid value" Source="Local" Usage="R"/>
+		<TableElement Code="5" Codesys="HL70533" DisplayName="Table value not found" Source="Local" Usage="P"/>
+		<TableElement Code="6" Codesys="HL70533" DisplayName="Required observation missing" Source="Local" Usage="P"/>
+	</TableDefinition>
+	<TableDefinition AlternateId="HL70301_IZ" Codesys="" Id="HL70301_IZ" Name="Universal ID type" Oid="" Type="HL7" Version="1.5" Stability="Static" Extensibility="Closed">
+		<TableElement Code="OID" Codesys="HL70301" DisplayName="OID" Source="Local" Usage="R"/>
+	</TableDefinition>
+	<TableDefinition AlternateId="HL70363_IZ" Codesys="" Id="HL70363_IZ" Name="Assigning Authority" Oid="" Type="HL7" Version="1.5" Stability="Dynamic" Extensibility="Open">
+		<TableElement Code="AKA" Codesys="HL70363" DisplayName="ALASKA" Source="Local" Usage="R"/>
+		<TableElement Code="ALA" Codesys="HL70363" DisplayName="ALABAMA" Source="Local" Usage="R"/>
+		<TableElement Code="ARA" Codesys="HL70363" DisplayName="ARKANSAS" Source="Local" Usage="P"/>
+		<TableElement Code="ASA" Codesys="HL70363" DisplayName="AMERICAN SAMOA" Source="Local" Usage="P"/>
+		<TableElement Code="AZA" Codesys="HL70363" DisplayName="ARIZONA" Source="Local" Usage="E"/>
+		<TableElement Code="BAA" Codesys="HL70363" DisplayName="NEW YORK CITY" Source="Local" Usage="E"/>
+		<TableElement Code="CAA" Codesys="HL70363" DisplayName="CALIFORNIA" Source="Local" Usage="R"/>
+		<TableElement Code="CHA" Codesys="HL70363" DisplayName="CHICAGO" Source="Local" Usage="R"/>
+		<TableElement Code="COA" Codesys="HL70363" DisplayName="COLORADO" Source="Local" Usage="R"/>
+		<TableElement Code="CTA" Codesys="HL70363" DisplayName="CONNECTICUT" Source="Local" Usage="R"/>
+		<TableElement Code="DCA" Codesys="HL70363" DisplayName="DISTRICT OF COLUMBIA" Source="Local" Usage="R"/>
+		<TableElement Code="DEA" Codesys="HL70363" DisplayName="DELAWARE" Source="Local" Usage="R"/>
+		<TableElement Code="FLA" Codesys="HL70363" DisplayName="FLORIDA" Source="Local" Usage="R"/>
+		<TableElement Code="FMA" Codesys="HL70363" DisplayName="FED STATES MICRO" Source="Local" Usage="R"/>
+		<TableElement Code="GAA" Codesys="HL70363" DisplayName="GEORGIA" Source="Local" Usage="R"/>
+		<TableElement Code="GUA" Codesys="HL70363" DisplayName="GUAM" Source="Local" Usage="R"/>
+		<TableElement Code="HIA" Codesys="HL70363" DisplayName="HAWAII" Source="Local" Usage="R"/>
+		<TableElement Code="IAA" Codesys="HL70363" DisplayName="IOWA" Source="Local" Usage="R"/>
+		<TableElement Code="IDA" Codesys="HL70363" DisplayName="IDAHO" Source="Local" Usage="R"/>
+		<TableElement Code="ILA" Codesys="HL70363" DisplayName="ILLINOIS" Source="Local" Usage="R"/>
+		<TableElement Code="INA" Codesys="HL70363" DisplayName="INDIANA" Source="Local" Usage="R"/>
+		<TableElement Code="KSA" Codesys="HL70363" DisplayName="KANSAS" Source="Local" Usage="R"/>
+		<TableElement Code="KYA" Codesys="HL70363" DisplayName="KENTUCKY" Source="Local" Usage="R"/>
+		<TableElement Code="LAA" Codesys="HL70363" DisplayName="LOUISIANA" Source="Local" Usage="R"/>
+		<TableElement Code="MAA" Codesys="HL70363" DisplayName="MASSACHUSETTS" Source="Local" Usage="R"/>
+		<TableElement Code="MDA" Codesys="HL70363" DisplayName="MARYLAND" Source="Local" Usage="R"/>
+		<TableElement Code="MEA" Codesys="HL70363" DisplayName="MAINE" Source="Local" Usage="R"/>
+		<TableElement Code="MHA" Codesys="HL70363" DisplayName="REP MARS ISLANDS" Source="Local" Usage="R"/>
+		<TableElement Code="MIA" Codesys="HL70363" DisplayName="MICHIGAN" Source="Local" Usage="R"/>
+		<TableElement Code="MNA" Codesys="HL70363" DisplayName="MINNESOTA" Source="Local" Usage="R"/>
+		<TableElement Code="MOA" Codesys="HL70363" DisplayName="MISSOURI" Source="Local" Usage="R"/>
+		<TableElement Code="MPA" Codesys="HL70363" DisplayName="NO. MARIANA ISLAND" Source="Local" Usage="R"/>
+		<TableElement Code="MSA" Codesys="HL70363" DisplayName="MISSISSIPPI" Source="Local" Usage="R"/>
+		<TableElement Code="MTA" Codesys="HL70363" DisplayName="MONTANA" Source="Local" Usage="R"/>
+		<TableElement Code="NCA" Codesys="HL70363" DisplayName="NORTH CAROLINA" Source="Local" Usage="R"/>
+		<TableElement Code="NDA" Codesys="HL70363" DisplayName="NORTH DAKOTA" Source="Local" Usage="R"/>
+		<TableElement Code="NEA" Codesys="HL70363" DisplayName="NEBRASKA" Source="Local" Usage="R"/>
+		<TableElement Code="NHA" Codesys="HL70363" DisplayName="NEW HAMPSHIRE" Source="Local" Usage="R"/>
+		<TableElement Code="NJA" Codesys="HL70363" DisplayName="NEW JERSEY" Source="Local" Usage="R"/>
+		<TableElement Code="NMA" Codesys="HL70363" DisplayName="NEW MEXICO" Source="Local" Usage="R"/>
+		<TableElement Code="NVA" Codesys="HL70363" DisplayName="NEVADA" Source="Local" Usage="R"/>
+		<TableElement Code="NYA" Codesys="HL70363" DisplayName="NEW YORK STATE" Source="Local" Usage="R"/>
+		<TableElement Code="OHA" Codesys="HL70363" DisplayName="OHIO" Source="Local" Usage="R"/>
+		<TableElement Code="OKA" Codesys="HL70363" DisplayName="OKLAHOMA" Source="Local" Usage="R"/>
+		<TableElement Code="ORA" Codesys="HL70363" DisplayName="OREGON" Source="Local" Usage="R"/>
+		<TableElement Code="PAA" Codesys="HL70363" DisplayName="PENNSYLVANIA" Source="Local" Usage="R"/>
+		<TableElement Code="PHA" Codesys="HL70363" DisplayName="PHILADELPHIA" Source="Local" Usage="R"/>
+		<TableElement Code="PRA" Codesys="HL70363" DisplayName="PUERTO RICO" Source="Local" Usage="R"/>
+		<TableElement Code="RIA" Codesys="HL70363" DisplayName="RHODE ISLAND" Source="Local" Usage="R"/>
+		<TableElement Code="RPA" Codesys="HL70363" DisplayName="REPUBLIC PALAU" Source="Local" Usage="R"/>
+		<TableElement Code="SCA" Codesys="HL70363" DisplayName="SOUTH CAROLINA" Source="Local" Usage="R"/>
+		<TableElement Code="SDA" Codesys="HL70363" DisplayName="SOUTH DAKOTA" Source="Local" Usage="R"/>
+		<TableElement Code="TBA" Codesys="HL70363" DisplayName="SAN ANTONIO" Source="Local" Usage="R"/>
+		<TableElement Code="THA" Codesys="HL70363" DisplayName="HOUSTON" Source="Local" Usage="R"/>
+		<TableElement Code="TNA" Codesys="HL70363" DisplayName="TENNESSEE" Source="Local" Usage="R"/>
+		<TableElement Code="TXA" Codesys="HL70363" DisplayName="TEXAS" Source="Local" Usage="R"/>
+		<TableElement Code="UTA" Codesys="HL70363" DisplayName="UTAH" Source="Local" Usage="R"/>
+		<TableElement Code="VAA" Codesys="HL70363" DisplayName="VIRGINIA" Source="Local" Usage="R"/>
+		<TableElement Code="VIA" Codesys="HL70363" DisplayName="VIRGIN ISLANDS" Source="Local" Usage="R"/>
+		<TableElement Code="VTA" Codesys="HL70363" DisplayName="VERMONT" Source="Local" Usage="R"/>
+		<TableElement Code="WAA" Codesys="HL70363" DisplayName="WASHINGTON" Source="Local" Usage="R"/>
+		<TableElement Code="WIA" Codesys="HL70363" DisplayName="WISCONSIN" Source="Local" Usage="R"/>
+		<TableElement Code="WVA" Codesys="HL70363" DisplayName="WEST VIRGINIA" Source="Local" Usage="R"/>
+		<TableElement Code="WYA" Codesys="HL70363" DisplayName="WYOMING" Source="Local"/>
+	</TableDefinition>
+	<TableDefinition AlternateId="HL70155_IZ" Codesys="" Id="HL70155_IZ" Name="Accept/Application acknowledgment conditions" Oid="" Type="HL7" Version="1.5" Stability="Static" Extensibility="Open">
+		<TableElement Code="AL" Codesys="HL70155" DisplayName="Always" Source="Local" Usage="R"/>
+		<TableElement Code="NE" Codesys="HL70155" DisplayName="Never" Source="Local" Usage="R"/>
+		<TableElement Code="ER" Codesys="HL70155" DisplayName="Error/Reject conditions only" Source="Local" Usage="P"/>
+		<TableElement Code="SU" Codesys="HL70155" DisplayName="Successful completion only" Source="Local" Usage="E"/>
+	</TableDefinition>
+</TableLibrary>
