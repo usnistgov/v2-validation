@@ -3,6 +3,7 @@ package extension
 
 import hl7.v2.profile.Range
 import hl7.v2.instance.{Line, Location}
+import hl7.v2.validation.vs.{BindingStrength, ValueSet}
 
 /**
   * Provides functions to convert a structure report entry (SEntry) to Json
@@ -24,6 +25,11 @@ object SEntryAsJson {
     case x: Length   => toJson(x)
     case x: Format   => toJson(x)
     case x: Extra    => toJson(x)
+    case x: EVS      => toJson(x)
+    case x: PVS      => toJson(x)
+    case x: CodeNotFound    => toJson(x)
+    case x: VSNotFound      => toJson(x)
+    case x: VSSpecError     => toJson(x)
     case x: UnexpectedLines => toJson(x)
     case x: InvalidLines    => toJson(x)
     case x: UnescapedSeparators => toJson(x)
@@ -105,5 +111,43 @@ object SEntryAsJson {
 
   private def toJson(l: Line): String =
     s"""{"number":"${l.number}","content":"${escape(l.content)}"}"""
+
+  private def toJson(x: EVS): String =
+    s"""{"EVS":{${toJson(x.location)},"value":"${escape(x.value)
+    }",${toJson(x.valueSet)}${toJson(x.bindingStrength)}}}"""
+
+  private def toJson(x: PVS): String =
+    s"""{"PVS":{${toJson(x.location)},"value":"${escape(x.value)
+    }",${toJson(x.valueSet)}${toJson(x.bindingStrength)}}}"""
+
+  private def toJson(x: CodeNotFound): String =
+    s"""{"CodeNotFound":{${toJson(x.location)},"value":"${escape(x.value)
+    }",${toJson(x.valueSet)}${toJson(x.bindingStrength)}}}"""
+
+  private def toJson(x: VSNotFound): String =
+    s"""{"VSNotFound":{${toJson(x.location)},"value":"${escape(x.value)
+    }","ValueSetId":"${escape(x.valueSetId)}"${toJson(x.bindingStrength)}}}"""
+
+  private def toJson(x: VSSpecError): String =
+    s"""{"VSSpecError":{${toJson(x.location)},"ValueSetId":"${escape(x.valueSetId)
+    }", "msg":"${escape(x.msg)}"}}"""
+
+  private def toJson(os: Option[BindingStrength]): String =
+    os match {
+      case Some(s) => s""","bindingStrength":$s"""
+      case None    => ""
+    }
+
+  private def toJson(x: ValueSet): String = {
+    val stability = x.stability match {
+      case Some(s) => s""","stability":"$s""""
+      case None => ""
+    }
+    val extensibility = x.extensibility match {
+      case Some(s) => s""","extensibility":"$s""""
+      case None    => ""
+    }
+    s""""ValueSet":{"id":${escape(x.id)}$stability$extensibility}"""
+  }
 
 }

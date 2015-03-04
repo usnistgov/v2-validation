@@ -3,6 +3,7 @@ package hl7.v2.validation.structure
 import hl7.v2.instance._
 import hl7.v2.profile.{Range, Req, Usage}
 import hl7.v2.validation.report._
+import hl7.v2.validation.vs.ValueSet
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -50,7 +51,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @return A list of problems found
     */
   def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
-    ValueValidation.checkValue(ss.value, req.length, ss.location)
+    ValueValidation.checkValue(ss.value, req.length, req.table, ss.location)
 
   /**
     * Checks the children of the complex element against their requirements

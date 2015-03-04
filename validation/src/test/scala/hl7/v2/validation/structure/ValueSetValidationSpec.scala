@@ -40,27 +40,19 @@ class ValueSetValidationSpec extends Specification { def is = s2"""
     "03" -> vs3
   )
 
-  def e1 = checkValueSet(l, Text(""), None) === None
+  def e1 = checkValueSet(l, Text(""), None) === Nil
 
-  def e2 = checkValueSet(l, Text(""), Some("x#R")) === Some {
-    VSNotFound(l, "", "x", bs)
-  }
+  def e2 = checkValueSet(l, Text(""), Some("x#R")) === VSNotFound(l, "", "x", bs)::Nil
 
-  def e3 = checkValueSet(l, Text("Z"), Some("01#R")) === Some {
-    CodeNotFound(l, "Z", vs1, bs)
-  }
+  def e3 = checkValueSet(l, Text("Z"), Some("01#R")) === CodeNotFound(l, "Z", vs1, bs)::Nil
 
-  def e4 = checkValueSet(l, Text("A"), Some("03#R")) === Some {
+  def e4 = checkValueSet(l, Text("A"), Some("03#R")) === List {
     val m = s"More than one code 'A' found in the value set '03'"
     VSSpecError(l, "03", m)
   }
 
-  def e5 = checkValueSet(l, Text("A"), Some("02#R")) === Some {
-    EVS(l, "A", vs2, bs)
-  }
+  def e5 = checkValueSet(l, Text("A"), Some("02#R")) === EVS(l, "A", vs2, bs)::Nil
 
-  def e6 = checkValueSet(l, Text("B"), Some("02#R")) === Some {
-    PVS(l, "B", vs2, bs)
-  }
+  def e6 = checkValueSet(l, Text("B"), Some("02#R")) === PVS(l, "B", vs2, bs)::Nil
 
 }

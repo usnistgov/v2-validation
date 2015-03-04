@@ -4,6 +4,7 @@ import hl7.v2.instance._
 import hl7.v2.instance.util.ValueFormatCheckers._
 import hl7.v2.profile.Range
 import hl7.v2.validation.report._
+import hl7.v2.validation.vs.ValueSet
 
 object ValueValidation extends EscapeSeqHandler  {
 
@@ -15,11 +16,12 @@ object ValueValidation extends EscapeSeqHandler  {
     * @param s  - The separators
     * @return The list of problem found
     */
-  def checkValue(v: Value, lc: Option[Range], l: Location)
-                (implicit s: Separators): List[SEntry] =
+  def checkValue(v: Value, lc: Option[Range], tc: Option[String], l: Location)
+                (implicit s: Separators, x: Map[String, ValueSet]): List[SEntry] =
     v.isNull match {
       case true  => Nil //No check if the value is Null
-      case false => checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
+      case false => checkFormat(l, v).toList ::: checkLength(l, v, lc).toList :::
+        ValueSetValidation.checkValueSet(l, v, tc)
     }
 
   /**

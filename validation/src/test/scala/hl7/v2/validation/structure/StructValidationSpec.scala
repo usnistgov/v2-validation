@@ -4,6 +4,7 @@ import hl7.v2.instance.{Line, Location}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{Range, XMLDeserializer}
 import hl7.v2.validation.report._
+import hl7.v2.validation.vs.ValueSet
 import org.specs2.Specification
 
 import scala.concurrent.Await
@@ -33,6 +34,8 @@ trait StructValidationSpec
   """
 
   //TODO: Implements invalid lines and unexpected segments
+
+  val valueSetLibrary = Map[String, ValueSet]()
 
   val profile = {
     val xml = getClass.getResourceAsStream("/ORU_R01_Profile.xml")

@@ -5,6 +5,7 @@ import hl7.v2.instance.{Element, Separators}
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
 import hl7.v2.validation.report.Report
+import hl7.v2.validation.vs.ValueSet
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -57,6 +58,7 @@ trait Validator { this: Parser with structure.Validator
   */
 class HL7Validator(
     val profile: Profile,
+    val valueSetLibrary: Map[String, ValueSet],
     val conformanceContext: content.ConformanceContext,
     val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
   ) extends Validator
@@ -74,6 +76,7 @@ class HL7Validator(
   */
 class SyncHL7Validator(
     val profile: Profile,
+    val valueSetLibrary: Map[String, ValueSet],
     val conformanceContext: content.ConformanceContext,
     val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
   ) extends Validator

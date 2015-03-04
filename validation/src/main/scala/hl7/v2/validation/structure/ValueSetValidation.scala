@@ -11,14 +11,14 @@ object ValueSetValidation {
     * Checks if the value 'v' against the table identified by 'table'
     */
   def checkValueSet(l: Location, v: Value, table: Option[String])
-                   (implicit library: Map[String, ValueSet]) : Option[SEntry] =
+                   (implicit library: Map[String, ValueSet]) : List[SEntry] =
     table match {
-      case None       => None
+      case None       => Nil
       case Some(spec) =>
         val(id, bsp) = spec span ( _ != '#' )
         val bs       = bindingStrength(bsp drop 1)
         library get id match {
-          case None     => Some( VSNotFound(l, v, id, bs) )
+          case None     => VSNotFound(l, v, id, bs) :: Nil
           case Some(vs) => checkValueSet(l, v, vs, bs)
         }
     }
@@ -27,9 +27,9 @@ object ValueSetValidation {
     * Checks if the value 'v' against the value set 'vs'
     */
   def checkValueSet(l: Location, v: Value, vs: ValueSet,
-                    bs: Option[BindingStrength]): Option[SEntry] =
+                    bs: Option[BindingStrength]): List[SEntry] =
     vs.codes filter ( c => c.value == v.raw ) match {
-      case Nil      => Some( CodeNotFound(l, v, vs, bs) )
+      case Nil      => CodeNotFound(l, v, vs, bs) :: Nil
       case x :: Nil => checkCodeUsage(x.usage, l, v, vs, bs)
       case x :: xs  => vsSpecError(l, x, vs)
     }
@@ -38,15 +38,15 @@ object ValueSetValidation {
     * Returns a detection if the code usage is E or P
     */
   def checkCodeUsage(usage: CodeUsage, l: Location, v: Value, vs: ValueSet,
-                    bs: Option[BindingStrength]): Option[SEntry] = usage match {
-    case E => Some( EVS(l, v, vs, bs) )
-    case P => Some( PVS(l, v, vs, bs) )
-    case _ => None
+                    bs: Option[BindingStrength]): List[SEntry] = usage match {
+    case E => EVS(l, v, vs, bs) :: Nil
+    case P => PVS(l, v, vs, bs) :: Nil
+    case _ => Nil
   }
 
   private def vsSpecError(l: Location, code: Code, vs: ValueSet) = {
     val m = s"More than one code '${code.value}' found in the value set '${vs.id}'"
-    Some( VSSpecError(l, vs.id, m) )
+    VSSpecError(l, vs.id, m) :: Nil
   }
 
   implicit private def value(v: Value): String = v.raw

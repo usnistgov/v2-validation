@@ -1,6 +1,7 @@
 package hl7.v2.validation.structure
 
 import hl7.v2.instance.Message
+import hl7.v2.validation.vs.ValueSet
 
 import scala.concurrent.Future
 import hl7.v2.validation.report.SEntry
@@ -11,7 +12,12 @@ import hl7.v2.validation.report.SEntry
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-trait Validator { 
+trait Validator {
+
+  /**
+    * The value set library
+    */
+  implicit val valueSetLibrary: Map[String, ValueSet]
 
   /**
     * Checks the message structure and returns the list of problems.
