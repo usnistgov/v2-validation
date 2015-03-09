@@ -98,14 +98,14 @@ object SEntryAsJson {
     s"""{"UnescapedSeparators":{${toJson(x.location)}}}"""
 
   /**
-   * Creates and returns a Json string from the InvalidLine
-   */
+    * Creates and returns a Json string from the InvalidLine
+    */
   private def toJson(x: InvalidLines): String =
     s"""{"InvalidLines":${ x.list map toJson mkString("[", ",", "]" )}}"""
 
   /**
-   * Creates and returns a Json string from the UnexpectedLine
-   */
+    * Creates and returns a Json string from the UnexpectedLine
+    */
   private def toJson(x: UnexpectedLines): String =
     s"""{"UnexpectedLines":${ x.list map toJson mkString("[", ",", "]" )}}"""
 
@@ -134,7 +134,7 @@ object SEntryAsJson {
 
   private def toJson(os: Option[BindingStrength]): String =
     os match {
-      case Some(s) => s""","bindingStrength":$s"""
+      case Some(s) => s""","bindingStrength":"$s""""
       case None    => ""
     }
 
@@ -147,7 +147,7 @@ object SEntryAsJson {
       case Some(s) => s""","extensibility":"$s""""
       case None    => ""
     }
-    s""""ValueSet":{"id":${escape(x.id)}$stability$extensibility}"""
+    s""""ValueSet":{"id":"${escape(x.id)}"$stability$extensibility}"""
   }
 
 }

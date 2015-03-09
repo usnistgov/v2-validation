@@ -46,7 +46,8 @@ object PrettyPrint {
     case x: VSSpecError  => vsSpecErr(x)
   }
 
-  private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
+  //private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
+  private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]"
 
   // Usage problems
   private def usage(e: RUsage) = s"${loc(e.location)}\tR-Usage (required but missing)."
