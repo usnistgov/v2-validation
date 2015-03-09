@@ -14,7 +14,10 @@ import hl7.v2.validation.report.CEntry
 
 trait EmptyValidator extends Validator {
 
-  val constraintManager = EmptyConstraintManager
+  /**
+    * The conformance context used by this validator.
+    */
+  val conformanceContext = EmptyConformanceContext
 
   /**
     * Returns an empty list independently from the message.
