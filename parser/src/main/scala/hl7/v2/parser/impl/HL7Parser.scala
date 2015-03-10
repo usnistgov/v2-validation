@@ -12,7 +12,7 @@ import scala.util.Try
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-trait DefaultParser extends Parser {
+trait HL7Parser extends Parser {
 
   /**
     * Parses the message and returns the message instance model
@@ -52,20 +52,19 @@ trait DefaultParser extends Parser {
           (ls ::: acc._1, s)
         case gm: GM =>
           val (lg, s) = processGroup(gm, acc._2)
-          isHead = false
           (lg ::: acc._1, s)
       }
-    }}
+    }
+  }
 
   private def processGroup(gm: GM, stack: Stack)
-                          (implicit separators: Separators): (List[Group], Stack) = {
-
+                          (implicit seps: Separators): (List[Group], Stack) = {
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) =
       s match {
         case x::xs if isExpected(x, gm)  =>
           val(children, ss) = processChildren( gm.structure, s)
           val g = Group( gm, i, children.reverse )
-          loop( g::acc, ss , i +1)
+          loop( g::acc, ss , i + 1)
         case _ => (acc, s)
       }
 
