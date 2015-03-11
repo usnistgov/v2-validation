@@ -9,13 +9,14 @@ import org.specs2.Specification
 
 class ValueSetValidationSpec extends Specification { def is = s2"""
   Value Set validation specification
+
     Value Set validation should:
       Abort if no value set is defined on the primitive element          $e1
       Return VSNotFound if the value set cannot be found in the library  $e2
       Return CodeNotFound if the code is not in the value set            $e3
       Return VSSpecError if more than one code is found in the value set $e4
-      Returns EVS if the code is in the value set but the usage is E     $e5
-      Returns PVS if the code is in the value set but the usage is P     $e6
+      Return EVS if the code is in the value set but the usage is E      $e5
+      Return PVS if the code is in the value set but the usage is P      $e6
   """
 
   val l = Location("", "", -1, -1)
