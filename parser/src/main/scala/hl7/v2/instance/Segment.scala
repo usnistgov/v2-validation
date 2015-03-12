@@ -1,6 +1,8 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{SegmentRef => SM, Field => FM}
+import hl7.v2.profile.{SegmentRef => SM, Field => FM, DynMapping}
+
+import scala.util.Try
 
 /**
   * Class representing a segment
@@ -34,8 +36,9 @@ object Segment extends EscapeSeqHandler {
     val name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
     val loc = Location(m.ref.desc, s"$name[$i]", l, 1)
-    val fml = m.ref.fields
     val vs  = split( s.fs, v drop 4 , 5)
+    // Attempt to resolve dynamic data types abort if errors
+    val fml = resolveDyn(m.ref.fields, vs, m.ref.mappings).getOrElse(m.ref.fields)//m.ref.fields
     val (hasExtra, lfs) =
       if( v startsWith "MSH" ) (vs.size > fml.size - 1) -> mshFields(fml, vs, loc)
       else (vs.size > fml.size) -> fields( fml, vs, loc )
@@ -115,4 +118,22 @@ object Segment extends EscapeSeqHandler {
     */
   private def location(l: Location, d: String,  p: Int, i: Int, c: Int) =
     l.copy( desc=d, path=s"${l.path}.$p[$i]", column = c )
+
+  private def resolveDyn(
+      models: List[FM],
+      vs: Array[(Int, String)],
+      mappings: List[DynMapping]): Try[List[FM]] = Try {
+    mappings match {
+      case Nil => models
+      case xs  =>
+        models map { x =>
+          mappings find ( _.position == x.req.position ) match {
+            case None          => x
+            case Some(mapping) =>
+              val dt = mapping.map(vs(mapping.reference - 1)._2)
+              x.copy(datatype = dt)
+          }
+        }
+    }
+  }
 }
