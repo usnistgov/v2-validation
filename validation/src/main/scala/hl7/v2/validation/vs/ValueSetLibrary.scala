@@ -59,6 +59,7 @@ object ValueSetLibrary {
     case "R" => CodeUsage.R
     case "E" => CodeUsage.E
     case "P" => CodeUsage.P
+    case ""  => CodeUsage.R //FIXME This is not needed if the xml is validated against the XSD
     case  x  => throw new Exception(s"Invalid code usage '$x'")
   }
 }
