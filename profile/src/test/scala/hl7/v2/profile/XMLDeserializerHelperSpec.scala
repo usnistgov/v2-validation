@@ -14,7 +14,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
 """
 
   def field = XMLDeserializerHelper.field( 1,
-    <Field
+      <Field
       Name="X"
       Datatype="Y"
       Usage="R"
@@ -24,17 +24,18 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       MaxLength="*"
       ConfLength="=2"
       Table="tt"
-     />
+      />
   ) === {
-    val r = Req(1, Usage.R, Some(Range(1,"*")), Some(Range(1,"*")), Some("=2"), Some("tt"))
+    val vs = ValueSetSpec("tt", None, None) :: Nil
+    val r = Req(1, Usage.R, Some(Range(1,"*")), Some(Range(1,"*")), Some("=2"), vs)
     Field("X", "Y", r)
   }
 
   def dt = Seq (
-    <Datatype ID="i1" Name="N1" Description="xx"/>
-        -> Primitive("i1", "N1", "xx"),
+      <Datatype ID="i1" Name="N1" Description="xx"/>
+      -> Primitive("i1", "N1", "xx"),
     <Datatype ID="i2" Name="N2" Description="xx">{
-      <Component
+        <Component
         Name="X"
         Datatype="Y"
         Usage="R"
@@ -42,27 +43,34 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
         MaxLength="*"
         ConfLength="=2"
         Table="tt"
-      />
-    }</Datatype>
+        />
+      }</Datatype>
       -> {
-           val r = Req(1, Usage.R, None, Some(Range(1,"*")), Some("=2"), Some("tt"))
-           Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
-         }
+      val vs = ValueSetSpec("tt", None, None) :: Nil
+      val r  = Req(1, Usage.R, None, Some(Range(1,"*")), Some("=2"), vs)
+      Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
+    }
   ) map ( t => XMLDeserializerHelper.datatype( t._1 ) === t._2 )
 
 
-  def req = Seq (
-    <E Usage="R"/>
-        -> Req(1, Usage.R, None, None, None, None),
-    <E Usage="R" Min="1" Max="2"/>
-        -> Req(1, Usage.R, Some(Range(1, "2")), None, None, None),
-    <E Usage="R" Min="1" Max="2" MinLength="1" MaxLength="*"/>
-        -> Req(1, Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, None),
-    <E Usage="R" MinLength="1" MaxLength="*" Table="tt"/>
-        -> Req(1, Usage.R, None, Some(Range(1, "*")), None, Some("tt")),
-    <E Usage="R" MinLength="1" MaxLength="*" Table="tt" ConfLength="=2"/>
-        -> Req(1, Usage.R, None, Some(Range(1, "*")), Some("=2"), Some("tt"))
-    ) map ( t => XMLDeserializerHelper.requirement(1, t._1) === t._2 )
+  def req =
+  {
+    val vs = ValueSetSpec("tt", None, None) :: Nil
+    val l = Seq (
+        <E Usage="R"/>
+        -> Req(1, Usage.R, None, None, None, Nil),
+        <E Usage="R" Min="1" Max="2"/>
+        -> Req(1, Usage.R, Some(Range(1, "2")), None, None, Nil),
+        <E Usage="R" Min="1" Max="2" MinLength="1" MaxLength="*"/>
+        -> Req(1, Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, Nil),
+        <E Usage="R" MinLength="1" MaxLength="*" Table="tt"/>
+        -> Req(1, Usage.R, None, Some(Range(1, "*")), None, vs),
+        <E Usage="R" MinLength="1" MaxLength="*" Table="tt" ConfLength="=2"/>
+        -> Req(1, Usage.R, None, Some(Range(1, "*")), Some("=2"), vs)
+    )
+
+    l map ( t => XMLDeserializerHelper.requirement(1, t._1) === t._2 )
+  }
 
   def card = Seq (
       <E Min="1" Max="*"/> -> Some(Range(1, "*") ),
@@ -70,8 +78,8 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
   ) map( t => XMLDeserializerHelper.cardinality( t._1 ) === t._2 )
 
   def len = Seq (
-    <E MinLength="1" MaxLength="*"/> -> Some(Range(1, "*") ),
-    <E/> -> None
+      <E MinLength="1" MaxLength="*"/> -> Some(Range(1, "*") ),
+      <E/> -> None
   ) map( t => XMLDeserializerHelper.length( t._1 ) === t._2 )
 
   //FIXME move this to nist.xml

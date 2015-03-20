@@ -147,9 +147,10 @@ object XMLDeserializerHelper {
     val usage  = Usage.fromString( e.attribute("Usage") )
     val card   = cardinality(e)
     val len    = length(e)
-    val table  = asOption( e.attribute("Table") )
+    //val table  = asOption( e.attribute("Table") )
+    val vss    = vsSpec( e.attribute("Table") )
     val confLen  = asOption( e.attribute("ConfLength") )
-    Req(p, usage, card, len, confLen, table)
+    Req(p, usage, card, len, confLen, vss)
   }
 
   /**
@@ -189,5 +190,9 @@ object XMLDeserializerHelper {
     val(l1, l2) = others.partition( isL1 )
     (primitives, l1, l2)
   }
+
+  //FIXME This will crash ValueSetSpec if invalid. Should be removed once schema is updated
+  def vsSpec(s: String): List[ValueSetSpec] =
+    if( s == "" ) Nil else s.split(",").toList map ( x => ValueSetSpec(x).get )
 
 }

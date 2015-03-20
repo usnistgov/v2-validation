@@ -84,7 +84,7 @@ object XMLSerializer {
         MinLength={f.req.length.get.min.toString}
         MaxLength={f.req.length.get.max}
         ConfLength={f.req.confLength.orNull}
-        Table={f.req.table.orNull}
+        Table={vs(f.req.vsSpec)}
         Min={f.req.cardinality.get.min.toString}
         Max={f.req.cardinality.get.max}
       />
@@ -107,6 +107,17 @@ object XMLSerializer {
         MinLength={c.req.length.get.min.toString}
         MaxLength={c.req.length.get.max}
         ConfLength={c.req.confLength.orNull}
-        Table={c.req.table.orNull}
+        Table={vs(c.req.vsSpec)}
       />
+
+  private def vs(x: List[ValueSetSpec]): String = x match {
+    case Nil => null
+    case xs  =>
+      (xs map {
+        case ValueSetSpec(id, obs, obl) =>
+          val bs = obs.fold("")(x => s"#$x")
+          val bl = obl.fold("")(x => s"#$x")
+          s"$id$bs$bl"
+      }).mkString(",")
+  }
 }

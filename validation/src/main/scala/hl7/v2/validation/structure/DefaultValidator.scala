@@ -51,7 +51,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @return A list of problems found
     */
   def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
-    ValueValidation.checkValue(ss.value, req.length, req.table, ss.location)
+    ValueValidation.checkValue(ss.value, req.length, req.vsSpec, ss.location)
 
   /**
     * Checks the children of the complex element against their requirements

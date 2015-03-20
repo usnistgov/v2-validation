@@ -2,9 +2,9 @@ package hl7.v2.validation.report
 
 import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.{Element, Line, Location}
-import hl7.v2.profile.Range
+import hl7.v2.profile.{Range, BindingStrength}
 import hl7.v2.validation.content.{Constraint, Predicate}
-import hl7.v2.validation.vs.{BindingStrength, ValueSet}
+import hl7.v2.validation.vs.ValueSet
 
 /**
   * Trait representing a report entry

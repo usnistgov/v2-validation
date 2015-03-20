@@ -42,13 +42,3 @@ case class ValueSet(
     stability: Option[Stability],
     codes: List[Code]
 )
-
-/**
-  * Trait representing a binding strength
-  */
-trait BindingStrength  { def desc: String }
-object BindingStrength {
-  case object R extends BindingStrength { def desc = "Required"     }
-  case object S extends BindingStrength { def desc = "Suggested"    }
-  case object U extends BindingStrength { def desc = "Undetermined" }
-}

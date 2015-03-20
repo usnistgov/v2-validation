@@ -23,7 +23,7 @@ class ValueValidationSpec extends Specification { def is = s2"""
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
   val loc = Location("The description", "The path", 1, 1)
   val lcs = Some( Range(2, "3") )
-  val tcs = None
+  val tcs = Nil
   val lcn = None
   implicit val vsLib = Map[String, ValueSet]()
 

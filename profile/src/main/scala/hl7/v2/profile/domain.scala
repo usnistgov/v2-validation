@@ -98,7 +98,7 @@ case class Message (
     structure: List[SegRefOrGroup]
 ) {
 
-  lazy val asGroup = Group(structId, structure, Req(1, Usage.R, None, None, None, None))
+  lazy val asGroup = Group(structId, structure, Req(1, Usage.R, None, None, None, Nil))
 }
 
 /**

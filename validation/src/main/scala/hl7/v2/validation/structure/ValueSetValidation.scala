@@ -1,9 +1,10 @@
 package hl7.v2.validation.structure
 
 import hl7.v2.instance.{Simple, Value, Location}
+import hl7.v2.profile.{ValueSetSpec, BindingStrength}
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.CodeUsage.{P, E}
-import hl7.v2.validation.vs.{Code, BindingStrength, CodeUsage, ValueSet}
+import hl7.v2.validation.vs.{Code, CodeUsage, ValueSet}
 
 object ValueSetValidation {
 
@@ -14,17 +15,18 @@ object ValueSetValidation {
   /**
     * Checks if the value 'v' against the table identified by 'table'
     */
-  def checkValueSet(l: Location, v: Value, table: Option[String])
+  def checkValueSet(l: Location, v: Value, vso: List[ValueSetSpec])
                    (implicit library: Map[String, ValueSet]) : List[SEntry] =
-    table match {
-      case None       => Nil
-      case Some(spec) =>
-        val(id, bsp) = spec span ( _ != '#' )
-        val bs       = bindingStrength(bsp drop 1) //FIXME Take 1
+    vso match {
+      case Nil       => Nil
+      case x :: Nil =>
+        val id = x.valueSetId
+        val bs = x.bindingStrength
         library get id match {
           case None     => VSNotFound(l, v, id, bs) :: Nil
           case Some(vs) => checkValueSet(l, v, vs, bs)
         }
+      case xs => ??? //TODO
     }
 
   /**
@@ -66,13 +68,4 @@ object ValueSetValidation {
   }
 
   implicit private def value(v: Value): String = v.raw
-
-  private def bindingStrength(s: String): Option[BindingStrength] =
-    s match {
-      case ""  => None
-      case "R" => Some(BindingStrength.R)
-      case "S" => Some(BindingStrength.S)
-      case "U" => Some(BindingStrength.U)
-      case _   => throw new Exception(s"Invalid Binding Strength '$s'")
-    }
 }

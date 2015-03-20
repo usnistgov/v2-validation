@@ -1,9 +1,9 @@
 package hl7.v2.validation.report
 package extension
 
-import hl7.v2.profile.Range
+import hl7.v2.profile.{BindingStrength, Range}
 import hl7.v2.instance.{Line, Location}
-import hl7.v2.validation.vs.{BindingStrength, ValueSet}
+import hl7.v2.validation.vs.ValueSet
 
 /**
   * Provides functions to convert a structure report entry (SEntry) to Json

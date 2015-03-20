@@ -6,5 +6,5 @@ case class Req (
     cardinality: Option[Range],
     length: Option[Range],
     confLength: Option[String],
-    table: Option[String]
+    vsSpec: List[ValueSetSpec]
 )
