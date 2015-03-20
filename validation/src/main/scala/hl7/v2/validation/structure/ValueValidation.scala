@@ -2,11 +2,24 @@ package hl7.v2.validation.structure
 
 import hl7.v2.instance._
 import hl7.v2.instance.util.ValueFormatCheckers._
-import hl7.v2.profile.Range
+import hl7.v2.profile.{Req, Range}
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.ValueSet
 
 object ValueValidation extends EscapeSeqHandler  {
+
+
+  def check(s: Simple, r: Req)
+           (implicit x: Separators, y: Map[String, ValueSet]): List[SEntry] =
+    s.value.isNull match {
+      case true  => Nil //No check if the value is Null
+      case false =>
+        val v = s.value
+        val l = s.location
+        checkFormat(l, v).toList :::
+        checkLength(l, v, r.length).toList :::
+        ValueSetValidation.checkValueSet(l, v, r.table)
+    }
 
   /**
     * Checks the value format, length and presence of escape characters
