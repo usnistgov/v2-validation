@@ -1,9 +1,8 @@
 package hl7.v2.validation.structure
 
 import hl7.v2.instance._
-import hl7.v2.profile.{Range, Req, Usage}
+import hl7.v2.profile.{Range, Usage}
 import hl7.v2.validation.report._
-import hl7.v2.validation.vs.ValueSet
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -35,30 +34,28 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * Checks the element against the the specified requirements
     * and recursively check the children if applicable
     * @param e - The element to be checked
-    * @param r - The requirements
     * @return A list of problems found
     */
-  def check(e: Element, r: Req)(implicit sep: Separators): List[SEntry] =
+  private def check(e: Element)(implicit sep: Separators): List[SEntry] =
     e match {
-      case s: Simple  => check(s, r)
+      case s: Simple  => check(s)
       case c: Complex => check(c)
     }
 
   /**
     * Checks the simple element against the specified requirements
     * @param s   - The simple element to be checked
-    * @param req - The requirements
     * @return A list of problems found
     */
-  def check(ss: Simple, req: Req)(implicit s: Separators): List[SEntry] =
-    ValueValidation.checkValue(ss.value, req.length, req.vsSpec, ss.location)
+  private def check(ss: Simple)(implicit s: Separators): List[SEntry] =
+    ValueValidation.check(ss)
 
   /**
     * Checks the children of the complex element against their requirements
     * @param c - The complex element to be checked
     * @return A list of problems found
     */
-  def check(c: Complex)(implicit s: Separators): List[SEntry] = {
+  private def check(c: Complex)(implicit s: Separators): List[SEntry] = {
     // Sort the children by position
     val map = c.children.groupBy( x => x.position )
 
@@ -68,7 +65,8 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       val children = map.getOrElse(r.position, Nil)
 
       //FIXME we are missing the description here ...
-      val dl = c.location.copy(desc="...", path=s"${c.location.path}.${r.position}[1]")
+      val dl = c.location.copy(desc="...",
+        path=s"${c.location.path}.${r.position}[1]")
 
       // Checks the usage
       checkUsage( r.usage, children )(dl) match {
@@ -76,7 +74,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
           // Check the cardinality
           val r1 = checkCardinality( children, r.cardinality )
           // Recursively check the children
-          val r2 = children flatMap { check( _, r ) }
+          val r2 = children flatMap check
           r1 ::: r2 ::: acc
         case xs  => xs ::: acc // Usage problem no further check is necessary
       }
@@ -97,7 +95,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param dl - The default location
     * @return A list of report entries
     */
-  def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
+  private def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
     (u, l) match {
       case (Usage.R,  Nil) => RUsage(dl) :: Nil
       case (Usage.RE, Nil) => REUsage(dl) :: Nil
@@ -115,7 +113,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param range - The cardinality range
     * @return A list of report entries
     */
-  def checkCardinality(l: List[Element], range: Range): List[SEntry] =
+  private def checkCardinality(l: List[Element], range: Range): List[SEntry] =
     if( l.isEmpty ) Nil
     else {
       // The only reason this is needed is because of field repetition

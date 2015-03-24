@@ -1,4 +1,4 @@
-package hl7.v2.validation.structure
+/*package hl7.v2.validation.structure
 
 import hl7.v2.instance.{Simple, Value, Location}
 import hl7.v2.profile.{ValueSetSpec, BindingStrength}
@@ -69,3 +69,4 @@ object ValueSetValidation {
 
   implicit private def value(v: Value): String = v.raw
 }
+*/

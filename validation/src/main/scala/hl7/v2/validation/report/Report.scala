@@ -72,40 +72,6 @@ case class UnexpectedLines( list: List[Line] ) extends SEntry
 
 case class InvalidLines( list: List[Line]  ) extends SEntry
 
-case class EVS (
-    location: Location,
-    value: String,
-    valueSet: ValueSet,
-    bindingStrength: Option[BindingStrength]
-) extends SEntry
-
-case class PVS (
-    location: Location,
-    value: String,
-    valueSet: ValueSet,
-    bindingStrength: Option[BindingStrength]
-) extends SEntry
-
-case class CodeNotFound(
-    location: Location,
-    value: String,
-    valueSet: ValueSet,
-    bindingStrength: Option[BindingStrength]
-) extends SEntry
-
-case class VSNotFound(
-    location: Location,
-    value: String,
-    valueSetId: String,
-    bindingStrength: Option[BindingStrength]
-) extends SEntry
-
-case class VSSpecError(
-    location: Location,
-    valueSetId: String,
-    msg: String
-) extends SEntry
-
 //==============================================================================
 //    Content problem report entries
 //==============================================================================
@@ -144,4 +110,42 @@ case class PredicateSpecError(predicate: Predicate, reasons: List[Reason]) exten
 //    Value Set problem report entries
 //==============================================================================
 
+case class EVS (
+    location: Location,
+    value: String,
+    valueSet: ValueSet,
+    bindingStrength: Option[BindingStrength]
+) extends VSEntry
+
+case class PVS (
+    location: Location,
+    value: String,
+    valueSet: ValueSet,
+    bindingStrength: Option[BindingStrength]
+) extends VSEntry
+
+case class CodeNotFound(
+    location: Location,
+    value: String,
+    valueSet: ValueSet,
+    bindingStrength: Option[BindingStrength]
+) extends VSEntry
+
+case class VSNotFound(
+    location: Location,
+    value: String,
+    valueSetId: String,
+    bindingStrength: Option[BindingStrength]
+) extends VSEntry
+
+case class EmptyVS(
+    location: Location,
+    valueSet: ValueSet
+) extends VSEntry
+
+case class VSSpecError(
+    location: Location,
+    valueSet: ValueSet,
+    msg: String
+) extends VSEntry
 

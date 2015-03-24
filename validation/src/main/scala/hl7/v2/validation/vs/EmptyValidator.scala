@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs
+/*package hl7.v2.validation.vs
 
 //FIXME: What is an empty value set validator?
 
@@ -13,5 +13,6 @@ import scala.concurrent.Future
   */
 trait EmptyValidator extends Validator {
 
-  def checkValueSet(m: Message): Future[Seq[VSEntry]] = Future{ Nil }
+  def checkValueSet(m: Message): Future[Seq[VSEntry]] = Future { Nil }
 }
+*/

@@ -1,4 +1,4 @@
-package hl7.v2.validation.structure
+/*package hl7.v2.validation.structure
 
 import hl7.v2.profile.{ValueSetSpec, BindingStrength}
 import hl7.v2.instance.{Location, Text}
@@ -61,3 +61,4 @@ class ValueSetValidationSpec extends Specification { def is = s2"""
     (s split ",").toList map { x => ValueSetSpec(x).get }
 
 }
+*/

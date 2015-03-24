@@ -25,11 +25,11 @@ object SEntryAsJson {
     case x: Length   => toJson(x)
     case x: Format   => toJson(x)
     case x: Extra    => toJson(x)
-    case x: EVS      => toJson(x)
-    case x: PVS      => toJson(x)
-    case x: CodeNotFound    => toJson(x)
-    case x: VSNotFound      => toJson(x)
-    case x: VSSpecError     => toJson(x)
+    //case x: EVS      => toJson(x)
+    //case x: PVS      => toJson(x)
+    //case x: CodeNotFound    => toJson(x)
+    //case x: VSNotFound      => toJson(x)
+    //case x: VSSpecError     => toJson(x)
     case x: UnexpectedLines => toJson(x)
     case x: InvalidLines    => toJson(x)
     case x: UnescapedSeparators => toJson(x)
@@ -111,7 +111,7 @@ object SEntryAsJson {
 
   private def toJson(l: Line): String =
     s"""{"number":"${l.number}","content":"${escape(l.content)}"}"""
-
+/*
   private def toJson(x: EVS): String =
     s"""{"EVS":{${toJson(x.location)},"value":"${escape(x.value)
     }",${toJson(x.valueSet)}${toJson(x.bindingStrength)}}}"""
@@ -148,6 +148,6 @@ object SEntryAsJson {
       case None    => ""
     }
     s""""ValueSet":{"id":"${escape(x.id)}"$stability$extensibility}"""
-  }
+  }*/
 
 }

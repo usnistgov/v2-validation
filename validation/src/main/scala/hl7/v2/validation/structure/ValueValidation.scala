@@ -2,24 +2,16 @@ package hl7.v2.validation.structure
 
 import hl7.v2.instance._
 import hl7.v2.instance.util.ValueFormatCheckers._
-import hl7.v2.profile.{ValueSetSpec, Req, Range}
+import hl7.v2.profile.{ValueSetSpec, Range}
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.ValueSet
 
 object ValueValidation extends EscapeSeqHandler  {
 
+  type VSLibrary = Map[String, ValueSet]
 
-  def check(s: Simple, r: Req)
-           (implicit x: Separators, y: Map[String, ValueSet]): List[SEntry] =
-    s.value.isNull match {
-      case true  => Nil //No check if the value is Null
-      case false =>
-        val v = s.value
-        val l = s.location
-        checkFormat(l, v).toList :::
-        checkLength(l, v, r.length).toList :::
-        ValueSetValidation.checkValueSet(l, v, r.vsSpec)
-    }
+  def check(s: Simple)(implicit x: Separators, y: VSLibrary): List[SEntry] =
+    checkValue(s.value, s.req.length, s.req.vsSpec, s.location)
 
   /**
     * Checks the value format, length and presence of escape characters
@@ -33,8 +25,10 @@ object ValueValidation extends EscapeSeqHandler  {
                 (implicit s: Separators, x: Map[String, ValueSet]): List[SEntry] =
     v.isNull match {
       case true  => Nil //No check if the value is Null
-      case false => checkFormat(l, v).toList ::: checkLength(l, v, lc).toList :::
-        ValueSetValidation.checkValueSet(l, v, vss)
+      case false =>
+        checkFormat(l, v).toList :::
+        checkLength(l, v, lc).toList //FIXME :::
+        //FIXME ValueSetValidation.checkValueSet(l, v, vss)
     }
 
   /**

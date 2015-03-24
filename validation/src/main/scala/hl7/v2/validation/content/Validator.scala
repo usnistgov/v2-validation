@@ -16,7 +16,7 @@ trait Validator {
   /**
     * The conformance context used by this validator.
     */
-  val conformanceContext: ConformanceContext
+  def conformanceContext: ConformanceContext
 
   /**
     * Check the message against the constraints defined

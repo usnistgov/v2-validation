@@ -39,11 +39,11 @@ object PrettyPrint {
     case x: PredicateSuccess   => success(x)
     case x: PredicateFailure   => failure(x)
     case x: PredicateSpecError => specErr(x)
-    case x: EVS => evs(x)
-    case x: PVS => pvs(x)
-    case x: CodeNotFound => codeNotFound(x)
-    case x: VSNotFound   => vsNotFound(x)
-    case x: VSSpecError  => vsSpecErr(x)
+    //case x: EVS => evs(x)
+    //case x: PVS => pvs(x)
+    //case x: CodeNotFound => codeNotFound(x)
+    //case x: VSNotFound   => vsNotFound(x)
+    //case x: VSSpecError  => vsSpecErr(x)
   }
 
   //private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -91,11 +91,13 @@ object PrettyPrint {
     s"### Unexpected Lines: ${ ls.mkString("\n\t","\n\t", "\n") }"
   }
 
+  /*
   private def evs(e: EVS)                   = s"${loc(e.location)}\t$e"
   private def pvs(e: PVS)                   = s"${loc(e.location)}\t$e"
   private def codeNotFound(e: CodeNotFound) = s"${loc(e.location)}\t$e"
   private def vsNotFound(e: VSNotFound)     = s"${loc(e.location)}\t$e"
   private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t$e"
+  */
 
   //============================================================================
   // Content

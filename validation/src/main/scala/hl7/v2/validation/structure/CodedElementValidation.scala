@@ -1,4 +1,4 @@
-package hl7.v2.validation.structure
+/*package hl7.v2.validation.structure
 
 import hl7.v2.instance.{ComplexComponent, ComplexField, Complex}
 
@@ -37,3 +37,4 @@ object CodedElementValidation {
   private def isCodedElement(dtName: String) = dtName.matches("C(W|N)?E")
 
 }
+*/
