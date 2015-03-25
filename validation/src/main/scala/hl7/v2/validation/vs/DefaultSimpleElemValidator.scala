@@ -11,6 +11,8 @@ trait DefaultSimpleElemValidator extends SimpleElementValidator {
   // Alias
   type OBS = Option[BindingStrength]
 
+  //FIXME: HANDLE HL70396, 99ZZZ etc.
+
   /**
     * Checks the simple element against the value specifications
     * and returns the list of problems detected.

@@ -10,7 +10,12 @@ trait CodedElementValidator {
   /**
     * Returns true if the data type is an HL7 coded element
     */
-  def isCodedElement(d: Datatype) = d.name.matches("C(W|N)?E")
+  def isCodedElement(d: Datatype): Boolean = isCodedElement(d.name)
+
+  /**
+    * Returns true if the data type is an HL7 coded element
+    */
+  def isCodedElement(d: String): Boolean = d matches "C(W|N)?E"
 
   /**
     * Checks the coded element and return the result
@@ -30,6 +35,10 @@ trait CodedElementValidator {
             c) If the code system is different from the value
                at position + 2 then InvalidCodeSystem
    */
-  def checkCodedElement(c: Complex): List[VSEntry] = ???
+  def checkCodedElement(c: Complex): List[VSEntry] = {
+    //FIXME require( isCodedElement(...) )
+
+    ???
+  }
 
 }

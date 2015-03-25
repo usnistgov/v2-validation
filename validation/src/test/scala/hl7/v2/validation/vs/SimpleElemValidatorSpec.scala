@@ -10,9 +10,9 @@ class SimpleElemValidatorSpec
     extends Specification
     with DefaultSimpleElemValidator { def is = s2"""
 
-  Value Set validation specification
+  Simple Element Value Set validation specification
 
-    Value Set validation should:
+    Value Set validation on a simple element should:
       Abort if the element value is Null                                 $e0
       Abort if no value set is defined on the primitive element          $e1
       Return VSNotFound if the value set cannot be found in the library  $e2
