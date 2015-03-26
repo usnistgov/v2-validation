@@ -1,6 +1,6 @@
 package hl7.v2.validation.vs
 
-import hl7.v2.instance.Simple
+import hl7.v2.instance.{Location, Value, Simple}
 import hl7.v2.profile.BindingStrength
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.CodeUsage.{E, P}
@@ -30,36 +30,37 @@ trait DefaultSimpleElemValidator extends SimpleElementValidator {
          the usage is either E or P
    */
   def check(s: Simple, library: Map[String, ValueSet]): List[VSEntry] =
-    canCheck(s) match {
-      case false => Nil
-      case true  =>
-        val spec = s.req.vsSpec.head
-        val id   = spec.valueSetId
-        val bs   = spec.bindingStrength
-        library get id  match {
+    s.req.vsSpec match {
+      case Nil      => Nil
+      case z :: Nil =>
+        val id = z.valueSetId
+        val bs = z.bindingStrength
+        library get id match {
           case None    => VSNotFound(s.location, s.value.raw, id, bs) :: Nil
           case Some(x) => x.codes.isEmpty match {
-            case true  => EmptyVS(s.location, x) :: Nil
-            case false => check(s, x, bs)
+            case true if !s.value.isNull => EmptyVS(s.location, x) :: Nil
+            case _                       => check(s.location, s.value, x, bs)
           }
         }
+      case xs => ??? //FIXME
     }
 
-  private def check(s: Simple, vs: ValueSet, obs: OBS): List[VSEntry] =
-    vs.codes filter ( c => c.value == s.value.raw ) match {
-      case Nil      => CodeNotFound(s.location, s.value.raw, vs, obs ) :: Nil
-      case x :: Nil => checkCode(s, x, vs, obs)
-      case x :: xs  => VSSpecError(s.location, vs, moreThanOneCodeInVS(x, vs)) :: Nil
+  def check(l: Location, v: Value, vs: ValueSet, obs: OBS): List[VSEntry] =
+    if( v.isNull ) Nil
+    else vs.codes filter ( c => c.value == v.raw ) match {
+      case Nil      => CodeNotFound(l, v.raw, vs, obs ) :: Nil
+      case x :: Nil => checkCode(l, v, x, vs, obs)
+      case x :: xs  => VSSpecError(l, moreThanOneCodeInVS(x, vs)) :: Nil
     }
 
   /**
     * Returns a detection if the code usage is E or P
     */
   private
-  def checkCode(s: Simple, c: Code, vs: ValueSet, obs: OBS): List[VSEntry] =
+  def checkCode(l: Location, v: Value, c: Code, vs: ValueSet, obs: OBS): List[VSEntry] =
     c.usage match {
-      case E => EVS(s.location, s.value.raw, vs, obs) :: Nil
-      case P => PVS(s.location, s.value.raw, vs, obs) :: Nil
+      case E => EVS(l, v.raw, vs, obs) :: Nil
+      case P => PVS(l, v.raw, vs, obs) :: Nil
       case _ => Nil
     }
 
@@ -67,8 +68,8 @@ trait DefaultSimpleElemValidator extends SimpleElementValidator {
     * Returns true is the simple element is valued and
     * not null  and there is a value set specification
     */
-  private
-  def canCheck(s: Simple): Boolean = !s.value.isNull && s.req.vsSpec.nonEmpty
+  //private
+  //def canCheck(s: Simple): Boolean = !s.value.isNull && s.req.vsSpec.nonEmpty
 
   /**
     * Returns the error message when more than one oce is found

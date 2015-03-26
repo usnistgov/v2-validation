@@ -14,12 +14,13 @@ trait DefaultComplexElmValidator
     */
   def check(e: Complex, library: Map[String, ValueSet]): List[VSEntry] =
     e match {
-      case ComplexField (dt, _, _, _, _, _) => check(e, dt)
-      case ComplexComponent(dt, _, _, _, _) => check(e, dt)
+      case ComplexField (dt, _, _, _, _, _) => check(e, dt, library)
+      case ComplexComponent(dt, _, _, _, _) => check(e, dt, library)
       case  _                               => Nil
     }
 
-  private def check(c: Complex, d: Datatype): List[VSEntry] =
-    if( isCodedElement(d) ) checkCodedElement(c)
+  private def check(c: Complex, d: Datatype,
+                    library: Map[String, ValueSet]): List[VSEntry] =
+    if( isCodedElement(d) ) checkCodedElement(c, library)
     else Nil // No Op
 }

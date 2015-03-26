@@ -53,7 +53,7 @@ class SimpleElemValidatorSpec
   def e5 = check( "A", "02" ) === EVS(l, "A", vs2, bs) :: Nil
   def e6 = check( "B", "02" ) === PVS(l, "B", vs2, bs) :: Nil
   def e7 = check( "A", "03" ) ===
-    VSSpecError (l, vs3, "Multiple code 'A' found in the value set '03'") :: Nil
+    VSSpecError (l, "Multiple code 'A' found in the value set '03'") :: Nil
 
   def check(s: String, spec: String): List[VSEntry] = check(simple(s, spec), library)
 

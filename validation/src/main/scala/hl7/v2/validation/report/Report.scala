@@ -145,7 +145,7 @@ case class EmptyVS(
 
 case class VSSpecError(
     location: Location,
-    valueSet: ValueSet,
     msg: String
 ) extends VSEntry
 
+case class CodedElement(l: Location, msg: String, errors: List[VSEntry]) extends VSEntry
