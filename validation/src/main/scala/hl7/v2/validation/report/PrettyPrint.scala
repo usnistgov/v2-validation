@@ -105,9 +105,9 @@ object PrettyPrint {
   private def codeNotFound(e: CodeNotFound) = s"${loc(e.location)}\t${e.toString.take(80)}"
   private def vsNotFound(e: VSNotFound)     = s"${loc(e.location)}\t${e.toString.take(80)}"
   private def emptyVS(e: EmptyVS)           = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t${e.toString.take(80)}"
+  private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t${e}"
   private def vsErr(e: VSError)             = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def codedElem(e: CodedElem)       = s"${loc(e.location)}\t${e.toString.take(80)}"
+  private def codedElem(e: CodedElem)       = s"${loc(e.location)}\t${e}"
 
 
   //============================================================================

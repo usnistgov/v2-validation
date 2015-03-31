@@ -254,7 +254,8 @@ Changes:
 			</DynamicMapping>
 			<Field Name="Set ID - OBX" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00569"/>
 			<Field Name="Value Type" Datatype="ID" Usage="C" Min="0" Max="1" MinLength="2" MaxLength="3" ItemNo="00570"/>
-			<Field Name="Observation Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00571"/>
+			<Field Name="Observation Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00571"
+                   Table="BadVS#R,VS1#R#1, VS1#R#1 or 4, VS1#R#1 xor 4, VS1#R#1 and 4"/>
 			<Field Name="Observation Sub-ID" Datatype="ST" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="20" ItemNo="00572"/>
 			<Field Name="Observation Value" Datatype="varies" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00573"/>
 			<Field Name="Units" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00574"/>

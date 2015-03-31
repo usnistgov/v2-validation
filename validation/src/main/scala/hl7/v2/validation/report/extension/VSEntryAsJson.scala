@@ -97,8 +97,12 @@ object VSEntryAsJson {
 
   private def gen(l: Location, ovs: Option[ValueSet],
                   spec: ValueSetSpec, msg: String): String = {
-    val vs  = ovs map { y => s""","valueSet":${toJson(y)}""" }
-    s"""${toJson(l)}$vs,"spec":${toJson(spec)}","msg":"${escape(msg)}""""
+    val vs  = ovs match {
+      case None => ""
+      case Some(x) => s""","valueSet":${toJson(x)}"""
+    }
+    //val vs  = ovs map { y => s""","valueSet":${toJson(y)}""" }
+    s"""${toJson(l)}$vs,"spec":${toJson(spec)},"msg":"${escape(msg)}""""
   }
 
   private def toJson(l: List[VSEntry]): String =

@@ -39,11 +39,12 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
     * Checks the coded element and return the result
     */
   def checkCodedElement(c: Complex, lib: Map[String, ValueSet]): List[VSEntry] =
-    c.req.vsSpec match { //FIXME require( isCodedElement(...) )
-      case Nil      => Nil
-      case x :: Nil => checkCE(c, getValueSet(x, lib), x)
-      case xs       => ??? //FIXME Multiple specs is not supported for now
-    }
+    (c.req.vsSpec map { x => checkCE(c, getValueSet(x, lib), x) }).flatten
+
+    /*match { //FIXME require( isCodedElement(...) )
+      case Nil => Nil
+      case xs  => (xs map { x => checkCE(c, getValueSet(x, lib), x) }).flatten
+    }*/
 
   // Type Aliases
   private type OVS = Option[ValueSet]
