@@ -14,8 +14,8 @@ object ReportAsJson {
   def toJson(r: Report): String = {
     val structure = r.structure map SEntryAsJson.toJson mkString("[", ",", "]")
     val content   = r.content   map CEntryAsJson.toJson mkString("[", ",", "]")
-
-    s"""{"structure":$structure,"content":$content}"""
+    val vs        = r.vs       map VSEntryAsJson.toJson mkString("[", ",", "]")
+    s"""{"structure":$structure,"content":$content, "valueSet":$vs}"""
   }
 
 }

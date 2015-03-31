@@ -144,17 +144,17 @@ case class EmptyVS(
     bindingStrength: Option[BindingStrength]
 ) extends VSEntry
 
+case class VSError(
+    location: Location,
+    valueSet: ValueSet,
+    reason: String
+) extends VSEntry
+
 case class VSSpecError(
     location: Location,
     valueSet: Option[ValueSet],
     spec: ValueSetSpec,
     msg: String
-) extends VSEntry
-
-case class VSError(
-    location: Location,
-    vs: ValueSet,
-    reason: String
 ) extends VSEntry
 
 case class CodedElem(

@@ -388,7 +388,7 @@ Changes:
 			<Field Name="Advance Directive Last Verified Date" Datatype="DT" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02141"/>
 		</Segment>
 		<Segment ID="ORC" Name="ORC" Description="Common Order">
-			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215"/>
+			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215" Table="BadVS#R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Placer Group Number" Datatype="EI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00218"/>
@@ -423,7 +423,7 @@ Changes:
 			<Field Name="Alternate Placer Order Number" Datatype="CX" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="03300"/>
 		</Segment>
 		<Segment ID="OBR" Name="OBR" Description="Observation Request">
-			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237"/>
+			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237" Table="EmptyVS#R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Universal Service Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00238"/>

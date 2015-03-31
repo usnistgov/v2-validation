@@ -16,7 +16,18 @@
         <TableElement Code="3" Codesys="CodeSys" DisplayName="..." Usage="P" Source="Local"/>
     </TableDefinition>
 
-	<TableDefinition AlternateId="HL70003_IZ" Codesys="" Id="HL70003_IZ" Name="Event type" Oid="" Type="HL7" Version="1.5">
+    <TableDefinition AlternateId="EmptyVS" Codesys="" Id="EmptyVS" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
+    </TableDefinition>
+
+    <TableDefinition AlternateId="BadVS" Codesys="" Id="BadVS" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
+        <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="R" Source="Local"/>
+        <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="E" Source="Local"/>
+    </TableDefinition>
+
+
+
+
+    <TableDefinition AlternateId="HL70003_IZ" Codesys="" Id="HL70003_IZ" Name="Event type" Oid="" Type="HL7" Version="1.5">
 		<TableElement Code="V04" Codesys="HL70003" DisplayName="V04" Source="Local"/>
 		<TableElement Code="K11" Codesys="HL70003" DisplayName="K11" Source="Local"/>
 		<TableElement Code="Q11" Codesys="HL70003" DisplayName="Q11" Source="Local"/>
