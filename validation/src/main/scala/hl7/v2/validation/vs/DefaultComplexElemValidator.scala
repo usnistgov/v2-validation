@@ -4,9 +4,7 @@ import hl7.v2.instance.{Complex, ComplexComponent, ComplexField}
 import hl7.v2.profile.Datatype
 import hl7.v2.validation.report.VSEntry
 
-trait DefaultComplexElmValidator
-    extends ComplexElementValidator
-    with    CodedElementValidator {
+trait DefaultComplexElemValidator extends CodedElementValidator {
 
   /**
     * Checks the complex element against the value specifications

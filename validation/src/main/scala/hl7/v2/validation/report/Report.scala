@@ -2,7 +2,7 @@ package hl7.v2.validation.report
 
 import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.{Element, Line, Location}
-import hl7.v2.profile.{BindingLocation, ValueSetSpec, Range, BindingStrength}
+import hl7.v2.profile.{BindingStrength, Range, ValueSetSpec}
 import hl7.v2.validation.content.{Constraint, Predicate}
 import hl7.v2.validation.vs.ValueSet
 

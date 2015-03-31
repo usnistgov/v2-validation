@@ -5,7 +5,7 @@ import hl7.v2.profile.BindingStrength
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.CodeUsage.{E, P}
 
-trait DefaultSimpleElemValidator extends SimpleElementValidator {
+trait DefaultSimpleElemValidator {
 
   // Alias
   type OBS = Option[BindingStrength]
