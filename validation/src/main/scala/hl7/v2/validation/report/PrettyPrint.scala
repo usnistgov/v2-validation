@@ -31,6 +31,7 @@ object PrettyPrint {
     case x: Format   => format(x)
     case x: Extra    => extra(x)
     case x: UnescapedSeparators => unescapedSep(x)
+
     case x: Success   => success(x)
     case x: Failure   => failure(x)
     case x: SpecError => specErr(x)
@@ -39,11 +40,15 @@ object PrettyPrint {
     case x: PredicateSuccess   => success(x)
     case x: PredicateFailure   => failure(x)
     case x: PredicateSpecError => specErr(x)
-    //case x: EVS => evs(x)
-    //case x: PVS => pvs(x)
-    //case x: CodeNotFound => codeNotFound(x)
-    //case x: VSNotFound   => vsNotFound(x)
-    //case x: VSSpecError  => vsSpecErr(x)
+
+    case x: EVS => evs(x)
+    case x: PVS => pvs(x)
+    case x: CodeNotFound => codeNotFound(x)
+    case x: VSNotFound   => vsNotFound(x)
+    case x: EmptyVS      => emptyVS(x)
+    case x: VSSpecError  => vsSpecErr(x)
+    case x: VSError      => vsErr(x)
+    case x: CodedElem    => codedElem(x)
   }
 
   //private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -91,13 +96,19 @@ object PrettyPrint {
     s"### Unexpected Lines: ${ ls.mkString("\n\t","\n\t", "\n") }"
   }
 
-  /*
+  //============================================================================
+  // Value Set
+  //============================================================================
+
   private def evs(e: EVS)                   = s"${loc(e.location)}\t$e"
   private def pvs(e: PVS)                   = s"${loc(e.location)}\t$e"
   private def codeNotFound(e: CodeNotFound) = s"${loc(e.location)}\t$e"
   private def vsNotFound(e: VSNotFound)     = s"${loc(e.location)}\t$e"
+  private def emptyVS(e: EmptyVS)           = s"${loc(e.location)}\t$e"
   private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t$e"
-  */
+  private def vsErr(e: VSError)             = s"${loc(e.location)}\t$e"
+  private def codedElem(e: CodedElem)       = s"${loc(e.location)}\t$e"
+
 
   //============================================================================
   // Content

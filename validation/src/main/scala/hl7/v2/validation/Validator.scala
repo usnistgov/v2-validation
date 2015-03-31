@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
 
 trait Validator { this: Parser with structure.Validator
                                with content.Validator
-                              //FIXME with vs.Validator
+                               with vs.Validator
                                =>
 
   val profile: Profile
@@ -41,12 +41,12 @@ trait Validator { this: Parser with structure.Validator
           case Success( m ) => 
             val structErrors   = checkStructure( m )
             val contentErrors  = checkContent  ( m )
-            //FIXME val valueSetErrors = checkValueSet ( m )
+            val valueSetErrors = checkValueSet ( m )
             for {
               r1 <- structErrors
               r2 <- contentErrors
-              //FIXME r3 <- valueSetErrors
-            } yield Report(r1, r2, Nil/*r3*/)
+              r3 <- valueSetErrors
+            } yield Report(r1, r2, r3)
           case Failure(e) => Future failed e
         }
     }
@@ -66,7 +66,7 @@ class HL7Validator(
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
-    //FIXME with vs.EmptyValidator
+    with vs.DefaultValidator
     with expression.DefaultEvaluator
 
 
@@ -84,7 +84,7 @@ class SyncHL7Validator(
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
-    //FIXME with vs.EmptyValidator
+    with vs.DefaultValidator
     with expression.DefaultEvaluator {
 
   import scala.concurrent.Await

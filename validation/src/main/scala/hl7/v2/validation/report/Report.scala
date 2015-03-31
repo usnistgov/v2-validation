@@ -158,7 +158,7 @@ case class VSError(
 ) extends VSEntry
 
 case class CodedElem(
-    l: Location,
+    location: Location,
     spec: ValueSetSpec,
     valueSet: Option[ValueSet],
     msg: String,
