@@ -1,10 +1,9 @@
 package hl7.v2.validation.vs
 
-import hl7.v2.instance.{Location, Value, Simple}
+import hl7.v2.instance.{Location, Simple, Value}
 import hl7.v2.profile.BindingStrength
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.CodeUsage.{E, P}
-
 
 trait DefaultSimpleElemValidator extends SimpleElementValidator {
 
@@ -30,19 +29,19 @@ trait DefaultSimpleElemValidator extends SimpleElementValidator {
          the usage is either E or P
    */
   def check(s: Simple, library: Map[String, ValueSet]): List[VSEntry] =
-    s.req.vsSpec match {
-      case Nil      => Nil
-      case z :: Nil =>
-        val id = z.valueSetId
-        val bs = z.bindingStrength
+    canCheck(s) match {
+      case false => Nil
+      case true  =>
+        val spec = s.req.vsSpec.head //FIXME We on take one spec for now ...
+        val id = spec.valueSetId
+        val bs = spec.bindingStrength
         library get id match {
           case None    => VSNotFound(s.location, s.value.raw, id, bs) :: Nil
           case Some(x) => x.codes.isEmpty match {
-            case true if !s.value.isNull => EmptyVS(s.location, x) :: Nil
-            case _                       => check(s.location, s.value, x, bs)
+            case true => EmptyVS(s.location, x, bs) :: Nil
+            case _    => check(s.location, s.value, x, bs)
           }
         }
-      case xs => ??? //FIXME
     }
 
   def check(l: Location, v: Value, vs: ValueSet, obs: OBS): List[VSEntry] =
@@ -50,7 +49,8 @@ trait DefaultSimpleElemValidator extends SimpleElementValidator {
     else vs.codes filter ( c => c.value == v.raw ) match {
       case Nil      => CodeNotFound(l, v.raw, vs, obs ) :: Nil
       case x :: Nil => checkCode(l, v, x, vs, obs)
-      case x :: xs  => VSSpecError(l, moreThanOneCodeInVS(x, vs)) :: Nil
+      case x :: xs  => VSError(l, vs,
+                s"Multiple occurrences of the code '${x.value}' found.") :: Nil
     }
 
   /**
@@ -68,13 +68,7 @@ trait DefaultSimpleElemValidator extends SimpleElementValidator {
     * Returns true is the simple element is valued and
     * not null  and there is a value set specification
     */
-  //private
-  //def canCheck(s: Simple): Boolean = !s.value.isNull && s.req.vsSpec.nonEmpty
-
-  /**
-    * Returns the error message when more than one oce is found
-    */
-  private def moreThanOneCodeInVS(c: Code, vs: ValueSet) =
-    s"Multiple code '${c.value}' found in the value set '${vs.id}'"
+  private
+  def canCheck(s: Simple): Boolean = !s.value.isNull && s.req.vsSpec.nonEmpty
 
 }

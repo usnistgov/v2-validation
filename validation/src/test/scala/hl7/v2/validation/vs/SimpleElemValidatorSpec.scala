@@ -45,15 +45,15 @@ class SimpleElemValidatorSpec
     "03" -> vs3
   )
 
-  def e0 = check( "\"\"", "01" ) === Nil
+  def e0 = check( "\"\"", "04" ) === Nil
   def e1 = check( "", "" )    === Nil
   def e2 = check( "x", "04" ) === VSNotFound(l, "x", "04", bs) :: Nil
-  def e3 = check( "x", "01" ) === EmptyVS(l, vs1) :: Nil
+  def e3 = check( "x", "01" ) === EmptyVS(l, vs1, bs) :: Nil
   def e4 = check( "C", "02" ) === CodeNotFound(l, "C", vs2, bs) :: Nil
   def e5 = check( "A", "02" ) === EVS(l, "A", vs2, bs) :: Nil
   def e6 = check( "B", "02" ) === PVS(l, "B", vs2, bs) :: Nil
   def e7 = check( "A", "03" ) ===
-    VSSpecError (l, "Multiple code 'A' found in the value set '03'") :: Nil
+    VSError (l, vs3, s"Multiple occurrences of the code 'A' found.") :: Nil
 
   def check(s: String, spec: String): List[VSEntry] = check(simple(s, spec), library)
 

@@ -2,7 +2,7 @@ package hl7.v2.validation.report
 
 import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.{Element, Line, Location}
-import hl7.v2.profile.{Range, BindingStrength}
+import hl7.v2.profile.{BindingLocation, ValueSetSpec, Range, BindingStrength}
 import hl7.v2.validation.content.{Constraint, Predicate}
 import hl7.v2.validation.vs.ValueSet
 
@@ -140,12 +140,27 @@ case class VSNotFound(
 
 case class EmptyVS(
     location: Location,
-    valueSet: ValueSet
+    valueSet: ValueSet,
+    bindingStrength: Option[BindingStrength]
 ) extends VSEntry
 
 case class VSSpecError(
     location: Location,
+    valueSet: Option[ValueSet],
+    spec: ValueSetSpec,
     msg: String
 ) extends VSEntry
 
-case class CodedElement(l: Location, msg: String, errors: List[VSEntry]) extends VSEntry
+case class VSError(
+    location: Location,
+    vs: ValueSet,
+    reason: String
+) extends VSEntry
+
+case class CodedElem(
+    l: Location,
+    spec: ValueSetSpec,
+    valueSet: Option[ValueSet],
+    msg: String,
+    details: List[VSEntry]
+) extends VSEntry
