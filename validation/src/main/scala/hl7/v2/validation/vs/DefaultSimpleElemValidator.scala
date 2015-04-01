@@ -10,8 +10,6 @@ trait DefaultSimpleElemValidator {
   // Alias
   type OBS = Option[BindingStrength]
 
-  //FIXME: HANDLE HL70396, 99ZZZ etc.
-
   /**
     * Checks the simple element against the value specifications
     * and returns the list of problems detected.
@@ -46,6 +44,7 @@ trait DefaultSimpleElemValidator {
 
   def check(l: Location, v: Value, vs: ValueSet, obs: OBS): List[VSEntry] =
     if( v.isNull ) Nil
+    else if( skipCodeCheck(v, vs) ) Nil
     else vs.codes filter ( c => c.value == v.raw ) match {
       case Nil      => CodeNotFound(l, v.raw, vs, obs ) :: Nil
       case x :: Nil => checkCode(l, v, x, vs, obs)
@@ -71,4 +70,9 @@ trait DefaultSimpleElemValidator {
   private
   def canCheck(s: Simple): Boolean = !s.value.isNull && s.req.vsSpec.nonEmpty
 
+  private def skipCodeCheck(v: Value, vs: ValueSet): Boolean =
+    vs.id match {
+      case "0396" => (v.raw matches "HL7[0-9]{4}") || (v.raw matches "99[a-zA-Z0-9]{3}")
+      case _      => false
+    }
 }
