@@ -14,7 +14,7 @@ trait Mocks {
     val location = Location("desc ...", "Path", -1, -1)
     /*val qProps   = QProps(QType.DT, "id", "name")*/
     val hasExtra = false
-    val req = Req(-1, Usage.O, None, None, None, Nil)
+    val req = Req(-1, "", Usage.O, None, None, None, Nil)
   }
 
   case class S(override val position: Int, instance: Int, value: Value)

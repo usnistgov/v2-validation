@@ -55,13 +55,13 @@ object PrettyPrint {
   private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]"
 
   // Usage problems
-  private def usage(e: RUsage) = s"${loc(e.location)}\tR-Usage (required but missing)."
+  private def usage(e: RUsage) = s"${loc(e.location)}\t$e"
 
-  private def usage(e: REUsage) = s"${loc(e.location)}\tRE-Usage"
+  private def usage(e: REUsage) = s"${loc(e.location)}\t$e"
 
-  private def usage(e: XUsage) = s"${loc(e.location)}\tX-Usage (not supported but present)."
+  private def usage(e: XUsage) = s"${loc(e.location)}\t$e"
 
-  private def usage(e: WUsage) = s"${loc(e.location)}\tW-Usage (withdrawn but present)."
+  private def usage(e: WUsage) = s"${loc(e.location)}\t$e"
 
   // Cardinality problems
   private def cardinality(e: MinCard) = {

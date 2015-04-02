@@ -84,7 +84,7 @@ trait StructValidationSpec
       List(
           W("Software Segment", "SFT[1]", 2, 1),
           X("User Authentication Credential Segment", "UAC[1]",3 , 1),
-          R("...", "PID[1].1[1]", 4,1),
+          R("Set ID - PID", "PID[1].1[1]", 4,1),
           W("Patient ID", "PID[1].2[1]", 4, 6),
           X("ID Number", "PID[1].3[2].1[1]", 4, 9),
           X("Group ORDER", "ORDER[1]", 7, 1)

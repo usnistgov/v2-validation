@@ -27,7 +27,8 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       />
   ) === {
     val vs = ValueSetSpec("tt", None, None) :: Nil
-    val r = Req(1, Usage.R, Some(Range(1,"*")), Some(Range(1,"*")), Some("=2"), vs)
+    val r = Req(1, "X", Usage.R,
+                Some(Range(1,"*")), Some(Range(1,"*")), Some("=2"), vs)
     Field("X", "Y", r)
   }
 
@@ -47,7 +48,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       }</Datatype>
       -> {
       val vs = ValueSetSpec("tt", None, None) :: Nil
-      val r  = Req(1, Usage.R, None, Some(Range(1,"*")), Some("=2"), vs)
+      val r  = Req(1, "X", Usage.R, None, Some(Range(1,"*")), Some("=2"), vs)
       Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
     }
   ) map ( t => XMLDeserializerHelper.datatype( t._1 ) === t._2 )
@@ -58,18 +59,18 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     val vs = ValueSetSpec("tt", None, None) :: Nil
     val l = Seq (
         <E Usage="R"/>
-        -> Req(1, Usage.R, None, None, None, Nil),
+        -> Req(1, "", Usage.R, None, None, None, Nil),
         <E Usage="R" Min="1" Max="2"/>
-        -> Req(1, Usage.R, Some(Range(1, "2")), None, None, Nil),
+        -> Req(1, "", Usage.R, Some(Range(1, "2")), None, None, Nil),
         <E Usage="R" Min="1" Max="2" MinLength="1" MaxLength="*"/>
-        -> Req(1, Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, Nil),
+        -> Req(1, "", Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, Nil),
         <E Usage="R" MinLength="1" MaxLength="*" Table="tt"/>
-        -> Req(1, Usage.R, None, Some(Range(1, "*")), None, vs),
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), None, vs),
         <E Usage="R" MinLength="1" MaxLength="*" Table="tt" ConfLength="=2"/>
-        -> Req(1, Usage.R, None, Some(Range(1, "*")), Some("=2"), vs)
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs)
     )
 
-    l map ( t => XMLDeserializerHelper.requirement(1, t._1) === t._2 )
+    l map ( t => XMLDeserializerHelper.requirement(1, "", t._1) === t._2 )
   }
 
   def card = Seq (

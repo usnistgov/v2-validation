@@ -72,10 +72,15 @@ object XMLDeserializerHelper {
                       (implicit map: Map[String, Segment]): List[SegRefOrGroup] =
     (for( i <- 0 until es.size) yield {
       val ee  = es.get(i)
-      val req = requirement(i + 1, ee)
       ee.getLocalName match {
-        case "Segment" => SegmentRef(req, ee.attribute("Ref"))
-        case "Group"   => group(req, ee)
+        case "Segment" =>
+          val ref = map( ee.attribute("Ref") )
+          val req = requirement(i + 1, ref.desc, ee)
+          SegmentRef(req, ref)
+        case "Group"   =>
+          val desc = ee.attribute("Name")
+          val req  = requirement(i + 1, desc, ee)
+          group(req, ee)
         case x => throw new Error(s"[Error] Unsupported element '$x' found")
       }
     }).toList
@@ -136,21 +141,21 @@ object XMLDeserializerHelper {
                  (implicit map: Map[String, Datatype]): A = {
     val name = e.attribute("Name")
     val dtId = e.attribute("Datatype")
-    val req  = requirement(p, e)
+    val req  = requirement(p, name, e)
     f(name, map(dtId), req)
   }
 
   /**
     * Creates a requirement(Req) object from xom.Element
     */
-  def requirement(p: Int, e: Element): Req = {
+  def requirement(p: Int, desc: String, e: Element): Req = {
     val usage  = Usage.fromString( e.attribute("Usage") )
     val card   = cardinality(e)
     val len    = length(e)
     //val table  = asOption( e.attribute("Table") )
     val vss    = vsSpec( e.attribute("Table") )
     val confLen  = asOption( e.attribute("ConfLength") )
-    Req(p, usage, card, len, confLen, vss)
+    Req(p, desc, usage, card, len, confLen, vss)
   }
 
   /**

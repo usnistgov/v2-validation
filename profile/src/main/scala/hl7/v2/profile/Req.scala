@@ -2,6 +2,7 @@ package hl7.v2.profile
 
 case class Req (
     position: Int,
+    description: String,
     usage: Usage,
     cardinality: Option[Range],
     length: Option[Range],

@@ -65,7 +65,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       val children = map.getOrElse(r.position, Nil)
 
       //FIXME we are missing the description here ...
-      val dl = c.location.copy(desc="...",
+      val dl = c.location.copy(desc=r.description,
         path=s"${c.location.path}.${r.position}[1]")
 
       // Checks the usage

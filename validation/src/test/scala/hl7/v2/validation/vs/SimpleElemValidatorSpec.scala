@@ -76,8 +76,8 @@ class SimpleElemValidatorSpec
       override val position = -1
       override val instance = -1
       override val req = s match {
-        case "" => Req(-1, Usage.O, None, None, None, Nil)
-        case x  => Req(-1, Usage.O, None, None, None, ValueSetSpec(s).get::Nil)
+        case "" => Req(-1, "", Usage.O, None, None, None, Nil)
+        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(s).get::Nil)
       }
     }
 }
