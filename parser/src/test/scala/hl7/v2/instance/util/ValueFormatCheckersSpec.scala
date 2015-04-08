@@ -6,7 +6,7 @@ import org.specs2.mutable.Specification
 class ValueFormatCheckersSpec extends Specification {
 
   "isValidNumberFormat" should {
-    val valids = Seq("1", "+1", "-1", "1.", "+1.", "-1.", "1.0", "+1.0", "-1.0")
+    val valids = Seq("1", "+1", "-1", "1.", "+1.", "-1.", "1.0", "+1.0", "-1.0", ".5", "-.5")
     s"returns true for ${valids.mkString("{'", "', '", "'}")}" in {
       valids map { s => isValidNumberFormat(s) === true }
     }

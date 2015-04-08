@@ -16,7 +16,8 @@ object ValueFormatCheckers {
   /**
     * Number format: [+|-]digits[.digits]
     */
-  private val NM = "(\\+|\\-)?\\d+(\\.\\d*)?".r
+  //private val NM = "(\\+|\\-)?\\d+(\\.\\d*)?".r
+  private val NM = "(\\+|\\-)?((\\d+(\\.\\d*)?)|(\\d*\\.\\d+))".r
 
   /**
     * Date format: YYYYMMDD
