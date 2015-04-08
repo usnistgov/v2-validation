@@ -45,12 +45,17 @@ class SimpleElemValidatorSpec
     Code("x", "", E,"" ),
     Code("x", "", P,"" )
   ))
+  val vs5 = ValueSet("HL70396", extensibility, stability, codes = List(
+    Code("x", "", E,"" ),
+    Code("x", "", P,"" )
+  ))
 
   implicit val library = Map[String, ValueSet](
     "01" -> vs1,
     "02" -> vs2,
     "03" -> vs3,
-    "0396" -> vs4
+    "0396" -> vs4,
+    "HL70396" -> vs5
   )
 
   def e0 = check( "\"\"", "04" ) === Nil
@@ -65,7 +70,9 @@ class SimpleElemValidatorSpec
 
   def e8 = check( "X", "02" ) === Nil
 
-  def e9 = check( "HL70001", "0396" ) === Nil and check( "99ZZZ", "0396" ) === Nil
+  def e9 = Seq("0396", "HL70396") map { vs =>
+    check("HL70001", vs) === Nil and check("99ZZZ", vs) === Nil
+  }
 
   def check(s: String, spec: String): List[VSEntry] = check(simple(s, spec), library)
 

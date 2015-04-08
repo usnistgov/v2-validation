@@ -71,8 +71,8 @@ trait DefaultSimpleElemValidator {
   def canCheck(s: Simple): Boolean = !s.value.isNull && s.req.vsSpec.nonEmpty
 
   private def skipCodeCheck(v: Value, vs: ValueSet): Boolean =
-    vs.id match {
-      case "0396" => (v.raw matches "HL7[0-9]{4}") || (v.raw matches "99[a-zA-Z0-9]{3}")
-      case _      => false
-    }
+    if( vs.id matches "(HL7)?0396" )
+      (v.raw matches "HL7[0-9]{4}") || (v.raw matches "99[a-zA-Z0-9]{3}")
+    else false
+
 }
