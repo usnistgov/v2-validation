@@ -10,6 +10,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="ValueSet.xsd">
 
+    <NoValidation>
+        <id>0396</id>
+        <!--<id>HL70533_IZ</id>
+        <id>HL70301_IZ</id>
+        <id>HL70363_IZ</id>
+        <id>HL70155_IZ</id>-->
+    </NoValidation>
+
+    <TableSet>
     <TableDefinition AlternateId="VS1" Codesys="" Id="VS1" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
         <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="R" Source="Local"/>
         <TableElement Code="2" Codesys="CodeSys" DisplayName="..." Usage="E" Source="Local"/>
@@ -23,8 +32,6 @@
         <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="R" Source="Local"/>
         <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="E" Source="Local"/>
     </TableDefinition>
-
-
 
 
     <TableDefinition AlternateId="HL70003_IZ" Codesys="" Id="HL70003_IZ" Name="Event type" Oid="" Type="HL7" Version="1.5">
@@ -115,4 +122,7 @@
 		<TableElement Code="ER" Codesys="HL70155" DisplayName="Error/Reject conditions only" Source="Local" Usage="P"/>
 		<TableElement Code="SU" Codesys="HL70155" DisplayName="Successful completion only" Source="Local" Usage="E"/>
 	</TableDefinition>
+
+    </TableSet>
+
 </TableLibrary>

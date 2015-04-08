@@ -2,8 +2,18 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 	<xs:element name="TableLibrary">
 		<xs:complexType>
-			<xs:sequence minOccurs="0" maxOccurs="unbounded">
-				<xs:element name="TableDefinition">
+			<xs:sequence>
+				<xs:element name="NoValidation" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="id" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TableSet" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+				<xs:sequence>
+				<xs:element name="TableDefinition" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence minOccurs="0" maxOccurs="unbounded">
 							<xs:element name="TableElement">
@@ -26,6 +36,9 @@
 						<xs:attribute name="Stability" type="StabilityType" use="optional"/>
 						<xs:attribute name="Extensibility" type="ExtensibilityType" use="optional"/>
 					</xs:complexType>
+				</xs:element>
+				</xs:sequence>
+				</xs:complexType>
 				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="Name" type="xs:string" use="required"/>

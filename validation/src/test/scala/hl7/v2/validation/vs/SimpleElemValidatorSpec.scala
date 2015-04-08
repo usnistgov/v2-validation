@@ -23,6 +23,7 @@ class SimpleElemValidatorSpec
       Return VSSpecError if more than one code is found in the value set     $e7
       Return no detection if the value is in the value set and the usage is R$e8
       Return no detection if the value match HL7nnn or 99ZZZ and vs is 0396  $e9
+      Return no error if the value set is excluded from the validation       $e10
   """
 
   val l = Location("", "", -1, -1)
@@ -49,13 +50,20 @@ class SimpleElemValidatorSpec
     Code("x", "", E,"" ),
     Code("x", "", P,"" )
   ))
+  val vs6 = ValueSet("06", extensibility, stability, Nil)
 
-  implicit val library = Map[String, ValueSet](
-    "01" -> vs1,
-    "02" -> vs2,
-    "03" -> vs3,
-    "0396" -> vs4,
-    "HL70396" -> vs5
+  val noValidation = Seq("06")
+
+  implicit val library = ValueSetLibrary(
+    noValidation,
+    Map[String, ValueSet](
+      "01" -> vs1,
+      "02" -> vs2,
+      "03" -> vs3,
+      "0396" -> vs4,
+      "HL70396" -> vs5,
+      "06" -> vs6
+    )
   )
 
   def e0 = check( "\"\"", "04" ) === Nil
@@ -73,6 +81,8 @@ class SimpleElemValidatorSpec
   def e9 = Seq("0396", "HL70396") map { vs =>
     check("HL70001", vs) === Nil and check("99ZZZ", vs) === Nil
   }
+
+  def e10 = check( "x", "06" ) === NoVal(l, "06") :: Nil
 
   def check(s: String, spec: String): List[VSEntry] = check(simple(s, spec), library)
 

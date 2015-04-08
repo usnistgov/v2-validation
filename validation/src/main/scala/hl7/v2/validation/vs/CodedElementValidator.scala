@@ -38,13 +38,13 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
   /**
     * Checks the coded element and return the result
     */
-  def checkCodedElement(c: Complex, lib: Map[String, ValueSet]): List[VSEntry] =
-    (c.req.vsSpec map { x => checkCE(c, getValueSet(x, lib), x) }).flatten
-
-    /*match { //FIXME require( isCodedElement(...) )
-      case Nil => Nil
-      case xs  => (xs map { x => checkCE(c, getValueSet(x, lib), x) }).flatten
-    }*/
+  def checkCodedElement(c: Complex, lib: ValueSetLibrary): List[VSEntry] =
+    //FIXME require( isCodedElement(...)
+    (c.req.vsSpec map { x =>
+      val id = x.valueSetId
+      if( lib skipValidation id ) NoVal(c.location, id) :: Nil
+      else checkCE(c, getValueSet(id, lib), x) }
+    ).flatten
 
   // Type Aliases
   private type OVS = Option[ValueSet]
@@ -146,14 +146,12 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
     * Returns the value set and the binding strength or an error message
     */
   private
-  def getValueSet(spec: ValueSetSpec, lib: Map[String, ValueSet]): VSE = {
-    val id = spec.valueSetId
+  def getValueSet(id: String, lib: ValueSetLibrary): VSE =
     lib get id match {
       case None    => Right(s"Value set $id cannot be found in the library")
       case Some(x) =>
         if( x.codes.isEmpty ) Right(s"Value set $id is empty") else Left(x)
     }
-  }
 
   /**
     * Return the detection for missing binding location

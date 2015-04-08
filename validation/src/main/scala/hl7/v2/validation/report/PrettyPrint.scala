@@ -49,6 +49,7 @@ object PrettyPrint {
     case x: VSSpecError  => vsSpecErr(x)
     case x: VSError      => vsErr(x)
     case x: CodedElem    => codedElem(x)
+    case x: NoVal        => noVal(x)
   }
 
   //private def loc(l: Location) = f"[${l.line}%03d, ${l.column}%03d]\t${l.path}(${l.desc})"
@@ -108,6 +109,7 @@ object PrettyPrint {
   private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t${e}"
   private def vsErr(e: VSError)             = s"${loc(e.location)}\t${e.toString.take(80)}"
   private def codedElem(e: CodedElem)       = s"${loc(e.location)}\t${e}"
+  private def noVal(e: NoVal)               = s"${loc(e.location)}\t${e}"
 
 
   //============================================================================

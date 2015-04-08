@@ -8,9 +8,7 @@ import hl7.v2.validation.vs.ValueSet
 
 object ValueValidation extends EscapeSeqHandler  {
 
-  type VSLibrary = Map[String, ValueSet]
-
-  def check(s: Simple)(implicit x: Separators, y: VSLibrary): List[SEntry] =
+  def check(s: Simple)(implicit x: Separators): List[SEntry] =
     checkValue(s.value, s.req.length, s.req.vsSpec, s.location)
 
   /**
@@ -21,14 +19,11 @@ object ValueValidation extends EscapeSeqHandler  {
     * @param s  - The separators
     * @return The list of problem found
     */
-  def checkValue(v: Value, lc: Option[Range], vss: List[ValueSetSpec], l: Location)
-                (implicit s: Separators, x: Map[String, ValueSet]): List[SEntry] =
+  def checkValue(v: Value, lc: Option[Range], vss: List[ValueSetSpec],
+                 l: Location)(implicit s: Separators): List[SEntry] =
     v.isNull match {
       case true  => Nil //No check if the value is Null
-      case false =>
-        checkFormat(l, v).toList :::
-        checkLength(l, v, lc).toList //FIXME :::
-        //FIXME ValueSetValidation.checkValueSet(l, v, vss)
+      case false =>checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
     }
 
   /**

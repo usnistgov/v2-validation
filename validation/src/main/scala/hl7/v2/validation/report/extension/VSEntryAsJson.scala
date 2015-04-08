@@ -24,6 +24,7 @@ object VSEntryAsJson {
     case x: VSError      => toJson(x)
     case x: VSSpecError  => toJson(x)
     case x: CodedElem    => toJson(x)
+    case x: NoVal        => toJson(x)
   }
 
   private def toJson(l: Location) = extension.toJson(l)
@@ -59,6 +60,9 @@ object VSEntryAsJson {
     s"""{"CodedElem":{${gen(x.location, x.valueSet, x.spec, x.msg)
         }, "details":${ toJson(x.details)}}}"""
 
+  private def toJson(x: NoVal): String =
+    s"""{"NoVal":{${toJson(x.location)}, "valueSetId":"${escape(x.valueSetId)}"}}"""
+
   private def toJson(x: ValueSet): String = {
     val e = x.extensibility match { case None => "" case Some(y) => toJson(y) }
     val s = x.stability match { case None => "" case Some(y) => toJson(y) }
@@ -69,7 +73,6 @@ object VSEntryAsJson {
     val bl = x.bindingLocation match { case None => "" case Some(y) => toJson(y)}
     s"""{"valueSetId":"${x.valueSetId}"$bs$bl}"""
   }
-
 
   private def toJson(x: BindingStrength) = s""","bindingStrength":"$x""""
 
@@ -84,7 +87,6 @@ object VSEntryAsJson {
     val bs = obs match { case None => "" case Some(y) => toJson(y)}
     s"""{"$n":{${gen(l, valueSet, value)}$bs}}"""
   }
-
 
   private def gen(l: Location, vs: ValueSet): String =
     s"""${toJson(l)}, "valueSet":${toJson(vs)}"""

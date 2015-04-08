@@ -164,3 +164,5 @@ case class CodedElem(
     msg: String,
     details: List[VSEntry]
 ) extends VSEntry
+
+case class NoVal(location: Location, valueSetId: String) extends VSEntry

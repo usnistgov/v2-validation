@@ -20,20 +20,22 @@ trait DefaultSimpleElemValidator {
       2) There is a value set spec
 
     Checks:
+      0) Return NoVal detection if the value set is excluded from the validation
       1) Return a detection if the value set is not in the library
       2) Return a detection if the value set is empty
       3) Return a detection if the value is not in the value set
       4) If the value is in the value set then returns EVS or PVS if the
          the usage is either E or P
    */
-  def check(s: Simple, library: Map[String, ValueSet]): List[VSEntry] =
+  def check(s: Simple, library: ValueSetLibrary): List[VSEntry] =
     canCheck(s) match {
       case false => Nil
       case true  =>
-        val spec = s.req.vsSpec.head //FIXME We on take one spec for now ...
+        val spec = s.req.vsSpec.head //FIXME We only take one spec for now ...
         val id = spec.valueSetId
         val bs = spec.bindingStrength
-        library get id match {
+        if( library skipValidation id ) NoVal(s.location, id) :: Nil
+        else library get id match {
           case None    => VSNotFound(s.location, s.value.raw, id, bs) :: Nil
           case Some(x) => x.codes.isEmpty match {
             case true => EmptyVS(s.location, x, bs) :: Nil

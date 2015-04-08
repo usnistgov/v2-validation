@@ -14,7 +14,8 @@ trait DefaultValidator
   /**
     * Checks the message and returns the list of problems.
     */
-  def checkValueSet(m: Message): Future[Seq[VSEntry]] = Future { check(m.asGroup) }
+  def checkValueSet(m: Message): Future[Seq[VSEntry]] =
+    Future { check(m.asGroup) }
 
   /**
     * Recursively the element and its children if any

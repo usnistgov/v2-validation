@@ -6,6 +6,16 @@ import nist.xml.util.XOMDocumentBuilder
 
 import scala.util.Try
 
+case class ValueSetLibrary(
+    noValidation: Seq[String],
+    library: Map[String, ValueSet]
+  ) {
+
+  def get(id: String): Option[ValueSet] = library get id
+
+  def skipValidation(id: String): Boolean = noValidation contains id
+}
+
 object ValueSetLibrary {
 
   import nist.xml.util.XOMExtensions._
@@ -15,11 +25,26 @@ object ValueSetLibrary {
   /**
     * Builds and returns the value set map from the XML file
     */
-  def apply(vsXML: InputStream): Try[Map[String, ValueSet]] =
+  def apply(vsXML: InputStream): Try[ValueSetLibrary] =
     XOMDocumentBuilder.build( vsXML, xsd ) map { doc =>
       val root = doc.getRootElement
-      root.getChildElements.foldLeft (Map[String, ValueSet]()) { (acc, x) =>
-        val vs = valueSet(x); acc + ( vs.id -> vs )
+      val noValDef = root.getFirstChildElement("NoValidation")
+      val tblSet   = root.getFirstChildElement("TableSet")
+      val noVal    = noValidation( noValDef )
+      val lib      = tableSet(tblSet)
+      ValueSetLibrary(noVal, lib)
+    }
+
+  private def noValidation(e: nu.xom.Element): Seq[String] =
+    if(e == null) Nil else e.getChildElements("id").map(_.getValue.trim).toList
+
+  private def tableSet(e: nu.xom.Element): Map[String, ValueSet] =
+    if( e == null ) Map()
+    else {
+      val tableDefs = e.getChildElements("TableDefinition")
+      tableDefs.foldLeft(Map[String, ValueSet]()) { (acc, x) =>
+        val vs = valueSet(x)
+        acc + (vs.id -> vs)
       }
     }
 

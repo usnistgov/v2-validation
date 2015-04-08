@@ -15,7 +15,7 @@ trait Validator {
   /**
     * The value set library used by this validator
     */
-  def valueSetLibrary: Map[String, ValueSet]
+  def valueSetLibrary: ValueSetLibrary
 
   /**
     * Checks the message and returns the list of problems.

@@ -10,7 +10,7 @@ trait DefaultComplexElemValidator extends CodedElementValidator {
     * Checks the complex element against the value specifications
     * and returns the list of problems detected.
     */
-  def check(e: Complex, library: Map[String, ValueSet]): List[VSEntry] =
+  def check(e: Complex, library: ValueSetLibrary): List[VSEntry] =
     e match {
       case ComplexField (dt, _, _, _, _, _) => check(e, dt, library)
       case ComplexComponent(dt, _, _, _, _) => check(e, dt, library)
@@ -18,7 +18,7 @@ trait DefaultComplexElemValidator extends CodedElementValidator {
     }
 
   private def check(c: Complex, d: Datatype,
-                    library: Map[String, ValueSet]): List[VSEntry] =
+                    library: ValueSetLibrary): List[VSEntry] =
     if( isCodedElement(d) ) checkCodedElement(c, library)
     else Nil // No Op
 }

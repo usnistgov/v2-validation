@@ -8,9 +8,6 @@ class CodedElementValidatorSpec
     with ScalaCheck
     with CodedElementValidator { def is = s2"""
 
-
-
-
   CodedElementValidation.isCodedElement should:
     Returns true when the data type is CE, CWE and CNE        $f1
     Returns false in all other cases                          $f2

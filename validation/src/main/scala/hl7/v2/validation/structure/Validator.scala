@@ -15,11 +15,6 @@ import hl7.v2.validation.report.SEntry
 trait Validator {
 
   /**
-    * The value set library
-    */
-  implicit val valueSetLibrary: Map[String, ValueSet]
-
-  /**
     * Checks the message structure and returns the list of problems.
     * 
     * @param m - The message to be checked
