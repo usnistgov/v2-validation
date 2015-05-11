@@ -101,7 +101,10 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
       case Success(s1) if s1.value.isNull => Nil
       case Success(s1) =>
         resolve(c, p + 2) match {
-          case Failure(e)  => vsSpecErr(c, vse, spec, e)
+          case Failure(e)  =>
+            val msg = "Code system checking cannot be performed. " +
+              s"Reason: Querying the code system failed. Details: ${e.getMessage}"
+            CodedElem(c.location, spec, None, msg, Nil) :: Nil
           case Success(s2) => checkTriplet(s1, s2, vse, spec)
         }
     }
@@ -148,9 +151,9 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
   private
   def getValueSet(id: String, lib: ValueSetLibrary): VSE =
     lib get id match {
-      case None    => Right(s"Value set $id cannot be found in the library")
+      case None    => Right(s"Value set '$id' cannot be found in the library")
       case Some(x) =>
-        if( x.codes.isEmpty ) Right(s"Value set $id is empty") else Left(x)
+        if( x.codes.isEmpty ) Right(s"Value set '$id' is empty") else Left(x)
     }
 
   /**
@@ -176,20 +179,20 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
   private def queryErrMsg(e: Throwable): String = queryErrMsg(e.getMessage)
 
   private def orError(c: Complex, spec: ValueSetSpec, l: List[VSEntry]) = {
-    val m = s"At least one triplet should be valued from the value set ${
-              spec.valueSetId}"
+    val m = s"At least one triplet should be valued from the value set '${
+              spec.valueSetId}'"
     CodedElem(c.location, spec, None, m, l) :: Nil
   }
 
   private def andError(c: Complex, spec: ValueSetSpec, l: List[VSEntry]) = {
-    val m = s"Both triplets should be valued from the value set ${
-              spec.valueSetId}"
+    val m = s"Both triplets should be valued from the value set '${
+              spec.valueSetId}'"
     CodedElem(c.location, spec, None, m, l) :: Nil
   }
 
   private def xorError(c: Complex, spec: ValueSetSpec, l: List[VSEntry]) = {
     val m = s"One of the triplet (but not both) should be valued from the" +
-            s" value set ${spec.valueSetId}"
+            s" value set '${spec.valueSetId}'"
     CodedElem(c.location, spec, None, m, l) :: Nil
   }
 }

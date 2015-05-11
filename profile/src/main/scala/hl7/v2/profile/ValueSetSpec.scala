@@ -23,14 +23,14 @@ object ValueSetSpec {
     * Create a ValueSetSpec from a string
     */
   def apply(s: String): Try[ValueSetSpec] = s match {
-    case format(id, null, null) => Success( ValueSetSpec(id, None, None) )
+    case format(id, null, null) => Success( ValueSetSpec(id.trim, None, None) )
     case format(id, bs, null  ) =>
-      BindingStrength(bs) map { x => ValueSetSpec(id, Some(x), None)}
+      BindingStrength(bs) map { x => ValueSetSpec(id.trim, Some(x), None)}
     case format(id, bs, bl) =>
       for {
         x <- BindingStrength(bs)
         y <- BindingLocation(bl)
-      } yield ValueSetSpec(id, Some(x), Some(y) )
+      } yield ValueSetSpec(id.trim, Some(x), Some(y) )
     case _ => Failure( new Exception(s"Invalid value set specification: $s") )
   }
 }

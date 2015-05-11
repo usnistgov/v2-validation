@@ -101,15 +101,15 @@ object PrettyPrint {
   // Value Set
   //============================================================================
 
-  private def evs(e: EVS)                   = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def pvs(e: PVS)                   = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def codeNotFound(e: CodeNotFound) = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def vsNotFound(e: VSNotFound)     = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def emptyVS(e: EmptyVS)           = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t${e}"
-  private def vsErr(e: VSError)             = s"${loc(e.location)}\t${e.toString.take(80)}"
-  private def codedElem(e: CodedElem)       = s"${loc(e.location)}\t${e}"
-  private def noVal(e: NoVal)               = s"${loc(e.location)}\t${e}"
+  private def evs(e: EVS)                   = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def pvs(e: PVS)                   = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def codeNotFound(e: CodeNotFound) = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def vsNotFound(e: VSNotFound)     = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def emptyVS(e: EmptyVS)           = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def vsSpecErr(e: VSSpecError)     = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def vsErr(e: VSError)             = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def codedElem(e: CodedElem)       = s"${loc(e.location)}\t${e.toString.take(90)}"
+  private def noVal(e: NoVal)               = s"${loc(e.location)}\t${e.toString.take(90)}"
 
 
   //============================================================================
