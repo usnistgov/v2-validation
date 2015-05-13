@@ -35,7 +35,7 @@ object Segment extends EscapeSeqHandler {
     require( isValid( s.fs, v ), s"Invalid segment instance '$v'" )
     val name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
-    val loc = Location(m.ref.desc, s"$name[$i]", l, 1)
+    val loc = Location(EType.Segment, m.ref.desc, name, l, 1)
     val vs  = split( s.fs, v drop 4 , 5)
     // Attempt to resolve dynamic data types abort if errors
     val fml = resolveDyn(m.ref.fields, vs, m.ref.mappings).getOrElse(m.ref.fields)//m.ref.fields
@@ -117,7 +117,7 @@ object Segment extends EscapeSeqHandler {
     * @return A location
     */
   private def location(l: Location, d: String,  p: Int, i: Int, c: Int) =
-    l.copy( desc=d, path=s"${l.path}.$p[$i]", column = c )
+    l.copy(EType.Field, desc=d, path=s"${l.path}-$p", column = c )
 
   private def resolveDyn(
       models: List[FM],

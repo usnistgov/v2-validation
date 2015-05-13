@@ -25,5 +25,5 @@ case class Group (
     }
 
   lazy val location = head.location
-    .copy(desc=s"Group ${model.name}", path = s"${model.name}[$instance]")
+    .copy(EType.Group, desc=model.name, path = model.name)
 }

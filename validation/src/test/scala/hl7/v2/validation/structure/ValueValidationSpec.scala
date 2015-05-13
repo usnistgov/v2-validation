@@ -21,7 +21,7 @@ class ValueValidationSpec extends Specification { def is = s2"""
 """
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
-  val loc = Location("The description", "The path", 1, 1)
+  val loc = Location(null, "The description", "The path", 1, 1)
   val lcs = Some( Range(2, "3") )
   val tcs = Nil
   val lcn = None

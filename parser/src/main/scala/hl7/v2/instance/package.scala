@@ -25,4 +25,14 @@ package object instance {
   }
 
   def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )
+
+  sealed trait EType
+  object EType{
+    //case object Message extends EType { override  def toString = "Message" }
+    case object Group   extends EType { override  def toString = "Group" }
+    case object Segment extends EType { override  def toString = "Segment" }
+    case object Field   extends EType { override  def toString = "Field" }
+    case object Component extends EType { override  def toString = "Component" }
+    case object SubComponent extends EType { override def toString = "Sub-Component" }
+  }
 }

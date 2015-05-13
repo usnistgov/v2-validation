@@ -61,11 +61,14 @@ object DataElement {
     val _children = ml zip vs map { t =>
       val (m, (col, vv)) = t
       val pos = m.req.position
-      val loc = l.copy( desc=m.name, path=s"${l.path}.$pos[1]", column=col )
+      val loc = l.copy( eType(l.path), desc=m.name, path=s"${l.path}.$pos", column=col )
       component( m.datatype, m.req, loc, vv )
     }
     (hasExtra, _children.flatten)
   }
+
+  private def eType(p: String): EType =
+    if ( p.drop(4).split("\\.").length == 1 ) EType.Component else EType.SubComponent
 
   /**
     * Returns if the value is Null i.e. ""

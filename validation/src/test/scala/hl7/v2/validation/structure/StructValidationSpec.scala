@@ -1,6 +1,6 @@
 package hl7.v2.validation.structure
 
-import hl7.v2.instance.{Line, Location}
+import hl7.v2.instance.{EType, Line, Location}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{Range, XMLDeserializer}
 import hl7.v2.validation.report._
@@ -82,12 +82,12 @@ trait StructValidationSpec
                /SFT""".stripMargin('/')
     val expected =
       List(
-          W("Software Segment", "SFT[1]", 2, 1),
-          X("User Authentication Credential Segment", "UAC[1]",3 , 1),
-          R("Set ID - PID", "PID[1].1[1]", 4,1),
-          W("Patient ID", "PID[1].2[1]", 4, 6),
-          X("ID Number", "PID[1].3[2].1[1]", 4, 9),
-          X("Group ORDER", "ORDER[1]", 7, 1)
+          W(EType.Segment, "Software Segment", "SFT", 2, 1),
+          X(EType.Segment, "User Authentication Credential Segment", "UAC",3 , 1),
+          R(EType.Field, "Set ID - PID", "PID-1", 4,1),
+          W(EType.Field, "Patient ID", "PID-2", 4, 6),
+          X(EType.Component, "ID Number", "PID-3.1", 4, 9),
+          X(EType.Group, "ORDER", "ORDER", 7, 1)
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -113,9 +113,9 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected =
       List(
-        MaxC("Group PATIENT", "PATIENT[3]", 7, 1, 3, Range(1, "2")),
-        MaxC("Patient Identifier List", "PID[1].3[4]", 5, 12, 4, Range(2, "3")),
-        MinC("User Authentication Credential Segment","UAC[1]",6,1,1,Range(2,"2"))
+        MaxC(EType.Group, "PATIENT", "PATIENT", 7, 1, 3, Range(1, "2")),
+        MaxC(EType.Field, "Patient Identifier List", "PID-3", 5, 12, 4, Range(2, "3")),
+        MinC(EType.Segment, "User Authentication Credential Segment","UAC",6,1,1,Range(2,"2"))
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -137,8 +137,8 @@ trait StructValidationSpec
                /UAC
                /UAC""".stripMargin('/')
     val expected = List(
-            Len("Set ID - PID", "PID[1].1[1]", 2, 5, "1", Range(2, "3")),
-            Len("Set ID - PID", "PID[1].1[1]", 5, 5, "333|", Range(2, "3"))
+            Len(EType.Field, "Set ID - PID", "PID-1", 2, 5, "1", Range(2, "3")),
+            Len(EType.Field, "Set ID - PID", "PID-1", 5, 5, "333|", Range(2, "3"))
     )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -197,8 +197,8 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected =
       List(
-        Extra( Location("Patient Identifier List", "PID[1].3[2]", 2, 10) ),
-        Extra( Location("Assigning Authority", "PID[1].3[2].4[1]", 2, 13) )
+        Extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10) ),
+        Extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13) )
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -217,7 +217,7 @@ trait StructValidationSpec
                 /UAC""".stripMargin('/')
     val expected =
       List(
-        UnescapedSeparators( Location("Set ID - PID", "PID[1].1[1]", 2, 5) )
+        UnescapedSeparators( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5) )
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -229,17 +229,17 @@ trait StructValidationSpec
     case Failure(e) => throw e
   }
 
-  private def R(d: String, p: String, l: Int, c: Int) = RUsage( Location(d, p, l, c) )
-  private def X(d: String, p: String, l: Int, c: Int) = XUsage( Location(d, p, l, c) )
-  private def W(d: String, p: String, l: Int, c: Int) = WUsage( Location(d, p, l, c) )
+  private def R(et: EType, d: String, p: String, l: Int, c: Int) = RUsage( Location(et, d, p, l, c) )
+  private def X(et: EType, d: String, p: String, l: Int, c: Int) = XUsage( Location(et, d, p, l, c) )
+  private def W(et: EType, d: String, p: String, l: Int, c: Int) = WUsage( Location(et, d, p, l, c) )
 
-  private def MaxC(d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
-    MaxCard(Location(d, p, l, c), i, r)
+  private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
+    MaxCard(Location(et, d, p, l, c), i, r)
 
-  private def MinC(d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
-    MinCard(Location(d, p, l, c), i, r)
+  private def MinC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
+    MinCard(Location(et, d, p, l, c), i, r)
 
-  private def Len(d: String, p: String, l: Int, c: Int, v: String, r: Range) =
-    Length(Location(d, p, l, c), v, r)
+  private def Len(et: EType, d: String, p: String, l: Int, c: Int, v: String, r: Range) =
+    Length(Location(et, d, p, l, c), v, r)
 
 }

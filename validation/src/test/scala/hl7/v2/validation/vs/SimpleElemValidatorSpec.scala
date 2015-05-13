@@ -26,7 +26,7 @@ class SimpleElemValidatorSpec
       Return no error if the value set is excluded from the validation       $e10
   """
 
-  val l = Location("", "", -1, -1)
+  val l = Location(null, "", "", -1, -1)
 
   val bs: Option[BindingStrength] = None
   val stability     = Some(Stability.Static)

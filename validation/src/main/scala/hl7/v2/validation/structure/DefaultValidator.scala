@@ -1,7 +1,8 @@
 package hl7.v2.validation.structure
 
 import hl7.v2.instance._
-import hl7.v2.profile.{Range, Usage}
+import hl7.v2.profile
+import profile.{Req, Range, Usage}
 import hl7.v2.validation.report._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -65,8 +66,9 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       val children = map.getOrElse(r.position, Nil)
 
       //FIXME we are missing the description here ...
-      val dl = c.location.copy(desc=r.description,
-        path=s"${c.location.path}.${r.position}[1]")
+      //val dl = c.location.copy(desc=r.description,
+      //  path=s"${c.location.path}.${r.position}[1]")
+      val dl = defaultLocation(c, r)
 
       // Checks the usage
       checkUsage( r.usage, children )(dl) match {
@@ -133,4 +135,29 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       case None    => Nil
     }
 
+  // Compute the default location ... the uglyness is due to poor and
+  // late requirements specification
+  private def defaultLocation(c: Complex, r: Req) = c match {
+    case m: Message =>
+      val (et, pp)  = m.model.structure.head match {
+        case gg: profile.Group      => (EType.Group, gg.name)
+        case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
+      }
+      c.location.copy(et, desc=r.description, path=pp)
+    case g: Group   =>
+      val (et, pp)  = g.model.structure.head match {
+        case gg: profile.Group   => (EType.Group, gg.name)
+        case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
+      }
+      c.location.copy(et, desc=r.description, path=pp)
+    case s: Segment =>
+      c.location.copy(EType.Field, desc=r.description,
+        path=s"${c.location.path}-${r.position}")
+    case f: Field =>
+      c.location.copy(EType.Component, desc=r.description,
+        path=s"${c.location.path}.${r.position}")
+    case c: Component =>
+      c.location.copy(EType.SubComponent, desc=r.description,
+        path=s"${c.location.path}.${r.position}")
+  }
 }
