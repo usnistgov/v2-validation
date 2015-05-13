@@ -141,7 +141,7 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
     s.value.raw == c.codeSys match {
       case true  => Nil
       case false =>
-        val m = s"Invalid Code System. Expected: ${c.codeSys}, Found: ${s.value.raw}"
+        val m = s"Invalid Code System. Expected: '${c.codeSys}', Found: '${s.value.raw}'"
         CodedElem(s.location, spec, None, m, Nil) :: Nil
     }
 
