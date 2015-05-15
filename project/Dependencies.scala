@@ -10,7 +10,7 @@ object Dependencies {
   def runtime   (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "runtime")
   def container (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "container")
 
-  val config         = "com.typesafe"        % "config"       % "1.3.0"
+  val config         = "com.typesafe"        % "config"       % "1.2.1"
   val `xml-util`     = "gov.nist"            %  "xml-util"    % "1.0.1-SNAPSHOT"
   //val json4sJackson  = "org.json4s"          %% "json4s-jackson"   % "3.2.11"
   //val sprayJson      = "io.spray"            %% "spray-json"       % "1.3.1"

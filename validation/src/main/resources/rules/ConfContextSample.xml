@@ -13,21 +13,21 @@
 			
 			<ByName Name="HD">
 				<Predicate Target="1[1]" TrueUsage="R" FalseUsage="X">
-					<Description>If HD.2 is valued 'XX'</Description>
+					<Description># If HD.2 is valued 'XX'</Description>
 					<Condition>
 						<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
 					</Condition>
 				</Predicate>
 
                 <Predicate Target="1[1]" TrueUsage="R" FalseUsage="O">
-                    <Description>If HD.2 is valued 'XX'</Description>
+                    <Description>## If HD.2 is valued 'XX'</Description>
                     <Condition>
                         <PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
                     </Condition>
                 </Predicate>
 
                 <Predicate Target="1[1].1[1]" TrueUsage="R" FalseUsage="X">
-                    <Description>If HD.2 is valued 'XX'</Description>
+                    <Description>### If HD.2 is valued 'XX'</Description>
                     <Condition>
                         <PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
                     </Condition>

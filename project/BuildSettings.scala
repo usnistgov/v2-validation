@@ -21,7 +21,8 @@ object BuildSettings {
       "-deprecation",
       "-target:jvm-1.7",
       "-language:_",
-      "-Yinline-warnings"
+      "-Yinline-warnings"/*,
+      "-Dconfig.trace=loads"*/
     )
   )
 

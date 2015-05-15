@@ -9,4 +9,7 @@ case class Location(
     path: String,
     line: Int,
     column: Int
-)
+  ) {
+
+  val prettyString = s"$eType $path ($desc)"
+}

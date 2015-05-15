@@ -1,4 +1,4 @@
-package hl7.v2.validation.report.extension
+/*package hl7.v2.validation.report.extension
 
 import hl7.v2.instance.Location
 import hl7.v2.profile.{BindingLocation, BindingStrength, ValueSetSpec}
@@ -111,3 +111,4 @@ object VSEntryAsJson {
     s"""${ (l map toJson) mkString ("[", ",", "]") }"""
 
 }
+*/

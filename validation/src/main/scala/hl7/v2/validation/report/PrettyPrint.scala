@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import expression.AsString.{expression => exp}
 import expression.EvalResult.{Trace, Reason}
@@ -161,3 +161,4 @@ object PrettyPrint {
   private def reason(r: Reason) =
     s"Reason: [${r.location.line}, ${r.location.column}] ${r.message}"
 }
+*/

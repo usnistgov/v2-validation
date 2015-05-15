@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 package extension
 
 import expression.{AsString, Expression}
@@ -53,8 +53,8 @@ object CEntryAsJson {
   private def toJson(x: PredicateFailure): String = {
     val predicate  = toJson(x.predicate)
     def violationAsJson(x: UsageEntry) = x match {
-      case x: RUsage => SEntryAsJson.toJson(x)
-      case x: XUsage => SEntryAsJson.toJson(x)
+      case x: RUsage => "" //FIXME SEntryAsJson.toJson(x)
+      case x: XUsage => "" //FIXME SEntryAsJson.toJson(x)
       case _      => ???
     }
     val violations = (x.violations map violationAsJson).mkString("[", ",", "]")
@@ -138,3 +138,4 @@ object CEntryAsJson {
     escape( AsString.expression(e, c) )
 
 }
+*/

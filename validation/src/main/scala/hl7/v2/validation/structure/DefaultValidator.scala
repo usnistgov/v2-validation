@@ -1,8 +1,9 @@
-package hl7.v2.validation.structure
+package hl7.v2.validation
+package structure
 
 import hl7.v2.instance._
 import hl7.v2.profile
-import profile.{Req, Range, Usage}
+import profile.{Range, Usage}
 import hl7.v2.validation.report._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,14 +22,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     */
   def checkStructure(m: Message): Future[List[SEntry]] = Future {
     implicit val s = m.separators
-    (m.invalid, m.unexpected) match {
-      case (Nil, Nil) => check(m.asGroup)
-      case (xs, Nil ) => InvalidLines( m.invalid ) :: check(m.asGroup)
-      case (Nil, xs ) => UnexpectedLines( m.unexpected ) :: check(m.asGroup)
-      case (xs , ys ) => InvalidLines( m.invalid ) ::
-                         UnexpectedLines( m.unexpected ) ::
-                         check(m.asGroup)
-    }
+    invalid( m.invalid ) ::: unexpected(m.unexpected) ::: check(m.asGroup)
   }
 
   /**
@@ -68,7 +62,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       //FIXME we are missing the description here ...
       //val dl = c.location.copy(desc=r.description,
       //  path=s"${c.location.path}.${r.position}[1]")
-      val dl = defaultLocation(c, r)
+      val dl = Utils.defaultLocation(c, r)
 
       // Checks the usage
       checkUsage( r.usage, children )(dl) match {
@@ -135,29 +129,12 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       case None    => Nil
     }
 
-  // Compute the default location ... the uglyness is due to poor and
-  // late requirements specification
-  private def defaultLocation(c: Complex, r: Req) = c match {
-    case m: Message =>
-      val (et, pp)  = m.model.structure.head match {
-        case gg: profile.Group      => (EType.Group, gg.name)
-        case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
-      }
-      c.location.copy(et, desc=r.description, path=pp)
-    case g: Group   =>
-      val (et, pp)  = g.model.structure.head match {
-        case gg: profile.Group   => (EType.Group, gg.name)
-        case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
-      }
-      c.location.copy(et, desc=r.description, path=pp)
-    case s: Segment =>
-      c.location.copy(EType.Field, desc=r.description,
-        path=s"${c.location.path}-${r.position}")
-    case f: Field =>
-      c.location.copy(EType.Component, desc=r.description,
-        path=s"${c.location.path}.${r.position}")
-    case c: Component =>
-      c.location.copy(EType.SubComponent, desc=r.description,
-        path=s"${c.location.path}.${r.position}")
+  private def invalid(xs: List[Line]): List[InvalidLine] = xs map { line =>
+    InvalidLine(line.number, line.content)
   }
+
+  private def unexpected(xs: List[Line]): List[UnexpectedLine] =
+    xs map { line =>
+      UnexpectedLine(line.number, line.content)
+    }
 }

@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 package extension
 
 /**
@@ -12,10 +12,17 @@ object ReportAsJson {
     * @return The Json string
     */
   def toJson(r: Report): String = {
-    val structure = r.structure map SEntryAsJson.toJson mkString("[", ",", "]")
-    val content   = r.content   map CEntryAsJson.toJson mkString("[", ",", "]")
+    val structure = r.structure map ( x => x.toJson ) mkString("[", ",", "]")
+    //val content   = r.content   map CEntryAsJson.toJson mkString("[", ",", "]")
+    val content   = r.content map {
+      case x: Failure          => x.toJson
+      case x: PredicateFailure => x.toJson
+      case _                   => "" //FIXME
+    } mkString("[", ",", "]")
+
     val vs        = r.vs       map VSEntryAsJson.toJson mkString("[", ",", "]")
     s"""{"structure":$structure,"content":$content, "valueSet":$vs}"""
   }
 
 }
+*/

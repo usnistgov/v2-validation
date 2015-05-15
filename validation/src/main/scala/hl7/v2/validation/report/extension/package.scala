@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import hl7.v2.instance.Location
 import hl7.v2.profile.Range
@@ -25,3 +25,4 @@ package object extension {
   def escape(s: String) = s.replaceAllLiterally("\\", "\\\\")
                            .replaceAllLiterally("\"", "\\\"")
 }
+*/

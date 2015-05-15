@@ -10,7 +10,7 @@ case class Reference( chapter: String, section: String, page: Int, url: String )
 case class Constraint( 
     id: Option[String],
     reference: Option[Reference],
-    description: Option[String],
+    description: Option[String], //FIXME Make this required
     assertion: Expression
 )
 

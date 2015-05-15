@@ -1,4 +1,5 @@
-package hl7.v2.validation.content
+package hl7.v2.validation
+package content
 
 import expression.EvalResult.{Fail, Inconclusive, Pass, Reason}
 import hl7.v2.instance._
@@ -34,7 +35,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     val pl: List[Predicate]  = conformanceContext.predicatesFor(e)
 
     val r = pl.foldLeft( cl map { check(e, _) } ){ (acc, p) =>
-      check(e, p) :: acc
+      check(e, p) ::: acc
     }
 
     e match {
@@ -58,33 +59,44 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     }
 
   private def check(e: Element, p: Predicate)
-                   (implicit s: Separators, dtz: Option[TimeZone]): CEntry =
+                   (implicit s: Separators, dtz: Option[TimeZone]): List[CEntry] =
     eval(p.condition, e) match {
       case Pass            => checkUsage(e, p, p.trueUsage)
       case Fail(stack)     => checkUsage(e, p, p.falseUsage)
-      case Inconclusive(t) => PredicateSpecError(p, t.reasons)
+      case Inconclusive(t) => PredicateSpecError(p, t.reasons) :: Nil
     }
 
   /**
     * Checks if the target path of the predicate satisfy the usage 'u'
     */
-  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): CEntry =
+  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): List[CEntry] =
     try {
-      lazy val l = Query.query(e, p.target).get
-      u match {
-        case R if l.isEmpty  => PredicateFailure(p, RUsage(dl(e, p.target))::Nil )
-        case X if l.nonEmpty => PredicateFailure(p, l map {x => XUsage(x.location)})
-        case _ => PredicateSuccess(p)
+      val(contexts, path) = resolve(e, p.target)
+      if( contexts.isEmpty ) PredicateSuccess(p) :: Nil //Nothing to do the parent is missing
+      else {
+        lazy val l = contexts flatMap { c => Query.query(c, path).get }
+        u match {
+          case R if l.isEmpty  =>
+            contexts map { c =>
+              val dl = Utils.defaultLocation(c.asInstanceOf[Complex], path).getOrElse(c.location)
+              PredicateFailure(p, RUsage(dl))
+            }
+          case X if l.nonEmpty => l map {x => PredicateFailure(p, XUsage(x.location))}
+          case _ => PredicateSuccess(p) :: Nil
+        }
       }
     } catch { case f: Throwable =>
       val reasons = Reason(e.location, f.getMessage) :: Nil
-      PredicateSpecError(p, reasons)
+      PredicateSpecError(p, reasons) :: Nil
     }
 
-  /**
-    * Generates a location for the specified path
-    */
-  private def dl(context: Element, path: String) =
-    context.location.copy(desc="...", path=s"${context.location.path}.$path")
-
+  @throws
+  private def resolve(context: Element, target: String) : (List[Element], String) =
+    target.lastIndexOf('.') match {
+      case -1 => (context :: Nil, target)
+      case i  =>
+        val parentPath = target.take( i )
+        val path = target.drop( i + 1)
+        (Query.query(context, parentPath).get, path )
+    }
 }
