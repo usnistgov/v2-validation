@@ -132,7 +132,7 @@ object DefaultConformanceContext {
     * Creates a constraint from a nu.xom.Element
     */
   private def constraint( e: nu.xom.Element ): Constraint = {
-    val id   = e.attribute("ID") match { case "" => None case x => Some(x) }
+    val id   = e.attribute("ID")// match { case "" => None case x => Some(x) }
     val ref  = reference( e.getFirstChildElement("Reference") )
     val desc = description( e.getFirstChildElement("Description") )
     Constraint(id, ref, desc, assertion(e) )
@@ -150,8 +150,8 @@ object DefaultConformanceContext {
     Predicate(target, tusage, fusage, ref, desc, condition(e))
   }
 
-  private def description(e: nu.xom.Element): Option[String] =
-    if( e != null ) Some( e.getValue ) else None
+  private def description(e: nu.xom.Element): String =
+    if( e != null ) e.getValue else "Description is missing ... "
 
   private def reference(e: nu.xom.Element): Option[Reference] = None //FIXME
 

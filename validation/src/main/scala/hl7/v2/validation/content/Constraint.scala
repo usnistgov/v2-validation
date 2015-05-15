@@ -8,9 +8,9 @@ case class Reference( chapter: String, section: String, page: Int, url: String )
   * A constraint describes an assertion that shall always be verified
   */
 case class Constraint( 
-    id: Option[String],
+    id: String,
     reference: Option[Reference],
-    description: Option[String], //FIXME Make this required
+    description: String,
     assertion: Expression
 )
 
