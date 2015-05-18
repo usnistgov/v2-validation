@@ -55,7 +55,7 @@ case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry]
     val cc = content filter { x =>
       x.isInstanceOf[report.Failure] || x.isInstanceOf[report.PredicateFailure]
     }
-    s"{ ${structure.view ++ cc.view ++ vs.view map { _.toJson } mkString ","} }"
+    s""" { "Report" : [ ${structure.view ++ cc.view ++ vs.view map { _.toJson } mkString ","} ] }"""
   }
 
 }

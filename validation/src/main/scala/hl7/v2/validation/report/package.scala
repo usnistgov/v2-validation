@@ -41,9 +41,9 @@ package object report {
       details: String,
       category: String,
       classification: String
-    ) = s""" "Entry":{"path":"$path","description":"${jsonEscape(desc)
+    ) = s"""{"Entry":{"path":"$path","description":"${jsonEscape(desc)
           }","line":"$line","column":"$column", ${ if( details == "" ) "" else s""""details":"${jsonEscape(details)}","""
-          } "category":"$category","classification":"$classification"}"""
+          } "category":"$category","classification":"$classification"}}"""
 
   def stackTrace(c: Element, l: List[Trace], tab: String = ""): String =
     Stream.from(1).zip(l).map( t => s"${trace(c, t._2, "\t" * t._1)}").mkString("\n")
