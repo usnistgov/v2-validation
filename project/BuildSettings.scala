@@ -4,7 +4,7 @@ import Keys._
 object BuildSettings {
 
   lazy val basicSettings = Seq(
-    version              := "1.0.0-beta-0",
+    version              := "1.0.0-beta-0-SNAPSHOT",
     //FIXME homepage             := Some(new URL("xxx")),
     organization         := "gov.nist",
     organizationHomepage := Some(new URL("http://nist.gov")),
