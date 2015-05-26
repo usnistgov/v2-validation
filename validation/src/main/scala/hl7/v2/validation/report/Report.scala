@@ -43,12 +43,28 @@ case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry]
     content foreach {
       case x: report.Failure          => println( x.toString )
       case x: report.PredicateFailure => println( x.toString )
-      case _                   => "" //FIXME
+      case _                          => "" //FIXME
     }
 
     println(s"\n\n########  Value set check: ${vs.size} problem(s) detected.")
     vs foreach { e => println( e.toString ) }
     println("\n")
+  }
+
+  def asText: String = {
+    val sb = new StringBuilder
+    sb.append(s"\n########  Structure check: ${structure.size} problem(s) detected.\n\n")
+    structure.reverse foreach { e => sb.append( e.toString ); sb.append("\n") }
+    sb.append(s"\n\n########  Content check: ${content.size} problem(s) detected.\n\n")
+    content foreach {
+      case x: report.Failure          => sb.append( x.toString ); sb.append("\n")
+      case x: report.PredicateFailure => sb.append( x.toString ); sb.append("\n")
+      case _                          => //FIXME
+    }
+    sb.append(s"\n\n########  Value set check: ${vs.size} problem(s) detected.\n\n")
+    vs foreach { e => sb.append( e.toString ); sb.append("\n") }
+    sb.append("\n")
+    sb.toString
   }
 
   def toJson: String = {

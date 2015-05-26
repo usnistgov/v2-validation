@@ -4,7 +4,7 @@ import expression.{EvalResult, Plugin}
 import hl7.v2.instance.{Element, Separators}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.vs.{ValueSetLibrary, ValueSet}
+import hl7.v2.validation.vs.ValueSetLibrary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -60,13 +60,8 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     time {
       validator.validate( m, "ORU_R01" ) onComplete {
         case Success( report ) =>
-          report.prettyPrint
-
-          //import hl7.v2.validation.report.extension.ReportAsJson._
-          //println( toJson(report) )
-
+          println( report.asText )
           println( s"\n\n ${ report.toJson } \n\n" )
-
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
       }
@@ -80,16 +75,4 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       Await.result( validtor.validate( m, "ORU_R01" ), 1.second )
     }
   }*/
-
-  /*private def asJson(report: Report, compact: Boolean): String = {
-    import org.json4s._
-    import org.json4s.jackson.Serialization
-    import org.json4s.jackson.Serialization.{write, writePretty}
-    //implicit val formats = Serialization.formats(NoTypeHints)
-    implicit val formats = Serialization.formats( ShortTypeHints(List(classOf[NOT])) )
-
-    if( compact ) write(report) else writePretty(report)
-  }*/
-
-
 }
