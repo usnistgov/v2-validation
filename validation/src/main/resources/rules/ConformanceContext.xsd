@@ -44,6 +44,11 @@
 		<xs:attribute name="Section" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="Page" type="PositiveInteger" use="optional"/>
 		<xs:attribute name="URL" type="NonEmptyString" use="optional"/>
+        <!-- The following have been added (in rush) to provide more meta data to constraint -->
+        <xs:attribute name="Source" type="NonEmptyString" use="optional"/>
+        <xs:attribute name="GeneratedBy" type="NonEmptyString" use="optional"/>
+        <xs:attribute name="ReferencePath" type="NonEmptyString" use="optional"/>
+        <xs:attribute name="TestDataCategorization" type="NonEmptyString" use="optional"/>
 	</xs:complexType>
 	
 	<!--  =============================================================================================================

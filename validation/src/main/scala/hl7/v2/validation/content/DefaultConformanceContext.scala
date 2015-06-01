@@ -153,7 +153,19 @@ object DefaultConformanceContext {
   private def description(e: nu.xom.Element): String =
     if( e != null ) e.getValue else "Description is missing ... "
 
-  private def reference(e: nu.xom.Element): Option[Reference] = None //FIXME
+  private def reference(e: nu.xom.Element): Option[Reference] =
+    if( e == null ) None
+    else {
+      val chapter = e.attribute("Chapter")
+      val section = e.attribute("Section")
+      val page    = e.attribute("Page")
+      val url     = e.attribute("URL")
+      val source  = e.attribute("Source")
+      val genBy   = e.attribute("GeneratedBy")
+      val refPath = e.attribute("ReferencePath")
+      val dataCat = e.attribute("TestDataCategorization")
+      Some(Reference(chapter, section, page, url, source, genBy,refPath,dataCat))
+    }
 
   /**
     * Create an expression from a nu.xom.Element representing an Assertion

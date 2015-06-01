@@ -2,7 +2,16 @@ package hl7.v2.validation.content
 
 import expression.Expression
 
-case class Reference( chapter: String, section: String, page: Int, url: String )
+case class Reference(
+    chapter: String,
+    section: String,
+    page: String,
+    url: String,
+    source: String,
+    generatedBy: String,
+    referencePath: String,
+    testDataCategorization: String
+)
 
 /**
   * A constraint describes an assertion that shall always be verified
