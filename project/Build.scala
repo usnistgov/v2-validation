@@ -41,6 +41,6 @@ object Build extends Build {
     .dependsOn( parser % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
-    .settings( libraryDependencies ++= compile( config ) )
+    .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
 
 }
