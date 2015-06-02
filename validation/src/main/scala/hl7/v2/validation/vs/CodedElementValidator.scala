@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs
+/*package hl7.v2.validation.vs
 
 import hl7.v2.instance.Query.queryAsSimple
 import hl7.v2.instance.{Complex, Location, Simple}
@@ -196,3 +196,4 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
     CodedElem(c.location, spec, None, m, l) :: Nil
   }
 }
+*/

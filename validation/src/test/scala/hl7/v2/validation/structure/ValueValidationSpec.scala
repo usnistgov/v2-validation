@@ -1,12 +1,10 @@
 package hl7.v2.validation.structure
 
+import hl7.v2.instance.{Location, Number, Separators, Text}
 import hl7.v2.profile.Range
-import hl7.v2.instance.{Separators, Number, Text, Location}
-import ValueValidation._
-import hl7.v2.validation.report.{Length, UnescapedSeparators, Format}
-import hl7.v2.validation.vs.ValueSet
+import hl7.v2.validation.report.Detections
+import hl7.v2.validation.structure.ValueValidation._
 import org.specs2.Specification
-
 
 class ValueValidationSpec extends Specification { def is = s2"""
 
@@ -23,31 +21,32 @@ class ValueValidationSpec extends Specification { def is = s2"""
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
   val loc = Location(null, "The description", "The path", 1, 1)
   val lcs = Some( Range(2, "3") )
-  val tcs = Nil
   val lcn = None
-  implicit val vsLib = Map[String, ValueSet]()
 
-  def e1 = checkValue( Number("\"\""), lcs, tcs, loc) === Nil
+  def e1 = checkValue( Number("\"\""), lcs, loc) === Nil
 
   def e2 = {
     val m = "1E5 is not a valid Number. The format should be: [+|-]digits[.digits]"
-    checkValue( Number("1E5"), lcs, tcs, loc) ===  Format(loc, m) :: Nil
+    checkValue( Number("1E5"), lcs, loc) ===  Detections.format(loc, m) :: Nil
   }
 
   def e3 = Seq("|x", "x^s", "x&q") map { s =>
-    checkValue( Text(s), lcs, tcs, loc) ===   UnescapedSeparators(loc) :: Nil
+    checkValue( Text(s), lcs, loc) ===   Detections.unescaped(loc) :: Nil
   }
 
   def e4 = Seq("x", "xxxx") map { s =>
-    checkValue(Text(s), lcs, tcs, loc) === Length(loc, s, lcs.get) :: Nil
+    checkValue(Text(s), lcs, loc) ===  Detections.length(loc, lcs.get, s) :: Nil
   }
 
   def e5 = Seq("""x\F\y""", """q\S\""", """\T\w""") map { s =>
-    checkValue( Text(s), lcs, tcs, loc) ===  Nil
+    checkValue( Text(s), lcs, loc) ===  Nil
   }
 
-  def e6 = Seq( ("  ", Nil), (" x  ", Length(loc, " x  ", lcs.get):: Nil) ) map { t =>
-    checkValue(Text(t._1), lcs, tcs, loc) === t._2
+  def e6 = Seq (
+      ("  ", Nil),
+      (" x  ", Detections.length(loc, lcs.get, " x  ") :: Nil)
+  ) map { t =>
+    checkValue(Text(t._1), lcs, loc) === t._2
   }
 
 }

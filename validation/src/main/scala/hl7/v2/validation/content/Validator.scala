@@ -1,9 +1,9 @@
 package hl7.v2.validation.content
 
-import scala.concurrent.Future
-
+import gov.nist.validation.report.Entry
 import hl7.v2.instance.Message
-import hl7.v2.validation.report.CEntry
+
+import scala.concurrent.Future
 
 /**
   * The message content validator
@@ -24,5 +24,5 @@ trait Validator {
     * @param m - The message to be checked
     * @return The report
     */
-  def checkContent(m: Message): Future[Seq[CEntry]]
+  def checkContent(m: Message): Future[Seq[Entry]]
 }

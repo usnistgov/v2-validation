@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import com.typesafe.config.ConfigFactory
 
@@ -60,3 +60,4 @@ object AsString {
     ) = s"""{"path":"$path","message":"${jsonEscape(msg)}","line":$line,"column":$column,"details":"${jsonEscape(details)}","category":"$category","classification":"$classification"}"""
 
 }
+*/

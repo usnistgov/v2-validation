@@ -1,10 +1,11 @@
 package hl7.v2.validation
 package structure
 
+import gov.nist.validation.report.Entry
 import hl7.v2.instance._
 import hl7.v2.profile
-import profile.{Range, Usage}
-import hl7.v2.validation.report._
+import hl7.v2.profile.{Range, Usage}
+import hl7.v2.validation.report.Detections
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -20,7 +21,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param m - The message to be checked
     * @return  - The list of problems
     */
-  def checkStructure(m: Message): Future[List[SEntry]] = Future {
+  def checkStructure(m: Message): Future[List[Entry]] = Future {
     implicit val s = m.separators
     invalid( m.invalid ) ::: unexpected(m.unexpected) ::: check(m.asGroup)
   }
@@ -31,7 +32,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param e - The element to be checked
     * @return A list of problems found
     */
-  private def check(e: Element)(implicit sep: Separators): List[SEntry] =
+  private def check(e: Element)(implicit sep: Separators): List[Entry] =
     e match {
       case s: Simple  => check(s)
       case c: Complex => check(c)
@@ -42,7 +43,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param s   - The simple element to be checked
     * @return A list of problems found
     */
-  private def check(ss: Simple)(implicit s: Separators): List[SEntry] =
+  private def check(ss: Simple)(implicit s: Separators): List[Entry] =
     ValueValidation.check(ss)
 
   /**
@@ -50,12 +51,12 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param c - The complex element to be checked
     * @return A list of problems found
     */
-  private def check(c: Complex)(implicit s: Separators): List[SEntry] = {
+  private def check(c: Complex)(implicit s: Separators): List[Entry] = {
     // Sort the children by position
     val map = c.children.groupBy( x => x.position )
 
     // Check every position defined in the model
-    val r = c.reqs.foldLeft( List[SEntry]() ) { (acc, r) =>
+    val r = c.reqs.foldLeft( List[Entry]() ) { (acc, r) =>
       // Get the children at the current position (r.position)
       val children = map.getOrElse(r.position, Nil)
 
@@ -77,7 +78,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     }
 
     // Check for extra children and return the result
-    if( c.hasExtra ) Extra( c.location ) :: r else r
+    if( c.hasExtra ) Detections.extra(c.location) :: r else r
   }
 
   /**
@@ -91,12 +92,12 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param dl - The default location
     * @return A list of report entries
     */
-  private def checkUsage(u: Usage, l: List[Element])(dl: Location): List[SEntry] =
+  private def checkUsage(u: Usage, l: List[Element])(dl: Location): List[Entry] =
     (u, l) match {
-      case (Usage.R,  Nil) => RUsage(dl) :: Nil
-      case (Usage.RE, Nil) => REUsage(dl) :: Nil
-      case (Usage.X,  xs ) => xs map { e => XUsage( e.location ) }
-      case (Usage.W,  xs ) => xs map { e => WUsage( e.location ) }
+      case (Usage.R,  Nil) => Detections.rusage(dl)  :: Nil
+      case (Usage.RE, Nil) => Detections.reusage(dl) :: Nil
+      case (Usage.X,  xs ) => xs map { e => Detections.xusage(e.location) }
+      case (Usage.W,  xs ) => xs map { e => Detections.wusage(e.location) }
       case _               => Nil
     }
 
@@ -109,32 +110,33 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param range - The cardinality range
     * @return A list of report entries
     */
-  private def checkCardinality(l: List[Element], range: Range): List[SEntry] =
+  private def checkCardinality(l: List[Element], range: Range): List[Entry] =
     if( l.isEmpty ) Nil
     else {
       // The only reason this is needed is because of field repetition
       val highestRep = l maxBy ( e => e.instance )
       val i = highestRep.instance
-      if( i < range.min ) MinCard( highestRep.location, i, range ) :: Nil
+      if( i < range.min )
+        Detections.cardinality(highestRep.location, range, i) :: Nil
       else
         l filter { e => range.isBefore( e.instance ) } map { e =>
-          MaxCard(e.location, e.instance, range)
+          Detections.cardinality(e.location, range, e.instance)
         }
     }
 
   private
-  def checkCardinality(l: List[Element], or: Option[Range]): List[SEntry] =
+  def checkCardinality(l: List[Element], or: Option[Range]): List[Entry] =
     or match {
       case Some(r) => checkCardinality(l, r)
       case None    => Nil
     }
 
-  private def invalid(xs: List[Line]): List[InvalidLine] = xs map { line =>
-    InvalidLine(line.number, line.content)
+  private def invalid(xs: List[Line]): List[Entry] = xs map { line =>
+    Detections.invalid(line.number, line.content)
   }
 
-  private def unexpected(xs: List[Line]): List[UnexpectedLine] =
+  private def unexpected(xs: List[Line]): List[Entry] =
     xs map { line =>
-      UnexpectedLine(line.number, line.content)
+      Detections.unexpected(line.number, line.content)
     }
 }

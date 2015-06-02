@@ -1,5 +1,6 @@
 package hl7.v2.validation.structure
 
+import gov.nist.validation.report.Entry
 import hl7.v2.instance.{EType, Location}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{Range, XMLDeserializer}
@@ -161,7 +162,7 @@ trait StructValidationSpec
               /PID!
               /UAC""".stripMargin('/')
     //val expected = List( InvalidLines( List( Line(1, "sss"), Line(4, "xzsas"), Line(6,"PID!")) ) )
-    val expected = List( (1, "sss"), (4, "xzsas"), (6,"PID!")) map { t => InvalidLine (t._1, t._2) }
+    val expected = List( (1, "sss"), (4, "xzsas"), (6,"PID!")) map { t => Detections.invalid (t._1, t._2) }
 
     validate(m) must containTheSameElementsAs( expected )
   }
@@ -179,7 +180,7 @@ trait StructValidationSpec
                /UAC
                /UAC
                /PDQ|1""".stripMargin('/')
-    val expected = UnexpectedLine(5, "PDQ|1") :: Nil //List( UnexpectedLines( Line(5, "PDQ|1") :: Nil ) )
+    val expected = Detections.unexpected(5, "PDQ|1") :: Nil //List( UnexpectedLines( Line(5, "PDQ|1") :: Nil ) )
 
     validate(m) must containTheSameElementsAs( expected )
   }
@@ -198,8 +199,8 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected =
       List(
-        Extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10) ),
-        Extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13) )
+        Detections.extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10) ),
+        Detections.extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13) )
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -218,29 +219,29 @@ trait StructValidationSpec
                 /UAC""".stripMargin('/')
     val expected =
       List(
-        UnescapedSeparators( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5) )
+        Detections.unescaped( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5) )
       )
 
     validate(m) must containTheSameElementsAs( expected )
   }
 
-  private def validate(m: String): Seq[SEntry] = parse(m, mm) match {
+  private def validate(m: String): Seq[Entry] = parse(m, mm) match {
     case Success(msg) =>
       Await.result( checkStructure(msg) , Duration(2, "seconds"))
     case Failure(e) => throw e
   }
 
-  private def R(et: EType, d: String, p: String, l: Int, c: Int) = RUsage( Location(et, d, p, l, c) )
-  private def X(et: EType, d: String, p: String, l: Int, c: Int) = XUsage( Location(et, d, p, l, c) )
-  private def W(et: EType, d: String, p: String, l: Int, c: Int) = WUsage( Location(et, d, p, l, c) )
+  private def R(et: EType, d: String, p: String, l: Int, c: Int) = Detections.rusage( Location(et, d, p, l, c) )
+  private def X(et: EType, d: String, p: String, l: Int, c: Int) = Detections.xusage( Location(et, d, p, l, c) )
+  private def W(et: EType, d: String, p: String, l: Int, c: Int) = Detections.wusage( Location(et, d, p, l, c) )
 
   private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
-    MaxCard(Location(et, d, p, l, c), i, r)
+    Detections.cardinality(Location(et, d, p, l, c), r, i)
 
   private def MinC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
-    MinCard(Location(et, d, p, l, c), i, r)
+    Detections.cardinality(Location(et, d, p, l, c), r, i)
 
   private def Len(et: EType, d: String, p: String, l: Int, c: Int, v: String, r: Range) =
-    Length(Location(et, d, p, l, c), v, r)
+    Detections.length(Location(et, d, p, l, c), r, v)
 
 }

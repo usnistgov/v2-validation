@@ -54,13 +54,13 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
   val vsLibStream = getClass.getResourceAsStream("/ValueSets.xml")
   val valueSetLibrary = ValueSetLibrary(vsLibStream).get
 
-  val validator = new HL7Validator(profile, valueSetLibrary, conformanceContext, pluginMap)
+  val validator = new HL7Validator(profile, /*valueSetLibrary,*/ conformanceContext, pluginMap)
 
   1 to 1 foreach { i =>
     time {
       validator.validate( m, "ORU_R01" ) onComplete {
         case Success( report ) =>
-          println( report.asText )
+          println( report.toText )
           println( s"\n\n ${ report.toJson } \n\n" )
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")

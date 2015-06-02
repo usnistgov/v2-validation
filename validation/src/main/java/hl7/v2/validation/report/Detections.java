@@ -8,6 +8,7 @@ import gov.nist.validation.report.impl.EntryImpl;
 import hl7.v2.instance.Element;
 import hl7.v2.instance.Location;
 import hl7.v2.profile.BindingStrength;
+import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Constraint;
 import hl7.v2.validation.vs.ValueSet;
@@ -73,13 +74,24 @@ public class Detections {
     }
 
     /**
+     * @return A report entry for the W usage detection
+     */
+    public static Entry cardinality(Location l, Range r, int count) {
+        String category       = conf.getString("report.cardinality.category");
+        String classification = conf.getString("report.cardinality.classification");
+        String template       = conf.getString("report.cardinality.template");
+        String description    = String.format(template, l.prettyString(), r.min(), r.max(), count);
+        return entry(l, description, category, classification);
+    }
+
+    /**
      * @return A report entry for the length detection
      */
-    public static Entry length(Location l, String min, String max, String value) {
+    public static Entry length(Location l, Range r, String value) {
         String category       = conf.getString("report.length.category");
         String classification = conf.getString("report.length.classification");
         String template       = conf.getString("report.length.template");
-        String desc = String.format(template, l.prettyString(), min, max, value);
+        String desc = String.format(template, l.prettyString(), r.min(), r.max(), value);
         return entry(l, desc, category, classification);
     }
 
@@ -146,10 +158,38 @@ public class Detections {
     /**
      * @return A report entry for a constraint failure detection
      */
-    public static Entry failure(Element context, Constraint c,List<Trace> stack) {
-        String category       = conf.getString("report.failure.category");
-        String classification = conf.getString("report.failure.classification");
-        String template       = conf.getString("report.failure.template");
+    public static Entry csFailure(Element context, Constraint c,List<Trace> stack) {
+        String category       = conf.getString("report.constraint-failure.category");
+        String classification = conf.getString("report.constraint-failure.classification");
+        String template       = conf.getString("report.constraint-failure.template");
+        String desc = String.format(template, c.id(), c.description());
+        Map<String, Object> metaData = new HashMap<String, Object>();
+        if( c.reference().isDefined() )
+            metaData.put("reference", c.reference().get());
+        return entry(context.location(), desc, category, classification, stack, metaData);
+    }
+
+    /**
+     * @return A report entry for a constraint failure detection
+     */
+    public static Entry csSuccess(Element context, Constraint c) {
+        String category       = conf.getString("report.constraint-success.category");
+        String classification = conf.getString("report.constraint-success.classification");
+        String template       = conf.getString("report.constraint-success.template");
+        String desc = String.format(template, c.id(), c.description());
+        Map<String, Object> metaData = new HashMap<String, Object>();
+        if( c.reference().isDefined() )
+            metaData.put("reference", c.reference().get());
+        return entry(context.location(), desc, category, classification, null, metaData);
+    }
+
+    /**
+     * @return A report entry for a constraint failure detection
+     */
+    public static Entry csSpecError(Element context, Constraint c,List<Trace> stack) {
+        String category       = conf.getString("report.constraint-spec-error.category");
+        String classification = conf.getString("report.constraint-spec-error.classification");
+        String template       = conf.getString("report.constraint-spec-error.template");
         String desc = String.format(template, c.id(), c.description());
         Map<String, Object> metaData = new HashMap<String, Object>();
         if( c.reference().isDefined() )
@@ -288,16 +328,16 @@ public class Detections {
                 classification, null, null);
     }
 
-    private static Entry entry(Location l, String category,
-                               String classification, String description) {
+    private static Entry entry(Location l, String description, String category,
+                               String classification) {
         int line    = l.line();
         int column  = l.column();
         String path = l.path();
         return entry(line, column, path, description, category, classification);
     }
 
-    private static Entry entry(Location l, String category, String classification,
-                               String description, List<Trace> stackTrace,
+    private static Entry entry(Location l, String description, String category,
+                               String classification, List<Trace> stackTrace,
                                Map<String, Object> metaData) {
         int line    = l.line();
         int column  = l.column();

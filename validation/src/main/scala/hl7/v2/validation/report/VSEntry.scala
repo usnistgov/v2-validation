@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import hl7.v2.instance.Location
 import hl7.v2.profile.{ValueSetSpec, BindingStrength}
@@ -109,3 +109,4 @@ case class NoVal(location: Location, valueSetId: String) extends VSEntry {
   override def category: String = Categories.NoVal
   override def classification: String = Classifications.NoVal
 }
+*/

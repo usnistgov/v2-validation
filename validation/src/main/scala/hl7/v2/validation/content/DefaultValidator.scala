@@ -1,10 +1,11 @@
 package hl7.v2.validation
 package content
 
-import expression.EvalResult.{Fail, Inconclusive, Pass, Reason}
+import expression.EvalResult.{Fail, Inconclusive, Pass}
+import gov.nist.validation.report.Entry
 import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{R, X}
-import hl7.v2.validation.report._
+import hl7.v2.validation.report.Detections
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -17,7 +18,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @param m - The message to be checked
     * @return The report
     */
-  def checkContent(m: Message): Future[Seq[CEntry]] = Future {
+  def checkContent(m: Message): Future[Seq[Entry]] = Future {
     implicit val separators = m.separators
     implicit val dtz = m.defaultTimeZone
     check(m.asGroup)
@@ -30,7 +31,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @return The report
     */
   private def check(e: Element)
-                   (implicit s: Separators, dtz: Option[TimeZone]): List[CEntry] = {
+                   (implicit s: Separators, dtz: Option[TimeZone]): List[Entry] = {
     val cl: List[Constraint] = conformanceContext.constraintsFor(e)
     val pl: List[Predicate]  = conformanceContext.predicatesFor(e)
 
@@ -51,43 +52,48 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @return A CEntry
     */
   private def check(e: Element, c: Constraint)
-                   (implicit s: Separators, dtz: Option[TimeZone]): CEntry =
+                   (implicit s: Separators, dtz: Option[TimeZone]): Entry =
     eval(c.assertion, e) match {
-      case Pass                => Success(e, c)
-      case Fail(stack)         => Failure(e, c, stack)
-      case Inconclusive(trace) => SpecError(e, c, trace)
+      case Pass                => Detections.csSuccess(e, c)
+      case Fail(stack)         => Detections.csFailure(e, c, stackTrace(e, stack))
+      case Inconclusive(trace) => Detections.csSpecError(e, c, stackTrace(e, trace::Nil))
     }
 
   private def check(e: Element, p: Predicate)
-                   (implicit s: Separators, dtz: Option[TimeZone]): List[CEntry] =
+                   (implicit s: Separators, dtz: Option[TimeZone]): List[Entry] =
     eval(p.condition, e) match {
-      case Pass            => checkUsage(e, p, p.trueUsage)
+      case Pass            => Nil //checkUsage(e, p, p.trueUsage)
       case Fail(stack)     => checkUsage(e, p, p.falseUsage)
-      case Inconclusive(t) => PredicateSpecError(p, t.reasons) :: Nil
+      case Inconclusive(t) => Nil //FIXME PredicateSpecError(p, t.reasons) :: Nil
     }
 
   /**
     * Checks if the target path of the predicate satisfy the usage 'u'
     */
-  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): List[CEntry] =
+  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): List[Entry] =
     try {
       val(contexts, path) = resolve(e, p.target)
-      if( contexts.isEmpty ) PredicateSuccess(p) :: Nil //Nothing to do the parent is missing
+      if( contexts.isEmpty ) Nil //Nothing to do the parent is missing
       else {
         lazy val l = contexts flatMap { c => Query.query(c, path).get }
         u match {
           case R if l.isEmpty  =>
             contexts map { c =>
               val dl = Utils.defaultLocation(c.asInstanceOf[Complex], path).getOrElse(c.location)
-              PredicateFailure(p, RUsage(dl))
+              val usageErr = Detections.rusage(dl).getDescription;
+              Detections.predicateFailure(dl, usageErr, "required", p.description)
             }
-          case X if l.nonEmpty => l map {x => PredicateFailure(p, XUsage(x.location))}
-          case _ => PredicateSuccess(p) :: Nil
+          case X if l.nonEmpty => l map { x =>
+            val usageErr = Detections.xusage(x.location).getDescription
+            Detections.predicateFailure(x.location, usageErr, "not supported", p.description)
+          }
+          case _ => Nil // Success
         }
       }
     } catch { case f: Throwable =>
-      val reasons = Reason(e.location, f.getMessage) :: Nil
-      PredicateSpecError(p, reasons) :: Nil
+      //val reasons = Reason(e.location, f.getMessage) :: Nil
+      //PredicateSpecError(p, reasons) :: Nil
+      Nil
     }
 
   @throws
@@ -99,4 +105,17 @@ trait DefaultValidator extends Validator with expression.Evaluator {
         val path = target.drop( i + 1)
         (Query.query(context, parentPath).get, path )
     }
+  import java.util.{List => JList}
+
+  import expression.EvalResult.Trace
+  import gov.nist.validation.report.{Trace => GTrace}
+
+  import scala.collection.JavaConversions.seqAsJavaList
+
+  private def stackTrace(context: Element, stack: List[Trace]): JList[GTrace] =
+  seqAsJavaList( stack map { t =>
+    val assertion = expression.AsString.expression(t.expression, context)
+    val reasons = t.reasons map { r => s"[${r.location.line}, ${r.location.column}] ${r.message}"}
+    new GTrace(assertion, reasons)
+  })
 }

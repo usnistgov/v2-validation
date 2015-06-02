@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs
+/*package hl7.v2.validation.vs
 
 import hl7.v2.instance.{Complex, ComplexComponent, ComplexField}
 import hl7.v2.profile.Datatype
@@ -22,3 +22,4 @@ trait DefaultComplexElemValidator extends CodedElementValidator {
     if( isCodedElement(d) ) checkCodedElement(c, library)
     else Nil // No Op
 }
+*/

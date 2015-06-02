@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import hl7.v2.instance.Location
 import hl7.v2.validation.report
@@ -75,3 +75,4 @@ case class Report(structure: Seq[SEntry], content: Seq[CEntry], vs: Seq[VSEntry]
   }
 
 }
+*/

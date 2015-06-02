@@ -1,15 +1,15 @@
 package hl7.v2.validation.structure
 
+import gov.nist.validation.report.Entry
 import hl7.v2.instance._
 import hl7.v2.instance.util.ValueFormatCheckers._
-import hl7.v2.profile.{ValueSetSpec, Range}
-import hl7.v2.validation.report._
-import hl7.v2.validation.vs.ValueSet
+import hl7.v2.profile.Range
+import hl7.v2.validation.report.Detections
 
 object ValueValidation extends EscapeSeqHandler  {
 
-  def check(s: Simple)(implicit x: Separators): List[SEntry] =
-    checkValue(s.value, s.req.length, s.req.vsSpec, s.location)
+  def check(s: Simple)(implicit x: Separators): List[Entry] =
+    checkValue(s.value, s.req.length, s.location)
 
   /**
     * Checks the value format, length and presence of escape characters
@@ -19,8 +19,8 @@ object ValueValidation extends EscapeSeqHandler  {
     * @param s  - The separators
     * @return The list of problem found
     */
-  def checkValue(v: Value, lc: Option[Range], vss: List[ValueSetSpec],
-                 l: Location)(implicit s: Separators): List[SEntry] =
+  def checkValue(v: Value, lc: Option[Range], l: Location)
+                (implicit s: Separators): List[Entry] =
     v.isNull match {
       case true  => Nil //No check if the value is Null
       case false =>checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
@@ -35,10 +35,11 @@ object ValueValidation extends EscapeSeqHandler  {
     * @return The error if any or None
     */
   def checkLength(l: Location, v: Value, lc: Option[Range])
-                 (implicit s: Separators): Option[Length] =
+                 (implicit s: Separators): Option[Entry] =
     lc flatMap { range =>
       val raw = unescape( v.raw )
-      if (range includes raw.length) None else Some(Length(l, raw, range))
+      if (range includes raw.length) None
+      else Some( Detections.length(l, range, raw))
     }
 
   /**
@@ -48,13 +49,13 @@ object ValueValidation extends EscapeSeqHandler  {
     * @param s - The separators
     * @return The error if any or None
     */
-  def checkFormat(l: Location, v: Value)(implicit s: Separators): Option[SEntry] =
+  def checkFormat(l: Location, v: Value)(implicit s: Separators): Option[Entry] =
     v match {
-      case Number(x)   => checkNumber(x)   map { m => Format(l, m) }
-      case Date(x)     => checkDate(x)     map { m => Format(l, m) }
-      case Time(x)     => checkTime(x)     map { m => Format(l, m) }
-      case DateTime(x) => checkDateTime(x) map { m => Format(l, m) }
-      case _ if containSeparators(v) => Some( UnescapedSeparators(l) )
+      case Number(x)   => checkNumber(x)   map { m => Detections.format(l, m) }
+      case Date(x)     => checkDate(x)     map { m => Detections.format(l, m) }
+      case Time(x)     => checkTime(x)     map { m => Detections.format(l, m) }
+      case DateTime(x) => checkDateTime(x) map { m => Detections.format(l, m) }
+      case _ if containSeparators(v) => Some(  Detections.unescaped(l) )
       case _ => None
     }
 

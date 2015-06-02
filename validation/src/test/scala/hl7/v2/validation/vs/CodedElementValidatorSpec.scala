@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs
+/*package hl7.v2.validation.vs
 
 import org.specs2.Specification
 import org.specs2.ScalaCheck
@@ -18,3 +18,4 @@ class CodedElementValidatorSpec
   def f1 = codedElems map { s => isCodedElement(s) === true }
   def f2 = prop { (s: String) => isCodedElement(s) === (codedElems contains s) }
 }
+*/

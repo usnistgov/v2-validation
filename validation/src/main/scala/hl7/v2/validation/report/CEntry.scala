@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import expression.EvalResult.{Reason, Trace}
 import hl7.v2.instance.{Element, Location}
@@ -88,7 +88,7 @@ case class PredicateSpecError(predicate: Predicate, reasons: List[Reason]) exten
   override def category: String = ???
   override def classification: String = ???
 }
-
+*/
 /*
   ################################################################################
   # This detection is issued for a successful constraint verification

@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs
+/*package hl7.v2.validation.vs
 
 import hl7.v2.instance.{Text, Simple, Location}
 import hl7.v2.profile.{Usage, Req, ValueSetSpec, BindingStrength}
@@ -98,3 +98,4 @@ class SimpleElemValidatorSpec
       }
     }
 }
+*/

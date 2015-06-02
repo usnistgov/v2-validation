@@ -1,4 +1,4 @@
-package hl7.v2.validation.report
+/*package hl7.v2.validation.report
 
 import hl7.v2.instance.{EType, Location}
 import hl7.v2.profile.Range
@@ -89,3 +89,4 @@ case class InvalidLine(override val line: Int, content: String) extends SEntry  
   override lazy val classification: String = Classifications.Invalid
   override lazy val msg = String.format(Templates.Invalid, content)
 }
+*/
