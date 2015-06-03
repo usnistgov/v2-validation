@@ -7,6 +7,13 @@ import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{R, X}
 import hl7.v2.validation.report.Detections
 
+
+import java.util.{List => JList, Arrays => JArrays}
+import expression.EvalResult.Trace
+import gov.nist.validation.report.{Trace => GTrace}
+import scala.collection.JavaConversions.seqAsJavaList
+
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -62,9 +69,9 @@ trait DefaultValidator extends Validator with expression.Evaluator {
   private def check(e: Element, p: Predicate)
                    (implicit s: Separators, dtz: Option[TimeZone]): List[Entry] =
     eval(p.condition, e) match {
-      case Pass            => Nil //checkUsage(e, p, p.trueUsage)
+      case Pass            => checkUsage(e, p, p.trueUsage)
       case Fail(stack)     => checkUsage(e, p, p.falseUsage)
-      case Inconclusive(t) => Nil //FIXME PredicateSpecError(p, t.reasons) :: Nil
+      case Inconclusive(t) => Detections.predicateSpecErr(e, p, stackTrace(e, t::Nil))::Nil
     }
 
   /**
@@ -72,32 +79,37 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     */
   private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): List[Entry] =
     try {
-      val(contexts, path) = resolve(e, p.target)
-      if( contexts.isEmpty ) Nil //Nothing to do the parent is missing
+      val(contexts, path) = reducePath(e, p.target)
+      if( contexts.isEmpty )
+        Detections.predicateSuccess(e, p) :: Nil //Nothing to do the parent is missing
       else {
         lazy val l = contexts flatMap { c => Query.query(c, path).get }
         u match {
           case R if l.isEmpty  =>
             contexts map { c =>
               val dl = Utils.defaultLocation(c.asInstanceOf[Complex], path).getOrElse(c.location)
-              val usageErr = Detections.rusage(dl).getDescription;
+              val usageErr = Detections.rusage(dl).getDescription
               Detections.predicateFailure(dl, usageErr, "required", p.description)
             }
           case X if l.nonEmpty => l map { x =>
             val usageErr = Detections.xusage(x.location).getDescription
             Detections.predicateFailure(x.location, usageErr, "not supported", p.description)
           }
-          case _ => Nil // Success
+          case _ => Detections.predicateSuccess(e, p) :: Nil
         }
       }
     } catch { case f: Throwable =>
-      //val reasons = Reason(e.location, f.getMessage) :: Nil
-      //PredicateSpecError(p, reasons) :: Nil
-      Nil
+      val trace = new GTrace("Path resolution failed.", JArrays.asList(f.getMessage))
+      Detections.predicateSpecErr(e, p, JArrays.asList(trace)) :: Nil
     }
 
+  /*
+   * The target path needs to be reduced since no verification should
+   * be done if the direct parent of the target is missing
+   */
   @throws
-  private def resolve(context: Element, target: String) : (List[Element], String) =
+  private
+  def reducePath(context: Element, target: String) : (List[Element], String) =
     target.lastIndexOf('.') match {
       case -1 => (context :: Nil, target)
       case i  =>
@@ -105,17 +117,14 @@ trait DefaultValidator extends Validator with expression.Evaluator {
         val path = target.drop( i + 1)
         (Query.query(context, parentPath).get, path )
     }
-  import java.util.{List => JList}
-
-  import expression.EvalResult.Trace
-  import gov.nist.validation.report.{Trace => GTrace}
-
-  import scala.collection.JavaConversions.seqAsJavaList
 
   private def stackTrace(context: Element, stack: List[Trace]): JList[GTrace] =
-  seqAsJavaList( stack map { t =>
-    val assertion = expression.AsString.expression(t.expression, context)
-    val reasons = t.reasons map { r => s"[${r.location.line}, ${r.location.column}] ${r.message}"}
-    new GTrace(assertion, reasons)
-  })
+    seqAsJavaList( stack map { t =>
+      val assertion = expression.AsString.expression(t.expression, context)
+      val reasons = t.reasons map { r =>
+        s"[${r.location.line}, ${r.location.column}] ${r.message}"
+      }
+      new GTrace(assertion, reasons)
+    })
+
 }

@@ -25,7 +25,7 @@ object Utils {
         }
         e.location.copy(et, desc=r.description, path=pp)
       case g: Group   =>
-        val (et, pp)  = g.model.structure.head match {
+        val (et, pp)  = g.model.structure.head match { //FIXME this is bogus
           case gg: profile.Group   => (EType.Group, gg.name)
           case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
         }
@@ -40,46 +40,5 @@ object Utils {
         c.location.copy(EType.SubComponent, desc=r.description,
           path=s"${c.location.path}.${r.position}")
     }
-
-  /*private def getReq(l: List[SegRefOrGroup], pathPart: List[Int]): Option[Req] =
-    pathPart match {
-      case Nil      => None
-      case x :: Nil => l find { y => y.req.position == x} map { z => z.req }
-      case x :: xs  =>
-        (l find { y => y.req.position == x }) flatMap {
-          case SegmentRef(req, ref)             => getReq(ref, xs)
-          case profile.Group(_, structure, req) => getReq(structure, xs)
-        }
-    }
-
-  def getReq(m: profile.Message, pathPart: List[Int]): Option[Req] =
-    getReq(m.structure, pathPart)
-
-  def getReq(g: profile.Group, pathPart: List[Int]): Option[Req] =
-    getReq(g.structure, pathPart)
-
-  def getReq(s: profile.Segment, pathPart: List[Int]): Option[Req] =
-    pathPart match {
-      case Nil      => None
-      case x :: Nil => s.fields find { _.req.position == x } map { _.req }
-      case x :: xs  =>
-        (s.fields find { f => f.req.position == x }) flatMap { f =>
-          getReq(f.datatype, xs)
-        }
-    }
-
-  def getReq(d: profile.Datatype, pathPart: List[Int]): Option[Req] =
-    d match {
-      case p: profile.Primitive => None
-      case c: profile.Composite =>
-        pathPart match {
-          case Nil      => None
-          case x :: Nil => c.components find { _.req.position == x } map { _.req }
-          case x :: xs  =>
-            (c.components find { _.req.position == x }) flatMap { cc =>
-              getReq(cc.datatype, xs)
-            }
-        }
-    }*/
 
 }

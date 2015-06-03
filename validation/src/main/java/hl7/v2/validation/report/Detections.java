@@ -11,6 +11,7 @@ import hl7.v2.profile.BindingStrength;
 import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Constraint;
+import hl7.v2.validation.content.Predicate;
 import hl7.v2.validation.vs.ValueSet;
 
 import java.util.HashMap;
@@ -200,6 +201,17 @@ public class Detections {
     /**
      * @return A report entry for a predicate failure detection
      */
+    public static Entry predicateSuccess(Element e, Predicate p) {
+        String category       = conf.getString("report.predicate-success.category");
+        String classification = conf.getString("report.predicate-success.classification");
+        String template       = conf.getString("report.predicate-success.template");
+        String desc = String.format(template, predicateAsString(p));
+        return entry(e.location(), desc, category, classification);
+    }
+
+    /**
+     * @return A report entry for a predicate failure detection
+     */
     public static Entry predicateFailure(Location l, String usageErr,
                                          String expectedUsage, String predicateDesc) {
         String category       = conf.getString("report.predicate-failure.category");
@@ -207,6 +219,17 @@ public class Detections {
         String template       = conf.getString("report.predicate-failure.template");
         String desc = String.format(template, usageErr, expectedUsage, predicateDesc);
         return entry(l, desc, category, classification);
+    }
+
+    /**
+     * @return A report entry for a predicate failure detection
+     */
+    public static Entry predicateSpecErr(Element e, Predicate p, List<Trace> stack) {
+        String category       = conf.getString("report.predicate-spec-error.category");
+        String classification = conf.getString("report.predicate-spec-error.classification");
+        String template       = conf.getString("report.predicate-spec-error.template");
+        String desc = String.format(template, predicateAsString(p));
+        return entry(e.location(), desc, category, classification, stack, null);
     }
 
     /* ========================================================================
@@ -356,5 +379,10 @@ public class Detections {
         metaData.put("valueSet", vs);
         metaData.put("bindingStrength", bs);
         return entry(l, desc, category, classification, null, metaData);
+    }
+
+    private static String predicateAsString(Predicate p) {
+        return String.format("Predicate C(%s/%s) target: %s description: %s",
+                p.trueUsage(), p.falseUsage(), p.target(), p.description());
     }
 }
