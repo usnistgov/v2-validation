@@ -23,7 +23,7 @@ import java.util.{List => JList, Map => JMap, HashMap => JHMap}
 
 trait Validator { this: Parser with structure.Validator
                                with content.Validator
-                               //with vs.Validator
+                               with vs.Validator
                                =>
 
   val profile: Profile
@@ -45,22 +45,22 @@ trait Validator { this: Parser with structure.Validator
           case Success( m ) => 
             val structErrors   = checkStructure( m )
             val contentErrors  = checkContent  ( m )
-            //val valueSetErrors = checkValueSet ( m )
+            val valueSetErrors = checkValueSet ( m )
             for {
               r1 <- structErrors
               r2 <- contentErrors
-              //r3 <- valueSetErrors
-            } yield new ReportImpl( entries(r1, r2) )  //Report(r1, r2, r3)
+              r3 <- valueSetErrors
+            } yield new ReportImpl( entries(r1, r2, r3) )  //Report(r1, r2, r3)
           case Failure(e) => Future failed e
         }
     }
 
   private
-  def entries[T](s1: Seq[T], s2: Seq[T]/*, s3: Seq[T]*/): JMap[String, JList[T]] = {
+  def entries[T](s1: Seq[T], s2: Seq[T], s3: Seq[T]): JMap[String, JList[T]] = {
     val entries = new JHMap[String, JList[T]]()
     entries.put("structure", seqAsJavaList(s1))
     entries.put("content", seqAsJavaList(s2))
-    //entries.put("valueSet", seqAsJavaList(s3))
+    entries.put("valueSet", seqAsJavaList(s3))
     entries
   }
 }
@@ -72,14 +72,14 @@ trait Validator { this: Parser with structure.Validator
   */
 class HL7Validator(
     val profile: Profile,
-    //FIXME override val valueSetLibrary: ValueSetLibrary,
+    override val valueSetLibrary: ValueSetLibrary,
     val conformanceContext: content.ConformanceContext,
     val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
-    //FIXME with vs.DefaultValidator
+    with vs.DefaultValidator
     with expression.DefaultEvaluator
 
 /*

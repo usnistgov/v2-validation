@@ -1,7 +1,7 @@
-/*package hl7.v2.validation.vs
+package hl7.v2.validation.vs
 
-import hl7.v2.instance.{Complex, Simple, Element, Message}
-import hl7.v2.validation.report.VSEntry
+import gov.nist.validation.report.Entry
+import hl7.v2.instance.{Complex, Element, Message, Simple}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -14,13 +14,13 @@ trait DefaultValidator
   /**
     * Checks the message and returns the list of problems.
     */
-  def checkValueSet(m: Message): Future[Seq[VSEntry]] =
+  def checkValueSet(m: Message): Future[Seq[Entry]] =
     Future { check(m.asGroup) }
 
   /**
     * Recursively the element and its children if any
     */
-  private def check(e: Element): List[VSEntry] = e match {
+  private def check(e: Element): List[Entry] = e match {
     case s: Simple  => check(s, valueSetLibrary)
     case c: Complex =>
       val r = check(c, valueSetLibrary)
@@ -29,4 +29,3 @@ trait DefaultValidator
   }
 
 }
-*/

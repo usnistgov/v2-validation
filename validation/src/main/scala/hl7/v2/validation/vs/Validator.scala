@@ -1,7 +1,7 @@
-/*package hl7.v2.validation.vs
+package hl7.v2.validation.vs
 
+import gov.nist.validation.report.Entry
 import hl7.v2.instance.Message
-import hl7.v2.validation.report.VSEntry
 
 import scala.concurrent.Future
 
@@ -20,7 +20,6 @@ trait Validator {
   /**
     * Checks the message and returns the list of problems.
     */
-  def checkValueSet(m: Message): Future[Seq[VSEntry]]
+  def checkValueSet(m: Message): Future[Seq[Entry]]
 
 }
-*/

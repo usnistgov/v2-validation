@@ -1,19 +1,15 @@
 package hl7.v2.validation
 package content
 
-import expression.EvalResult.{Fail, Inconclusive, Pass}
-import gov.nist.validation.report.Entry
+import java.util.{Arrays => JArrays, List => JList}
+
+import expression.EvalResult.{Fail, Inconclusive, Pass, Trace}
+import gov.nist.validation.report.{Entry, Trace => GTrace}
 import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{R, X}
 import hl7.v2.validation.report.Detections
 
-
-import java.util.{List => JList, Arrays => JArrays}
-import expression.EvalResult.Trace
-import gov.nist.validation.report.{Trace => GTrace}
 import scala.collection.JavaConversions.seqAsJavaList
-
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

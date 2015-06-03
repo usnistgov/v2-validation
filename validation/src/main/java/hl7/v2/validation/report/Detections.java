@@ -7,7 +7,6 @@ import gov.nist.validation.report.Trace;
 import gov.nist.validation.report.impl.EntryImpl;
 import hl7.v2.instance.Element;
 import hl7.v2.instance.Location;
-import hl7.v2.profile.BindingStrength;
 import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Constraint;
@@ -238,88 +237,67 @@ public class Detections {
     /**
      * @return A report entry for an excluded VS code detection
      */
-    public static Entry evs(Location l, String value, ValueSet vs,
-                            BindingStrength bs) {
-        return vsEntry("evs", l, value, vs, bs);
+    public static Entry evs(Location l, String value, ValueSet vs, ValueSetSpec spec) {
+        String desc = vsTemplate3("evs", value, l.prettyString(), vs.id());
+        return vsEntry("evs", desc, l, vs, spec);
     }
 
     /**
      * @return A report entry for a permitted VS code detection
      */
-    public static Entry pvs(Location l, String value, ValueSet vs,
-                            BindingStrength bs) {
-        return vsEntry("pvs", l, value, vs, bs);
+    public static Entry pvs(Location l, String value, ValueSet vs, ValueSetSpec spec) {
+        String desc = vsTemplate3("pvs", value, l.prettyString(), vs.id());
+        return vsEntry("pvs", desc, l, vs, spec);
     }
 
     /**
      * @return A report entry for a VS code not found detection
      */
     public static Entry codeNotFound(Location l, String value, ValueSet vs,
-                                     BindingStrength bs) {
-        return vsEntry("code-not-found", l, value, vs, bs);
+                                     ValueSetSpec spec) {
+        String desc = vsTemplate3("code-not-found", value, l.prettyString(), vs.id());
+        return vsEntry("code-not-found", desc, l, vs, spec);
     }
 
     /**
      * @return A report entry for a VS not found detection
      */
-    public static Entry vsNotFound(Location l, String value, String vsID,
-                                   BindingStrength bs) {
-        String category       = conf.getString("report.vs-not-found.category");
-        String classification = conf.getString("report.vs-not-found.classification");
-        String template       = conf.getString("report.vs-not-found.template");
-        String desc = String.format(template, value, l.prettyString(), vsID);
-        Map<String, Object> metaData = new HashMap<String, Object>();
-        metaData.put("bindingStrength", bs);
-        return entry(l, desc, category, classification, null, metaData);
+    public static Entry vsNotFound(Location l, String value, ValueSetSpec spec) {
+        String desc = vsTemplate3("vs-not-found", value, l.prettyString(), spec.valueSetId());
+        return vsEntry("vs-not-found", desc, l, null, spec);
     }
 
     /**
-     * @return A report entry for a VS code not found detection
+     * @return A report entry for an empty VS detection
      */
-    public static Entry emptyVS(Location l, String value, ValueSet vs,
-                                BindingStrength bs) {
-        return vsEntry("empty-vs", l, value, vs, bs);
+    public static Entry emptyVS(Location l, ValueSet vs, ValueSetSpec spec) {
+        String desc = vsTemplate1("empty-vs", vs.id());
+        return vsEntry("empty-vs", desc, l, vs, spec);
     }
 
     /**
-     * @return A report entry for a VS code not found detection
+     * @return A report entry for a VS error detection
      */
-    public static Entry vsError(Location l, String msg, ValueSet vs,
-                                BindingStrength bs) {
-        String category       = conf.getString("report.vs-error.category");
-        String classification = conf.getString("report.vs-error.classification");
-        String template       = conf.getString("report.vs-error.template");
-        String desc = String.format(template, msg);
-        Map<String, Object> metaData = new HashMap<String, Object>();
-        metaData.put("valueSet", vs);
-        metaData.put("bindingStrength", bs);
-        return entry(l, desc, category, classification, null, metaData);
+    public static Entry vsError(Location l, String msg, ValueSet vs, ValueSetSpec spec) {
+        String desc = vsTemplate1("vs-error", msg);
+        return vsEntry("vs-error", desc, l, vs, spec);
     }
 
     /**
      * @return A report entry for an excluded VS detection
      */
-    public static Entry vsNoVal(Location l, ValueSet vs) {
-        String category       = conf.getString("report.vs-no-validation.category");
-        String classification = conf.getString("report.vs-no-validation.classification");
-        String template       = conf.getString("report.vs-no-validation.template");
-        String desc = String.format(template, vs.id());
-        return entry(l, desc, category, classification);
+    public static Entry vsNoVal(Location l, String vsID) {
+        String desc = vsTemplate1("vs-no-validation", vsID);
+        return vsEntry("vs-no-validation", desc, l, null, null);
     }
 
     /**
      * @return A report entry for a coded Elem detection
      */
     public static Entry codedElem(Location l, String msg, ValueSet vs,
-                                  ValueSetSpec vsSpec) {
-        String category       = conf.getString("report.coded-element.category");
-        String classification = conf.getString("report.coded-element.classification");
-        String template       = conf.getString("report.coded-element.template");
-        String desc = String.format(template, msg);
-        Map<String, Object> metaData = new HashMap<String, Object>();
-        metaData.put("valueSet", vs);
-        metaData.put("valueSetSpec", vsSpec);
-        return entry(l, desc, category, classification, null, metaData);
+                                  ValueSetSpec spec, List<Trace> stack) {
+
+        return vsEntry("coded-element", msg, l, vs, spec, stack);
     }
 
     /* ========================================================================
@@ -369,20 +347,75 @@ public class Detections {
                 classification, stackTrace, metaData);
     }
 
-    private static Entry vsEntry(String configKey, Location l, String value,
-                                 ValueSet vs, BindingStrength bs) {
+    private static Entry vsEntry(String configKey, String desc, Location l,
+                                 ValueSet vs, ValueSetSpec spec) {
+        return vsEntry(configKey, desc, l, vs, spec, null);
+    }
+
+    private static Entry vsEntry(String configKey, String desc, Location l,
+                                 ValueSet vs, ValueSetSpec spec, List<Trace> stack) {
         String category       = conf.getString("report."+configKey+".category");
-        String classification = conf.getString("report."+configKey+".classification");
-        String template       = conf.getString("report."+configKey+".template");
-        String desc = String.format(template, value, l.prettyString(), vs.id());
+        String classification = conf.getString("report." + configKey + ".classification");
         Map<String, Object> metaData = new HashMap<String, Object>();
-        metaData.put("valueSet", vs);
-        metaData.put("bindingStrength", bs);
-        return entry(l, desc, category, classification, null, metaData);
+        metaData.put("valueSet", new ValueSetDetails(vs, spec));
+        return entry(l, desc, category, classification, stack, metaData);
     }
 
     private static String predicateAsString(Predicate p) {
         return String.format("Predicate C(%s/%s) target: %s description: %s",
                 p.trueUsage(), p.falseUsage(), p.target(), p.description());
     }
+
+    private static String vsTemplate1(String configKey, String s1) {
+        String template = conf.getString("report."+configKey+".template");
+        return String.format(template, s1);
+    }
+
+    private static String vsTemplate3(String configKey, String s1,
+                                      String s2, String s3) {
+        String template = conf.getString("report."+configKey+".template");
+        return String.format(template, s1, s2, s3);
+    }
+
+    static class ValueSetDetails {
+
+        private String id;
+        private String stability;
+        private String extensibility;
+        private String bindingStrength;
+        private String bindingLocation;
+
+        public ValueSetDetails(ValueSet vs, ValueSetSpec spec ) {
+            if( vs != null ) {
+                this.id = vs.id();
+                this.stability = optionAsString(vs.stability());
+                this.extensibility = optionAsString(vs.extensibility());
+            }
+            if( spec != null ) {
+                this.id = spec.valueSetId(); //Should be the same value as above
+                this.bindingStrength = optionAsString(spec.bindingStrength());
+                this.bindingLocation  = optionAsString( spec.bindingLocation());
+            }
+
+        }
+
+        public String getId() { return id; }
+
+        public String getStability() { return stability; }
+
+        public String getExtensibility() { return extensibility; }
+
+        public String getBindingStrength() { return bindingStrength; }
+
+        public String getBindingLocation() { return bindingLocation; }
+
+        public static <T> String optionAsString(scala.Option<T> o) {
+            try {
+                return o.get().toString();
+            } catch( Exception e) {
+                return null;
+            }
+        }
+    }
+
 }
