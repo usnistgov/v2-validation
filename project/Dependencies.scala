@@ -24,6 +24,6 @@ object Dependencies {
   val spec2         = "org.specs2"          %%  "specs2"            %  "2.3.11"
   val scalaCheck    = "org.scalacheck"      %%  "scalacheck"        %  "1.11.3"
   //val vreport       = "com.github.salifou"  %   "validation-report" % "v1.0.3"
-  val vreport       = "gov.nist"  %   "validation-report" % "1.0.3"
+  val vreport       = "gov.nist"  %   "validation-report" % "1.0.0"
 
 }

@@ -1,7 +1,6 @@
 package hl7.v2.validation
 
 import expression.{EvalResult, Plugin}
-import gov.nist.validation.report.impl.ReportImpl
 import hl7.v2.instance.{Element, Separators}
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
@@ -50,19 +49,19 @@ trait Validator { this: Parser with structure.Validator
               r1 <- structErrors
               r2 <- contentErrors
               r3 <- valueSetErrors
-            } yield new ReportImpl( entries(r1, r2, r3) )  //Report(r1, r2, r3)
+            } yield report.Report(r1, r2, r3)
           case Failure(e) => Future failed e
         }
     }
 
-  private
+  /*private
   def entries[T](s1: Seq[T], s2: Seq[T], s3: Seq[T]): JMap[String, JList[T]] = {
     val entries = new JHMap[String, JList[T]]()
     entries.put("structure", seqAsJavaList(s1))
     entries.put("content", seqAsJavaList(s2))
     entries.put("valueSet", seqAsJavaList(s3))
     entries
-  }
+  }*/
 }
 
 /**
