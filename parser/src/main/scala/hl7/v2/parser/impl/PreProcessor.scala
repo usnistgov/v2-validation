@@ -28,7 +28,7 @@ object PreProcessor {
   def process(message: String): Try[PPR] =
     splitOnMSH(message) match {
       case (beforeMSH, Nil) =>
-        Failure( new Error("No MSH Segment found in the message.") )
+        Failure( new Exception("No MSH Segment found in the message.") )
       case (beforeMSH, xs ) =>
         getSeparators( xs.head._2 ) map { separators =>
           implicit val fs = separators.fs
@@ -68,11 +68,11 @@ object PreProcessor {
     separators.getDuplicates match {
       case Nil => Success( separators )
       case xs  => Failure(
-        new Error( s"The following character(s) ['${xs.mkString("', '")
+        new Exception( s"The following character(s) ['${xs.mkString("', '")
         }'] has/have been used more than once as a separator.")
       )
     }
   } catch {
-    case _: Throwable => Failure( new Error("The MSH line contains less than 9 characters.") )
+    case _: Throwable => Failure( new Exception("The MSH line contains less than 9 characters.") )
   }
 }
