@@ -50,7 +50,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
 
   val confContext = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
 
-  val conformanceContext = /*content.EmptyConformanceContext*/ content.DefaultConformanceContext( confContext ).get
+  val conformanceContext = content.EmptyConformanceContext// content.DefaultConformanceContext( confContext ).get
 
   val vsLibStream = getClass.getResourceAsStream("/ValueSets.xml")
   val valueSetLibrary = ValueSetLibrary(vsLibStream).get
@@ -62,7 +62,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       validator.validate( m, "ORU_R01" ) onComplete {
         case Success( report ) =>
           println( report.toText )
-          println( s"\n\n ${ report.toJson } \n\n" )
+          //println( s"\n\n ${ report.toJson } \n\n" )
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
       }

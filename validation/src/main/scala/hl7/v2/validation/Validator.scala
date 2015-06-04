@@ -1,6 +1,7 @@
 package hl7.v2.validation
 
 import expression.{EvalResult, Plugin}
+import gov.nist.validation.report.Report
 import hl7.v2.instance.{Element, Separators}
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
@@ -9,10 +10,6 @@ import hl7.v2.validation.vs.ValueSetLibrary
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-
-import gov.nist.validation.report.Report
-import scala.collection.JavaConversions.{seqAsJavaList, mapAsJavaMap}
-import java.util.{List => JList, Map => JMap, HashMap => JHMap}
 
 /**
   * Trait defining the message validation 
@@ -53,15 +50,6 @@ trait Validator { this: Parser with structure.Validator
           case Failure(e) => Future failed e
         }
     }
-
-  /*private
-  def entries[T](s1: Seq[T], s2: Seq[T], s3: Seq[T]): JMap[String, JList[T]] = {
-    val entries = new JHMap[String, JList[T]]()
-    entries.put("structure", seqAsJavaList(s1))
-    entries.put("content", seqAsJavaList(s2))
-    entries.put("valueSet", seqAsJavaList(s3))
-    entries
-  }*/
 }
 
 /**
@@ -81,7 +69,7 @@ class HL7Validator(
     with vs.DefaultValidator
     with expression.DefaultEvaluator
 
-/*
+
 /**
   * A synchronous HL7 message validator which uses an empty value set
   * validator  and the default implementation of the  parser,
@@ -107,4 +95,3 @@ class SyncHL7Validator(
     Await.result(validate(message, id), 10.second)
 
 }
-*/
