@@ -159,42 +159,21 @@ public class Detections {
      * @return A report entry for a constraint failure detection
      */
     public static Entry csFailure(Element context, Constraint c,List<Trace> stack) {
-        String category       = conf.getString("report.constraint-failure.category");
-        String classification = conf.getString("report.constraint-failure.classification");
-        String template       = conf.getString("report.constraint-failure.template");
-        String desc = String.format(template, c.id(), c.description());
-        Map<String, Object> metaData = new HashMap<String, Object>();
-        if( c.reference().isDefined() )
-            metaData.put("reference", c.reference().get());
-        return entry(context.location(), desc, category, classification, stack, metaData);
+        return csEntry("constraint-failure", context, c, stack);
     }
 
     /**
      * @return A report entry for a constraint failure detection
      */
     public static Entry csSuccess(Element context, Constraint c) {
-        String category       = conf.getString("report.constraint-success.category");
-        String classification = conf.getString("report.constraint-success.classification");
-        String template       = conf.getString("report.constraint-success.template");
-        String desc = String.format(template, c.id(), c.description());
-        Map<String, Object> metaData = new HashMap<String, Object>();
-        if( c.reference().isDefined() )
-            metaData.put("reference", c.reference().get());
-        return entry(context.location(), desc, category, classification, null, metaData);
+        return csEntry("constraint-success", context, c, null);
     }
 
     /**
      * @return A report entry for a constraint failure detection
      */
     public static Entry csSpecError(Element context, Constraint c,List<Trace> stack) {
-        String category       = conf.getString("report.constraint-spec-error.category");
-        String classification = conf.getString("report.constraint-spec-error.classification");
-        String template       = conf.getString("report.constraint-spec-error.template");
-        String desc = String.format(template, c.id(), c.description());
-        Map<String, Object> metaData = new HashMap<String, Object>();
-        if( c.reference().isDefined() )
-            metaData.put("reference", c.reference().get());
-        return entry(context.location(), desc, category, classification, stack, metaData);
+        return csEntry("constraint-spec-error", context, c, stack);
     }
 
     /**
@@ -345,6 +324,18 @@ public class Detections {
         String path = l.path();
         return entry(line, column, path, description, category,
                 classification, stackTrace, metaData);
+    }
+
+    private static Entry csEntry(String configKey, Element context,
+                                 Constraint c, List<Trace> stack) {
+        String category       = conf.getString("report."+configKey+".category");
+        String classification = conf.getString("report."+configKey+".classification");
+        String template       = conf.getString("report."+configKey+".template");
+        String desc = String.format(template, c.id(), c.description());
+        Map<String, Object> metaData = new HashMap<String, Object>();
+        if( c.reference().isDefined() )
+            metaData.put("reference", c.reference().get());
+        return entry(context.location(), desc, category, classification, stack, metaData);
     }
 
     private static Entry vsEntry(String configKey, String desc, Location l,

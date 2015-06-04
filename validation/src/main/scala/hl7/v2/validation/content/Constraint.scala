@@ -2,15 +2,17 @@ package hl7.v2.validation.content
 
 import expression.Expression
 
+import scala.beans.BeanProperty
+
 case class Reference(
-    chapter: String,
-    section: String,
-    page: String,
-    url: String,
-    source: String,
-    generatedBy: String,
-    referencePath: String,
-    testDataCategorization: String
+    @BeanProperty chapter: String,
+    @BeanProperty section: String,
+    @BeanProperty page: String,
+    @BeanProperty url: String,
+    @BeanProperty source: String,
+    @BeanProperty generatedBy: String,
+    @BeanProperty referencePath: String,
+    @BeanProperty testDataCategorization: String
 )
 
 /**
