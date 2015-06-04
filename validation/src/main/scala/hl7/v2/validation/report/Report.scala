@@ -21,7 +21,7 @@ case class Report(
   }
 
   override def toJson: String =
-    gov.nist.validation.report.impl.Util.mapper.writeValueAsString(this)
+    gov.nist.validation.report.impl.JsonObjectMapper.mapper.writeValueAsString(this)
 
   override def toText: String =
     s"""
