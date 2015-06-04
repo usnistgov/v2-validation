@@ -19,15 +19,15 @@ object Utils {
   def defaultLocation(e: Complex, r: Req): Location =
     e match {
       case m: Message =>
-        val (et, pp)  = m.model.structure.head match {
-          case gg: profile.Group      => (EType.Group, gg.name)
-          case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
+        val (et, pp)  = m.model.structure.filter( _.req == r ) match {
+          case profile.Group(name, _, _)  :: xs => (EType.Group, name)
+          case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
         }
         e.location.copy(et, desc=r.description, path=pp)
       case g: Group   =>
-        val (et, pp)  = g.model.structure.head match { //FIXME this is bogus
-          case gg: profile.Group   => (EType.Group, gg.name)
-          case ss: profile.SegmentRef => (EType.Segment, ss.ref.name)
+        val (et, pp)  = g.model.structure.filter( _.req == r ) match {
+          case profile.Group(name, _, _)  :: xs => (EType.Group, name)
+          case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
         }
         e.location.copy(et, desc=r.description, path=pp)
       case s: Segment =>
@@ -40,5 +40,4 @@ object Utils {
         c.location.copy(EType.SubComponent, desc=r.description,
           path=s"${c.location.path}.${r.position}")
     }
-
 }
