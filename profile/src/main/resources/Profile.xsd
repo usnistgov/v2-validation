@@ -148,7 +148,7 @@
 	
 	<xs:simpleType name="TableType">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[^#]+(#(R|S|U))?"/>
+			<xs:pattern value="([^#]+(#(R|S|U).*)?(,[^#]+(#(R|S|U).*)?)*)"/> <!-- We should enforce the binding location -->
 		</xs:restriction>
 	</xs:simpleType>
 	

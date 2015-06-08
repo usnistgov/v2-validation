@@ -36,3 +36,5 @@ case class FORALL( list: Expression* ) extends Expression
 case class EXIST( list: Expression* ) extends Expression
 
 case class Plugin( id: String, params: Map[String, String] ) extends Expression
+
+case class SetId(path: String) extends Expression

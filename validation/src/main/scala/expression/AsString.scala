@@ -20,6 +20,7 @@ object AsString {
     case e: EXIST       => exist(e, context)
     case e: FORALL      => forall(e, context)
     case e: Plugin      => plugin(e, context)
+    case e: SetId       => setId(e, context)
   }
 
   private def path(c: Element, p: String) = s"${c.location.path}.$p"
@@ -67,6 +68,8 @@ object AsString {
 
   private def plugin(e: Plugin, c: Element) = s"Plugin '${e.id}'"
 
+  private def setId(e: SetId, c: Element) = s"$e # Context: ${c.location.prettyString}"
+
   // De Morgan's laws
   // not (A and B) === (not A) or (not B)
   // not (A or B) === (not A) and (not B)
@@ -79,6 +82,7 @@ object AsString {
     case x: IMPLY  => throw new Exception("Invalid use of NOT expression")
     case x: EXIST  => throw new Exception("Invalid use of NOT expression")
     case x: FORALL => throw new Exception("Invalid use of NOT expression")
+    case x: SetId  => throw new Exception("Invalid use of NOT expression")
     case x  => expression(x, c).replaceAllLiterally("SHALL", "SHALL not")
   }
 }

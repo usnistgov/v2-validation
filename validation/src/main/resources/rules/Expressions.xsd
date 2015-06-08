@@ -175,6 +175,14 @@
 		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
 	</xs:complexType>
 	
+	<!--  =============================================================================================================
+       	  =========================       HL7 v2x Specific                      =======================================
+          ============================================================================================================= -->
+	
+	<xs:complexType name="SetIdType">
+		<xs:attribute name="Path" type="PathType" use="required"/>
+	</xs:complexType>
+	
 	<xs:group name="ExpressionGroup">
 		<xs:choice>
 			<xs:element name="Presence" type="PresenceType" minOccurs="1" maxOccurs="1"/>
@@ -197,6 +205,7 @@
 			<xs:element name="IMPLY" type="ImplyType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="FORALL" type="ForallType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="EXIST" type="ExistType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SetID" type="SetIdType" minOccurs="1" maxOccurs="1"/>
 		</xs:choice>
 	</xs:group>
 	

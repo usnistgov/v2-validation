@@ -7,7 +7,7 @@
 	<MetaData>
 		<Description>Conformance context sample</Description>
 	</MetaData>
-
+	
 	<Predicates>
 		<Datatype>
 			
@@ -18,21 +18,21 @@
 						<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
 					</Condition>
 				</Predicate>
-
-                <Predicate Target="1[1]" TrueUsage="R" FalseUsage="O">
-                    <Description>## If HD.2 is valued 'XX'</Description>
-                    <Condition>
-                        <PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
-                    </Condition>
-                </Predicate>
-
-                <Predicate Target="1[1].1[1]" TrueUsage="R" FalseUsage="X">
-                    <Description>### If HD.2 is valued 'XX'</Description>
-                    <Condition>
-                        <PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
-                    </Condition>
-                </Predicate>
-
+				
+				<Predicate Target="1[1]" TrueUsage="R" FalseUsage="O">
+					<Description>## If HD.2 is valued 'XX'</Description>
+					<Condition>
+						<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
+					</Condition>
+				</Predicate>
+				
+				<Predicate Target="1[1].1[1]" TrueUsage="R" FalseUsage="X">
+					<Description>### If HD.2 is valued 'XX'</Description>
+					<Condition>
+						<PlainText Path="2[1]" Text="XXX" IgnoreCase="true"/>
+					</Condition>
+				</Predicate>
+				
 			</ByName>
 			
 		</Datatype>
@@ -44,11 +44,11 @@
 		<Datatype>
 			
 			<ByName Name="HD">
-								
+				
 				<!-- Generic Expressions -->
 				
 				<Constraint ID="Presence" Target="1[1]">
-                    <Reference Chapter="chapter" GeneratedBy="GenBy" Page="1" ReferencePath="ss" Section="xs" Source="Conf. Statement" TestDataCategorization="xx" URL="yy"/>
+					<Reference Chapter="chapter" GeneratedBy="GenBy" Page="1" ReferencePath="ss" Section="xs" Source="Conf. Statement" TestDataCategorization="xx" URL="yy"/>
 					<Description>Presence</Description>
 					<Assertion>
 						<Presence Path="1[1]"/>
@@ -70,8 +70,6 @@
 						<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
 					</Assertion>
 				</Constraint>
-				
-				
 				
 				<Constraint ID="Format">
 					<Description>Format</Description>
@@ -141,6 +139,7 @@
 				
 				
 				<Constraint ID="NOT">
+					<Description>NOT - Constraint</Description>
 					<Assertion>
 						<NOT>
 							<AND>
@@ -152,69 +151,69 @@
 				</Constraint>
 				
 				<!--<Constraint ID="IMPLY">
-                <Assertion>
-                    <IMPLY>
-                        <Presence Path="1[1]"/>
-                        <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
-                    </IMPLY>
-                </Assertion>
-            </Constraint>-->
+					<Assertion>
+					<IMPLY>
+					<Presence Path="1[1]"/>
+					<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+					</IMPLY>
+					</Assertion>
+					</Constraint>-->
 				
 				<!--<Constraint ID="XOR">
-				<Assertion>
+					<Assertion>
 					<XOR>
-						<NOT><Presence Path="1[1]"/></NOT>
-						<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
+					<NOT><Presence Path="1[1]"/></NOT>
+					<PlainText Path="1[1]" Text="XX" IgnoreCase="true"/>
 					</XOR>
-				</Assertion>
-			</Constraint>-->
+					</Assertion>
+					</Constraint>-->
 				
 			</ByName>
 			
 			<!--
-		<ByID ID="_XX_">
-			<Constraint ID="XOR">
+				<ByID ID="_XX_">
+				<Constraint ID="XOR">
 				<Description>XOR</Description>
 				<Assertion>
-					<XOR>
-						<Presence Path="1[1]"/>
-						<Presence Path="2[2]"/>
-					</XOR>
+				<XOR>
+				<Presence Path="1[1]"/>
+				<Presence Path="2[2]"/>
+				</XOR>
 				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="IMPLY">
+				</Constraint>
+				
+				<Constraint ID="IMPLY">
 				<Description>IMPLY</Description>
 				<Assertion>
-					<IMPLY>
-						<Presence Path="1[1]"/>
-						<Presence Path="2[2]"/>
-					</IMPLY>
+				<IMPLY>
+				<Presence Path="1[1]"/>
+				<Presence Path="2[2]"/>
+				</IMPLY>
 				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="FORALL">
+				</Constraint>
+				
+				<Constraint ID="FORALL">
 				<Description>FORALL</Description>
 				<Assertion>
-					<FORALL>
-						<Presence Path="1[1]"/>
-						<Presence Path="2[2]"/>
-						<Presence Path="3[3]"/>
-					</FORALL>
+				<FORALL>
+				<Presence Path="1[1]"/>
+				<Presence Path="2[2]"/>
+				<Presence Path="3[3]"/>
+				</FORALL>
 				</Assertion>
-			</Constraint>
-			
-			<Constraint ID="EXIST">
+				</Constraint>
+				
+				<Constraint ID="EXIST">
 				<Description>EXIST</Description>
 				<Assertion>
-					<EXIST>
-						<Presence Path="1[1]"/>
-						<Presence Path="2[2]"/>
-						<Presence Path="3[3]"/>
-					</EXIST>
+				<EXIST>
+				<Presence Path="1[1]"/>
+				<Presence Path="2[2]"/>
+				<Presence Path="3[3]"/>
+				</EXIST>
 				</Assertion>
-			</Constraint>
-		</ByID> -->
+				</Constraint>
+				</ByID> -->
 			
 		</Datatype>
 		
@@ -247,10 +246,31 @@
 				</Constraint>
 			</ByID>
 			
+			<ByID ID="NTE_1">
+				
+				<Constraint ID="NTE_SetID">
+					<Description>NTE_1 - Set ID</Description>
+					<Assertion>
+						<SetID Path="1[1]"/>
+					</Assertion>
+				</Constraint>
+				
+			</ByID>
 			
 		</Segment>
 		
-		<Group/>
+		<Group>
+			
+			<ByName Name="ORDER_OBSERVATION">
+				<Constraint ID="SetId">
+					<Description>OBR - Set ID Constraint</Description>
+					<Assertion>
+						<SetID Path="2[1].1[1]"/>
+					</Assertion>
+				</Constraint>	
+			</ByName>
+			
+		</Group>
 	</Constraints>
 	
 </ConformanceContext>

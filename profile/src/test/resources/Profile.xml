@@ -9,7 +9,7 @@ Changes:
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/hl7-tools/v2-tools/profile/src/main/resources/Profile.xsd"
+	xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/v2-validation-legacy/profile/src/main/resources/Profile.xsd"
 	>
 	
 	<Encodings>
@@ -42,7 +42,7 @@ Changes:
 				<Group Name="ORDER_OBSERVATION" Usage="O" Min="1" Max="*">
 					<Segment Ref="ORC" Usage="O" Min="0" Max="1"/>
 					<Segment Ref="OBR" Usage="R" Min="1" Max="1"/>
-					<Segment Ref="NTE" Usage="O" Min="0" Max="*"/>
+					<Segment Ref="NTE_1" Usage="O" Min="0" Max="*"/>
 					<Segment Ref="PRT" Usage="O" Min="0" Max="*"/>
 					<Group Name="TIMING_QTY" Usage="O" Min="0" Max="*">
 						<Segment Ref="TQ1" Usage="R" Min="1" Max="1"/>
@@ -192,7 +192,17 @@ Changes:
 			<Field Name="Participation Address" Datatype="XAD" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="02390"/>
 			<Field Name="Participant Telecommunication Address" Datatype="XTN" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="02391"/>
 		</Segment>
-		<Segment ID="NTE" Name="NTE" Description="Notes and Comments">
+        <Segment ID="NTE_1" Name="NTE" Description="Notes and Comments">
+            <Field Name="Set ID - NTE" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00096"/>
+            <Field Name="Source of Comment" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="00097"/>
+            <Field Name="Comment" Datatype="FT" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00098"/>
+            <Field Name="Comment Type" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01318"/>
+            <Field Name="Entered By" Datatype="XCN" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00224"/>
+            <Field Name="Entered Date/Time" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00661"/>
+            <Field Name="Effective Start Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01004"/>
+            <Field Name="Expiration Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02185"/>
+        </Segment>
+        <Segment ID="NTE" Name="NTE" Description="Notes and Comments">
 			<Field Name="Set ID - NTE" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00096"/>
 			<Field Name="Source of Comment" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="00097"/>
 			<Field Name="Comment" Datatype="FT" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00098"/>

@@ -113,4 +113,9 @@ object Failures extends EscapeSeqHandler {
   def not(e: NOT, c: Element): Fail =
     Fail( Trace( e, List(Reason(c.location, "The inner expression is true")) ) :: Nil )
 
+  def seqId(e: SetId, c: Element, s: Simple) = {
+    val reason = Reason(s.location, s"Expected ${c.instance}, Found ${s.value.raw}")
+    Fail( Trace(e, reason :: Nil) :: Nil )
+  }
+
 }

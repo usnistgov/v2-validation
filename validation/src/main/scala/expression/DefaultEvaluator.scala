@@ -34,6 +34,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     case x: EXIST       => exist(x, c)
     case x: FORALL      => forall(x, c)
     case x: Plugin      => plugin(x, c)
+    case x: SetId       => setId(x, c)
   }
 
   /**
@@ -222,6 +223,17 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def exist(e: EXIST, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
 
   def forall(e: FORALL, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
+
+  def setId(e: SetId, context: Element) =
+    queryAsSimple(context, e.path) match {
+      case Success( x:: Nil) =>
+        if( context.instance.toString == x.value.raw ) Pass
+        else Failures.seqId(e, context, x)
+      case Success(xs) =>
+        val m = s"$e Path resolution returned more than one element"
+        inconclusive(e, context.location, m)
+      case Failure(f)  => inconclusive(e, context.location, f)
+    }
 
   /**
     * Evaluates the plugin expression and returns the result

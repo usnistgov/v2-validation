@@ -39,8 +39,8 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       /ORC!
       /OBR|1|ORD723222^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|R-783274^NIST Lab Filler^2.16.840.1.113883.3.72.5.25^ISO|30341-2^Erythrocyte sedimentation rate^LN^815115^Erythrocyte sedimentation rate^99USI^^^Erythrocyte sedimentation rate|||20110331140551-0800||||L||7520000^fever of unknown origin^SCT^22546000^fever, origin unknown^99USI^^^Fever of unknown origin|||57422^Radon^Nicholas^M^JR^DR^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^NPI||||||20110331160428-0800|||F|||10092^Hamlin^Pafford^M^Sr.^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^NPI|||||||||||||||||||||CC^Carbon Copy^HL70507^C^Send Copy^L^^^Copied Requested
       /NTE|1||Patient is extremely anxious about needles used for drawing blood.
-      /NTE|1||Patient is extremely anxious about needles used for drawing blood.
-      /NTE|1||Patient is extremely anxious about needles used for drawing blood.
+      /NTE|2||Patient is extremely anxious about needles used for drawing blood.
+      /NTE|3||Patient is extremely anxious about needles used for drawing blood.
       /TQ1|1||||||20110331150028-0800|20110331152028-0800
       /OBX|1|NM|1^Erythrocyte sedimentation rate^xx^815117^ESR^99USI^^^Erythrocyte sedimentation rate||10|mm/h^millimeter per hour^UCUM|0 to 17|N|||F|||20110331140551-0800|||||20110331150551-0800||||Century Hospital^^^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^XX^^^987|2070 Test Park^^Los Angeles^CA^90067^USA^B^^06037|2343242^Knowsalot^Phil^J.^III^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^DN
       /PDQ
@@ -50,7 +50,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
 
   val confContext = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
 
-  val conformanceContext = content.EmptyConformanceContext// content.DefaultConformanceContext( confContext ).get
+  val conformanceContext = content.DefaultConformanceContext( confContext ).get
 
   val vsLibStream = getClass.getResourceAsStream("/ValueSets.xml")
   val valueSetLibrary = ValueSetLibrary(vsLibStream).get
@@ -62,7 +62,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       validator.validate( m, "ORU_R01" ) onComplete {
         case Success( report ) =>
           println( report.toText )
-          //println( s"\n\n ${ report.toJson } \n\n" )
+          println( s"\n\n ${ report.toJson } \n\n" )
         case Failure( e )      =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
       }
