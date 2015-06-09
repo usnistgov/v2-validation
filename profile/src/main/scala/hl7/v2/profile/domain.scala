@@ -78,6 +78,7 @@ case class SegmentRef( req: Req, ref: Segment ) extends SegRefOrGroup {
   * A group
   */
 case class Group(
+    id: String,
     name: String,
     structure: List[SegRefOrGroup],
     req: Req
@@ -98,7 +99,7 @@ case class Message (
     structure: List[SegRefOrGroup]
 ) {
 
-  lazy val asGroup = Group(structId, structure,
+  lazy val asGroup = Group(id, structId, structure,
         Req(1, structId, Usage.R, None, None, None, Nil))
 }
 

@@ -20,13 +20,13 @@ object Utils {
     e match {
       case m: Message =>
         val (et, pp)  = m.model.structure.filter( _.req == r ) match {
-          case profile.Group(name, _, _)  :: xs => (EType.Group, name)
+          case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
         }
         e.location.copy(et, desc=r.description, path=pp)
       case g: Group   =>
         val (et, pp)  = g.model.structure.filter( _.req == r ) match {
-          case profile.Group(name, _, _)  :: xs => (EType.Group, name)
+          case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
         }
         e.location.copy(et, desc=r.description, path=pp)

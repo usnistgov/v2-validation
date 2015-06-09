@@ -22,43 +22,43 @@ Changes:
 			<Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
 			<Segment Ref="SFT" Usage="W" Min="0" Max="*" />
 			<Segment Ref="UAC" Usage="O" Min="0" Max="1"/>
-			<Group Name="PATIENT_RESULT" Usage="R" Min="1" Max="*">
-				<Group Name="PATIENT" Usage="O" Min="0" Max="1">
+			<Group ID="1" Name="PATIENT_RESULT" Usage="R" Min="1" Max="*">
+				<Group ID="2" Name="PATIENT" Usage="O" Min="0" Max="1">
 					<Segment Ref="PID" Usage="R" Min="1" Max="1"/>
 					<Segment Ref="PD1" Usage="O" Min="0" Max="1"/>
 					<Segment Ref="PRT" Usage="O" Min="0" Max="*"/>
 					<Segment Ref="NTE" Usage="O" Min="0" Max="*"/>
 					<Segment Ref="NK1" Usage="O" Min="0" Max="*"/>
-					<Group Name="PATIENT_OBSERVATION" Usage="O" Min="0" Max="*">
+					<Group ID="3" Name="PATIENT_OBSERVATION" Usage="O" Min="0" Max="*">
 						<Segment Ref="OBX" Usage="R" Min="1" Max="1"/>
 						<Segment Ref="PRT" Usage="O" Min="0" Max="*"/>
 					</Group>
-					<Group Name="VISIT" Usage="O" Min="0" Max="1">
+					<Group ID="4" Name="VISIT" Usage="O" Min="0" Max="1">
 						<Segment Ref="PV1" Usage="R" Min="1" Max="1"/>
 						<Segment Ref="PV2" Usage="O" Min="0" Max="1"/>
 						<Segment Ref="PRT" Usage="O" Min="0" Max="*"/>
 					</Group>
 				</Group>
-				<Group Name="ORDER_OBSERVATION" Usage="O" Min="1" Max="*">
+				<Group ID="4" Name="ORDER_OBSERVATION" Usage="O" Min="1" Max="*">
 					<Segment Ref="ORC" Usage="O" Min="0" Max="1"/>
 					<Segment Ref="OBR" Usage="R" Min="1" Max="1"/>
 					<Segment Ref="NTE_1" Usage="O" Min="0" Max="*"/>
 					<Segment Ref="PRT" Usage="O" Min="0" Max="*"/>
-					<Group Name="TIMING_QTY" Usage="O" Min="0" Max="*">
+					<Group ID="5" Name="TIMING_QTY" Usage="O" Min="0" Max="*">
 						<Segment Ref="TQ1" Usage="R" Min="1" Max="1"/>
 						<Segment Ref="TQ2" Usage="O" Min="0" Max="*"/>
 					</Group>
 					<Segment Ref="CTD" Usage="O" Min="0" Max="1"/>
-					<Group Name="OBSERVATION" Usage="O" Min="0" Max="*">
+					<Group ID="6" Name="OBSERVATION" Usage="O" Min="0" Max="*">
 						<Segment Ref="OBX" Usage="R" Min="1" Max="1"/>
 						<Segment Ref="PRT" Usage="O" Min="0" Max="*"/>
 						<Segment Ref="NTE" Usage="O" Min="0" Max="*"/>
 					</Group>
 					<Segment Ref="FT1" Usage="O" Min="0" Max="*"/>
 					<Segment Ref="CTI" Usage="O" Min="0" Max="*" />
-					<Group Name="SPECIMEN" Usage="O" Min="0" Max="*">
+					<Group ID="7" Name="SPECIMEN" Usage="O" Min="0" Max="*">
 						<Segment Ref="SPM" Usage="R" Min="1" Max="1"/>
-						<Group Name="SPECIMEN_OBSERVATION" Usage="O" Min="0" Max="*">
+						<Group ID="8" Name="SPECIMEN_OBSERVATION" Usage="O" Min="0" Max="*">
 							<Segment Ref="OBX" Usage="R" Min="1" Max="1"/>
 							<Segment Ref="PRT" Usage="O" Min="0" Max="*" />
 						</Group>

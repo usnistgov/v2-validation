@@ -124,7 +124,7 @@
 					<xs:selector xpath="./ByName"></xs:selector>
 					<xs:field xpath="@Name"></xs:field>
 				</xs:key>
-				<!--  The Name attribute of a by-name context must be unique -->
+				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="DTByIDContextTypeKey">
 					<xs:selector xpath="./ByID"></xs:selector>
 					<xs:field xpath="@ID"></xs:field>
@@ -137,7 +137,7 @@
 					<xs:selector xpath="./ByName"></xs:selector>
 					<xs:field xpath="@Name"></xs:field>
 				</xs:key>
-				<!--  The Name attribute of a by-name context must be unique -->
+				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="SegByIDContextTypeKey">
 					<xs:selector xpath="./ByID"></xs:selector>
 					<xs:field xpath="@ID"></xs:field>
@@ -150,7 +150,7 @@
 					<xs:selector xpath="./ByName"></xs:selector>
 					<xs:field xpath="@Name"></xs:field>
 				</xs:key>
-				<!--  The Name attribute of a by-name context must be unique -->
+				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="GroupByIDContextTypeKey">
 					<xs:selector xpath="./ByID"></xs:selector>
 					<xs:field xpath="@ID"></xs:field>

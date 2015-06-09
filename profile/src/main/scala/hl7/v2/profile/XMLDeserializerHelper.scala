@@ -57,15 +57,16 @@ object XMLDeserializerHelper {
     Message(id, structId, event, typ, desc, structure )
   }
 
-  private def group(name: String, r: Req, es: Elements)
+  private def group(id: String, name: String, r: Req, es: Elements)
                    (implicit map: Map[String, Segment])= {
     val structure = children( es )
-    Group(name, structure, r)
+    Group(id, name, structure, r)
   }
 
   def group(r: Req, e: Element)(implicit map: Map[String, Segment]): Group = {
+    val id   = e.attribute("ID")
     val name = e.attribute("Name")
-    group(name, r, e.getChildElements)
+    group(id, name, r, e.getChildElements)
   }
 
   private def children(es: Elements)

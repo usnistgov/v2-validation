@@ -262,6 +262,7 @@
 			<xs:documentation>Documents the characteristics of a grouping of HL7 segments within the context of a particular message or segment group.</xs:documentation>
 		</xs:annotation>
 		<xs:group ref="GroupStructure" minOccurs="1" maxOccurs="1"/>
+		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Usage" type="UsageType" use="required"/>
 		<xs:attributeGroup ref="RepeatableProperties"/>

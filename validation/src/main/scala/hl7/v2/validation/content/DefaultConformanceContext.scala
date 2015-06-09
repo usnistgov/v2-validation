@@ -52,7 +52,8 @@ class DefaultConformanceContext(
     map.segmentByID.getOrElse( s.id, Nil)
 
   private def groupSpecs[T](g: GM, map: VMap[T]): List[T] =
-    map.groupByName.getOrElse( g.name, Nil )
+    map.groupByName.getOrElse( g.name, Nil ) :::
+    map.groupByID.getOrElse( g.id, Nil)
 }
 
 /**

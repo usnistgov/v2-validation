@@ -270,6 +270,17 @@
 				</Constraint>	
 			</ByName>
 			
+			<ByID ID="1">
+				
+				<Constraint ID=">>>>>>>>>>>>>>>>>>> ">
+					<Description>PATIENT Group should not be used</Description>
+					<Assertion>
+						<NOT><Presence Path="1[1]"/></NOT>
+					</Assertion>
+				</Constraint>
+				
+			</ByID>
+			
 		</Group>
 	</Constraints>
 	
