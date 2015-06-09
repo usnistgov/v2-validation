@@ -242,10 +242,14 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @return The evaluation result
     */
   def plugin(e: Plugin, context: Element)(implicit s: Separators): EvalResult =
-    pluginMap.get( e.id ) match {
-      case Some( f ) => f( e, context, s )
-      case None => inconclusive(e, context.location, s"Plugin '${e.id}' not found")
-    }
+    try {
+      val clazz  = Class.forName(e.clazz)
+      val method = clazz.getDeclaredMethod("assertion", classOf[Element])
+      method.invoke(clazz.newInstance(), context).asInstanceOf[Boolean] match {
+        case true  => Pass
+        case false => Fail(Nil)
+      }
+    } catch { case f: Throwable => inconclusive(e, context.location, f) }
 
   /**
     * Returns true if the unescaped value of 's' is not

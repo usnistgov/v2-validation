@@ -66,7 +66,7 @@ object AsString {
 
   private def forall(e: FORALL, c: Element) = e.list.map( expression(_, c) ).mkString("AND")
 
-  private def plugin(e: Plugin, c: Element) = s"Plugin '${e.id}'"
+  private def plugin(e: Plugin, c: Element) = s"$e'"
 
   private def setId(e: SetId, c: Element) = s"$e # Context: ${c.location.prettyString}"
 

@@ -101,10 +101,9 @@ trait EvaluatorSpec
       NOT should fail if the underlining expression pass                            $notFail
 
     PluginSpec
-      Plugin execution should fail if there is no associated function in the map      $pluginNoFunction
-      Plugin execution should pass if the function returns Pass                       $pluginPass
-      Plugin execution should fail if the function returns Fail                       $pluginFail
-      Plugin execution should be inconclusive if the function returns is inconclusive $pluginInconclusive
+      Plugin execution should be inconclusive if an exception is raised when evaluation the assertion $pluginInconclusive
+      Plugin execution should pass if the assertion evaluation is true       $pluginPass
+      Plugin execution should fail if the assertion evaluation is false      $pluginFail
 
   """
 }

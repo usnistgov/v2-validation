@@ -1,8 +1,6 @@
 package hl7.v2.validation
 
-import expression.{EvalResult, Plugin}
 import gov.nist.validation.report.Report
-import hl7.v2.instance.{Element, Separators}
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
 import hl7.v2.validation.vs.ValueSetLibrary
@@ -60,8 +58,7 @@ trait Validator { this: Parser with structure.Validator
 class HL7Validator(
     val profile: Profile,
     override val valueSetLibrary: ValueSetLibrary,
-    val conformanceContext: content.ConformanceContext,
-    val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
+    val conformanceContext: content.ConformanceContext
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
@@ -78,8 +75,7 @@ class HL7Validator(
 class SyncHL7Validator(
     val profile: Profile,
     override val valueSetLibrary: ValueSetLibrary,
-    val conformanceContext: content.ConformanceContext,
-    val pluginMap: Map[String, (Plugin, Element, Separators) => EvalResult]
+    val conformanceContext: content.ConformanceContext
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
