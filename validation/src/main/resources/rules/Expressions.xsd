@@ -175,6 +175,10 @@
 		<xs:group ref="ExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
 	</xs:complexType>
 	
+	<xs:complexType name="PluginType">
+		<xs:attribute name="QualifiedClassName" type="NonEmptyString" use="required"/>
+	</xs:complexType>
+	
 	<!--  =============================================================================================================
        	  =========================       HL7 v2x Specific                      =======================================
           ============================================================================================================= -->
@@ -206,6 +210,7 @@
 			<xs:element name="FORALL" type="ForallType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="EXIST" type="ExistType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="SetID" type="SetIdType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Plugin" type="PluginType" minOccurs="1" maxOccurs="1"/>
 		</xs:choice>
 	</xs:group>
 	

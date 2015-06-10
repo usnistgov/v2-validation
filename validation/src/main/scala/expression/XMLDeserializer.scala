@@ -34,6 +34,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "FORALL"      => forall( e )
     case "EXIST"       => exist( e )
     case "SetID"       => setId( e )
+    case "Plugin"      => plugin( e )
     case _ => throw new Error(s"[Error] Unknown expression node $e")
   } 
 
@@ -96,6 +97,8 @@ object XMLDeserializer extends EscapeSeqHandler {
   private def exist( e: Element )  = EXIST( combinationn(e): _ * )
 
   private def setId( e: Element ) = SetId( e.attribute("Path") )
+
+  private def plugin(e: Element) = Plugin( e.attribute("QualifiedClassName") )
 
   // Helpers
   private def toBoolean( s: String ) = 
