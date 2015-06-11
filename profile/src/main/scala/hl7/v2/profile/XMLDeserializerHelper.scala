@@ -153,8 +153,7 @@ object XMLDeserializerHelper {
     val usage  = Usage.fromString( e.attribute("Usage") )
     val card   = cardinality(e)
     val len    = length(e)
-    //val table  = asOption( e.attribute("Table") )
-    val vss    = vsSpec( e.attribute("Table") )
+    val vss    = vsSpec( e )
     val confLen  = asOption( e.attribute("ConfLength") )
     Req(p, desc, usage, card, len, confLen, vss)
   }
@@ -197,8 +196,15 @@ object XMLDeserializerHelper {
     (primitives, l1, l2)
   }
 
-  //FIXME This will crash ValueSetSpec if invalid. Should be removed once schema is updated
-  def vsSpec(s: String): List[ValueSetSpec] =
-    if( s == "" ) Nil else s.split(",").toList map ( x => ValueSetSpec(x).get )
+  def vsSpec(e: Element): List[ValueSetSpec] =
+    asOption( e.attribute("Binding") )  match {
+      case None       => Nil
+      case Some(vsid) =>
+        // The following will throw if either the binding strength or location is invalid
+        val bs   = asOption( e.attribute("BindingStrenght") ) map { x => BindingStrength(x).get }
+        val bl   = asOption( e.attribute("BindingLocation") ) map { x => BindingLocation(x).get }
+        ValueSetSpec(vsid, bs, bl) :: Nil
+    }
+
 
 }

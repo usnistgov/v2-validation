@@ -97,7 +97,9 @@
 				<xs:documentation>The minimum length an application must be able to handle.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="Table" type="TableType" use="optional"/>    	
+		<xs:attribute name="Binding" type="NonEmptyString" use="optional"/>
+		<xs:attribute name="BindingStrenght" type="BindingStrenghtType" use="optional"/>
+		<xs:attribute name="BindingLocation" type="BindingLocationType" use="optional"/>
 	</xs:attributeGroup>
 	
 	<!--  =============================================================================================================
@@ -146,12 +148,6 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
-	<xs:simpleType name="TableType">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="([^#]+(#(R|S|U).*)?(,[^#]+(#(R|S|U).*)?)*)"/> <!-- We should enforce the binding location -->
-		</xs:restriction>
-	</xs:simpleType>
-	
 	<xs:simpleType name="MsgStructIDType">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[A-Z0-9]{3}(_[A-Z0-9]{3})?"/>
@@ -176,7 +172,21 @@
 			<xs:pattern value="[A-Z]{2}[0-9]{1}"></xs:pattern>
 		</xs:restriction>
 	</xs:simpleType>
-		
+	
+	<xs:simpleType name="BindingStrenghtType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="R"/> <!-- Required -->
+			<xs:enumeration value="S"/> <!-- Suggested -->
+			<xs:enumeration value="U"/> <!-- Undermined -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="BindingLocationType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d+|(\d+:\d+)"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<!--  =============================================================================================================
 		    =========================         Complex Types Definitions           =======================================
 		    ============================================================================================================= -->

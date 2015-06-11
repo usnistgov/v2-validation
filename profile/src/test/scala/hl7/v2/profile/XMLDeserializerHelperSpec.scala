@@ -23,7 +23,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       MinLength="1"
       MaxLength="*"
       ConfLength="=2"
-      Table="tt"
+      Binding="tt"
       />
   ) === {
     val vs = ValueSetSpec("tt", None, None) :: Nil
@@ -43,7 +43,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
         MinLength="1"
         MaxLength="*"
         ConfLength="=2"
-        Table="tt"
+        Binding="tt"
         />
       }</Datatype>
       -> {
@@ -64,9 +64,9 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
         -> Req(1, "", Usage.R, Some(Range(1, "2")), None, None, Nil),
         <E Usage="R" Min="1" Max="2" MinLength="1" MaxLength="*"/>
         -> Req(1, "", Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, Nil),
-        <E Usage="R" MinLength="1" MaxLength="*" Table="tt"/>
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt"/>
         -> Req(1, "", Usage.R, None, Some(Range(1, "*")), None, vs),
-        <E Usage="R" MinLength="1" MaxLength="*" Table="tt" ConfLength="=2"/>
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2"/>
         -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs)
     )
 

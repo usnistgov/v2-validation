@@ -110,7 +110,7 @@ Changes:
 			<Field Name="User Authentication Credential" Datatype="ED" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02268"/>
 		</Segment>
 		<Segment ID="PID" Name="PID" Description="Patient Identification">
-			<Field Name="Set ID - PID" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00104" Table="VS1#R"/>
+			<Field Name="Set ID - PID" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00104" Binding="VS1" BindingStrenght="R"/>
 			<Field Name="Patient ID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00105"/>
 			<Field Name="Patient Identifier List" Datatype="CX" Usage="R" Min="1" Max="*" MinLength="1" MaxLength="*" ItemNo="00106"/>
 			<Field Name="Alternate Patient ID - PID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00107"/>
@@ -265,7 +265,7 @@ Changes:
 			<Field Name="Set ID - OBX" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00569"/>
 			<Field Name="Value Type" Datatype="ID" Usage="C" Min="0" Max="1" MinLength="2" MaxLength="3" ItemNo="00570"/>
 			<Field Name="Observation Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00571"
-                   Table="BadVS#R,VS1#R#1, VS1#R#1 or 4, VS1#R#1 xor 4, VS1#R#1 and 4"/>
+				Binding="VS1" BindingStrenght="R" BindingLocation="1:4"/>
 			<Field Name="Observation Sub-ID" Datatype="ST" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="20" ItemNo="00572"/>
 			<Field Name="Observation Value" Datatype="varies" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00573"/>
 			<Field Name="Units" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00574"/>
@@ -399,7 +399,8 @@ Changes:
 			<Field Name="Advance Directive Last Verified Date" Datatype="DT" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02141"/>
 		</Segment>
 		<Segment ID="ORC" Name="ORC" Description="Common Order">
-			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215" Table="BadVS#R"/>
+			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215" 
+				Binding="BadVS" BindingStrenght="R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Placer Group Number" Datatype="EI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00218"/>
@@ -434,7 +435,8 @@ Changes:
 			<Field Name="Alternate Placer Order Number" Datatype="CX" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="03300"/>
 		</Segment>
 		<Segment ID="OBR" Name="OBR" Description="Observation Request">
-			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237" Table="EmptyVS#R"/>
+			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237" 
+				Binding="EmptyVS" BindingStrenght="R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Universal Service Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00238"/>
@@ -698,7 +700,7 @@ Changes:
 		<Datatype ID="CWE" Name="CWE" Description="Coded with Exceptions">
 			<Component Name="Identifier" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Text" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
-			<Component Name="Name of Coding System" Datatype="ID" Usage="C" MinLength="1" MaxLength="12" Table="0396"/>
+			<Component Name="Name of Coding System" Datatype="ID" Usage="C" MinLength="1" MaxLength="12" Binding="0396"/>
 			<Component Name="Alternate Identifier" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Alternate Text" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Name of Alternate Coding System" Datatype="ID" Usage="C" MinLength="1" MaxLength="12"/>

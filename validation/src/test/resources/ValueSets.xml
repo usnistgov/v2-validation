@@ -19,26 +19,26 @@
     </NoValidation>
 
     <TableSet>
-        <TableDefinition AlternateId="VS1" Codesys="" Id="VS1" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
+        <TableDefinition AlternateId="VS1" Codesys="" BindingIdentifier="VS1" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
             <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="R" Source="Local"/>
             <TableElement Code="2" Codesys="CodeSys" DisplayName="..." Usage="E" Source="Local"/>
             <TableElement Code="3" Codesys="CodeSys" DisplayName="..." Usage="P" Source="Local"/>
         </TableDefinition>
 
-        <TableDefinition AlternateId="EmptyVS" Codesys="" Id="EmptyVS" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
+        <TableDefinition AlternateId="EmptyVS" Codesys="" BindingIdentifier="EmptyVS" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
         </TableDefinition>
 
-        <TableDefinition AlternateId="BadVS" Codesys="" Id="BadVS" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
+        <TableDefinition AlternateId="BadVS" Codesys="" BindingIdentifier="BadVS" Name="Event type" Oid="" Type="HL7" Version="1.5" Extensibility="Closed" Stability="Static">
             <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="R" Source="Local"/>
             <TableElement Code="1" Codesys="CodeSys" DisplayName="..." Usage="E" Source="Local"/>
         </TableDefinition>
-        <TableDefinition AlternateId="HL70003_IZ" Codesys="" Id="HL70003_IZ" Name="Event type" Oid="" Type="HL7" Version="1.5">
+        <TableDefinition AlternateId="HL70003_IZ" Codesys="" BindingIdentifier="HL70003_IZ" Name="Event type" Oid="" Type="HL7" Version="1.5">
             <TableElement Code="V04" Codesys="HL70003" DisplayName="V04" Source="Local"/>
             <TableElement Code="K11" Codesys="HL70003" DisplayName="K11" Source="Local"/>
             <TableElement Code="Q11" Codesys="HL70003" DisplayName="Q11" Source="Local"/>
         </TableDefinition>
 
-        <TableDefinition AlternateId="HL70533_IZ" Codesys="" Id="HL70533_IZ" Name="Application Error Code" Oid="" Type="HL7" Version="1.5" Stability="Dynamic" Extensibility="Closed">
+        <TableDefinition AlternateId="HL70533_IZ" Codesys="" BindingIdentifier="HL70533_IZ" Name="Application Error Code" Oid="" Type="HL7" Version="1.5" Stability="Dynamic" Extensibility="Closed">
             <TableElement Code="1" Codesys="HL70533" DisplayName="Illogical Date error" Source="Local" Usage="R"/>
             <TableElement Code="2" Codesys="HL70533" DisplayName="Invalid Date" Source="Local" Usage="R"/>
             <TableElement Code="3" Codesys="HL70533" DisplayName="Illogical Value error" Source="Local" Usage="R"/>
@@ -46,10 +46,10 @@
             <TableElement Code="5" Codesys="HL70533" DisplayName="Table value not found" Source="Local" Usage="P"/>
             <TableElement Code="6" Codesys="HL70533" DisplayName="Required observation missing" Source="Local" Usage="P"/>
         </TableDefinition>
-        <TableDefinition AlternateId="HL70301_IZ" Codesys="" Id="HL70301_IZ" Name="Universal ID type" Oid="" Type="HL7" Version="1.5" Stability="Static" Extensibility="Closed">
+        <TableDefinition AlternateId="HL70301_IZ" Codesys="" BindingIdentifier="HL70301_IZ" Name="Universal ID type" Oid="" Type="HL7" Version="1.5" Stability="Static" Extensibility="Closed">
             <TableElement Code="OID" Codesys="HL70301" DisplayName="OID" Source="Local" Usage="R"/>
         </TableDefinition>
-        <TableDefinition AlternateId="HL70363_IZ" Codesys="" Id="HL70363_IZ" Name="Assigning Authority" Oid="" Type="HL7" Version="1.5" Stability="Dynamic" Extensibility="Open">
+        <TableDefinition AlternateId="HL70363_IZ" Codesys="" BindingIdentifier="HL70363_IZ" Name="Assigning Authority" Oid="" Type="HL7" Version="1.5" Stability="Dynamic" Extensibility="Open">
             <TableElement Code="AKA" Codesys="HL70363" DisplayName="ALASKA" Source="Local" Usage="R"/>
             <TableElement Code="ALA" Codesys="HL70363" DisplayName="ALABAMA" Source="Local" Usage="R"/>
             <TableElement Code="ARA" Codesys="HL70363" DisplayName="ARKANSAS" Source="Local" Usage="P"/>
@@ -115,7 +115,7 @@
             <TableElement Code="WVA" Codesys="HL70363" DisplayName="WEST VIRGINIA" Source="Local" Usage="R"/>
             <TableElement Code="WYA" Codesys="HL70363" DisplayName="WYOMING" Source="Local"/>
         </TableDefinition>
-        <TableDefinition AlternateId="HL70155_IZ" Codesys="" Id="HL70155_IZ" Name="Accept/Application acknowledgment conditions" Oid="" Type="HL7" Version="1.5" Stability="Static" Extensibility="Open">
+        <TableDefinition AlternateId="HL70155_IZ" Codesys="" BindingIdentifier="HL70155_IZ" Name="Accept/Application acknowledgment conditions" Oid="" Type="HL7" Version="1.5" Stability="Static" Extensibility="Open">
             <TableElement Code="AL" Codesys="HL70155" DisplayName="Always" Source="Local" Usage="R"/>
             <TableElement Code="NE" Codesys="HL70155" DisplayName="Never" Source="Local" Usage="R"/>
             <TableElement Code="ER" Codesys="HL70155" DisplayName="Error/Reject conditions only" Source="Local" Usage="P"/>

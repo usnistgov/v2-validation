@@ -72,32 +72,8 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
       case Some(bl) =>
         bl match {
           case Position(p) => checkPosition(c, p, vs, spec)
-          case OR(p1, p2)  => checkOR(c, p1, p2, vs, spec)
           case XOR(p1, p2) => checkXOR(c, p1, p2, vs, spec)
-          case AND(p1, p2) => checkAND(c, p1, p2, vs, spec)
-          case NBL(p, sbl) => ??? //FIXME Not supported for now
         }
-    }
-
-  private def checkOR(c: Complex, p1: Int, p2: Int, vs: ValueSet,
-                      spec: ValueSetSpec): List[Entry] =
-    checkPosition(c, p1, vs, spec) match {
-      case Nil => Nil
-      case xs1 => checkPosition(c, p2, vs, spec) match {
-        case Nil => Nil
-        case xs2 => orError(c, vs, spec, xs1 ::: xs2)
-      }
-    }
-
-  private def checkAND(c: Complex, p1: Int, p2: Int, vs: ValueSet,
-                       spec: ValueSetSpec): List[Entry] =
-    checkPosition(c, p1, vs, spec) match {
-      case Nil =>
-        checkPosition(c, p2, vs, spec) match {
-          case Nil => Nil
-          case xs => andError(c, vs, spec, xs)
-        }
-      case xs => andError(c, vs, spec, xs)
     }
 
   private def checkXOR(c: Complex, p1: Int, p2: Int, vs: ValueSet,
@@ -160,22 +136,6 @@ trait CodedElementValidator extends DefaultSimpleElemValidator {
     s"An error occurred while resolving the biding location. Detail: $m"
 
   private def queryErrMsg(e: Throwable): String = queryErrMsg(e.getMessage)
-
-  private
-  def orError(c: Complex, vs: ValueSet, spec: ValueSetSpec, l: List[Entry]) = {
-    val m = s"At least one triplet should be valued from the value set '${
-      spec.valueSetId
-    }'"
-    Detections.codedElem(c.location, m, vs, spec, stackTrace(l)) :: Nil
-  }
-
-  private
-  def andError(c: Complex, vs: ValueSet, spec: ValueSetSpec, l: List[Entry]) = {
-    val m = s"Both triplets should be valued from the value set '${
-      spec.valueSetId
-    }'"
-    Detections.codedElem(c.location, m, vs, spec, stackTrace(l)) :: Nil
-  }
 
   private
   def xorError(c: Complex, vs: ValueSet, spec: ValueSetSpec, l: List[Entry]) = {

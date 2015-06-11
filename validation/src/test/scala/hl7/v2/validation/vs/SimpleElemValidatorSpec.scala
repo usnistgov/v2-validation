@@ -88,17 +88,17 @@ class SimpleElemValidatorSpec
 
   def check(s: String, spec: String): List[Entry] = check(simple(s, spec), library)
 
-  private def simple(v: String, s: String): Simple =
+  private def simple(v: String, vsid: String): Simple =
     new Simple {
       override val location = l
       override val value    = Text(v)
       override val position = -1
       override val instance = -1
-      override val req = s match {
+      override val req = vsid match {
         case "" => Req(-1, "", Usage.O, None, None, None, Nil)
-        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(s).get::Nil)
+        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(vsid, None, None)::Nil)
       }
     }
 
-  implicit private def vsSpec(s: String): ValueSetSpec = ValueSetSpec(s).get
+  implicit private def vsSpec(vsid: String): ValueSetSpec = ValueSetSpec(vsid, None, None)
 }

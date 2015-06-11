@@ -49,7 +49,7 @@ object ValueSetLibrary {
     }
 
   private def valueSet(e: nu.xom.Element): ValueSet = {
-    val id = e.attribute("Id")
+    val id = e.attribute("BindingIdentifier")
     val _stability = stability( e.attribute("Stability") )
     val _extensibility = extensibility( e.attribute("Extensibility") )
     val codes = (e.getChildElements("TableElement") map code).toList
