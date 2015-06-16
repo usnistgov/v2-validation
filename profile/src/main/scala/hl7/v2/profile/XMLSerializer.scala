@@ -39,7 +39,8 @@ object XMLSerializer {
     </Message>
 
   def group( g: Group): Elem =
-    <Group Name={g.name}
+    <Group ID={g.id}
+           Name={g.name}
            Usage={g.req.usage.toString}
            Min={g.req.cardinality.get.min.toString}
            Max={g.req.cardinality.get.min.toString}
@@ -84,7 +85,9 @@ object XMLSerializer {
         MinLength={f.req.length.get.min.toString}
         MaxLength={f.req.length.get.max}
         ConfLength={f.req.confLength.orNull}
-        Table={vs(f.req.vsSpec)}
+        Binding={bindingIdentifier(f.req.vsSpec)}
+        BindingStrength={bindingStrength(f.req.vsSpec)}
+        BindingLocation={bindingLocation(f.req.vsSpec)}
         Min={f.req.cardinality.get.min.toString}
         Max={f.req.cardinality.get.max}
       />
@@ -107,17 +110,24 @@ object XMLSerializer {
         MinLength={c.req.length.get.min.toString}
         MaxLength={c.req.length.get.max}
         ConfLength={c.req.confLength.orNull}
-        Table={vs(c.req.vsSpec)}
+        Binding={bindingIdentifier(c.req.vsSpec)}
+        BindingStrength={bindingStrength(c.req.vsSpec)}
+        BindingLocation={bindingLocation(c.req.vsSpec)}
       />
 
-  private def vs(x: List[ValueSetSpec]): String = x match {
-    case Nil => null
-    case xs  =>
-      (xs map {
-        case ValueSetSpec(id, obs, obl) =>
-          val bs = obs.fold("")(x => s"#$x")
-          val bl = obl.fold("")(x => s"#$x")
-          s"$id$bs$bl"
-      }).mkString(",")
+  private def bindingIdentifier(l: List[ValueSetSpec]): String = l match {
+    case Nil      => null
+    case x :: xs  => x.valueSetId
   }
+
+  private def bindingStrength(l: List[ValueSetSpec]): String = l match {
+    case Nil      => null
+    case x :: xs  => (x.bindingStrength map ( _.toString )).orNull
+  }
+
+  private def bindingLocation(l: List[ValueSetSpec]): String = l match {
+    case Nil      => null
+    case x :: xs  => (x.bindingLocation map ( _.asString )).orNull
+  }
+
 }

@@ -110,7 +110,7 @@ Changes:
 			<Field Name="User Authentication Credential" Datatype="ED" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02268"/>
 		</Segment>
 		<Segment ID="PID" Name="PID" Description="Patient Identification">
-			<Field Name="Set ID - PID" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00104" Binding="VS1" BindingStrenght="R"/>
+			<Field Name="Set ID - PID" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00104" Binding="VS1" BindingStrength="R"/>
 			<Field Name="Patient ID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00105"/>
 			<Field Name="Patient Identifier List" Datatype="CX" Usage="R" Min="1" Max="*" MinLength="1" MaxLength="*" ItemNo="00106"/>
 			<Field Name="Alternate Patient ID - PID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00107"/>
@@ -265,7 +265,7 @@ Changes:
 			<Field Name="Set ID - OBX" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00569"/>
 			<Field Name="Value Type" Datatype="ID" Usage="C" Min="0" Max="1" MinLength="2" MaxLength="3" ItemNo="00570"/>
 			<Field Name="Observation Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00571"
-				Binding="VS1" BindingStrenght="R" BindingLocation="1:4"/>
+				Binding="VS1" BindingStrength="R" BindingLocation="1:4"/>
 			<Field Name="Observation Sub-ID" Datatype="ST" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="20" ItemNo="00572"/>
 			<Field Name="Observation Value" Datatype="varies" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00573"/>
 			<Field Name="Units" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00574"/>
@@ -400,7 +400,7 @@ Changes:
 		</Segment>
 		<Segment ID="ORC" Name="ORC" Description="Common Order">
 			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215" 
-				Binding="BadVS" BindingStrenght="R"/>
+				Binding="BadVS" BindingStrength="R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Placer Group Number" Datatype="EI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00218"/>
@@ -436,7 +436,7 @@ Changes:
 		</Segment>
 		<Segment ID="OBR" Name="OBR" Description="Observation Request">
 			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237" 
-				Binding="EmptyVS" BindingStrenght="R"/>
+				Binding="EmptyVS" BindingStrength="R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Universal Service Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00238"/>

@@ -201,7 +201,7 @@ object XMLDeserializerHelper {
       case None       => Nil
       case Some(vsid) =>
         // The following will throw if either the binding strength or location is invalid
-        val bs   = asOption( e.attribute("BindingStrenght") ) map { x => BindingStrength(x).get }
+        val bs   = asOption( e.attribute("BindingStrength") ) map { x => BindingStrength(x).get }
         val bl   = asOption( e.attribute("BindingLocation") ) map { x => BindingLocation(x).get }
         ValueSetSpec(vsid, bs, bl) :: Nil
     }

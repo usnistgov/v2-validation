@@ -36,15 +36,19 @@ object BindingStrength {
 /**
   * Trait defining a value set binding location
   */
-sealed trait BindingLocation
+sealed trait BindingLocation { def asString: String }
 
 /**
   * Value set binding location companion object
   */
 object BindingLocation {
 
-  case class Position(value: Int) extends BindingLocation
-  case class XOR(position1: Int, position2: Int) extends  BindingLocation
+  case class Position(value: Int) extends BindingLocation {
+    lazy val asString = s"$value"
+  }
+  case class XOR(position1: Int, position2: Int) extends  BindingLocation  {
+    lazy val asString = s"$position1:$position2"
+  }
 
   val pos = """\s*(\d+)\s*""".r
   val xor = """\s*(\d+)\s*:\s*(\d+)\s*""".r

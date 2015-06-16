@@ -98,7 +98,7 @@
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="Binding" type="NonEmptyString" use="optional"/>
-		<xs:attribute name="BindingStrenght" type="BindingStrenghtType" use="optional"/>
+		<xs:attribute name="BindingStrength" type="BindingStrengthType" use="optional"/>
 		<xs:attribute name="BindingLocation" type="BindingLocationType" use="optional"/>
 	</xs:attributeGroup>
 	
@@ -173,7 +173,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
-	<xs:simpleType name="BindingStrenghtType">
+	<xs:simpleType name="BindingStrengthType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="R"/> <!-- Required -->
 			<xs:enumeration value="S"/> <!-- Suggested -->
