@@ -20,7 +20,7 @@ object ValueSetLibrary {
 
   import nist.xml.util.XOMExtensions._
 
-  private val xsd = getClass.getResourceAsStream("/vs/ValueSet.xsd")
+  private val xsd = getClass.getResourceAsStream("/vs/ValueSets.xsd")
 
   /**
     * Builds and returns the value set map from the XML file
@@ -29,19 +29,19 @@ object ValueSetLibrary {
     XOMDocumentBuilder.build( vsXML, xsd ) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
-      val tblSet   = root.getFirstChildElement("TableSet")
+      val tblSet   = root.getFirstChildElement("ValueSets")
       val noVal    = noValidation( noValDef )
       val lib      = tableSet(tblSet)
       ValueSetLibrary(noVal, lib)
     }
 
   private def noValidation(e: nu.xom.Element): Seq[String] =
-    if(e == null) Nil else e.getChildElements("id").map(_.getValue.trim).toList
+    if(e == null) Nil else e.getChildElements("BindingIdentifier").map(_.getValue.trim).toList
 
   private def tableSet(e: nu.xom.Element): Map[String, ValueSet] =
     if( e == null ) Map()
     else {
-      val tableDefs = e.getChildElements("TableDefinition")
+      val tableDefs = e.getChildElements("ValueSet")
       tableDefs.foldLeft(Map[String, ValueSet]()) { (acc, x) =>
         val vs = valueSet(x)
         acc + (vs.id -> vs)
@@ -52,7 +52,7 @@ object ValueSetLibrary {
     val id = e.attribute("BindingIdentifier")
     val _stability = stability( e.attribute("Stability") )
     val _extensibility = extensibility( e.attribute("Extensibility") )
-    val codes = (e.getChildElements("TableElement") map code).toList
+    val codes = (e.getChildElements("ValueSetElement") map code).toList
     ValueSet(id, _extensibility, _stability, codes )
   }
 
@@ -73,10 +73,10 @@ object ValueSetLibrary {
     }
 
   private def code(e: nu.xom.Element): Code = {
-    val value   = e.attribute("Code")
+    val value   = e.attribute("Value")
     val desc    = e.attribute("DisplayName")
     val usage   = codeUsage( e.attribute("Usage") )
-    val codeSys = e.attribute("Codesys")
+    val codeSys = e.attribute("CodeSystem")
     Code(value, desc, usage, codeSys)
   }
 

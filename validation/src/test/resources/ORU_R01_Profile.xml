@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/v2-validation-legacy/profile/src/main/resources/Profile.xsd"
+  >
   
   <Encodings>
     <Encoding>ER7</Encoding>
@@ -13,11 +15,11 @@
       <Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
       <Segment Ref="SFT" Usage="W" Min="0" Max="*" />
       <Segment Ref="UAC" Usage="X" Min="0" Max="1"/>
-      <Group Name="PATIENT" Usage="R" Min="1" Max="2">
+      <Group ID="1" Name="PATIENT" Usage="R" Min="1" Max="2">
         <Segment Ref="PID" Usage="R" Min="1" Max="1"/>
         <Segment Ref="UAC" Usage="R" Min="2" Max="2"/>
       </Group>
-      <Group Name="ORDER" Usage="X" Min="1" Max="*">
+      <Group ID="2" Name="ORDER" Usage="X" Min="1" Max="*">
         <Segment Ref="SFT" Usage="R" Min="0" Max="1"/>
       </Group>
     </Message>
