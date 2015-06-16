@@ -19,3 +19,13 @@ case class Separators( fs: Char, cs: Char, rs: Char, ec: Char, ss: Char, tc: Opt
   def toList = if( tc.isDefined ) List( fs, cs, rs, ec, ss, tc.get )
   else List( fs, cs, rs, ec, ss)
 }
+
+
+object Separators {
+
+  def apply(fs: Char, cs: Char, rs: Char, ec: Char, ss: Char): Separators =
+    Separators(fs, cs, rs, ec, ss, None)
+
+  def apply(fs: Char, cs: Char, rs: Char, ec: Char, ss: Char,
+            tc: Char): Separators = Separators(fs, cs, rs, ec, ss, Some(tc))
+}
