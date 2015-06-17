@@ -158,8 +158,8 @@ public class Detections {
     /**
      * @return A report entry for a constraint failure detection
      */
-    public static Entry csFailure(Element context, Constraint c,List<Trace> stack) {
-        return csEntry("constraint-failure", context, c, stack);
+    public static Entry csFailure(Location errLoc, Element context, Constraint c,List<Trace> stack) {
+        return csEntry("constraint-failure", errLoc, context, c, stack);
     }
 
     /**
@@ -326,7 +326,9 @@ public class Detections {
                 classification, stackTrace, metaData);
     }
 
-    private static Entry csEntry(String configKey, Element context,
+    //Location errLoc,
+
+    private static Entry csEntry(String configKey, Location errLoc, Element context,
                                  Constraint c, List<Trace> stack) {
         String category       = conf.getString("report."+configKey+".category");
         String classification = conf.getString("report."+configKey+".classification");
@@ -335,7 +337,12 @@ public class Detections {
         Map<String, Object> metaData = new HashMap<String, Object>();
         if( c.reference().isDefined() )
             metaData.put("reference", c.reference().get());
-        return entry(context.location(), desc, category, classification, stack, metaData);
+        return entry(errLoc, desc, category, classification, stack, metaData);
+    }
+
+    private static Entry csEntry(String configKey, Element context,
+                                 Constraint c, List<Trace> stack) {
+        return csEntry(configKey, context.location(), context, c, stack);
     }
 
     private static Entry vsEntry(String configKey, String desc, Location l,

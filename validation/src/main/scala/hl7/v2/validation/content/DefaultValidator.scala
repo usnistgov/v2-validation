@@ -58,7 +58,9 @@ trait DefaultValidator extends Validator with expression.Evaluator {
                    (implicit s: Separators, dtz: Option[TimeZone]): Entry =
     eval(c.assertion, e) match {
       case Pass                => Detections.csSuccess(e, c)
-      case Fail(stack)         => Detections.csFailure(e, c, stackTrace(e, stack))
+      case Fail(stack)         =>
+        val errLoc = approximativeErrorLocation(e, stack)
+        Detections.csFailure(errLoc, e, c, stackTrace(e, stack))
       case Inconclusive(trace) => Detections.csSpecError(e, c, stackTrace(e, trace::Nil))
     }
 
@@ -123,4 +125,13 @@ trait DefaultValidator extends Validator with expression.Evaluator {
       new GTrace(assertion, reasons)
     })
 
+  private def approximativeErrorLocation(context: Element, stack: List[Trace]) =
+    stack match {
+      case Nil => context.location
+      case _   =>
+        stack.last.reasons match {
+          case Nil => context.location
+          case xs  => xs.last.location
+        }
+    }
 }
