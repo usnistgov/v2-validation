@@ -11,13 +11,13 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="ValueSets" minOccurs="1" maxOccurs="1">
+				<xs:element name="ValueSetDefinitions" minOccurs="1" maxOccurs="1">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="ValueSet" minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="ValueSetDefinition" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence minOccurs="0" maxOccurs="unbounded">
-										<xs:element name="ValueSetElement">
+										<xs:element name="ValueElement">
 											<xs:complexType>
 												<xs:attribute name="Value" type="xs:string" use="required"/>
 												<xs:attribute name="DisplayName" type="xs:string" use="required"/>
@@ -34,19 +34,19 @@
 									<xs:attribute name="DisplayClassifier" type="xs:string" use="optional"/>
 									<xs:attribute name="Version" type="xs:string" use="optional"/>
 									<xs:attribute name="Oid" type="xs:string"/>
-									<xs:attribute name="Stability" type="StabilityType" use="optional" default="Static"/>
-									<xs:attribute name="Extensibility" type="ExtensibilityType" use="optional" default="Closed"/>
-									<xs:attribute name="ContentDefinition" type="ContentDefinitionType" use="optional" default="Extensional"/>
+									<xs:attribute name="Stability" type="StabilityType" use="optional"/>
+									<xs:attribute name="Extensibility" type="ExtensibilityType" use="optional"/>
+									<xs:attribute name="ContentDefinition" type="ContentDefinitionType" use="optional"/>
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="TableLibraryIdentifier" type="xs:string" use="required"/>
+			<xs:attribute name="ValueSetIdentifier" type="xs:string" use="required"/>
 			<xs:attribute name="Name" type="xs:string" use="required"/>
 			<xs:attribute name="OrganizationName" type="xs:string"/>
-			<xs:attribute name="TableLibraryVersion" type="xs:string"/>
+			<xs:attribute name="ValueSetVersion" type="xs:string"/>
 			<xs:attribute name="Status" type="StatusType"/>
 			<xs:attribute name="Description" type="xs:string"/>
 			<xs:attribute name="DateCreated" type="xs:date"/>

@@ -29,7 +29,7 @@ object ValueSetLibrary {
     XOMDocumentBuilder.build( vsXML, xsd ) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
-      val tblSet   = root.getFirstChildElement("ValueSets")
+      val tblSet   = root.getFirstChildElement("ValueSetDefinitions")
       val noVal    = noValidation( noValDef )
       val lib      = tableSet(tblSet)
       ValueSetLibrary(noVal, lib)
@@ -41,7 +41,7 @@ object ValueSetLibrary {
   private def tableSet(e: nu.xom.Element): Map[String, ValueSet] =
     if( e == null ) Map()
     else {
-      val tableDefs = e.getChildElements("ValueSet")
+      val tableDefs = e.getChildElements("ValueSetDefinition")
       tableDefs.foldLeft(Map[String, ValueSet]()) { (acc, x) =>
         val vs = valueSet(x)
         acc + (vs.id -> vs)
@@ -52,7 +52,7 @@ object ValueSetLibrary {
     val id = e.attribute("BindingIdentifier")
     val _stability = stability( e.attribute("Stability") )
     val _extensibility = extensibility( e.attribute("Extensibility") )
-    val codes = (e.getChildElements("ValueSetElement") map code).toList
+    val codes = (e.getChildElements("ValueElement") map code).toList
     ValueSet(id, _extensibility, _stability, codes )
   }
 

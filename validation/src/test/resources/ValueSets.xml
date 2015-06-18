@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2015 rel. 3 (x64) (http://www.altova.com) by ww (NIST) -->
 <ValueSetLibrary  
+    ValueSetIdentifier=""
 	Description="Automatically generated vacab for ACK"
 	Name="Vocab for ACK"
 	OrganizationName="HL7 NIST"
 	Status="Active"
-	TableLibraryIdentifier=""
-	TableLibraryVersion="1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../main/resources/vs/ValueSets.xsd">
 
@@ -18,110 +17,110 @@
         <id>HL70155_IZ</id>-->
     </NoValidation>
 
-    <ValueSets>
-        <ValueSet BindingIdentifier="VS1" Name="Event type" Oid="" Version="1.5" Extensibility="Closed" Stability="Static">
-            <ValueSetElement Value="1" CodeSystem="CodeSys" DisplayName="..." Usage="R"/>
-            <ValueSetElement Value="2" CodeSystem="CodeSys" DisplayName="..." Usage="E"/>
-            <ValueSetElement Value="3" CodeSystem="CodeSys" DisplayName="..." Usage="P"/>
-        </ValueSet>
+    <ValueSetDefinitions>
+        <ValueSetDefinition BindingIdentifier="VS1" Name="Event type" Oid="" Version="1.5" Extensibility="Closed" Stability="Static">
+            <ValueElement Value="1" CodeSystem="CodeSys" DisplayName="..." Usage="R"/>
+            <ValueElement Value="2" CodeSystem="CodeSys" DisplayName="..." Usage="E"/>
+            <ValueElement Value="3" CodeSystem="CodeSys" DisplayName="..." Usage="P"/>
+        </ValueSetDefinition>
 
-        <ValueSet BindingIdentifier="EmptyVS" Name="Event type" Oid="" Version="1.5" Extensibility="Closed" Stability="Static">
-        </ValueSet>
+        <ValueSetDefinition BindingIdentifier="EmptyVS" Name="Event type" Oid="" Version="1.5" Extensibility="Closed" Stability="Static">
+        </ValueSetDefinition>
 
-        <ValueSet BindingIdentifier="BadVS" Name="Event type" Oid="" Version="1.5" Extensibility="Closed" Stability="Static">
-            <ValueSetElement Value="1" CodeSystem="CodeSys" DisplayName="..." Usage="R"/>
-            <ValueSetElement Value="1" CodeSystem="CodeSys" DisplayName="..." Usage="E"/>
-        </ValueSet>
-        <ValueSet BindingIdentifier="HL70003_IZ" Name="Event type" Oid="" Version="1.5">
-            <ValueSetElement Value="V04" CodeSystem="HL70003" DisplayName="V04"/>
-            <ValueSetElement Value="K11" CodeSystem="HL70003" DisplayName="K11"/>
-            <ValueSetElement Value="Q11" CodeSystem="HL70003" DisplayName="Q11"/>
-        </ValueSet>
+        <ValueSetDefinition BindingIdentifier="BadVS" Name="Event type" Oid="" Version="1.5" Extensibility="Closed" Stability="Static">
+            <ValueElement Value="1" CodeSystem="CodeSys" DisplayName="..." Usage="R"/>
+            <ValueElement Value="1" CodeSystem="CodeSys" DisplayName="..." Usage="E"/>
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="HL70003_IZ" Name="Event type" Oid="" Version="1.5">
+            <ValueElement Value="V04" CodeSystem="HL70003" DisplayName="V04"/>
+            <ValueElement Value="K11" CodeSystem="HL70003" DisplayName="K11"/>
+            <ValueElement Value="Q11" CodeSystem="HL70003" DisplayName="Q11"/>
+        </ValueSetDefinition>
 
-        <ValueSet BindingIdentifier="HL70533_IZ" Name="Application Error Code" Oid="" Version="1.5" Stability="Dynamic" Extensibility="Closed">
-            <ValueSetElement Value="1" CodeSystem="HL70533" DisplayName="Illogical Date error" Usage="R"/>
-            <ValueSetElement Value="2" CodeSystem="HL70533" DisplayName="Invalid Date" Usage="R"/>
-            <ValueSetElement Value="3" CodeSystem="HL70533" DisplayName="Illogical Value error" Usage="R"/>
-            <ValueSetElement Value="4" CodeSystem="HL70533" DisplayName="Invalid value" Usage="R"/>
-            <ValueSetElement Value="5" CodeSystem="HL70533" DisplayName="Table value not found" Usage="P"/>
-            <ValueSetElement Value="6" CodeSystem="HL70533" DisplayName="Required observation missing" Usage="P"/>
-        </ValueSet>
-        <ValueSet BindingIdentifier="HL70301_IZ" Name="Universal ID type" Oid="" Version="1.5" Stability="Static" Extensibility="Closed">
-            <ValueSetElement Value="OID" CodeSystem="HL70301" DisplayName="OID" Usage="R"/>
-        </ValueSet>
-        <ValueSet BindingIdentifier="HL70363_IZ" Name="Assigning Authority" Oid="" Version="1.5" Stability="Dynamic" Extensibility="Open">
-            <ValueSetElement Value="AKA" CodeSystem="HL70363" DisplayName="ALASKA" Usage="R"/>
-            <ValueSetElement Value="ALA" CodeSystem="HL70363" DisplayName="ALABAMA" Usage="R"/>
-            <ValueSetElement Value="ARA" CodeSystem="HL70363" DisplayName="ARKANSAS" Usage="P"/>
-            <ValueSetElement Value="ASA" CodeSystem="HL70363" DisplayName="AMERICAN SAMOA" Usage="P"/>
-            <ValueSetElement Value="AZA" CodeSystem="HL70363" DisplayName="ARIZONA" Usage="E"/>
-            <ValueSetElement Value="BAA" CodeSystem="HL70363" DisplayName="NEW YORK CITY" Usage="E"/>
-            <ValueSetElement Value="CAA" CodeSystem="HL70363" DisplayName="CALIFORNIA" Usage="R"/>
-            <ValueSetElement Value="CHA" CodeSystem="HL70363" DisplayName="CHICAGO" Usage="R"/>
-            <ValueSetElement Value="COA" CodeSystem="HL70363" DisplayName="COLORADO" Usage="R"/>
-            <ValueSetElement Value="CTA" CodeSystem="HL70363" DisplayName="CONNECTICUT" Usage="R"/>
-            <ValueSetElement Value="DCA" CodeSystem="HL70363" DisplayName="DISTRICT OF COLUMBIA" Usage="R"/>
-            <ValueSetElement Value="DEA" CodeSystem="HL70363" DisplayName="DELAWARE" Usage="R"/>
-            <ValueSetElement Value="FLA" CodeSystem="HL70363" DisplayName="FLORIDA" Usage="R"/>
-            <ValueSetElement Value="FMA" CodeSystem="HL70363" DisplayName="FED STATES MICRO" Usage="R"/>
-            <ValueSetElement Value="GAA" CodeSystem="HL70363" DisplayName="GEORGIA" Usage="R"/>
-            <ValueSetElement Value="GUA" CodeSystem="HL70363" DisplayName="GUAM" Usage="R"/>
-            <ValueSetElement Value="HIA" CodeSystem="HL70363" DisplayName="HAWAII" Usage="R"/>
-            <ValueSetElement Value="IAA" CodeSystem="HL70363" DisplayName="IOWA" Usage="R"/>
-            <ValueSetElement Value="IDA" CodeSystem="HL70363" DisplayName="IDAHO" Usage="R"/>
-            <ValueSetElement Value="ILA" CodeSystem="HL70363" DisplayName="ILLINOIS" Usage="R"/>
-            <ValueSetElement Value="INA" CodeSystem="HL70363" DisplayName="INDIANA" Usage="R"/>
-            <ValueSetElement Value="KSA" CodeSystem="HL70363" DisplayName="KANSAS" Usage="R"/>
-            <ValueSetElement Value="KYA" CodeSystem="HL70363" DisplayName="KENTUCKY" Usage="R"/>
-            <ValueSetElement Value="LAA" CodeSystem="HL70363" DisplayName="LOUISIANA" Usage="R"/>
-            <ValueSetElement Value="MAA" CodeSystem="HL70363" DisplayName="MASSACHUSETTS" Usage="R"/>
-            <ValueSetElement Value="MDA" CodeSystem="HL70363" DisplayName="MARYLAND" Usage="R"/>
-            <ValueSetElement Value="MEA" CodeSystem="HL70363" DisplayName="MAINE" Usage="R"/>
-            <ValueSetElement Value="MHA" CodeSystem="HL70363" DisplayName="REP MARS ISLANDS" Usage="R"/>
-            <ValueSetElement Value="MIA" CodeSystem="HL70363" DisplayName="MICHIGAN" Usage="R"/>
-            <ValueSetElement Value="MNA" CodeSystem="HL70363" DisplayName="MINNESOTA" Usage="R"/>
-            <ValueSetElement Value="MOA" CodeSystem="HL70363" DisplayName="MISSOURI" Usage="R"/>
-            <ValueSetElement Value="MPA" CodeSystem="HL70363" DisplayName="NO. MARIANA ISLAND" Usage="R"/>
-            <ValueSetElement Value="MSA" CodeSystem="HL70363" DisplayName="MISSISSIPPI" Usage="R"/>
-            <ValueSetElement Value="MTA" CodeSystem="HL70363" DisplayName="MONTANA" Usage="R"/>
-            <ValueSetElement Value="NCA" CodeSystem="HL70363" DisplayName="NORTH CAROLINA" Usage="R"/>
-            <ValueSetElement Value="NDA" CodeSystem="HL70363" DisplayName="NORTH DAKOTA" Usage="R"/>
-            <ValueSetElement Value="NEA" CodeSystem="HL70363" DisplayName="NEBRASKA" Usage="R"/>
-            <ValueSetElement Value="NHA" CodeSystem="HL70363" DisplayName="NEW HAMPSHIRE" Usage="R"/>
-            <ValueSetElement Value="NJA" CodeSystem="HL70363" DisplayName="NEW JERSEY" Usage="R"/>
-            <ValueSetElement Value="NMA" CodeSystem="HL70363" DisplayName="NEW MEXICO" Usage="R"/>
-            <ValueSetElement Value="NVA" CodeSystem="HL70363" DisplayName="NEVADA" Usage="R"/>
-            <ValueSetElement Value="NYA" CodeSystem="HL70363" DisplayName="NEW YORK STATE" Usage="R"/>
-            <ValueSetElement Value="OHA" CodeSystem="HL70363" DisplayName="OHIO" Usage="R"/>
-            <ValueSetElement Value="OKA" CodeSystem="HL70363" DisplayName="OKLAHOMA" Usage="R"/>
-            <ValueSetElement Value="ORA" CodeSystem="HL70363" DisplayName="OREGON" Usage="R"/>
-            <ValueSetElement Value="PAA" CodeSystem="HL70363" DisplayName="PENNSYLVANIA" Usage="R"/>
-            <ValueSetElement Value="PHA" CodeSystem="HL70363" DisplayName="PHILADELPHIA" Usage="R"/>
-            <ValueSetElement Value="PRA" CodeSystem="HL70363" DisplayName="PUERTO RICO" Usage="R"/>
-            <ValueSetElement Value="RIA" CodeSystem="HL70363" DisplayName="RHODE ISLAND" Usage="R"/>
-            <ValueSetElement Value="RPA" CodeSystem="HL70363" DisplayName="REPUBLIC PALAU" Usage="R"/>
-            <ValueSetElement Value="SCA" CodeSystem="HL70363" DisplayName="SOUTH CAROLINA" Usage="R"/>
-            <ValueSetElement Value="SDA" CodeSystem="HL70363" DisplayName="SOUTH DAKOTA" Usage="R"/>
-            <ValueSetElement Value="TBA" CodeSystem="HL70363" DisplayName="SAN ANTONIO" Usage="R"/>
-            <ValueSetElement Value="THA" CodeSystem="HL70363" DisplayName="HOUSTON" Usage="R"/>
-            <ValueSetElement Value="TNA" CodeSystem="HL70363" DisplayName="TENNESSEE" Usage="R"/>
-            <ValueSetElement Value="TXA" CodeSystem="HL70363" DisplayName="TEXAS" Usage="R"/>
-            <ValueSetElement Value="UTA" CodeSystem="HL70363" DisplayName="UTAH" Usage="R"/>
-            <ValueSetElement Value="VAA" CodeSystem="HL70363" DisplayName="VIRGINIA" Usage="R"/>
-            <ValueSetElement Value="VIA" CodeSystem="HL70363" DisplayName="VIRGIN ISLANDS" Usage="R"/>
-            <ValueSetElement Value="VTA" CodeSystem="HL70363" DisplayName="VERMONT" Usage="R"/>
-            <ValueSetElement Value="WAA" CodeSystem="HL70363" DisplayName="WASHINGTON" Usage="R"/>
-            <ValueSetElement Value="WIA" CodeSystem="HL70363" DisplayName="WISCONSIN" Usage="R"/>
-            <ValueSetElement Value="WVA" CodeSystem="HL70363" DisplayName="WEST VIRGINIA" Usage="R"/>
-            <ValueSetElement Value="WYA" CodeSystem="HL70363" DisplayName="WYOMING"/>
-        </ValueSet>
-        <ValueSet BindingIdentifier="HL70155_IZ" Name="Accept/Application acknowledgment conditions" Oid="" Version="1.5" Stability="Static" Extensibility="Open">
-            <ValueSetElement Value="AL" CodeSystem="HL70155" DisplayName="Always" Usage="R"/>
-            <ValueSetElement Value="NE" CodeSystem="HL70155" DisplayName="Never" Usage="R"/>
-            <ValueSetElement Value="ER" CodeSystem="HL70155" DisplayName="Error/Reject conditions only" Usage="P"/>
-            <ValueSetElement Value="SU" CodeSystem="HL70155" DisplayName="Successful completion only" Usage="E"/>
-        </ValueSet>
+        <ValueSetDefinition BindingIdentifier="HL70533_IZ" Name="Application Error Code" Oid="" Version="1.5" Stability="Dynamic" Extensibility="Closed">
+            <ValueElement Value="1" CodeSystem="HL70533" DisplayName="Illogical Date error" Usage="R"/>
+            <ValueElement Value="2" CodeSystem="HL70533" DisplayName="Invalid Date" Usage="R"/>
+            <ValueElement Value="3" CodeSystem="HL70533" DisplayName="Illogical Value error" Usage="R"/>
+            <ValueElement Value="4" CodeSystem="HL70533" DisplayName="Invalid value" Usage="R"/>
+            <ValueElement Value="5" CodeSystem="HL70533" DisplayName="Table value not found" Usage="P"/>
+            <ValueElement Value="6" CodeSystem="HL70533" DisplayName="Required observation missing" Usage="P"/>
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="HL70301_IZ" Name="Universal ID type" Oid="" Version="1.5" Stability="Static" Extensibility="Closed">
+            <ValueElement Value="OID" CodeSystem="HL70301" DisplayName="OID" Usage="R"/>
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="HL70363_IZ" Name="Assigning Authority" Oid="" Version="1.5" Stability="Dynamic" Extensibility="Open">
+            <ValueElement Value="AKA" CodeSystem="HL70363" DisplayName="ALASKA" Usage="R"/>
+            <ValueElement Value="ALA" CodeSystem="HL70363" DisplayName="ALABAMA" Usage="R"/>
+            <ValueElement Value="ARA" CodeSystem="HL70363" DisplayName="ARKANSAS" Usage="P"/>
+            <ValueElement Value="ASA" CodeSystem="HL70363" DisplayName="AMERICAN SAMOA" Usage="P"/>
+            <ValueElement Value="AZA" CodeSystem="HL70363" DisplayName="ARIZONA" Usage="E"/>
+            <ValueElement Value="BAA" CodeSystem="HL70363" DisplayName="NEW YORK CITY" Usage="E"/>
+            <ValueElement Value="CAA" CodeSystem="HL70363" DisplayName="CALIFORNIA" Usage="R"/>
+            <ValueElement Value="CHA" CodeSystem="HL70363" DisplayName="CHICAGO" Usage="R"/>
+            <ValueElement Value="COA" CodeSystem="HL70363" DisplayName="COLORADO" Usage="R"/>
+            <ValueElement Value="CTA" CodeSystem="HL70363" DisplayName="CONNECTICUT" Usage="R"/>
+            <ValueElement Value="DCA" CodeSystem="HL70363" DisplayName="DISTRICT OF COLUMBIA" Usage="R"/>
+            <ValueElement Value="DEA" CodeSystem="HL70363" DisplayName="DELAWARE" Usage="R"/>
+            <ValueElement Value="FLA" CodeSystem="HL70363" DisplayName="FLORIDA" Usage="R"/>
+            <ValueElement Value="FMA" CodeSystem="HL70363" DisplayName="FED STATES MICRO" Usage="R"/>
+            <ValueElement Value="GAA" CodeSystem="HL70363" DisplayName="GEORGIA" Usage="R"/>
+            <ValueElement Value="GUA" CodeSystem="HL70363" DisplayName="GUAM" Usage="R"/>
+            <ValueElement Value="HIA" CodeSystem="HL70363" DisplayName="HAWAII" Usage="R"/>
+            <ValueElement Value="IAA" CodeSystem="HL70363" DisplayName="IOWA" Usage="R"/>
+            <ValueElement Value="IDA" CodeSystem="HL70363" DisplayName="IDAHO" Usage="R"/>
+            <ValueElement Value="ILA" CodeSystem="HL70363" DisplayName="ILLINOIS" Usage="R"/>
+            <ValueElement Value="INA" CodeSystem="HL70363" DisplayName="INDIANA" Usage="R"/>
+            <ValueElement Value="KSA" CodeSystem="HL70363" DisplayName="KANSAS" Usage="R"/>
+            <ValueElement Value="KYA" CodeSystem="HL70363" DisplayName="KENTUCKY" Usage="R"/>
+            <ValueElement Value="LAA" CodeSystem="HL70363" DisplayName="LOUISIANA" Usage="R"/>
+            <ValueElement Value="MAA" CodeSystem="HL70363" DisplayName="MASSACHUSETTS" Usage="R"/>
+            <ValueElement Value="MDA" CodeSystem="HL70363" DisplayName="MARYLAND" Usage="R"/>
+            <ValueElement Value="MEA" CodeSystem="HL70363" DisplayName="MAINE" Usage="R"/>
+            <ValueElement Value="MHA" CodeSystem="HL70363" DisplayName="REP MARS ISLANDS" Usage="R"/>
+            <ValueElement Value="MIA" CodeSystem="HL70363" DisplayName="MICHIGAN" Usage="R"/>
+            <ValueElement Value="MNA" CodeSystem="HL70363" DisplayName="MINNESOTA" Usage="R"/>
+            <ValueElement Value="MOA" CodeSystem="HL70363" DisplayName="MISSOURI" Usage="R"/>
+            <ValueElement Value="MPA" CodeSystem="HL70363" DisplayName="NO. MARIANA ISLAND" Usage="R"/>
+            <ValueElement Value="MSA" CodeSystem="HL70363" DisplayName="MISSISSIPPI" Usage="R"/>
+            <ValueElement Value="MTA" CodeSystem="HL70363" DisplayName="MONTANA" Usage="R"/>
+            <ValueElement Value="NCA" CodeSystem="HL70363" DisplayName="NORTH CAROLINA" Usage="R"/>
+            <ValueElement Value="NDA" CodeSystem="HL70363" DisplayName="NORTH DAKOTA" Usage="R"/>
+            <ValueElement Value="NEA" CodeSystem="HL70363" DisplayName="NEBRASKA" Usage="R"/>
+            <ValueElement Value="NHA" CodeSystem="HL70363" DisplayName="NEW HAMPSHIRE" Usage="R"/>
+            <ValueElement Value="NJA" CodeSystem="HL70363" DisplayName="NEW JERSEY" Usage="R"/>
+            <ValueElement Value="NMA" CodeSystem="HL70363" DisplayName="NEW MEXICO" Usage="R"/>
+            <ValueElement Value="NVA" CodeSystem="HL70363" DisplayName="NEVADA" Usage="R"/>
+            <ValueElement Value="NYA" CodeSystem="HL70363" DisplayName="NEW YORK STATE" Usage="R"/>
+            <ValueElement Value="OHA" CodeSystem="HL70363" DisplayName="OHIO" Usage="R"/>
+            <ValueElement Value="OKA" CodeSystem="HL70363" DisplayName="OKLAHOMA" Usage="R"/>
+            <ValueElement Value="ORA" CodeSystem="HL70363" DisplayName="OREGON" Usage="R"/>
+            <ValueElement Value="PAA" CodeSystem="HL70363" DisplayName="PENNSYLVANIA" Usage="R"/>
+            <ValueElement Value="PHA" CodeSystem="HL70363" DisplayName="PHILADELPHIA" Usage="R"/>
+            <ValueElement Value="PRA" CodeSystem="HL70363" DisplayName="PUERTO RICO" Usage="R"/>
+            <ValueElement Value="RIA" CodeSystem="HL70363" DisplayName="RHODE ISLAND" Usage="R"/>
+            <ValueElement Value="RPA" CodeSystem="HL70363" DisplayName="REPUBLIC PALAU" Usage="R"/>
+            <ValueElement Value="SCA" CodeSystem="HL70363" DisplayName="SOUTH CAROLINA" Usage="R"/>
+            <ValueElement Value="SDA" CodeSystem="HL70363" DisplayName="SOUTH DAKOTA" Usage="R"/>
+            <ValueElement Value="TBA" CodeSystem="HL70363" DisplayName="SAN ANTONIO" Usage="R"/>
+            <ValueElement Value="THA" CodeSystem="HL70363" DisplayName="HOUSTON" Usage="R"/>
+            <ValueElement Value="TNA" CodeSystem="HL70363" DisplayName="TENNESSEE" Usage="R"/>
+            <ValueElement Value="TXA" CodeSystem="HL70363" DisplayName="TEXAS" Usage="R"/>
+            <ValueElement Value="UTA" CodeSystem="HL70363" DisplayName="UTAH" Usage="R"/>
+            <ValueElement Value="VAA" CodeSystem="HL70363" DisplayName="VIRGINIA" Usage="R"/>
+            <ValueElement Value="VIA" CodeSystem="HL70363" DisplayName="VIRGIN ISLANDS" Usage="R"/>
+            <ValueElement Value="VTA" CodeSystem="HL70363" DisplayName="VERMONT" Usage="R"/>
+            <ValueElement Value="WAA" CodeSystem="HL70363" DisplayName="WASHINGTON" Usage="R"/>
+            <ValueElement Value="WIA" CodeSystem="HL70363" DisplayName="WISCONSIN" Usage="R"/>
+            <ValueElement Value="WVA" CodeSystem="HL70363" DisplayName="WEST VIRGINIA" Usage="R"/>
+            <ValueElement Value="WYA" CodeSystem="HL70363" DisplayName="WYOMING"/>
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="HL70155_IZ" Name="Accept/Application acknowledgment conditions" Oid="" Version="1.5" Stability="Static" Extensibility="Open">
+            <ValueElement Value="AL" CodeSystem="HL70155" DisplayName="Always" Usage="R"/>
+            <ValueElement Value="NE" CodeSystem="HL70155" DisplayName="Never" Usage="R"/>
+            <ValueElement Value="ER" CodeSystem="HL70155" DisplayName="Error/Reject conditions only" Usage="P"/>
+            <ValueElement Value="SU" CodeSystem="HL70155" DisplayName="Successful completion only" Usage="E"/>
+        </ValueSetDefinition>
 
-        </ValueSets>
+        </ValueSetDefinitions>
 
 </ValueSetLibrary >
