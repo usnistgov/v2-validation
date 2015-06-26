@@ -169,7 +169,7 @@ object ValueFormatCheckers {
     val d = s drop 6 take 2
     if ("02" == m && (d == "30" || d == "31") )
       Some(s"$s is not a valid Date. February cannot have $d days.")
-    else if (d == "29" && y.toInt % 4 != 0)
+    else if ("02" == m && d == "29" && y.toInt % 4 != 0)
       Some(s"$s is not a valid Date. February cannot have 29 days since $y is not a leap year.")
     else if (d == "31" && ("04" == m || "06" == m || "09" == m || "11" == m))
       Some(s"$s is not a valid Date. The month $m cannot have 31 days.")
