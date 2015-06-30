@@ -1,6 +1,7 @@
 package hl7.v2.validation.vs
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConversions.seqAsJavaList
+import java.util.{List => JList}
 
 /**
   * Trait representing a code usage
@@ -47,8 +48,8 @@ case class ValueSet(
 
   def isEmpty: Boolean = codes.isEmpty
 
-  def getCodes(value: String): java.util.List[Code] =
-    JavaConversions.seqAsJavaList( codes filter(c => c.value == value) )
+  def getCodes(value: String): JList[Code] =
+    seqAsJavaList( codes filter(c => c.value == value) )
 
   def contains(value: String) = codes.exists( c => c.value == value )
 

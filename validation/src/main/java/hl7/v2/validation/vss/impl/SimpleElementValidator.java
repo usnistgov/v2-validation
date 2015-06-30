@@ -11,6 +11,11 @@ import hl7.v2.validation.vs.ValueSet;
 import hl7.v2.validation.vss.ValueSetLibrary;
 import hl7.v2.validation.vss.ValueSetNotFoundException;
 
+/**
+ * Module for validating simple element against a value set specification
+ *
+ * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
+ */
 public class SimpleElementValidator {
 
     /**
@@ -39,6 +44,8 @@ public class SimpleElementValidator {
      */
     public static Entry check(Location location, String value, ValueSetSpec spec,
                               ValueSetLibrary library) {
+        if( spec == null )
+            return null;
 
         // Return a detection if the value set is excluded from the validation
         if( library.isExcludedFromTheValidation( spec.valueSetId() ) )

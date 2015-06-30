@@ -16,7 +16,7 @@ public interface Validator {
     /**
      * @return The value set library used by this validator
      */
-    public ValueSetLibrary getValueSetLibray();
+    public ValueSetLibrary getValueSetLibrary();
 
     /**
      * Checks every data element value set and return the list of problem
