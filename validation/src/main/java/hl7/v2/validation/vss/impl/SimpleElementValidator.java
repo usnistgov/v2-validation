@@ -94,6 +94,10 @@ public class SimpleElementValidator {
      * Returns true if the code check should be skipped
      */
     private static boolean skipCodeCheck(String vsID, String value) {
+        return vsID.matches("(HL7)?0396") &&
+                (value.matches("HL7[0-9]{4}") || value.matches("99[a-zA-Z0-9]{3}"));
+    }
+    /*private static boolean skipCodeCheck(String vsID, String value) {
         if( vsID.matches("(HL7)?0396") ) {
             if( value.matches("HL7[0-9]{4}") )
                 return vsID.contains("HL7nnnn");
@@ -101,6 +105,7 @@ public class SimpleElementValidator {
                 return vsID.contains("99ZZZ");
         }
         return false;
-    }
+    }*/
+
 
 }
