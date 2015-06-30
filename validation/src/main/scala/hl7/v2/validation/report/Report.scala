@@ -5,18 +5,19 @@ import java.util.{HashMap => JHMap, List => JList, Map => JMap}
 import gov.nist.validation.report.Entry
 
 import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConverters._
 
 case class Report(
     structure: Seq[Entry],
     content: Seq[Entry],
-    vs: Seq[Entry]
+    vs: JList[Entry]
   ) extends gov.nist.validation.report.Report {
 
   override def getEntries: JMap[String, JList[Entry]] = {
     val map = new JHMap[String, JList[Entry]]()
     map.put("structure", seqAsJavaList(structure))
     map.put("content", seqAsJavaList(content))
-    map.put("value-set", seqAsJavaList(vs))
+    map.put("value-set", vs)
     map
   }
 
@@ -30,7 +31,7 @@ case class Report(
       |\n\n########  content check: ${content.size} problems detected.\n
       |${ content map (e => e.toString) mkString "\n" }
       \n\n|########  value set check: ${vs.size} problems detected.\n
-      |${ vs map (e => e.toString) mkString "\n" }
+      |${ vs.asScala map (e => e.toString) mkString "\n" }
      """.stripMargin
 
 }

@@ -3,7 +3,7 @@ package hl7.v2.validation
 import gov.nist.validation.report.Report
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
-import hl7.v2.validation.vs.ValueSetLibrary
+import hl7.v2.validation.vss.ValueSetLibrary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -17,10 +17,12 @@ import scala.util.{Failure, Success}
 
 trait Validator { this: Parser with structure.Validator
                                with content.Validator
-                               with vs.Validator
                                =>
-
   val profile: Profile
+
+  val valueSetLibrary: vss.ValueSetLibrary
+
+  lazy val valueSetValidator = new vss.impl.ValidatorImpl(valueSetLibrary)
 
   /**
     * Validates the message using the mixed in structure,
@@ -39,7 +41,7 @@ trait Validator { this: Parser with structure.Validator
           case Success( m ) => 
             val structErrors   = checkStructure( m )
             val contentErrors  = checkContent  ( m )
-            val valueSetErrors = checkValueSet ( m )
+            val valueSetErrors = Future { valueSetValidator.checkValueSet(m) }
             for {
               r1 <- structErrors
               r2 <- contentErrors
@@ -57,13 +59,12 @@ trait Validator { this: Parser with structure.Validator
   */
 class HL7Validator(
     val profile: Profile,
-    override val valueSetLibrary: ValueSetLibrary,
+    val valueSetLibrary: ValueSetLibrary,
     val conformanceContext: content.ConformanceContext
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
-    with vs.DefaultValidator
     with expression.DefaultEvaluator
 
 
@@ -74,13 +75,12 @@ class HL7Validator(
   */
 class SyncHL7Validator(
     val profile: Profile,
-    override val valueSetLibrary: ValueSetLibrary,
+    val valueSetLibrary: ValueSetLibrary,
     val conformanceContext: content.ConformanceContext
   ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
-    with vs.DefaultValidator
     with expression.DefaultEvaluator {
 
   import scala.concurrent.Await
