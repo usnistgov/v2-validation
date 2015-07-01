@@ -3,7 +3,7 @@ package hl7.v2.validation
 import gov.nist.validation.report.Report
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
-import hl7.v2.validation.vss.ValueSetLibrary
+import hl7.v2.validation.vs.ValueSetLibrary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -20,9 +20,9 @@ trait Validator { this: Parser with structure.Validator
                                =>
   val profile: Profile
 
-  val valueSetLibrary: vss.ValueSetLibrary
+  val valueSetLibrary: vs.ValueSetLibrary
 
-  lazy val valueSetValidator = new vss.impl.ValidatorImpl(valueSetLibrary)
+  lazy val valueSetValidator = new vs.impl.ValidatorImpl(valueSetLibrary)
 
   /**
     * Validates the message using the mixed in structure,

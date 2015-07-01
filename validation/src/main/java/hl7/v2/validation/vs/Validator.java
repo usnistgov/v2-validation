@@ -1,4 +1,4 @@
-package hl7.v2.validation.vss;
+package hl7.v2.validation.vs;
 
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Complex;

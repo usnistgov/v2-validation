@@ -1,9 +1,8 @@
-package hl7.v2.validation.vss
+package hl7.v2.validation.vs
 
 import java.io.InputStream
 import java.lang.Boolean
 
-import hl7.v2.validation.vs._
 import nist.xml.util.XOMDocumentBuilder
 
 import scala.util.Try

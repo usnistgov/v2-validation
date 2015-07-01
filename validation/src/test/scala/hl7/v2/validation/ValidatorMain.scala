@@ -2,7 +2,7 @@ package hl7.v2.validation
 
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.vss.ValueSetLibraryImpl
+import hl7.v2.validation.vs.ValueSetLibraryImpl
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -1,4 +1,4 @@
-package hl7.v2.validation.vss;
+package hl7.v2.validation.vs;
 
 /**
  * Exception thrown when the value set cannot be found in the library

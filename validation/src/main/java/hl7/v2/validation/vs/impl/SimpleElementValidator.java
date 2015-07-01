@@ -1,4 +1,4 @@
-package hl7.v2.validation.vss.impl;
+package hl7.v2.validation.vs.impl;
 
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Location;
@@ -8,8 +8,8 @@ import hl7.v2.validation.report.Detections;
 import hl7.v2.validation.vs.Code;
 import hl7.v2.validation.vs.CodeUsage;
 import hl7.v2.validation.vs.ValueSet;
-import hl7.v2.validation.vss.ValueSetLibrary;
-import hl7.v2.validation.vss.ValueSetNotFoundException;
+import hl7.v2.validation.vs.ValueSetLibrary;
+import hl7.v2.validation.vs.ValueSetNotFoundException;
 
 /**
  * Module for validating simple element against a value set specification
@@ -97,15 +97,5 @@ public class SimpleElementValidator {
         return vsID.matches("(HL7)?0396") &&
                 (value.matches("HL7[0-9]{4}") || value.matches("99[a-zA-Z0-9]{3}"));
     }
-    /*private static boolean skipCodeCheck(String vsID, String value) {
-        if( vsID.matches("(HL7)?0396") ) {
-            if( value.matches("HL7[0-9]{4}") )
-                return vsID.contains("HL7nnnn");
-            if( value.matches("99[a-zA-Z0-9]{3}") )
-                return vsID.contains("99ZZZ");
-        }
-        return false;
-    }*/
-
 
 }

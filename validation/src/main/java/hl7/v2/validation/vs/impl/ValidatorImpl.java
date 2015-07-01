@@ -1,4 +1,4 @@
-package hl7.v2.validation.vss.impl;
+package hl7.v2.validation.vs.impl;
 
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Complex;
@@ -7,8 +7,8 @@ import hl7.v2.instance.Message;
 import hl7.v2.instance.Simple;
 import hl7.v2.profile.Req;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.vss.Validator;
-import hl7.v2.validation.vss.ValueSetLibrary;
+import hl7.v2.validation.vs.Validator;
+import hl7.v2.validation.vs.ValueSetLibrary;
 
 import java.util.List;
 

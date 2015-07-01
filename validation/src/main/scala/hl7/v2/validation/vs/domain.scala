@@ -1,7 +1,8 @@
 package hl7.v2.validation.vs
 
-import scala.collection.JavaConversions.seqAsJavaList
 import java.util.{List => JList}
+
+import scala.collection.JavaConversions.seqAsJavaList
 
 /**
   * Trait representing a code usage
