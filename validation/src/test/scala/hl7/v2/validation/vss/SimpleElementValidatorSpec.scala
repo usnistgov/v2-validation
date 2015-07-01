@@ -74,13 +74,12 @@ class SimpleElementValidatorSpec
   def e4 = check( "C", "02" ) === Detections.codeNotFound(l, "C", vs2, "02")
   def e5 = check( "A", "02" ) === Detections.evs(l, "A", vs2, "02")
   def e6 = check( "B", "02" ) === Detections.pvs(l, "B", vs2, "02")
-  def e7 = check( "A", "03" ) ===
-    Detections.vsError(l, s"Multiple occurrences of the code 'A' found.", vs3, "03")
+  def e7 = pending(" ## The new implementation allows this, However it will pick the first code") //check( "A", "03" ) === Detections.vsError(l, s"Multiple occurrences of the code 'A' found.", vs3, "03")
 
   def e8 = check( "X", "02" ) === null
 
   def e9 = Seq("0396", "HL70396") map { vs =>
-    check("HL70001", vs) === Nil and check("99ZZZ", vs) === null
+    check("HL70001", vs) === null and check("99ZZZ", vs) === null
   }
 
   def e10 = check( "x", "06" ) === Detections.vsNoVal(l, "06")
