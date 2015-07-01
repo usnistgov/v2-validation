@@ -20,7 +20,7 @@ public class SimpleElementValidator {
 
     /**
      * Checks the simple element against the value set specification
-     * and a detection if a problem if found, null otherwise
+     * and returns a detection if a problem is found, null otherwise
      * @param e       - The simple element to be validated
      * @param spec    - The value set specification
      * @param library - The value set library to be used
@@ -34,8 +34,8 @@ public class SimpleElementValidator {
     }
 
     /**
-     * Checks the value against the value set specification
-     * and a detection if a problem if found, null otherwise
+     * Checks the value against the value set specification and
+     * returns a detection if a problem is found, null otherwise
      * @param location - The location
      * @param value    - The value to be validated
      * @param spec     - The value set specification
@@ -53,17 +53,21 @@ public class SimpleElementValidator {
 
         try {
             ValueSet vs = library.get( spec.valueSetId() );
-            // Return a detection in the value set is empty
-            if( vs.isEmpty() ) return Detections.emptyVS(location, vs, spec);
-
-            // Check if we should stop the validation here
-            if( skipCodeCheck(vs.id(), value) ) return null;
-
-            return checkCode(location, value, vs, spec);
-
+            return checkValueSet(location, value, vs, spec);
         } catch ( ValueSetNotFoundException e) {
             return Detections.vsNotFound(location, value, spec);
         }
+    }
+
+    public static Entry checkValueSet(Location location, String value, ValueSet vs,
+                              ValueSetSpec spec) {
+        if( vs.isEmpty() )
+            return Detections.emptyVS(location, vs, spec);
+
+        if( skipCodeCheck(vs.id(), value) )
+            return null;
+
+        return checkCode(location, value, vs, spec);
     }
 
     /**
@@ -72,10 +76,16 @@ public class SimpleElementValidator {
     private static Entry checkCode(Location location, String value, ValueSet vs,
                                    ValueSetSpec spec) {
         java.util.List<Code> codes = vs.getCodes(value);
-        if( codes.isEmpty() )
+        int nbOfCodes = codes.size();
+
+        if( nbOfCodes == 0 )
             return Detections.codeNotFound(location, value, vs, spec);
-        else
+
+        if( nbOfCodes == 1)
             return checkCodeUsage(location, value, codes.get(0), vs, spec);
+
+        String msg = "Multiple occurrences of the code '"+value+"' found.";
+        return Detections.vsError(location, msg, vs, spec);
     }
 
     /**

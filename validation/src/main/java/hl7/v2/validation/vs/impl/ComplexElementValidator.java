@@ -13,8 +13,8 @@ import hl7.v2.validation.vs.ValueSetLibrary;
 public class ComplexElementValidator {
 
     /**
-     * Checks the simple element against the value set specification
-     * and a detection if a problem if found, null otherwise
+     * Checks the complex element against the value set specification
+     * and returns a detection if a problem is found, null otherwise
      * @param e       - The complex element to be validated
      * @param spec    - The value set specification
      * @param library - The value set library to be used
@@ -23,7 +23,6 @@ public class ComplexElementValidator {
     public static Entry check(Complex e, ValueSetSpec spec, ValueSetLibrary library) {
         if( spec == null )
             return null;
-
-        return null; //FIXME;
+        return CodedElementValidator.check(e, spec, library);
     }
 }
