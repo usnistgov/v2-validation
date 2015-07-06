@@ -33,8 +33,8 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @param e - The element to be checked
     * @return The report
     */
-  private def check(e: Element)
-                   (implicit s: Separators, dtz: Option[TimeZone]): List[Entry] = {
+  private def check(e: Element)(implicit s: Separators,
+                                dtz: Option[TimeZone]): List[Entry] = {
     val cl: List[Constraint] = conformanceContext.constraintsFor(e)
     val pl: List[Predicate]  = conformanceContext.predicatesFor(e)
 
@@ -54,8 +54,8 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     * @param c - The constraint
     * @return A CEntry
     */
-  private def check(e: Element, c: Constraint)
-                   (implicit s: Separators, dtz: Option[TimeZone]): Entry =
+  private def check(e: Element, c: Constraint)(implicit s: Separators,
+                                               dtz: Option[TimeZone]): Entry =
     eval(c.assertion, e) match {
       case Pass                => Detections.csSuccess(e, c)
       case Fail(stack)         =>

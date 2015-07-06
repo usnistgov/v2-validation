@@ -19,4 +19,18 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
+	<xs:simpleType name="BindingStrengthType">
+		<xs:restriction base="NonEmptyString">
+			<xs:enumeration value="R"/> <!-- Required -->
+			<xs:enumeration value="S"/> <!-- Suggested -->
+			<xs:enumeration value="U"/> <!-- Undetermined -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="BindingLocationType">
+		<xs:restriction base="NonEmptyString">
+			<xs:pattern value="(\d+)|(\d+:\d+)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
 </xs:schema>

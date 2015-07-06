@@ -3,7 +3,7 @@ package hl7.v2.validation
 import gov.nist.validation.report.Report
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
-import hl7.v2.validation.vs.ValueSetLibrary
+import hl7.v2.validation.vs.{Validator, ValueSetLibrary}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -22,8 +22,6 @@ trait Validator { this: Parser with structure.Validator
 
   val valueSetLibrary: vs.ValueSetLibrary
 
-  lazy val valueSetValidator = new vs.impl.ValidatorImpl(valueSetLibrary)
-
   /**
     * Validates the message using the mixed in structure,
     * content and value set validators and returns the report.
@@ -41,7 +39,7 @@ trait Validator { this: Parser with structure.Validator
           case Success( m ) => 
             val structErrors   = checkStructure( m )
             val contentErrors  = checkContent  ( m )
-            val valueSetErrors = Future { valueSetValidator.checkValueSet(m) }
+            val valueSetErrors = Future { Validator.checkValueSet(m, valueSetLibrary) }
             for {
               r1 <- structErrors
               r2 <- contentErrors
@@ -73,7 +71,7 @@ class HL7Validator(
   * validator  and the default implementation of the  parser,
   * structure validator, content validator and expression evaluator.
   */
-class SyncHL7Validator(
+/*class SyncHL7Validator(
     val profile: Profile,
     val valueSetLibrary: ValueSetLibrary,
     val conformanceContext: content.ConformanceContext
@@ -91,3 +89,4 @@ class SyncHL7Validator(
     Await.result(validate(message, id), 10.second)
 
 }
+*/

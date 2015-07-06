@@ -1,9 +1,8 @@
-package hl7.v2.validation.vs.impl;
+package hl7.v2.validation.vs;
 
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Complex;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.vs.ValueSetLibrary;
 
 /**
  * Module for validating complex element against a value set specification

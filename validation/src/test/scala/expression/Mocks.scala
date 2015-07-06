@@ -2,8 +2,11 @@ package expression
 
 import hl7.v2.instance._
 import hl7.v2.profile.{Usage, Req}
+import hl7.v2.validation.vs.EmptyValueSetLibrary
 
 trait Mocks {
+
+  implicit val defaultValueSetLibrary = EmptyValueSetLibrary.getInstance()
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
 

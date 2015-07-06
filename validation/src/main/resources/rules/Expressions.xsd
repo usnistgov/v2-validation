@@ -143,6 +143,13 @@
 		<xs:attribute name="Type" type="ValueType" default="String"/>
 	</xs:complexType>
 	
+	<xs:complexType name="ValueSetType">
+		<xs:attribute name="Path" type="PathType" use="required"/>
+		<xs:attribute name="ValueSetID" type="xs:string" use="required"/>
+		<xs:attribute name="BindingStrength" type="BindingStrengthType" use="required"/>
+		<xs:attribute name="BindingLocation" type="BindingLocationType" use="required"/>
+	</xs:complexType>
+	
 	<!--  =============================================================================================================
        	  =========================       Combination Expressions               =======================================
           ============================================================================================================= -->
@@ -196,6 +203,7 @@
 			<xs:element name="NumberList" type="NumberListType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="StringList" type="StringListType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="SimpleValue" type="SimpleValueType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ValueSet" type="ValueSetType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="NOT" type="NOTType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="AND" type="ANDType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="OR" type="ORType" minOccurs="1" maxOccurs="1"/>

@@ -1,7 +1,8 @@
 package expression
 
 import expression.EvalResult.{Fail, Reason, Trace}
-import hl7.v2.instance.{Element, EscapeSeqHandler, Separators, Simple}
+import hl7.v2.instance._
+import gov.nist.validation.report.Entry
 
 object Failures extends EscapeSeqHandler {
 
@@ -93,6 +94,17 @@ object Failures extends EscapeSeqHandler {
   def pathValue( e: PathValue, s: Simple, p: String): Fail = {
     val m = s"${s.location.path}(${s.location.desc}) is populated but $p is not"
     val reasons = Reason(s.location, m) :: Nil
+    Fail( Trace(e, reasons) :: Nil )
+  }
+
+  /**
+    * Creates and returns a value set failure stack traces
+    */
+  def valueSet(e: ValueSet, xs: List[Entry]): Fail = {
+    val reasons = xs map { x =>
+      val location = Location(null, "...", x.getPath, x.getLine, x.getColumn)
+      Reason(location, s"Value Set assertion is violated. Details: ${x.getDescription}")
+    }
     Fail( Trace(e, reasons) :: Nil )
   }
 

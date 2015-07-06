@@ -1,7 +1,5 @@
 package hl7.v2.validation.vs;
 
-import hl7.v2.validation.vs.ValueSet;
-
 /**
  * The value set library
  *

@@ -3,6 +3,9 @@ package expression
 import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
+import hl7.v2.validation.vs.{Validator, ValueSetLibrary}
+import Validator.checkValueSet
+import gov.nist.validation.report.Entry
 
 import scala.util.{Failure, Success, Try}
 
@@ -17,8 +20,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param t - The default time zone
     * @return The evaluation result
     */
-  def eval(e: Expression, c: Element)
-          (implicit  s: Separators, t: Option[TimeZone]): EvalResult = e match {
+  def eval(e: Expression, c: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                      t: Option[TimeZone]): EvalResult = e match {
     case x: Presence    => presence(x, c)
     case x: PlainText   => plainText(x, c)
     case x: Format      => format(x, c)
@@ -35,6 +38,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     case x: FORALL      => forall(x, c)
     case x: Plugin      => plugin(x, c)
     case x: SetId       => setId(x, c)
+    case x: ValueSet    => valueSet(x, c)
   }
 
   /**
@@ -168,13 +172,32 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     }
 
   /**
+    * Evaluates the value set expression and returns the result
+    * @param vs      - The value set expression
+    * @param context - The context
+    * @return The result of the evaluation
+    */
+  def valueSet(vs: ValueSet, context: Element)(implicit l: ValueSetLibrary): EvalResult =
+    query(context, vs.path) match {
+      case Failure(e)   => inconclusive(vs, context.location, e)
+      case Success(Nil) => Pass
+      case Success(xs)  =>
+        val vsEvals    = xs map { x => checkValueSet(x, vs.spec, l) }
+        val violations = vsEvals filter { x => isVSViolated(x) }
+        violations match {
+          case Nil => Pass
+          case ys  => Failures.valueSet(vs, ys)
+        }
+    }
+
+  /**
     * Evaluates the AND expression and returns the result
     * @param and     - The AND expression
     * @param context - The context
     * @return The evaluation result
     */
-  def and(and: AND, context: Element)
-         (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
+  def and(and: AND, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                      dtz: Option[TimeZone]): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
       case f: Fail         => Failures.and(and, context, f)
@@ -191,8 +214,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def or(or: OR, context: Element)
-        (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
+  def or(or: OR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                   dtz: Option[TimeZone]): EvalResult =
     eval( or.exp1, context ) match {
       case f1: Fail =>
         eval(or.exp2, context) match {
@@ -208,21 +231,25 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def not(not: NOT, context: Element)
-         (implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
+  def not(not: NOT, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                      dtz: Option[TimeZone]): EvalResult =
     eval( not.exp, context ) match {
       case Pass    => Failures.not( not, context)
       case f: Fail => Pass
       case i: Inconclusive => i
     }
 
-  def xor(xor: XOR, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
+  def xor(xor: XOR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                      dtz: Option[TimeZone]): EvalResult = ??? //FIXME
 
-  def imply(e: IMPLY, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
+  def imply(e: IMPLY, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                        dtz: Option[TimeZone]): EvalResult = ??? //FIXME
 
-  def exist(e: EXIST, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
+  def exist(e: EXIST, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                        dtz: Option[TimeZone]): EvalResult = ??? //FIXME
 
-  def forall(e: FORALL, context: Element)(implicit s: Separators): EvalResult = ??? //FIXME
+  def forall(e: FORALL, context: Element)(implicit l: ValueSetLibrary, s: Separators,
+                                          dtz: Option[TimeZone]): EvalResult = ??? //FIXME
 
   def setId(e: SetId, context: Element) =
     queryAsSimple(context, e.path) match {
@@ -313,5 +340,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     val reasons = Reason( c.location, m ) :: Nil
     Inconclusive( Trace(pv, reasons) )
   }
+
+  //FIXME This needs to be updated according to Rob's feedback
+  // For now every non null entry is considered as violation
+  private def isVSViolated( e: Entry ): Boolean = e != null
 
 }

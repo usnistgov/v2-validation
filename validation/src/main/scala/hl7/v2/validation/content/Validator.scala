@@ -2,6 +2,7 @@ package hl7.v2.validation.content
 
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.Message
+import hl7.v2.validation.vs.ValueSetLibrary
 
 import scala.concurrent.Future
 
@@ -17,6 +18,8 @@ trait Validator {
     * The conformance context used by this validator.
     */
   def conformanceContext: ConformanceContext
+
+  implicit def valueSetLibrary: ValueSetLibrary
 
   /**
     * Check the message against the constraints defined

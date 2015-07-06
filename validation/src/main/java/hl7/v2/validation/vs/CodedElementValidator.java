@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs.impl;
+package hl7.v2.validation.vs;
 
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.*;
@@ -8,10 +8,8 @@ import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.report.Detections;
 import hl7.v2.validation.vs.Code;
 import hl7.v2.validation.vs.ValueSet;
-import hl7.v2.validation.vs.ValueSetLibrary;
-import hl7.v2.validation.vs.ValueSetNotFoundException;
 
-import static hl7.v2.validation.vs.impl.SimpleElementValidator.checkValueSet;
+import static hl7.v2.validation.vs.SimpleElementValidator.checkValueSet;
 
 /**
  *Module providing coded element value set validation logic.

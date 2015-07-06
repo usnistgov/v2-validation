@@ -1,6 +1,7 @@
 package expression
 
 import hl7.v2.instance.Value
+import hl7.v2.profile.ValueSetSpec
 
 sealed trait Expression
 
@@ -38,3 +39,5 @@ case class EXIST( list: Expression* ) extends Expression
 case class Plugin( clazz: String ) extends Expression
 
 case class SetId(path: String) extends Expression
+
+case class ValueSet(path: String, spec: ValueSetSpec) extends Expression

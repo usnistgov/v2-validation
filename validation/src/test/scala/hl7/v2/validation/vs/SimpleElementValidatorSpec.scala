@@ -5,6 +5,7 @@ import hl7.v2.instance.{Location, Simple, Text}
 import hl7.v2.profile.{BindingStrength, Req, Usage, ValueSetSpec}
 import hl7.v2.validation.report.Detections
 import CodeUsage.{E, P, R}
+import hl7.v2.validation.vs.SimpleElementValidator
 import org.specs2.Specification
 
 class SimpleElementValidatorSpec
@@ -86,7 +87,7 @@ class SimpleElementValidatorSpec
   def check(s: String, spec: String): Entry = {
     val x = simple(s, spec)
     val y = x.req.vsSpec match { case Nil => null case z::zs => z }
-    impl.SimpleElementValidator.check(x, y, library)
+    SimpleElementValidator.check(x, y, library)
   }
 
   private def simple(v: String, vsid: String): Simple =

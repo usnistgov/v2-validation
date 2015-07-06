@@ -1,4 +1,4 @@
-package hl7.v2.validation.vs.impl;
+package hl7.v2.validation.vs;
 
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Location;
