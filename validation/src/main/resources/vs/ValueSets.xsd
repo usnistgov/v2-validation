@@ -43,10 +43,10 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="ValueSetIdentifier" type="xs:string" use="required"/>
+			<xs:attribute name="ValueSetLibraryIdentifier" type="xs:string" use="required"/>
 			<xs:attribute name="Name" type="xs:string" use="required"/>
 			<xs:attribute name="OrganizationName" type="xs:string"/>
-			<xs:attribute name="ValueSetVersion" type="xs:string"/>
+			<xs:attribute name="ValueSetLibraryVersion" type="xs:string"/>
 			<xs:attribute name="Status" type="StatusType"/>
 			<xs:attribute name="Description" type="xs:string"/>
 			<xs:attribute name="DateCreated" type="xs:date"/>
