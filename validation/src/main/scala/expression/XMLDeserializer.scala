@@ -1,5 +1,6 @@
 package expression
 
+import hl7.v2.profile.{BindingLocation, BindingStrength, ValueSetSpec}
 import nu.xom.Element
 import nist.xml.util.XOMExtensions._
 import hl7.v2.instance.{EscapeSeqHandler, Separators, Text, Number}
@@ -35,6 +36,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "EXIST"       => exist( e )
     case "SetID"       => setId( e )
     case "Plugin"      => plugin( e )
+    case "ValueSet"    => valueSet( e )
     case _ => throw new Error(s"[Error] Unknown expression node $e")
   } 
 
@@ -99,6 +101,14 @@ object XMLDeserializer extends EscapeSeqHandler {
   private def setId( e: Element ) = SetId( e.attribute("Path") )
 
   private def plugin(e: Element) = Plugin( e.attribute("QualifiedClassName") )
+
+  private def valueSet(e: Element) = {
+    val id   = e.attribute("ValueSetID")
+    val bs   = BindingStrength( e.attribute("BindingStrength") ).get
+    val bl   = BindingLocation( e.attribute("BindingLocation") ).get
+    val spec = ValueSetSpec( id, Some(bs), Some(bl) )
+    ValueSet(e.attribute("Path"), spec)
+  }
 
   // Helpers
   private def toBoolean( s: String ) = 

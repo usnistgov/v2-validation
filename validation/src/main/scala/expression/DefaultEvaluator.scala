@@ -177,17 +177,17 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The result of the evaluation
     */
-  def valueSet(vs: ValueSet, context: Element)(implicit l: ValueSetLibrary): EvalResult =
+  def valueSet(vs: ValueSet, context: Element)
+              (implicit l: ValueSetLibrary): EvalResult =
     query(context, vs.path) match {
       case Failure(e)   => inconclusive(vs, context.location, e)
       case Success(Nil) => Pass
-      case Success(xs)  =>
-        val vsEvals    = xs map { x => checkValueSet(x, vs.spec, l) }
-        val violations = vsEvals filter { x => isVSViolated(x) }
-        violations match {
-          case Nil => Pass
-          case ys  => Failures.valueSet(vs, ys)
-        }
+      case Success(x::Nil)  =>
+        val r = checkValueSet(x, vs.spec, l)
+        if( isVSViolated(r) ) Failures.valueSet(vs, r) else Pass
+      case Success(xs) =>
+        val msg = "Path resolution returned more than one element"
+        inconclusive(vs, context.location, msg)
     }
 
   /**
@@ -342,7 +342,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   }
 
   //FIXME This needs to be updated according to Rob's feedback
-  // For now every non null entry is considered as violation
+  //FIXME For now every non null entry is considered as violation
   private def isVSViolated( e: Entry ): Boolean = e != null
 
 }

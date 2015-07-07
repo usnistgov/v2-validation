@@ -1,13 +1,16 @@
 package hl7.v2.validation.vs;
 
 import gov.nist.validation.report.Entry;
+import gov.nist.validation.report.Trace;
 import hl7.v2.instance.*;
 import hl7.v2.profile.BindingLocation;
 import hl7.v2.profile.Datatype;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.report.Detections;
-import hl7.v2.validation.vs.Code;
-import hl7.v2.validation.vs.ValueSet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static hl7.v2.validation.vs.SimpleElementValidator.checkValueSet;
 
@@ -86,9 +89,17 @@ public class CodedElementValidator {
         if( (e1 == null && e2 != null) || (e1 != null && e2 == null) )
             return null; //No detection
 
+        List<String> reasons = new ArrayList<String>();
+        if( e1 != null )
+            reasons.add( e1.getDescription() );
+        if( e2 != null )
+            reasons.add( e2.getDescription() );
+
+        List<Trace> stack = Arrays.asList( new Trace("", reasons) );
+
         String msg = "One of the triplet (but not both) should be valued from the" +
                      " value set '"+vs.id()+"'";
-        return Detections.codedElem(c.location(), msg, vs, spec, null);
+        return Detections.codedElem(c.location(), msg, vs, spec, stack);
     }
 
     private static Entry checkPosition(Complex c, int p, ValueSet vs, ValueSetSpec spec) {
@@ -130,7 +141,7 @@ public class CodedElementValidator {
             int count = l.size();
             if( count == 1 )
                 return l.head();
-            details = "The query returned "+count+" element(s)";
+            details = "Querying "+c.location().prettyString()+" for the position '"+position+"' returned "+count+" element(s)";
         } catch (Exception e) {
             details = e.getMessage();
         }

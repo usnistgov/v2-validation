@@ -219,18 +219,18 @@
 		
 		<Segment>
 			
-			<!-- <ByName Name="OBX">
+			<ByName Name="OBX">
 				
 				<Constraint ID="Co-Constraint">
 					<Description>If OBX.3 = XX then OBX.2 = CE and OBX.5 valued from VS1</Description>
 					<Assertion>
-						<IMPLY>
+						<!-- <IMPLY>
 							<PlainText Path="3[1]" Text="LN-Code" IgnoreCase="false"/>
 							<AND>
 								<PlainText Path="2[1]" Text="CWE" IgnoreCase="false"/>
 								<ValueSet Path="5[1]" ValueSetID="VSID" BindingStrength="R" BindingLocation="1:3"/>
 							</AND>
-						</IMPLY>
+						</IMPLY> -->
 						<OR>
 							<NOT><PlainText Path="3[1]" Text="LN-Code" IgnoreCase="false"/></NOT>
 							<AND>
@@ -241,7 +241,7 @@
 					</Assertion>
 				</Constraint>
 				
-			</ByName> -->
+			</ByName>
 			
 			<ByName Name="PID">
 				<Constraint ID="XX_1">

@@ -100,13 +100,26 @@ object Failures extends EscapeSeqHandler {
   /**
     * Creates and returns a value set failure stack traces
     */
-  def valueSet(e: ValueSet, xs: List[Entry]): Fail = {
+  def valueSet(e: ValueSet, x: Entry): Fail = {
+    val location = Location(null, "...", x.getPath, x.getLine, x.getColumn)
+    var reasons = Reason(location, x.getDescription) :: Nil
+
+    if( x.getStackTrace != null )
+      (0 until x.getStackTrace.size()) foreach { i =>
+        val gtrace = x.getStackTrace.get(i)
+        (0 until gtrace.getReasons.size()) foreach { n =>
+          reasons = Reason(location, gtrace.getReasons.get(n)) :: reasons
+        }
+      }
+    Fail( Trace(e, reasons) :: Nil )
+  }
+  /*def valueSet(e: ValueSet, xs: List[Entry]): Fail = {
     val reasons = xs map { x =>
       val location = Location(null, "...", x.getPath, x.getLine, x.getColumn)
       Reason(location, s"Value Set assertion is violated. Details: ${x.getDescription}")
     }
     Fail( Trace(e, reasons) :: Nil )
-  }
+  }*/
 
   /**
     * Creates and returns an AND expression failure stack traces

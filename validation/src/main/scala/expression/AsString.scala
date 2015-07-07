@@ -21,6 +21,7 @@ object AsString {
     case e: FORALL      => forall(e, context)
     case e: Plugin      => plugin(e, context)
     case e: SetId       => setId(e, context)
+    case e: ValueSet    => valueSet(e, context)
   }
 
   private def path(c: Element, p: String) = s"${c.location.path}.$p"
@@ -69,6 +70,10 @@ object AsString {
   private def plugin(e: Plugin, c: Element) = s"$e'"
 
   private def setId(e: SetId, c: Element) = s"$e # Context: ${c.location.prettyString}"
+
+  private def valueSet(e: ValueSet, c: Element) =
+    s"${ path(c, e.path) } SHALL be valued from the value set ${e.spec.valueSetId
+    } (Binding Strength = ${e.spec.bindingStrength}, Binding Location = ${e.spec.bindingLocation})"
 
   // De Morgan's laws
   // not (A and B) === (not A) or (not B)

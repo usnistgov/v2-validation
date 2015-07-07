@@ -5,11 +5,6 @@ import hl7.v2.instance.Location;
 import hl7.v2.instance.Simple;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.report.Detections;
-import hl7.v2.validation.vs.Code;
-import hl7.v2.validation.vs.CodeUsage;
-import hl7.v2.validation.vs.ValueSet;
-import hl7.v2.validation.vs.ValueSetLibrary;
-import hl7.v2.validation.vs.ValueSetNotFoundException;
 
 /**
  * Module for validating simple element against a value set specification

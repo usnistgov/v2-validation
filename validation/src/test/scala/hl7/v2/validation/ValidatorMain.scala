@@ -41,10 +41,11 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       /NTE|3||Patient is extremely anxious about needles used for drawing blood.
       /TQ1|1||||||20110331150028-0800|20110331152028-0800
       /OBX|1|NM|1^Erythrocyte sedimentation rate^xx^815117^ESR^99USI^^^Erythrocyte sedimentation rate||10|mm/h^millimeter per hour^UCUM|0 to 17|N|||F|||20110331140551-0800|||||20110331150551-0800||||Century Hospital^^^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^XX^^^987|2070 Test Park^^Los Angeles^CA^90067^USA^B^^06037|2343242^Knowsalot^Phil^J.^III^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^DN
+      /OBX|2|CWE|XX^Erythrocyte sedimentation rate^xx^815117^ESR^99USI^^^Erythrocyte sedimentation rate||1^^CodeSyss|mm/h^millimeter per hour^UCUM|0 to 17|N|||F|||20110331140551-0800|||||20110331150551-0800||||Century Hospital^^^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^XX^^^987|2070 Test Park^^Los Angeles^CA^90067^USA^B^^06037|2343242^Knowsalot^Phil^J.^III^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^DN
       /PDQ
       /""".stripMargin('/')
 
-  val confContext = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
+  val confContext = getClass.getResourceAsStream("/rules/CContext.xml")
 
   val conformanceContext = content.DefaultConformanceContext( confContext ).get
 

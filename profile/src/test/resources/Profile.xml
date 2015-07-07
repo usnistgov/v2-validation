@@ -260,6 +260,7 @@ Changes:
 				<Mapping Position="5" Reference="2">
 					<Case Value="NM" Datatype="NM"/>
 					<Case Value="ST" Datatype="ST"/>
+					<Case Value="CWE" Datatype="CWE"/>
 				</Mapping>
 			</DynamicMapping>
 			<Field Name="Set ID - OBX" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00569"/>
