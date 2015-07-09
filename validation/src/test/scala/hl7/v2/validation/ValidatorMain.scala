@@ -45,9 +45,11 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
       /PDQ
       /""".stripMargin('/')
 
-  val confContext = getClass.getResourceAsStream("/rules/CContext.xml")
+  val context1 = getClass.getResourceAsStream("/rules/CContext.xml")
 
-  val conformanceContext = content.DefaultConformanceContext( confContext ).get
+  val context2 = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
+
+  val conformanceContext = content.DefaultConformanceContext().get
 
   val vsLibStream = getClass.getResourceAsStream("/ValueSets.xml")
   val valueSetLibrary = ValueSetLibraryImpl(vsLibStream).get

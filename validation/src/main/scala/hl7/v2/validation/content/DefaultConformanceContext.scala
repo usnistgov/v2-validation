@@ -1,13 +1,16 @@
 package hl7.v2.validation.content
 
 import java.io.InputStream
+import java.util.{List => JList}
 
 import expression.Expression
 import hl7.v2.instance._
 import hl7.v2.profile.{Group => GM, Segment => SM, Datatype}
 import nist.xml.util.{XOMDocumentBuilder, ClassPathResourceResolver}
 
-import scala.util.Try
+import scala.collection.{JavaConverters, JavaConversions}
+import scala.collection.convert.Wrappers.JListWrapper
+import scala.util.{Success, Failure, Try}
 
 class VMap[T] (
     val groupByID:      Map[String, List[T]],
@@ -16,7 +19,31 @@ class VMap[T] (
     val segmentByName:  Map[String, List[T]],
     val datatypeByID:   Map[String, List[T]],
     val datatypeByName: Map[String, List[T]]
-)
+) {
+
+  def merge(map: VMap[T]) = new VMap[T](
+    groupByID      ++ map.groupByID,
+    groupByName    ++ map.groupByName,
+    segmentByID    ++ map.segmentByID,
+    segmentByName  ++ map.segmentByName,
+    datatypeByID   ++ map.datatypeByID,
+    datatypeByName ++ map.datatypeByName
+  )
+
+}
+
+object VMap {
+
+  def empty[T] = new VMap[T](
+    Map[String, List[T]](),
+    Map[String, List[T]](),
+    Map[String, List[T]](),
+    Map[String, List[T]](),
+    Map[String, List[T]](),
+    Map[String, List[T]]()
+  )
+
+}
 
 class DefaultConformanceContext(
     val constraints: VMap[Constraint],
@@ -73,14 +100,31 @@ object DefaultConformanceContext {
     */
   private def xsd = getClass.getResourceAsStream("/rules/ConformanceContext.xsd")
 
+  def apply(contexts: JList[InputStream]): Try[ConformanceContext] = {
+    import JavaConverters._
+    val params = contexts.asScala.toList
+    apply(params: _ *)
+  }
+
   /**
-    * Build a constraint manager from the conformance context XML files
-    * @param confContext - The conformance context XML file
-    * @return A success containing the constraint manager or a failure
-    */
-  def apply( confContext: InputStream ): Try[ConformanceContext] =
+   * Build the conformance context from a list of XML files.
+   * An empty conformance context will be created if the list is empty.
+   * @param contexts - The list of XML files
+   * @return A success containing the constraint manager or a failure
+   */
+  def apply(contexts: InputStream* ): Try[ConformanceContext] =
+    try {
+      val z = (VMap.empty[Constraint], VMap.empty[Predicate])
+      val l = contexts map { x => vMaps(x).get }
+      val r = l.foldLeft( z ) { (acc, x) =>
+        (acc._1 merge x._1, acc._2 merge x._2 )
+      }
+      Success( new DefaultConformanceContext(r._1, r._2) )
+    } catch { case e: Throwable => Failure(e) }
+
+  private def vMaps( confContext: InputStream ): Try[(VMap[Constraint], VMap[Predicate])] =
     XOMDocumentBuilder.build( confContext, xsd, resourceResolver ) map { doc =>
-      new DefaultConformanceContext( constraints(doc), predicates(doc) )
+      ( constraints(doc), predicates(doc) )
     }
 
   private def constraints(doc: nu.xom.Document): VMap[Constraint] = {

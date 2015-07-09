@@ -5,7 +5,6 @@ import hl7.v2.instance.{Location, Simple, Text}
 import hl7.v2.profile.{BindingStrength, Req, Usage, ValueSetSpec}
 import hl7.v2.validation.report.Detections
 import CodeUsage.{E, P, R}
-import hl7.v2.validation.vs.SimpleElementValidator
 import org.specs2.Specification
 
 class SimpleElementValidatorSpec
