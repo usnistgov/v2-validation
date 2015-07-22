@@ -16,7 +16,10 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
       StringList evaluation should be inconclusive if the path is invalid          $stringListPathInvalid
       StringList evaluation should be inconclusive if the path is unreachable      $stringListPathUnreachable
       StringList should pass if the values are in the list                         $stringListValueInList
-      StringList should fail if the values are in the list                         $stringListValueNotInList
+      StringList should fail if the values are not in the list                         $stringListValueNotInList
+      If the path is valued to multiple elements
+        StringList should pass if one of the elements is in the list and AtLeastOnce = True           $stringListAtLeastOnceT
+        StringList should fail if one of the elements is not in the list and AtLeastOnce = False           $stringListAtLeastOnceF
   */
 
   //c1.4[1] is not populated
@@ -56,6 +59,22 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
   def stringListValueNotInList = {
     val p = StringList("3[1]", List("s3"))
     eval( p, c1 ) === Failures.stringList(p, `c1.3[1]`::Nil)
+  }
+  
+  assert( queryAsSimple(c1, "1[*]").isSuccess &&  queryAsSimple(c1, "1[*]").get.size > 1)
+  def stringListAtLeastOnceT = {
+    val p = StringList("1[*]", List("S12","XX"), true)
+    eval( p, c1 ) === Pass
+  }
+  
+  def stringListAtLeastOnceF = {
+    val p = StringList("1[*]", List("S12","XX"), false)
+    
+    val `c1.1[1]`  = queryAsSimple(c1, "1[1]").get.head
+    assert( `c1.1[1]`.value == Text("S11") )
+    val `c1.1[3]`  = queryAsSimple(c1, "1[3]").get.head
+    assert( `c1.1[3]`.value == Text("S13") )
+    eval( p, c1 ) === Failures.stringList(p, `c1.1[1]`::`c1.1[3]`::Nil)
   }
 
 }

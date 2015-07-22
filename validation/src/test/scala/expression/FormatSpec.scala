@@ -14,6 +14,9 @@ trait FormatSpec extends Specification with Evaluator with Mocks {
       Format evaluation should succeed if the path is not populated       $formatPathNotPopulated
       Format should pass if the value match the pattern                   $formatMatch
       Format should fail if the value doesn't match the pattern           $formatNoMatch
+      If the path is valued to multiple elements
+        Format should pass if one of the elements matches the pattern and AtLeastOnce = True           $formatAtLeastOnceT
+        Format should fail if one of the elements doesn't match the pattern and AtLeastOnce = False           $formatAtLeastOnceF
   */
 
   //c1.4[1] is not populated
@@ -29,5 +32,20 @@ trait FormatSpec extends Specification with Evaluator with Mocks {
   def formatNoMatch = {
     val e = Format("3[1]", "[a-z0-9]+")
     eval( e, c1 ) === Failures.format(e, `c1.3[1]` :: Nil )
+  }
+  
+  assert( queryAsSimple(c1, "1[*]").isSuccess &&  queryAsSimple(c1, "1[*]").get.size > 1)
+  def formatAtLeastOnceF = {
+    val e = Format("1[*]", "[A-Z0-9]+2", false)
+    val `c1.1[3]` = queryAsSimple(c1, "1[3]").get.head
+    assert( `c1.1[3]`.value == Text("S13") )
+    val `c1.1[1]` = queryAsSimple(c1, "1[1]").get.head
+    assert( `c1.1[1]`.value == Text("S11") )
+    eval( e, c1 ) === Failures.format(e, `c1.1[1]`::`c1.1[3]`::Nil )
+  }
+  
+  def formatAtLeastOnceT = {
+    val e = Format("1[*]", "[A-Z0-9]+2", true)
+    eval( e, c1 ) === Pass
   }
 }

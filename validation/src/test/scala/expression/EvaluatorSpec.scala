@@ -40,12 +40,17 @@ trait EvaluatorSpec
       PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
-      PlainText should fail for multiple elements with different values with AtLeastOnce = False $plainTextAtLeastOnceF
-      PlainText should Pass for multiple elements with different values (including one equal to the expected value) with AtLeastOnce = True $plainTextAtLeastOnceT
+      If the path is valued to multiple elements
+        PlainText should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
+        PlainText should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+        
     FormatSpec
       Format evaluation should succeed if the path is not populated                 $formatPathNotPopulated
       Format should pass if the value match the pattern                             $formatMatch
       Format should fail if the value doesn't match the pattern                     $formatNoMatch
+      If the path is valued to multiple elements
+        Format should pass if one of the elements matches the pattern and AtLeastOnce = True           $formatAtLeastOnceT
+        Format should fail if one of the elements doesn't match the pattern and AtLeastOnce = False           $formatAtLeastOnceF
 
     StringListSpec
       StringList evaluation should succeed if the path is not populated            $stringListPathNotPopulated
@@ -54,7 +59,10 @@ trait EvaluatorSpec
       StringList evaluation should be inconclusive if the path is unreachable      $stringListPathUnreachable
       StringList should pass if the values are in the list                         $stringListValueInList
       StringList should fail if the values are in the list                         $stringListValueNotInList
-
+      If the path is valued to multiple elements
+        StringList should pass if one of the elements is in the list and AtLeastOnce = True           $stringListAtLeastOnceT
+        StringList should fail if one of the elements is not in the list and AtLeastOnce = False           $stringListAtLeastOnceF
+        
     NumberListSpec
       NumberList evaluation should succeed if the path is not populated            $numberListPathNotPopulated
       NumberList evaluation should be inconclusive if the path is complex          $numberListPathComplex
@@ -63,7 +71,10 @@ trait EvaluatorSpec
       NumberList should be inconclusive if at least one value is not a number      $numberListNaN
       NumberList should pass if the values are in the list                         $numberListValueInList
       NumberList should fail if the values are in the list                         $numberListValueNotInList
-
+      If the path is valued to multiple elements
+        NumberList should pass if one of the elements is in the list and AtLeastOnce = True           $numberListAtLeastOnceT
+        NumberList should fail if one of the elements is not in the list and AtLeastOnce = False           $numberListAtLeastOnceF
+        
     SimpleValueSpec
       SimpleValue evaluation should succeed if the path is not populated            $simpleValuePathNotPopulated
       SimpleValue evaluation should be inconclusive if the path is complex          $simpleValuePathComplex

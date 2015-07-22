@@ -17,7 +17,10 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
       NumberList evaluation should be inconclusive if the path is unreachable      $numberListPathUnreachable
       NumberList should be inconclusive if at least one value is not a number      $numberListNaN
       NumberList should pass if the values are in the list                         $numberListValueInList
-      NumberList should fail if the values are in the list                         $numberListValueNotInList
+      NumberList should fail if the values are not in the list                         $numberListValueNotInList
+      If the path is valued to multiple elements
+        NumberList should pass if one of the elements is in the list and AtLeastOnce = True           $numberListAtLeastOnceT
+        NumberList should fail if one of the elements is not in the list and AtLeastOnce = False           $numberListAtLeastOnceF
   */
 
   //c1.4[1] is not populated
@@ -60,6 +63,19 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
   def numberListValueNotInList = {
     val p = NumberList("5[1]", List(52, 53))
     eval(p, c2 ) === Failures.numberList(p, `c2.5[1]`::Nil)
+  }
+  
+  assert( queryAsSimple(c1, "2[*]").isSuccess &&  queryAsSimple(c1, "2[*]").get.size > 1)
+  def numberListAtLeastOnceT = {
+    val p = NumberList("2[*]", List(52, 22),true)
+    eval(p, c1 ) === Pass
+  }
+  
+  def numberListAtLeastOnceF = {
+    val p = NumberList("2[*]", List(21, 22),false)
+    val `c1.2[3]`  = queryAsSimple(c1, "2[3]").get.head
+    assert( `c1.2[3]`.value == Number("23") )
+    eval(p, c1 ) === Failures.numberList(p, `c1.2[3]`::Nil)
   }
 
 }

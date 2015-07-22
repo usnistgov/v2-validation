@@ -82,7 +82,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(ls)  =>
         ls filter( x => notMatch(x, f.pattern) ) match {
           case Nil => Pass
-          case xs  => Failures.format(f, xs)
+          case xs  => if(f.atLeastOnce && (xs.size != ls.size)) Pass else Failures.format(f, xs)
         }
       case Failure(e) => inconclusive(f, context.location, e)
     }
@@ -99,7 +99,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(ls)  =>
         ls filter( x => notInList(x.value.raw, sl.csv) ) match {
           case Nil => Pass
-          case xs  => Failures.stringList(sl, xs)
+          case xs  => if(sl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.stringList(sl, xs)
         }
       case Failure(e) => inconclusive(sl, context.location, e)
     }
@@ -119,7 +119,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Nil =>
             l1 filter( x => notInList(x.value.raw.toDouble, nl.csv) ) match {
               case Nil => Pass
-              case xs  => Failures.numberList(nl, xs)
+              case xs  => if(nl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.numberList(nl, xs)
             }
           case xs => Failures.numberListNaN(nl, xs)
         }

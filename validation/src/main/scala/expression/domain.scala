@@ -7,13 +7,13 @@ sealed trait Expression
 
 case class Presence( path: String ) extends Expression
 
-case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean) extends Expression
+case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false) extends Expression
 
-case class Format( path: String, pattern: String ) extends Expression
+case class Format( path: String, pattern: String, atLeastOnce : Boolean = false) extends Expression
 
-case class NumberList( path: String, csv: List[Double] ) extends Expression
+case class NumberList( path: String, csv: List[Double], atLeastOnce : Boolean = false) extends Expression
 
-case class StringList( path: String, csv: List[String] ) extends Expression
+case class StringList( path: String, csv: List[String], atLeastOnce : Boolean = false) extends Expression
 
 case class SimpleValue( path: String, operator: Operator, value: Value ) extends Expression
 
@@ -41,9 +41,3 @@ case class Plugin( clazz: String ) extends Expression
 case class SetId(path: String) extends Expression
 
 case class ValueSet(path: String, spec: ValueSetSpec) extends Expression
-
-object PlainText {
-  def apply(path: String, text: String, ignoreCase: Boolean) : PlainText = {
-     PlainText( path, text, ignoreCase, false) 
-  }
-}

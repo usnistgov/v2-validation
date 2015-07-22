@@ -55,26 +55,29 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("Path")
     val text = e.attribute("Text")
     val ignoreCase = toBoolean( e.attribute("IgnoreCase") )
-    val atLeatOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    PlainText( path , text, ignoreCase, atLeatOnce)
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    PlainText( path , text, ignoreCase, atLeastOnce)
   }
 
   private def format( e: Element ): Format = {
     val path = e.attribute("Path")
     val regex = e.attribute("Regex")
-    Format( path, regex)
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    Format( path, regex, atLeastOnce)
   }
 
   private def numberList( e: Element ): NumberList = {
     val path = e.attribute("Path")
     val csv  = e.attribute("CSV").split(',').toList map ( _.toDouble )
-    NumberList( path, csv )
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    NumberList( path, csv, atLeastOnce)
   }
 
   private def stringList( e: Element ): StringList = {
     val path = e.attribute("Path")
     val csv  = e.attribute("CSV").split(',').toList //No need to trim since no spaces in the schema
-    StringList( path, csv )
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    StringList( path, csv, atLeastOnce)
   }
 
   private def simpleValue( e: Element ): SimpleValue = {

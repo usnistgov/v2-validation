@@ -20,8 +20,9 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
       PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
-      PlainText should fail for multiple elements with different values with AtLeastOnce = False $plainTextAtLeastOnceF
-      PlainText should Pass for multiple elements with different values (including one equal to the expected value) with AtLeastOnce = True $plainTextAtLeastOnceT
+      If the path is valued to multiple elements
+        PlainText should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
+        PlainText should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
   */
   
   //c1.4[1] is not populated

@@ -44,12 +44,21 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   def pe37 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="1"/> )     === PlainText( "1[1]", "XX", false, true)
   def pe38 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="0"/> )     === PlainText( "1[1]", "XX", false, false)
   
-  def pe4 = expression( <Format Path="1[1]" Regex="XX"/> ) === Format( "1[1]", "XX")
-
-  def pe5 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/> ) === NumberList( "1[1]", List(1, 2.0, 3))
-
-  def pe6 = expression( <StringList Path="1[1]" CSV="1,2"/> ) === StringList( "1[1]", List("1", "2") )
-
+  def pe4 = pe41 and pe42 and pe43
+  def pe41 = expression( <Format Path="1[1]" Regex="XX"/> ) === Format( "1[1]", "XX", false)
+  def pe42 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="false" /> ) === Format( "1[1]", "XX", false)
+  def pe43 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" /> ) === Format( "1[1]", "XX", true)
+  
+  def pe5 = pe51 and pe52 and pe53
+  def pe51 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/> ) === NumberList( "1[1]", List(1, 2.0, 3), false)
+  def pe52 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="false" /> ) === NumberList( "1[1]", List(1, 2.0, 3), false)
+  def pe53 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true)
+  
+  def pe6 = pe61 and pe62 and pe63
+  def pe61 = expression( <StringList Path="1[1]" CSV="1,2"/> ) === StringList( "1[1]", List("1", "2"), false)
+  def pe62 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="false" /> ) === StringList( "1[1]", List("1", "2"), false)
+  def pe63 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" /> ) === StringList( "1[1]", List("1", "2"), true)
+  
   def pe7 = {
     val e1 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX"/> )
     val e2 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/> )
