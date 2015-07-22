@@ -20,6 +20,8 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
       PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
+      PlainText should fail for multiple elements with different values with AtLeastOnce = False $plainTextAtLeastOnceF
+      PlainText should Pass for multiple elements with different values (including one equal to the expected value) with AtLeastOnce = True $plainTextAtLeastOnceT
   */
   
   //c1.4[1] is not populated
@@ -52,7 +54,11 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
 
   private val `c2.4[1]` = queryAsSimple(c2, "4[1]").get.head
   assert( `c2.4[1]`.value == Text("41\\F\\") )
-
+  
+  private val `c1.1[1]` = queryAsSimple(c1, "1[1]").get.head
+  assert( `c1.1[1]`.value == Text("S11") )
+  
+  
   def plainTextSameValue = Seq(true, false) map { b =>
     eval( PlainText("3[1]", "S3", b), c1 ) === Pass and
     eval( PlainText("4[1]", "41|", b), c2  ) === Pass
@@ -70,5 +76,18 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   def plainTextSameValueCNI = {
     val p = PlainText("3[1]", "s3", false)
     eval( p, c1 ) === Failures.plainText(p, `c1.3[1]`::Nil)
+  }
+  
+  assert( queryAsSimple(c1, "1[*]").isSuccess &&  queryAsSimple(c1, "1[*]").get.size > 1)
+  def plainTextAtLeastOnceF = {
+    val p = PlainText("1[*]", "S12", false, false)
+    val `c1.1[3]` = queryAsSimple(c1, "1[3]").get.head
+    assert( `c1.1[3]`.value == Text("S13") )
+    eval(p, c1) === Failures.plainText(p, `c1.1[1]`::`c1.1[3]`::Nil)
+  }
+  
+  def plainTextAtLeastOnceT = {
+    val p = PlainText("1[*]", "S12", false, true)
+    eval(p, c1) === Pass
   }
 }

@@ -40,7 +40,8 @@ trait EvaluatorSpec
       PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
       PlainText should fail if the values are different                             $plainTextDifferentValue
       PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
-
+      PlainText should fail for multiple elements with different values with AtLeastOnce = False $plainTextAtLeastOnceF
+      PlainText should Pass for multiple elements with different values (including one equal to the expected value) with AtLeastOnce = True $plainTextAtLeastOnceT
     FormatSpec
       Format evaluation should succeed if the path is not populated                 $formatPathNotPopulated
       Format should pass if the value match the pattern                             $formatMatch
