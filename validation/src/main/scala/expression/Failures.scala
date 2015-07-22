@@ -127,6 +127,17 @@ object Failures extends EscapeSeqHandler {
   def and(e: AND, c: Element, f: Fail): Fail = Fail( Trace( e, Nil) :: f.stack )
 
   /**
+   * Creates and returns an FORALL expression failure stack traces
+   */
+  def forall(e: FORALL, c: Element, f: Fail): Fail = Fail( Trace( e, Nil) :: f.stack )
+
+  /**
+   * Creates and returns an EXIST expression failure stack traces
+   */
+  def exist(e: EXIST, c: Element, f: Fail) : Fail = Fail( Trace( e, Nil) :: f.stack )
+
+
+  /**
     * Creates and returns an OR expression failure stack traces
     */
   def or(e: OR, c: Element, f1: Fail, f2: Fail): Fail =

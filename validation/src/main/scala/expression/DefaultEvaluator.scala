@@ -66,7 +66,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(ls)  =>
         ls filter( x => notEqual(x, p.text, p.ignoreCase) ) match {
           case Nil => Pass
-          case xs  => Failures.plainText(p, xs)
+          case xs  => if(p.atLeastOnce && (xs.size != ls.size)) Pass else Failures.plainText(p, xs)
         }
       case Failure(e) => inconclusive(p, context.location, e)
     }
@@ -238,18 +238,57 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case f: Fail => Pass
       case i: Inconclusive => i
     }
-
+  //x ⊕ y   =   (x ∨ y) ∧ ¬(x ∧ y)
   def xor(xor: XOR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone]): EvalResult = ??? //FIXME
+                                      dtz: Option[TimeZone]): EvalResult =
+    eval(AND(OR(xor.exp1,xor.exp2),NOT(AND(xor.exp1,xor.exp2))),context)
 
   def imply(e: IMPLY, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                        dtz: Option[TimeZone]): EvalResult = ??? //FIXME
+                                        dtz: Option[TimeZone]): EvalResult =
+    eval(OR(NOT(e.exp1),e.exp2),context)
 
   def exist(e: EXIST, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                        dtz: Option[TimeZone]): EvalResult = ??? //FIXME
+                                        dtz: Option[TimeZone]): EvalResult = {
+    def loop(expressions : List[Expression]) : EvalResult = {
+      expressions match {
+        case x::Nil => eval(x,context)
+        case x::y => eval(x,context) match {
+          case Pass => Pass
+          case Fail(tr1) => loop(y) match {
+            case Pass => Pass
+            case Fail(tr2) => Fail(tr1:::tr2)
+            case x => x
+          }
+          case x => x
+        }
+      }
+    }
+    loop(e.list toList) match {
+      case Fail(tr) => Failures.exist(e,context,Fail(tr))
+      case Pass => Pass
+      case x => x
+    }
+  }
 
   def forall(e: FORALL, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                          dtz: Option[TimeZone]): EvalResult = ??? //FIXME
+                                          dtz: Option[TimeZone]): EvalResult = {
+
+    def loop(expressions : List[Expression]) : EvalResult = {
+      expressions match {
+        case x::Nil => eval(x,context)
+        case x::y => eval(x,context) match {
+          case Pass => loop(y)
+          case Fail(tr) => Fail(tr)
+          case x => x
+        }
+      }
+    }
+    loop(e.list toList) match {
+      case Fail(tr) => Failures.forall(e,context,Fail(tr))
+      case Pass => Pass
+      case x => x
+    }
+  }
 
   def setId(e: SetId, context: Element) =
     queryAsSimple(context, e.path) match {

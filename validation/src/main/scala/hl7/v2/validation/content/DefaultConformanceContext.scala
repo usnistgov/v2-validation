@@ -22,12 +22,12 @@ class VMap[T] (
 ) {
 
   def merge(map: VMap[T]) = new VMap[T](
-    groupByID      ++ map.groupByID,
-    groupByName    ++ map.groupByName,
-    segmentByID    ++ map.segmentByID,
-    segmentByName  ++ map.segmentByName,
-    datatypeByID   ++ map.datatypeByID,
-    datatypeByName ++ map.datatypeByName
+    VMap.merge[T](groupByID, map.groupByID),
+    VMap.merge[T](groupByName, map.groupByName),
+    VMap.merge[T](segmentByID, map.segmentByID),
+    VMap.merge[T](segmentByName, map.segmentByName),
+    VMap.merge[T](datatypeByID, map.datatypeByID),
+    VMap.merge[T](datatypeByName, map.datatypeByName)
   )
 
 }
@@ -43,6 +43,14 @@ object VMap {
     Map[String, List[T]]()
   )
 
+  def merge[T](map1 : Map[String, List[T]], map2 : Map[String, List[T]]) = {
+      map1.foldLeft(map2){ (acc, x) =>
+        acc.get(x._1) match {
+          case Some(xs) => acc + (x._1 -> (xs ++ x._2))
+          case None => acc + x
+        }
+    }      
+  }
 }
 
 class DefaultConformanceContext(

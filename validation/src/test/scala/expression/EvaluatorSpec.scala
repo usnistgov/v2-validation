@@ -13,6 +13,10 @@ trait EvaluatorSpec
   with ORSpec
   with NOTSpec
   with PluginSpec
+  with XORSpec
+  with IMPLYSpec
+  with FORALLSpec
+  with EXISTSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -79,6 +83,18 @@ trait EvaluatorSpec
       PathValue should pass if operator = < and path1.value < path2.value          $pathValuePass
       PathValue should fail if operator = < and path1.value > path2.value          $pathValueFail
 
+    FORALL expression evaluation specifications
+           FORALL should be inconclusive if one of the expressions is inconclusive $forallInconclusive
+           FORALL should fail if one of the expressions fails                      $forallOneFails
+           FORALL should fail if many of the expressions fails                     $forallManyFail
+           FORALL should pass if all the expressions pass                          $forallAllPass
+
+    EXIST expression evaluation specifications
+           EXIST should be inconclusive if one of the expressions is inconclusive  $existInconclusive
+           EXIST should fail if all the expressions fails                          $existAllFail
+           EXIST should pass if one of the expressions passes                      $existOnePasses
+           EXIST should pass if many of the expressions pass                       $existManyPass
+
     AND expression evaluation specifications
       AND should be inconclusive if the first expression is inconclusive            $andFirstInconclusive
       AND should fail in the first expression fails                                 $andFirstFails
@@ -94,6 +110,25 @@ trait EvaluatorSpec
           OR should be inconclusive if the second is inconclusive                   $orFirstFailsSecondInconclusive
           OR should pass if the second passes                                       $orFirstFailsSecondPasses
           OR should fail if the second fails                                        $orFirstFailsSecondFails
+
+    IMPLY expression evaluation specifications
+      IMPLY should be inconclusive if the first expression is inconclusive          $implyFirstInconclusive
+      IMPLY should pass if first expression fails                                   $implyFirstFails
+      If the first expression passes
+        IMPLY should be inconclusive if the second is inconclusive                  $implyFirstPassesSecondInconclusive
+        IMPLY should fail if the second fails                                       $implyFirstPassesSecondFails
+        IMPLY should pass if the second passes                                      $implyFirstPassesSecondPasses
+
+    XOR expression evaluation specifications
+         XOR should be inconclusive if the first expression is inconclusive         $xorFirstInconclusive
+         If the first expression passes
+             XOR should be inconclusive if the second is inconclusive               $xorFirstPassesSecondInconclusive
+             XOR should pass if the second fails                                    $xorFirstPassesSecondFails
+             XOR should fail if the second passes                                   $xorFirstPassesSecondPasses
+         If the first expression fails
+             XOR should be inconclusive if the second is inconclusive               $xorFirstFailsSecondInconclusive
+             XOR should pass if the second passes                                   $xorFirstFailsSecondPasses
+             XOR should fail if the second fails                                    $xorFirstFailsSecondFails
 
     NOT expression evaluation specifications
       NOT should be inconclusive if the underlining expression is inconclusive      $notInconclusive

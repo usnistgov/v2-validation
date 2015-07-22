@@ -31,6 +31,7 @@ object AsString {
 
   private def plainText(e: PlainText, c: Element) = {
     val cs = if (e.ignoreCase) "(case insensitive)"
+      if(e.atLeastOnce) " At least one element from "
     s"${path(c, e.path)} SHALL be equal to '${e.text}' $cs"
   }
 
@@ -63,9 +64,9 @@ object AsString {
   private def imply(e: IMPLY, c: Element) =
     s"If ${ expression(e.exp1, c) } Then ${ expression(e.exp2, c) }"
 
-  private def exist(e: EXIST, c: Element) = e.list.map( expression(_, c) ).mkString("OR")
+  private def exist(e: EXIST, c: Element) = e.list.map( expression(_, c) ).mkString(" OR ")
 
-  private def forall(e: FORALL, c: Element) = e.list.map( expression(_, c) ).mkString("AND")
+  private def forall(e: FORALL, c: Element) = e.list.map( expression(_, c) ).mkString(" AND ")
 
   private def plugin(e: Plugin, c: Element) = s"$e'"
 

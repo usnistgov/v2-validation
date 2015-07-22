@@ -34,12 +34,16 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
 
   def pe2 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
 
-  def pe3 = pe31 and pe32 and pe33 and pe34
-  def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true)
-  def pe32 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="1"/> )     === PlainText( "1[1]", "XX", true)
-  def pe33 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="false"/> ) === PlainText( "1[1]", "XX", false)
-  def pe34 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0"/> )     === PlainText( "1[1]", "XX", false)
-
+  def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38
+  def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true, false)
+  def pe32 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="1"/> )     === PlainText( "1[1]", "XX", true, false)
+  def pe33 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="false"/> ) === PlainText( "1[1]", "XX", false, false)
+  def pe34 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0"/> )     === PlainText( "1[1]", "XX", false, false)
+  def pe35 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="true"/> )     === PlainText( "1[1]", "XX", false, true)
+  def pe36 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="false"/> )     === PlainText( "1[1]", "XX", false, false)
+  def pe37 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="1"/> )     === PlainText( "1[1]", "XX", false, true)
+  def pe38 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="0"/> )     === PlainText( "1[1]", "XX", false, false)
+  
   def pe4 = expression( <Format Path="1[1]" Regex="XX"/> ) === Format( "1[1]", "XX")
 
   def pe5 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/> ) === NumberList( "1[1]", List(1, 2.0, 3))

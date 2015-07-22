@@ -55,7 +55,8 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("Path")
     val text = e.attribute("Text")
     val ignoreCase = toBoolean( e.attribute("IgnoreCase") )
-    PlainText( path , text, ignoreCase )
+    val atLeatOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    PlainText( path , text, ignoreCase, atLeatOnce)
   }
 
   private def format( e: Element ): Format = {
