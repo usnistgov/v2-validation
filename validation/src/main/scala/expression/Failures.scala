@@ -3,6 +3,8 @@ package expression
 import expression.EvalResult.{Fail, Reason, Trace}
 import hl7.v2.instance._
 import gov.nist.validation.report.Entry
+import hl7.v2.instance.Query._
+import scala.util.{Failure, Success, Try}
 
 object Failures extends EscapeSeqHandler {
 
@@ -10,8 +12,9 @@ object Failures extends EscapeSeqHandler {
     * Creates and returns a presence failure stack traces
     */
   def presence(c: Element, e: Presence): Fail = {
+    val nar = narrowLocation(c,e.path)
     val path    = s"${c.location.path}.${e.path}"
-    val reasons = Reason( c.location, s"$path is missing"):: Nil
+    val reasons = Reason( nar.location, s"$path is missing"):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
 
@@ -152,6 +155,16 @@ object Failures extends EscapeSeqHandler {
   def seqId(e: SetId, c: Element, s: Simple) = {
     val reason = Reason(s.location, s"Expected ${c.instance}, Found ${s.value.raw}")
     Fail( Trace(e, reason :: Nil) :: Nil )
+  }
+  
+  def narrowLocation(c : Element, path : String) : Element = {
+    path.split("\\.").foldLeft(c)( (acc,p) =>
+        query(acc,p) match {
+          case Success(Nil) => return acc
+          case Success(ls) => ls.head
+          case Failure(_) => return acc
+        }
+    )
   }
 
 }
