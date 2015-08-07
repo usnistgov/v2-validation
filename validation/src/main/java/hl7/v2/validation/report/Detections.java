@@ -83,6 +83,14 @@ public class Detections {
         String description    = String.format(template, l.prettyString(), r.min(), r.max(), count);
         return entry(l, description, category, classification);
     }
+    
+    public static Entry ncardinality(Location l, int count) {
+        String category       = conf.getString("report.null-cardinality.category");
+        String classification = conf.getString("report.null-cardinality.classification");
+        String template       = conf.getString("report.null-cardinality.template");
+        String description    = String.format(template, l.prettyString(), count);
+        return entry(l, description, category, classification);
+    }
 
     /**
      * @return A report entry for the length detection

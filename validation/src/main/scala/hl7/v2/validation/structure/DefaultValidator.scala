@@ -9,7 +9,6 @@ import hl7.v2.validation.report.Detections
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
 /**
   * Default implementation of the structure validation
   */
@@ -35,7 +34,10 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
   private def check(e: Element)(implicit sep: Separators): List[Entry] =
     e match {
       case s: Simple  => check(s)
-      case c: Complex => check(c)
+      case c: Complex => c match {
+        case nX: NULLComplexField =>  Nil
+        case _ => check(c);
+      }
     }
 
   /**
@@ -68,17 +70,41 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       // Checks the usage
       checkUsage( r.usage, children )(dl) match {
         case Nil => // No usage error thus we can continue the validation
+          
           // Check the cardinality
-          val r1 = checkCardinality( children, r.cardinality )
-          // Recursively check the children
-          val r2 = children flatMap check
-          r1 ::: r2 ::: acc
+          if(dl.eType == EType.Field && positionHasNull(children)){
+            if(children.length == 1) acc
+            else {
+              val lowR = children minBy ( e => e.instance )
+              Detections.ncardinality(lowR.location, children.length) :: Nil
+            }
+          }
+          else{
+            val r1 = checkCardinality( children, r.cardinality )
+            // Recursively check the children
+            val r2 = children flatMap check
+            r1 ::: r2 ::: acc
+          }
+           
         case xs  => xs ::: acc // Usage problem no further check is necessary
       }
     }
 
     // Check for extra children and return the result
     if( c.hasExtra ) Detections.extra(c.location) :: r else r
+  }
+  
+  private def positionHasNull(l : List[Element]): Boolean = {
+    def loop(ls : List[Element]) = {
+      ls match {
+        case Nil => false
+        case a::xs => a match {
+          case n: NULLComplexField => true
+          case _ => positionHasNull(xs)
+        }
+      }
+    }
+    loop(l)
   }
 
   /**
@@ -111,7 +137,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @return A list of report entries
     */
   private def checkCardinality(l: List[Element], range: Range): List[Entry] =
-    if( l.isEmpty ) Nil
+    if( l.isEmpty ) Nil 
     else {
       // The only reason this is needed is because of field repetition
       val highestRep = l maxBy ( e => e.instance )

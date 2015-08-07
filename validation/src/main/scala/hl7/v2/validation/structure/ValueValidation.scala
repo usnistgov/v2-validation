@@ -22,7 +22,9 @@ object ValueValidation extends EscapeSeqHandler  {
   def checkValue(v: Value, lc: Option[Range], l: Location)
                 (implicit s: Separators): List[Entry] =
     v.isNull match {
-      case true  => Nil //No check if the value is Null
+      case true  => if(l.eType == EType.Field) //No check if the value is Null and the location is a Field
+                      Nil 
+                    else checkFormat(l, v).toList ::: checkLength(l, v, lc).toList 
       case false =>checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
     }
 
