@@ -10,6 +10,6 @@ object Main extends App {
     case Success(s) => 
       val pp = new PrettyPrinter(200, 4)
       println( pp.format( XMLSerializer.serialize( s ) ) )
-    case Failure(f) => println(f.getStackTraceString)
+    case Failure(f) => println("Error Message:\n"+f.getMessage)
   }
 }
