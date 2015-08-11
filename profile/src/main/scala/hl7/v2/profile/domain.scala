@@ -108,6 +108,8 @@ case class Message (
   */
 case class Profile(
     id: String,
+    profileType: String,
+    schemaVersion: String,
     messages : Map[String, Message],
     segments : Map[String, Segment],
     datatypes: Map[String, Datatype]

@@ -2,8 +2,9 @@ package hl7.v2.profile
 
 import org.specs2.Specification
 
-class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
+class XMLDeserializerHelperSpec extends Specification  {
 
+ def is =s2"""
     Deserialization of segment should work as expected $todo
     Deserialization of dynamic mappings should work as expected $todo
     Deserialization of field should work as expected            $field
@@ -11,7 +12,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     Deserialization of requirement should work as expected      $req
     Deserialization of cardinality should work as expected      $card
     Deserialization of length should work as expected           $len
-"""
+  """
 
   def field = XMLDeserializerHelper.field( 1,
       <Field

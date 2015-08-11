@@ -1,7 +1,8 @@
-package hl7.v2.profile
+package ncpdp.script.profile
 
 import java.io.InputStream
 
+import hl7.v2.profile.Profile 
 import hl7.v2.profile.XMLDeserializerHelper.profile
 
 import nist.xml.util.XOMDocumentBuilder
@@ -19,7 +20,7 @@ object XMLDeserializer{
   /**
     * Returns the profile XSD schema as InputStream
     */
-  def xsd: InputStream = getClass.getResourceAsStream("/Profile.xsd")
+  def xsd: InputStream = getClass.getResourceAsStream("/Profile-ncpdp.xsd")
 
   /**
     * Create a profile from XML

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2015 rel. 3 (x64) (http://www.altova.com) by ww (NIST) -->
 <ValueSetLibrary  
-    ValueSetIdentifier=""
+    ValueSetLibraryIdentifier=""
 	Description="Automatically generated vacab for ACK"
 	Name="Vocab for ACK"
 	OrganizationName="HL7 NIST"

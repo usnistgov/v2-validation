@@ -13,7 +13,7 @@ object XMLSerializer {
   //FIXME @Type, @HL7Version and @SchemaVersion are required
   def serialize( p: Profile ): Elem =
     <ConformanceProfile ID={p.id}
-        Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
+        Type={p.profileType} SchemaVersion={p.schemaVersion}
     >
       {
         <Messages>{  p.messages.values  map message  }</Messages>
