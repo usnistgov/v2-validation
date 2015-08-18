@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ConformanceProfile ID="xxx" Type="Constrainable" SchemaVersion="10.6"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="file:///vagrant/project/profile/src/main/resources/Profile.xsd"
+	>
+	
+	<Encodings>
+		<Encoding>EDI</Encoding>
+		<Encoding>XML</Encoding>
+	</Encodings>
+	
+	<Messages>
+		<!--
+		<Message ID="NEWRX" Type="NEWRX" Event="R01" StructID="NRX_R01" Description="confsig-NCPDP-10.6-static-SCRIPT-NEWRX-null-NEWRX-1.8-Final-Sender">
+			<Segment Ref="UNA" Usage="R" Min="1" Max="1"/> 
+			<Segment Ref="UIB" Usage="O" Min="0" Max="1" />
+		</Message>
+		-->
+	</Messages> 
+	
+	<Segments>
+		<Segment ID="Base_PVD" Name="Base_PVD" Description="PVD Segment">
+			<!--<Field Name="Delimiters" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="1" ItemNo="00001"/>-->
+		</Segment>
+	</Segments>
+	
+	<Datatypes>
+		<!-- Generic Types -->
+		<Datatype ID="NM" Name="NM" Description="Numeric"/>
+		<Datatype ID="ST" Name="ST" Description="String Data"/>
+
+		<!--
+		<Datatype ID="DTM" Name="DTM" Description="Date/Time"/>
+		<Datatype ID="SI" Name="SI" Description="Sequence ID"/>
+		<Datatype ID="-" Name="-" Description="withdrawn"/>
+		<Datatype ID="GTS" Name="GTS" Description="General Timing Specification"/>
+		<Datatype ID="TX" Name="TX" Description="Text Data"/>
+		<Datatype ID="TM" Name="TM" Description="Time"/>
+		<Datatype ID="SNM" Name="SNM" Description="String of Telephone Number Digits"/>
+		<Datatype ID="FT" Name="FT" Description="Formatted Text Data"/>
+		<Datatype ID="DT" Name="DT" Description="Date"/>
+		<Datatype ID="DR" Name="DR" Description="Date/Time Range">
+			<Component Name="Range Start Date/Time" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
+			<Component Name="Range End Date/Time" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
+		</Datatype>
+		<Datatype ID="ID" Name="ID" Description="Coded Value for HL7 Defined Tables"/>
+		<Datatype ID="MSG" Name="MSG" Description="Message Type">
+			<Component Name="Message Code" Datatype="ID" Usage="R" MinLength="3" MaxLength="3"/>
+			<Component Name="Trigger Event" Datatype="ID" Usage="R" MinLength="3" MaxLength="3"/>
+			<Component Name="Message Structure" Datatype="ID" Usage="R" MinLength="3" MaxLength="7"/>
+		</Datatype>
+		-->
+		<!-- Message Specific Types-->
+		<!--
+		<Datatype ID="S_SYNTAX_ID" Name="S_SYNTAX_ID" Description="Syntax ID">
+			<Component Name="Syntax identifier" Datatype="ST" Usage="R" MinLength="1" MaxLength="4" />
+			<Component Name="Syntax version number" Datatype="NM" Usage="R" MinLength="1" MaxLength="1" />
+			<Component Name="Service code directory version" Datatype="NM" Usage="X" MinLength="1" MaxLength="*" />
+			<Component Name="Service code directory" Datatype="NM" Usage="X" MinLength="1" MaxLength="*" />
+		</Datatype>
+		-->
+	</Datatypes>
+	
+</ConformanceProfile>
