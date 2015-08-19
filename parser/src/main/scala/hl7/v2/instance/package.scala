@@ -2,12 +2,14 @@ package hl7.v2
 
 package object instance {
 
+/*
   val rs = '~'  // Field repetition separator
   val fs = '|'  // Field separator
   val cs = '^'  // Component separator
   val ss = '&'  // Sub component separator
   val ec = '\\' // Escape character
   val tc = '#'  // Truncation character
+*/
 
   /**
    * Trim the space on right of the string
