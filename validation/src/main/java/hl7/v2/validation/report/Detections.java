@@ -320,7 +320,7 @@ public class Detections {
                                String classification) {
         int line    = l.line();
         int column  = l.column();
-        String path = l.path();
+        String path = l.uidPath();
         return entry(line, column, path, description, category, classification);
     }
 
@@ -329,7 +329,7 @@ public class Detections {
                                Map<String, Object> metaData) {
         int line    = l.line();
         int column  = l.column();
-        String path = l.path();
+        String path = l.uidPath();
         return entry(line, column, path, description, category,
                 classification, stackTrace, metaData);
     }

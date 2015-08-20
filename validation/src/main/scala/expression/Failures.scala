@@ -17,6 +17,19 @@ object Failures extends EscapeSeqHandler {
     val reasons = Reason( nar.location, s"$path is missing"):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
+  
+  def isNull(c: Element, e: isNULL, isField : Boolean): Fail = {
+    val path    = s"${c.location.path}.${e.path}"
+    val r = if(isField) " is not NULL" else " is not a Field";
+    val reasons = Reason( c.location, s"$path "+r):: Nil
+    Fail( Trace( e, reasons ) :: Nil )
+  }
+  
+  def isNull(c: Element, e: isNULL): Fail = {
+    val path    = s"${c.location.path}.${e.path}"
+    val reasons = Reason( c.location, s"$path is missing"):: Nil
+    Fail( Trace( e, reasons ) :: Nil )
+  }
 
   /**
     * Creates and returns a plain text failure stack traces
@@ -155,6 +168,14 @@ object Failures extends EscapeSeqHandler {
   def seqId(e: SetId, c: Element, s: Simple) = {
     val reason = Reason(s.location, s"Expected ${c.instance}, Found ${s.value.raw}")
     Fail( Trace(e, reason :: Nil) :: Nil )
+  }
+  
+  def IZseqId(e: IZSetId, c: Element, s: List[(Simple, Int)]) = {
+    val reasons = s.foldLeft(List[Reason]())({ (acc,l) =>
+      if(l._2 == -1) Reason(l._1.location, s"Value ${l._1.value.raw} is not a number")::acc
+      else Reason(l._1.location, s"Expected ${l._2}, Found ${l._1.value.raw}")::acc
+    })
+    Fail( Trace(e, reasons) :: Nil )
   }
   
   def narrowLocation(c : Element, path : String) : Element = {

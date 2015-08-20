@@ -21,7 +21,9 @@ object AsString {
     case e: FORALL      => forall(e, context)
     case e: Plugin      => plugin(e, context)
     case e: SetId       => setId(e, context)
+    case e: IZSetId       => IZsetId(e, context)
     case e: ValueSet    => valueSet(e, context)
+    case e: isNULL      => isNull(e, context)
   }
 
   private def path(c: Element, p: String) = s"${c.location.path}.$p"
@@ -29,20 +31,29 @@ object AsString {
   private def presence(e: Presence, c: Element) =
     s"${ path(c, e.path) } SHALL be present"
 
+  private def isNull(e: isNULL, c: Element) =
+    s"${ path(c, e.path) } SHALL be NULL"
+  
   private def plainText(e: PlainText, c: Element) = {
     val cs = if (e.ignoreCase) "(case insensitive)"
-      if(e.atLeastOnce) " At least one element from "
-    s"${path(c, e.path)} SHALL be equal to '${e.text}' $cs"
+    val at = if(e.atLeastOnce) "At least one element from "
+    s"$at${path(c, e.path)} SHALL be equal to '${e.text}' $cs"
   }
 
-  private def format(e: Format, c: Element) =
-    s"${ path(c, e.path) } SHALL match '${e.pattern}' regular expression"
+  private def format(e: Format, c: Element) = {
+    val at = if(e.atLeastOnce) "At least one element from " 
+    s"$at${ path(c, e.path) } SHALL match '${e.pattern}' regular expression"  
+  }
+  private def numberList(e: NumberList, c: Element) = {
+    val at = if(e.atLeastOnce) "At least one element from " 
+    s"$at${ path(c, e.path) } SHALL be one of ${e.csv.mkString("{", ", ", "}")}"
+  }
 
-  private def numberList(e: NumberList, c: Element) =
-    s"${ path(c, e.path) } SHALL be one of ${e.csv.mkString("{", ", ", "}")}"
-
-  private def stringList(e: StringList, c: Element) =
-    s"${ path(c, e.path) } SHALL be one of ${e.csv.mkString("{", ", ", "}")}"
+  private def stringList(e: StringList, c: Element) = {
+    val at = if(e.atLeastOnce) "At least one element from " 
+    s"$at${ path(c, e.path) } SHALL be one of ${e.csv.mkString("{", ", ", "}")}"
+  }
+    
 
   private def simpleValue(e: SimpleValue, c: Element) =
     s"${ path(c, e.path) } SHALL be ${e.operator} '${e.value}'"
@@ -71,6 +82,8 @@ object AsString {
   private def plugin(e: Plugin, c: Element) = s"$e'"
 
   private def setId(e: SetId, c: Element) = s"$e # Context: ${c.location.prettyString}"
+  
+  private def IZsetId(e: IZSetId, c: Element) = s"$e # Context: ${c.location.prettyString}"
 
   private def valueSet(e: ValueSet, c: Element) =
     s"${ path(c, e.path) } SHALL be valued from the value set ${e.spec.valueSetId
