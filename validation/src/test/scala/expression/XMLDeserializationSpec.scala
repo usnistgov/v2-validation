@@ -28,6 +28,7 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     Deserialization of imply expression should work as expected           $pe12
     Deserialization of exist expression should work as expected           $pe13
     Deserialization of forall expression should work as expected          $pe14
+    Deserialization of isNULL expression should work as expected          $pe15
   """
 
   def pe1 = expression( <Presence Path="1[1]"/> ) === Presence( "1[1]" ) 
@@ -65,9 +66,9 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     e1 === SimpleValue( "1[1]", Operator.NE, Text("XX") ) and e2 === SimpleValue( "1[1]", Operator.NE, Number("XX") )
   }
 
-  def pe8 = expression( <AND><Presence Path="1[1]"/><Presence Path="2[2]"/></AND> ) === AND( Presence("1[1]"), Presence("2[2]") )
+  def pe8  = expression( <AND><Presence Path="1[1]"/><Presence Path="2[2]"/></AND> ) === AND( Presence("1[1]"), Presence("2[2]") )
 
-  def pe9 = expression( <OR><Presence Path="1[1]"/><Presence Path="2[2]"/></OR> ) === OR( Presence("1[1]"), Presence("2[2]") )
+  def pe9  = expression( <OR><Presence Path="1[1]"/><Presence Path="2[2]"/></OR> ) === OR( Presence("1[1]"), Presence("2[2]") )
 
   def pe10 = expression( <NOT><Presence Path="1[1]"/></NOT> ) === NOT( Presence("1[1]") )
 
@@ -79,6 +80,8 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
 
   def pe14 = expression( <FORALL><Presence Path="1[1]"/><Presence Path="2[2]"/></FORALL> ) === FORALL( Presence("1[1]"), Presence("2[2]") )
 
+  def pe15 = expression( <isNULL  Path="1[1]"/> ) === isNULL("1[1]")
+  
   private implicit def toXOM( e: scala.xml.Node ): nu.xom.Element = {
     val r = new nu.xom.Element( e.label )
     // process the attributes

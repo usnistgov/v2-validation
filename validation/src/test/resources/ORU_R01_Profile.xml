@@ -49,12 +49,12 @@
     <Datatype ID="CX" Name="CX" Description="Extended Composite ID with Check Digit">
       <Component Name="ID Number" Datatype="ST" Usage="X" MinLength="1" MaxLength="*" ConfLength="15" />
       <Component Name="Identifier Check Digit" Datatype="ST" Usage="X" MinLength="1" MaxLength="*" ConfLength="4" />
-      <Component Name="Check Digit Scheme" Datatype="ST" Usage="X" MinLength="3" MaxLength="3"/>
-      <Component Name="Assigning Authority" Datatype="HD" Usage="C" MinLength="1" MaxLength="*"/>
+      <Component Name="Check Digit Scheme" Datatype="ST" Usage="C" MinLength="3" MaxLength="3"/>
+      <Component Name="Assigning Authority" Datatype="HD" Usage="C" MinLength="3" MaxLength="*"/>
     </Datatype>
     <Datatype ID="HD" Name="HD" Description="Hierarchic Designator">
       <Component Name="Namespace ID" Datatype="ST" Usage="W" MinLength="1" MaxLength="*" ConfLength="20" />
-      <Component Name="Universal ID" Datatype="ST" Usage="R" MinLength="1" MaxLength="*" ConfLength="199" />
+      <Component Name="Universal ID" Datatype="ST" Usage="R" MinLength="3" MaxLength="*" ConfLength="199" />
       <Component Name="Universal ID Type" Datatype="ST" Usage="X" MinLength="1" MaxLength="6"/>
     </Datatype>
   </Datatypes>

@@ -20,9 +20,13 @@ object DataElement {
       case false => Some {
         d match {
           case p: Primitive => SimpleField(p, r, l, i, Value(p, v))
-          case c: Composite =>
+          case c: Composite => if(isNull(v)){
+            NULLComplexField(c,r,l,i)
+          }
+          else {
             val (hasExtra, components) = children(l, c.components, v, s.cs)
-            ComplexField(c, r, l, i, components, hasExtra)
+            ComplexField(c, r, l, i, components, hasExtra) 
+          }
         }
       }
     }
@@ -56,12 +60,12 @@ object DataElement {
   private def children(l: Location, ml: List[CM], v: String, sep: Char)
                       (implicit s: Separators): (Boolean, List[Component]) = {
     val max = ml.size
-    val vs = if( isNull(v) ) Array.fill(max)(l.column -> "\"\"") else split(sep, v, l.column)
+    val vs = split(sep, v, l.column)
     val hasExtra = vs.size > max
     val _children = ml zip vs map { t =>
       val (m, (col, vv)) = t
       val pos = m.req.position
-      val loc = l.copy( eType(l.path), desc=m.name, path=s"${l.path}.$pos", column=col )
+      val loc = l.copy( eType(l.path), desc=m.name, path=s"${l.path}.$pos", column=col, uidPath = s"${l.uidPath}.$pos" )
       component( m.datatype, m.req, loc, vv )
     }
     (hasExtra, _children.flatten)

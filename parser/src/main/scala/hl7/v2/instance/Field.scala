@@ -37,3 +37,17 @@ case class ComplexField(
 
   def reqs = datatype.reqs
 }
+
+/**
+  * Class representing a complex field with a null value
+  */
+case class NULLComplexField (
+      datatype: Composite,
+      req: Req,
+      location: Location,
+      instance: Int
+  ) extends Field with Complex {
+  def reqs = datatype.reqs
+  def children = Nil
+  def hasExtra = false
+}
