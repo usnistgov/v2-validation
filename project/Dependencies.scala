@@ -5,8 +5,7 @@ object Dependencies {
   val resolutionRepos = Seq(
     "jitpack.io" at "https://jitpack.io",
     "NIST nexus" at "http://vm-070.nist.gov:8081/nexus/content/groups/public",
-    "Local Maven Repository" at "file:///vagrant/.m2/repository"//,
-    //"Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
+    "Local Maven Repository" at "file:///vagrant/.m2/repository"
   )
 
   def compile   (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "compile")
