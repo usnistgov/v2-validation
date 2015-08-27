@@ -29,13 +29,13 @@ object NCPDPPreProcessor {
     */
   def process(message: String): Try[PPR] =
     splitOnUNA(message) match {
-      case (beforeMSH, Nil) =>
+      case (beforeUNA, Nil) =>
         Failure( new Exception("No UNA Segment found in the message.") )
-      case (beforeMSH, xs ) =>
+      case (beforeUNA, xs ) =>
         getSeparators( xs.head._2 ) map { separators =>
           implicit val fs = separators.fs
           val (valid, invalid) = partition( xs )
-          PPR(valid, beforeMSH:::invalid, separators)
+          PPR(valid, beforeUNA:::invalid, separators)
         }
     }
 
