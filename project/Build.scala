@@ -19,6 +19,11 @@ object Build extends Build {
     .aggregate(profile, parser, `validation`)
     .settings(basicSettings: _*)
     .settings(noPublishing: _*)
+    .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) => 
+      Classpaths.publishConfig(arts, None, resolverName = m2Repo.name, checksums = cs, logging = level) 
+   }, 
+   publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
+   otherResolvers += m2Repo )
 
   //----------------------------------------------------------------------------
   // Modules
@@ -31,16 +36,31 @@ object Build extends Build {
         compile(`xml-util`) ++
         test( spec2 )
     )
+    .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) => 
+      Classpaths.publishConfig(arts, None, resolverName = m2Repo.name, checksums = cs, logging = level) 
+   }, 
+   publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
+   otherResolvers += m2Repo )
 
   lazy val parser = Project("hl7-v2-parser", file("parser"))
     .dependsOn( profile % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
+    .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) => 
+      Classpaths.publishConfig(arts, None, resolverName = m2Repo.name, checksums = cs, logging = level) 
+   }, 
+   publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
+   otherResolvers += m2Repo )
 
   lazy val validation = Project("hl7-v2-validation", file("validation"))
     .dependsOn( parser % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
+    .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) => 
+      Classpaths.publishConfig(arts, None, resolverName = m2Repo.name, checksums = cs, logging = level) 
+   }, 
+   publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
+   otherResolvers += m2Repo )
 
 }
