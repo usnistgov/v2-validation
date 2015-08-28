@@ -7,7 +7,7 @@ import hl7.v2.profile.{Range, XMLDeserializer}
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.ValueSet
 import org.specs2.Specification
-
+import hl7.v2.instance.Query._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
@@ -44,7 +44,6 @@ trait StructValidationSpec
     assert(r.isSuccess, "[Error] An error occurred while creating the profile.")
     r.get
   }
-
   val mm = profile.messages.getOrElse("ORU_R01",
                            throw new Error("Unable to find the message model") )
 
@@ -57,7 +56,6 @@ trait StructValidationSpec
                /PID|11||~^^^&3.4.2
                /UAC
                /UAC""".stripMargin('/')
-
     validate(m) === Nil
   }
 
@@ -83,14 +81,13 @@ trait StructValidationSpec
                /SFT""".stripMargin('/')
     val expected =
       List(
-          W(EType.Segment, "Software Segment", "SFT", 2, 1),
-          X(EType.Segment, "User Authentication Credential Segment", "UAC",3 , 1),
-          R(EType.Field, "Set ID - PID", "PID-1", 4,1),
-          W(EType.Field, "Patient ID", "PID-2", 4, 6),
-          X(EType.Component, "ID Number", "PID-3.1", 4, 9),
-          X(EType.Group, "ORDER", "ORDER", 7, 1)
+          W(EType.Segment, "Software Segment", "SFT", 2, 1,"SFT[1]"),
+          X(EType.Segment, "User Authentication Credential Segment", "UAC",3 , 1,"UAC[1]"),
+          R(EType.Field, "Set ID - PID", "PID-1", 4,1,"PID[1]"),
+          W(EType.Field, "Patient ID", "PID-2", 4, 6,"PID[1]-2[1]"),
+          X(EType.Component, "ID Number", "PID-3.1", 4, 9,"PID[1]-3[2].1"),
+          X(EType.Group, "ORDER", "ORDER", 7, 1,"ORDER[1]")
       )
-
     validate(m) must containTheSameElementsAs( expected )
   }
 
@@ -114,11 +111,11 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected =
       List(
-        MaxC(EType.Group, "PATIENT", "PATIENT", 7, 1, 3, Range(1, "2")),
-        MaxC(EType.Field, "Patient Identifier List", "PID-3", 5, 12, 4, Range(2, "3")),
-        MinC(EType.Segment, "User Authentication Credential Segment","UAC",6,1,1,Range(2,"2"))
+        MaxC(EType.Group, "PATIENT", "PATIENT", 7, 1, 3, Range(1, "2"), "PATIENT[3]"),
+        MaxC(EType.Field, "Patient Identifier List", "PID-3", 5, 12, 4, Range(2, "3"),"PID[1]-3[4]"),
+        MinC(EType.Segment, "User Authentication Credential Segment","UAC",6,1,1,Range(2,"2"),"UAC[1]")
       )
-
+      
     validate(m) must containTheSameElementsAs( expected )
   }
 
@@ -138,8 +135,8 @@ trait StructValidationSpec
                /UAC
                /UAC""".stripMargin('/')
     val expected = List(
-            Len(EType.Field, "Set ID - PID", "PID-1", 2, 5, "1", Range(2, "3")),
-            Len(EType.Field, "Set ID - PID", "PID-1", 5, 5, "333|", Range(2, "3"))
+            Len(EType.Field, "Set ID - PID", "PID-1", 2, 5, "1", Range(2, "3"),"PID[1]-1[1]"),
+            Len(EType.Field, "Set ID - PID", "PID-1", 5, 5, "333|", Range(2, "3"),"PID[1]-1[1]")
     )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -199,10 +196,9 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected =
       List(
-        Detections.extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10) ),
-        Detections.extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13) )
+        Detections.extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10,"PID[1]-3[2]") ),
+        Detections.extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13,"PID[1]-3[2].4") )
       )
-
     validate(m) must containTheSameElementsAs( expected )
   }
 
@@ -219,7 +215,7 @@ trait StructValidationSpec
                 /UAC""".stripMargin('/')
     val expected =
       List(
-        Detections.unescaped( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5) )
+        Detections.unescaped( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5,"PID[1]-1[1]") )
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -231,17 +227,20 @@ trait StructValidationSpec
     case Failure(e) => throw e
   }
 
-  private def R(et: EType, d: String, p: String, l: Int, c: Int) = Detections.rusage( Location(et, d, p, l, c) )
-  private def X(et: EType, d: String, p: String, l: Int, c: Int) = Detections.xusage( Location(et, d, p, l, c) )
-  private def W(et: EType, d: String, p: String, l: Int, c: Int) = Detections.wusage( Location(et, d, p, l, c) )
+  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c, uid))
+  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c,uid))
+  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c, uid))
 
-  private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
-    Detections.cardinality(Location(et, d, p, l, c), r, i)
+  private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
+    Detections.cardinality(Location(et, d, p, l, c, uid), r, i)
 
-  private def MinC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range) =
-    Detections.cardinality(Location(et, d, p, l, c), r, i)
+  private def MinC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
+    Detections.cardinality(Location(et, d, p, l, c, uid), r, i)
 
-  private def Len(et: EType, d: String, p: String, l: Int, c: Int, v: String, r: Range) =
-    Detections.length(Location(et, d, p, l, c), r, v)
+  private def Len(et: EType, d: String, p: String, l: Int, c: Int, v: String, r: Range, uid : String) =
+    Detections.length(Location(et, d, p, l, c, uid), r, v)
+  
+  private def NullCard(et: EType, d: String, p: String, l: Int, c: Int, i: Int, uid : String) =
+    Detections.ncardinality(Location(et, d, p, l, c, uid), i)
 
 }
