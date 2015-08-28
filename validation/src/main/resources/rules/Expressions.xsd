@@ -198,6 +198,11 @@
 		<xs:attribute name="Path" type="PathType" use="required"/>
 	</xs:complexType>
 	
+	<xs:complexType name="IZSetIdType">
+		<xs:attribute name="Parent" type="PathType" use="required"/>
+		<xs:attribute name="Element" type="PathType" use="required"/>
+	</xs:complexType>
+	
 	<xs:group name="ExpressionGroup">
 		<xs:choice>
 			<xs:element name="Presence" type="PresenceType" minOccurs="1" maxOccurs="1"/>
@@ -222,6 +227,7 @@
 			<xs:element name="FORALL" type="ForallType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="EXIST" type="ExistType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="SetID" type="SetIdType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="IZSetID" type="IZSetIdType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="Plugin" type="PluginType" minOccurs="1" maxOccurs="1"/>
 		</xs:choice>
 	</xs:group>
