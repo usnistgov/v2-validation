@@ -1,6 +1,6 @@
 package hl7.v2.validation.structure
 
-import hl7.v2.instance.{Location, Number, Separators, Text}
+import hl7.v2.instance._
 import hl7.v2.profile.Range
 import hl7.v2.validation.report.Detections
 import hl7.v2.validation.structure.ValueValidation._
@@ -10,7 +10,7 @@ class ValueValidationSpec extends Specification { def is = s2"""
 
   Value Validation Specification (Length, Format and Separator in Value )
 
-    Value validation should not report any error if the value is Null  $e1
+    Value validation should not report any error if the value is Null and the location is a Field  $e1
     Value validation should check and report the format errors         $e2
     Value validation should check the use of unescaped separators      $e3
     Value validation should check the length constraint                $e4
@@ -19,7 +19,7 @@ class ValueValidationSpec extends Specification { def is = s2"""
 """
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
-  val loc = Location(null, "The description", "The path", 1, 1)
+  val loc = Location(EType.Field, "The description", "The path", 1, 1)
   val lcs = Some( Range(2, "3") )
   val lcn = None
 

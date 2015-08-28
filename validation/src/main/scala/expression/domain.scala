@@ -19,6 +19,8 @@ case class SimpleValue( path: String, operator: Operator, value: Value ) extends
 
 case class PathValue( path1: String, operator: Operator, path2: String ) extends Expression
 
+case class isNULL(path: String) extends Expression
+
 // Combination expressions
 case class AND( exp1: Expression, exp2: Expression ) extends Expression
 
@@ -39,5 +41,7 @@ case class EXIST( list: Expression* ) extends Expression
 case class Plugin( clazz: String ) extends Expression
 
 case class SetId(path: String) extends Expression
+
+case class IZSetId(parent: String, element : String) extends Expression
 
 case class ValueSet(path: String, spec: ValueSetSpec) extends Expression

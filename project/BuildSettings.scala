@@ -4,7 +4,7 @@ import Keys._
 object BuildSettings {
 
   lazy val basicSettings = Seq(
-    version              := "1.0.0-beta-4-SNAPSHOT",
+    version              := "1.0.0-beta-10.2-SNAPSHOT",
     //FIXME homepage             := Some(new URL("xxx")),
     organization         := "gov.nist",
     organizationHomepage := Some(new URL("http://nist.gov")),
@@ -47,16 +47,17 @@ object BuildSettings {
     publishTo    := None
   )
 
-    lazy val publishM2Configuration = 
+  lazy val publishM2Configuration = 
    TaskKey[PublishConfiguration]("publish-m2-configuration", 
      "Configuration for publishing to the .m2 repository.") 
 
-lazy val publishM2 = 
+  lazy val publishM2 = 
    TaskKey[Unit]("publish-m2", 
       "Publishes artifacts to the .m2 repository.") 
 
-lazy val m2Repo = 
+  lazy val m2Repo = 
    Resolver.file("publish-m2-local", 
       file("/vagrant/.m2") )
 
 }
+
