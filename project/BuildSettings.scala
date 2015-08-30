@@ -47,6 +47,7 @@ object BuildSettings {
     publishTo    := None
   )
 
+/*
   lazy val publishM2Configuration = 
    TaskKey[PublishConfiguration]("publish-m2-configuration", 
      "Configuration for publishing to the .m2 repository.") 
@@ -54,9 +55,10 @@ object BuildSettings {
   lazy val publishM2 = 
    TaskKey[Unit]("publish-m2", 
       "Publishes artifacts to the .m2 repository.") 
+*/
 
   lazy val m2Repo = 
-   Resolver.file("publish-m2-local", 
+   Resolver.file("publish-m2-custom-local", 
       file("/vagrant/.m2") )
 
 }
