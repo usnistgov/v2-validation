@@ -2,6 +2,7 @@ package hl7.v2.profile
 
 import nist.xml.util.XOMExtensions.{ExtendedElement, ExtendedElements}
 import nu.xom.{Element, Elements}
+import scala.xml.PrettyPrinter
 
 object XMLDeserializerHelper {
 
@@ -17,7 +18,10 @@ object XMLDeserializerHelper {
     implicit val dts = datatypes( dtElems )
     implicit val sgs = segments( sgElems )
     val mgs = messages( mgElems )
-    Profile( id, typ, schemaVer, mgs, sgs, dts )
+    val p = Profile( id, typ, schemaVer, mgs, sgs, dts )
+    val pp = new PrettyPrinter(200, 4)
+    println( pp.format( XMLSerializer.serialize( p ) ) )
+    return p
   }
 
   def messages( elems: Elements )(implicit map: Map[String, Segment]) =

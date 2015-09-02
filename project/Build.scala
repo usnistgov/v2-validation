@@ -29,7 +29,7 @@ object Build extends Build {
   // Modules
   //----------------------------------------------------------------------------
 
-  lazy val profile = Project("hl7-v2-profile", file("profile"))
+  lazy val profile = Project("edi-profile", file("profile"))
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++=
@@ -42,7 +42,7 @@ object Build extends Build {
    publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
    otherResolvers += m2Repo )
 
-  lazy val parser = Project("hl7-v2-parser", file("parser"))
+  lazy val parser = Project("edi-parser", file("parser"))
     .dependsOn( profile % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
@@ -52,7 +52,7 @@ object Build extends Build {
    publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
    otherResolvers += m2Repo )
 
-  lazy val validation = Project("hl7-v2-validation", file("validation"))
+  lazy val validation = Project("edi-validation", file("validation"))
     .dependsOn( parser % "test->test; compile->compile" )
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)

@@ -4,20 +4,20 @@
     <Messages>
         <Message ID="NEWRX" Type="SCRIPT" Event="NEWRX" StructID="NEW_RX1" Description="New prescription message">
             <Segment Ref="UNA_NEWRX" Usage="C" Min="0" Max="1" />
-            <Segment Ref="UIB_NEWRX" Usage="C" Min="1" Max="1" />
-            <Segment Ref="UIH_NEWRX" Usage="C" Min="1" Max="1" />
+            <Segment Ref="UIB_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIH_NEWRX" Usage="R" Min="1" Max="1" />
             <Segment Ref="REQ_NEWRX" Usage="C" Min="0" Max="1" />
             <Segment Ref="PVD_P2_NEWRX" Usage="C" Min="0" Max="1" />
-            <Segment Ref="PVD_PC_NEWRX" Usage="C" Min="1" Max="1" />
+            <Segment Ref="PVD_PC_NEWRX" Usage="R" Min="1" Max="1" />
             <Segment Ref="PVD_SU_NEWRX" Usage="C" Min="0" Max="1" />
             <Segment Ref="PVD_SK_NEWRX" Usage="C" Min="0" Max="1" />
-            <Segment Ref="PTT_NEWRX" Usage="C" Min="1" Max="1" />
+            <Segment Ref="PTT_NEWRX" Usage="R" Min="1" Max="1" />
             <Segment Ref="COO_NEWRX" Usage="C" Min="0" Max="3" />
-            <Segment Ref="DRU_P_NEWRX" Usage="C" Min="1" Max="1" />
+            <Segment Ref="DRU_P_NEWRX" Usage="R" Min="1" Max="1" />
             <Segment Ref="SIG_P_NEWRX" Usage="C" Min="0" Max="*" />
             <Segment Ref="OBS_NEWRX" Usage="C" Min="0" Max="1" />
-            <Segment Ref="UIT_NEWRX" Usage="C" Min="1" Max="1" />
-            <Segment Ref="UIZ_NEWRX" Usage="C" Min="1" Max="1" />
+            <Segment Ref="UIT_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIZ_NEWRX" Usage="R" Min="1" Max="1" />
         </Message>
     </Messages>
     <Segments>
