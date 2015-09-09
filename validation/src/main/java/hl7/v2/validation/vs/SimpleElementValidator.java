@@ -39,8 +39,14 @@ public class SimpleElementValidator {
      */
     public static Entry check(Location location, String value, ValueSetSpec spec,
                               ValueSetLibrary library) {
+    	
         if( spec == null )
             return null;
+        
+        if(spec.valueSetId().contains(":")){
+        	return null;
+        }
+    		
 
         // Return a detection if the value set is excluded from the validation
         if( library.isExcludedFromTheValidation( spec.valueSetId() ) )

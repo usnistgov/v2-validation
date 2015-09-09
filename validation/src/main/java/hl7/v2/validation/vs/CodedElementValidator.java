@@ -49,6 +49,9 @@ public class CodedElementValidator {
     public static Entry check(Complex c, ValueSetSpec spec, ValueSetLibrary library) {
         if( !isCodedElement(c) )
             return null;
+        
+        if(spec.valueSetId().contains(":"))
+        	return null;
 
         // Return a detection if the value set is excluded from the validation
         if( library.isExcludedFromTheValidation( spec.valueSetId() ) )
