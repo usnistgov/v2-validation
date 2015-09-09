@@ -112,8 +112,8 @@ trait StructValidationSpec
     val expected =
       List(
         MaxC(EType.Group, "PATIENT", "PATIENT", 7, 1, 3, Range(1, "2"), "PATIENT[3]"),
-        MaxC(EType.Field, "Patient Identifier List", "PID-3", 5, 12, 4, Range(2, "3"),"PID[1]-3[4]"),
-        MinC(EType.Segment, "User Authentication Credential Segment","UAC",6,1,1,Range(2,"2"),"UAC[1]")
+        MaxC(EType.Field, "Patient Identifier List", "PID-3", 5, 12, 4, Range(2, "3"),"PID[2]-3[4]"),
+        MinC(EType.Segment, "User Authentication Credential Segment","UAC",6,1,1,Range(2,"2"),"UAC[3]")
       )
       
     validate(m) must containTheSameElementsAs( expected )
@@ -136,7 +136,7 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected = List(
             Len(EType.Field, "Set ID - PID", "PID-1", 2, 5, "1", Range(2, "3"),"PID[1]-1[1]"),
-            Len(EType.Field, "Set ID - PID", "PID-1", 5, 5, "333|", Range(2, "3"),"PID[1]-1[1]")
+            Len(EType.Field, "Set ID - PID", "PID-1", 5, 5, "333|", Range(2, "3"),"PID[2]-1[1]")
     )
 
     validate(m) must containTheSameElementsAs( expected )

@@ -24,6 +24,7 @@ trait DefaultParser extends Parser {
     PreProcessor.process(message) map { t =>
       val PPR(valid, invalid, separators) = t
       implicit val s = separators
+      implicit val ctr = Counter(scala.collection.mutable.Map[String,Int]())
       val(children, unexpected) = processChildren( model.structure , valid)
       val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
       val ils = invalid map ( x => Line( x._1, x._2 ) ) //FIXME Update PreProcessor to use Line
@@ -42,7 +43,7 @@ trait DefaultParser extends Parser {
     * of the list of children elements and the remaining stack.
     */
   private def processChildren(models: List[SGM], stack: Stack)
-                             (implicit separators: Separators): (LSG, Stack) = {
+                             (implicit separators: Separators, ctr : Counter) : (LSG, Stack) = {
     var isHead = true
     models.foldLeft( (List[SegOrGroup](), stack) ) { (acc, x) =>
       x match {
@@ -58,7 +59,7 @@ trait DefaultParser extends Parser {
     }}
 
   private def processGroup(gm: GM, stack: Stack)
-                          (implicit separators: Separators): (List[Group], Stack) = {
+                          (implicit separators: Separators, ctr : Counter): (List[Group], Stack) = {
 
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) =
       s match {
@@ -73,7 +74,7 @@ trait DefaultParser extends Parser {
   }
 
   private def processSegment(sm: SM, stack: Stack, isHead: Boolean)
-                            (implicit s: Separators): (List[Segment], Stack) =
+                            (implicit s: Separators, ctr : Counter): (List[Segment], Stack) =
     if(isHead) ( segment(sm, stack.head, 1) :: Nil, stack.tail )
     else {
       val(x, remainingStack) = stack span (l => isExpected(l, sm))
@@ -89,7 +90,7 @@ trait DefaultParser extends Parser {
     * @param s - The separators
     * @return A segment instance
     */
-  private def segment(m: SM, l: Line, i: Int)(implicit s: Separators) =
+  private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr : Counter) =
     Segment(m, l._2, i, l._1)
 
   private def isExpected( l: Line, m: GM ) = l._2 startsWith headName(m)

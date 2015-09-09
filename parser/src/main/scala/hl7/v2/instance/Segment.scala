@@ -31,11 +31,12 @@ object Segment extends EscapeSeqHandler {
     * @return A segment
     */
   def apply(m: SM, v: String, i: Int, l: Int)
-           (implicit s: Separators): Segment = {
+           (implicit s: Separators, ctr : Counter): Segment = {
     require( isValid( s.fs, v ), s"Invalid segment instance '$v'" )
     val name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
-    val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$i]")
+    val nb = ctr.countFor(name);
+    val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$nb]")
     val vs  = split( s.fs, v drop 4 , 5)
     // Attempt to resolve dynamic data types abort if errors
     val fml = resolveDyn(m.ref.fields, vs, m.ref.mappings).getOrElse(m.ref.fields)//m.ref.fields
