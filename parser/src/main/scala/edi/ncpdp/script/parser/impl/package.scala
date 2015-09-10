@@ -6,14 +6,21 @@ package object impl {
 
   val lineBreak = """\r?\n|\r\n?|\r\n""".r
 
-  def validLinesRegex(implicit fs: Char) = s"^[A-Z]{2}[A-Z0-9](${quote(fs)}.*)*".r
+  def validLinesRegex(implicit fs: Char, cs: String) = s"^([A-Z]{2}[A-Z0-9](${quote(fs)}.*)|UNA(${quoteS(cs)}.*))*".r
 
   def quote(c: Char) = java.util.regex.Pattern.quote( c.toString )
+
+  def quoteS(c: String) = java.util.regex.Pattern.quote( c )
 
   /**
     * Trim the space on right of the string
     */
   def trimRight(s: String) = s.replaceAll("\\s+$", "")
+
+  /**
+    * Trim the line breaks on left of the string
+    */
+  def trimLineBreakLeft(s: String) = s.replaceAll("^\r?\n|\r\n?|\r\n","")
 
   /**
     * Splits the string `s' on the character `sep' and returns a tuple of

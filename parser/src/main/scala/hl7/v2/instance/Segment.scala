@@ -32,7 +32,7 @@ object Segment extends EscapeSeqHandler {
     */
   def apply(m: SM, v: String, i: Int, l: Int)
            (implicit s: Separators): Segment = {
-    require( isValid( s.fs, v ), s"Invalid segment instance '$v'" )
+    require( isValid( s.fs, s.cs, v ), s"Invalid segment instance '$v'" )
     val name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
     val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$i]")
@@ -98,14 +98,14 @@ object Segment extends EscapeSeqHandler {
   /**
     * Regular expression for matching valid segment instance
     */
-  private def segFormat(fs: Char) = s"[A-Z]{2}[A-Z0-9](?:\\Q$fs\\E.*)*".r
+  private def segFormat(fs: Char, cs: Char) = s"([A-Z]{2}[A-Z0-9](?:\\Q$fs\\E.*)|UNA(?:\\Q$cs\\E.*))*".r
 
   /**
     * Returns true if s is a valid segment instance
     * @param s - The segment as string
     * @return True if s is a valid segment instance
     */
-  private def isValid( fs: Char, s: String ) = segFormat(fs).pattern.matcher( s ).matches
+  private def isValid( fs: Char, cs: Char, s: String ) = segFormat(fs,cs).pattern.matcher( s ).matches
 
   /**
     * Creates and returns a location from the parent location

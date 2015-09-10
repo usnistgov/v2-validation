@@ -12,7 +12,7 @@ trait EscapeSeqHandler {
     */
   def escape(s: String)(implicit  separators: Separators): String = {
 
-    val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
+    val( fs, cs, rs, ec, ss, otc, dn, ts) = Separators.unapply( separators ).get
 
     val r = s.replaceAllLiterally( ec.toString, s"${ec}E$ec" )
              .replaceAllLiterally( fs.toString, s"${ec}F$ec" )
@@ -34,7 +34,7 @@ trait EscapeSeqHandler {
     */
   def unescape(s: String)(implicit  separators: Separators): String = {
 
-    val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
+    val( fs, cs, rs, ec, ss, otc, dn, ts) = Separators.unapply( separators ).get
 
     val escapeTruncation = otc match { case None => false case _ => true }
     val efs = s"${ec}F$ec"

@@ -28,53 +28,99 @@ object NCPDPPreProcessor {
     *    3) A character is use twice as a separator
     */
   def process(message: String): Try[PPR] =
-    splitOnUNA(message) match {
-      case (beforeUNA, Nil) =>
-        Failure( new Exception("No UNA Segment found in the message.") )
-      case (beforeUNA, xs ) =>
-        getSeparators( xs.head._2 ) map { separators =>
-          implicit val fs = separators.fs
-          val (valid, invalid) = partition( xs )
-          PPR(valid, beforeUNA:::invalid, separators)
+      splitOnUNA(message) match {
+      case (Nil, s) =>
+        Failure( new Exception("Issue.") )
+      case (xs, s) =>
+        implicit val fs = s.fs
+        implicit val cs = s.cs.toString
+        println("fs:^"+fs.toString+"^")
+        println("cs:^"+cs+"^")
+        partition( xs ) match {
+          case (Nil, invalid) =>
+            println("invalid: "+invalid)
+            Failure( new Exception("No valid segments in this message") )
+          case (valid, invalid) =>
+            println("valid: "+valid)
+            println("invalid: "+invalid)
+            Success(PPR(valid, invalid, s))
         }
-    }
+    }  
+    
 
   /**
     * Splits the message into lines and returns a pair of list of lines.
     * The first list will contain all lines before the MSH segment
     */
-  private def splitOnUNA( message: String ): (List[Line], List[Line]) =
-    ( (Stream from 1) zip lineBreak.split( message ) ).toList span { l =>
-      !(l._2 startsWith "UNA")
+  private def splitOnUNA( message: String): (List[Line], Separators) = {
+    getSeparators( message ) map { s =>
+      val ts = s.ts.get.toString
+      println("ts:^"+ts+"^")
+      val lines = ( (Stream from 1) zip ts.r.split( message ) ).toList.map(l=>(l._1,trimLineBreakLeft(l._2)))
+      (lines, s)
+    } match {
+      case Success(p) => p
+      case Failure(e) => throw e
     }
+  }
 
   /**
     * Partition the list of lines into list of valid and invalid lines.
     */
   private def partition(list: List[Line])
-                       (implicit fs: Char): (List[Line], List[Line]) =
-    list partition (l => validLinesRegex.pattern.matcher(l._2).matches)
+                       (implicit fs: Char, cs: String): (List[Line], List[Line]) =
+    list partition (l => {
+      val ml = trimLineBreakLeft(l._2)
+      println("ml about to be matched:\n^"+ml+"^")
+      validLinesRegex.pattern.matcher(ml).matches
+    })
+      
 
   /**
     * Returns the separators defined in MSH.2 or a Failure
     */
-  private def getSeparators( msh: String ): Try[Separators] = try {
-    val fs = msh(3)
-    val cs = msh(4)
-    val rs = msh(5)
-    val ec = msh(6)
-    val ss = msh(7)
-    val x  = msh(8)
-    val tc = if( x == fs ) None else Some(x)
-    val separators = Separators(fs, cs, rs, ec, ss, tc)
+  private def getSeparators( message: String ): Try[Separators] = try {
+
+    println("getting separators for message: " + message)
+
+    if (!message.startsWith("UNA")) {
+      Failure(
+        new Exception( s"The message doesn't start with a UNA segment")
+      )
+    }
+    if (message.length() < 9){
+      Failure(
+        new Exception( s"The UNA segment length is less than 9 characters")
+      )
+    }
+
+    //UNA:+./*'
+    val cs = message(3)
+    val fs = message(4)
+    val ec = message(6)
+    val rs = message(7)
+    
+    val ss = '^'
+    val tc = None
+
+    val dnChar = message(5)
+    val tsChar = message(8)
+    val dn = if( dnChar != '\0' ) Some(dnChar) else None
+    val ts = if( tsChar != '\0' ) Some(tsChar) else None
+
+    //val ss = msh(7)
+    //val x  = msh(8)
+    //val tc = if( x == fs ) None else Some(x)
+    
+    val separators = Separators(fs, cs, rs, ec, ss, tc, dn, ts)
+
     separators.getDuplicates match {
       case Nil => Success( separators )
       case xs  => Failure(
-        new Exception( s"The following character(s) ['${xs.mkString("', '")
-        }'] has/have been used more than once as a separator.")
+        new Exception( s"The following character(s) ['${xs.mkString("', '")}'] has/have been used more than once as a separator.")
       )
     }
   } catch {
-    case _: Throwable => Failure( new Exception("The MSH line contains less than 9 characters.") )
+    case e: Throwable => Failure( e )
   }
 }

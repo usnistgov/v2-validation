@@ -16,19 +16,25 @@ object Main extends App with DefaultNCPDPParser {
     result
   }
 
-  val xml = getClass.getResourceAsStream("/newrx_profile_20150824_fv.xml")
+  val xml = getClass.getResourceAsStream("/status_profile_20150824-fv.xml")
 
   val profile = XMLDeserializer.deserialize( xml ) match {
     case Success(p) => p
     case Failure(e) => throw e
   }
 
-  val mm = profile.messages("NEWRX")
+  val mm = profile.messages("STATUS")
 
   val m =
     """/UNA:+./*'
       /UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'
       /""".stripMargin('/')
+
+  val m1 =
+    """/UNA:+./*'UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'""".stripMargin('/')   
+
+  val m2 =
+    """/UNA./UIBUNOA09911234567890123D1234563P20100125081322""".stripMargin('/')     
 
 /*
   val m1 =
