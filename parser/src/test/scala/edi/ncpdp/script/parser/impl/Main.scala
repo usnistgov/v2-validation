@@ -31,7 +31,7 @@ object Main extends App with DefaultNCPDPParser {
       /""".stripMargin('/')
 
   val m1 =
-    """/UNA:+./*'UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'""".stripMargin('/')   
+    """/UN:+./*'UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'""".stripMargin('/')   
 
   val m2 =
     """/UNA./UIBUNOA09911234567890123D1234563P20100125081322""".stripMargin('/')     
@@ -53,7 +53,7 @@ object Main extends App with DefaultNCPDPParser {
 
   1 to 1 foreach { i =>
     time {
-      parse( m , mm ) match {
+      parse( m1 , mm ) match {
         case Failure( e ) => e.printStackTrace()
         case Success( r ) =>
           println( Serializer.toXML(r) )

@@ -34,8 +34,7 @@ object NCPDPPreProcessor {
       case (xs, s) =>
         implicit val fs = s.fs
         implicit val cs = s.cs.toString
-        println("fs:^"+fs.toString+"^")
-        println("cs:^"+cs+"^")
+        println("fs:^"+fs.toString+"^ | cs:^"+cs+"^")
         partition( xs ) match {
           case (Nil, invalid) =>
             println("invalid: "+invalid)
@@ -71,7 +70,7 @@ object NCPDPPreProcessor {
                        (implicit fs: Char, cs: String): (List[Line], List[Line]) =
     list partition (l => {
       val ml = trimLineBreakLeft(l._2)
-      println("ml about to be matched:\n^"+ml+"^")
+      //println("ml about to be matched:\n^"+ml+"^")
       validLinesRegex.pattern.matcher(ml).matches
     })
       
@@ -84,14 +83,10 @@ object NCPDPPreProcessor {
     println("getting separators for message: " + message)
 
     if (!message.startsWith("UNA")) {
-      Failure(
-        new Exception( s"The message doesn't start with a UNA segment")
-      )
+      Failure( new Exception( s"The message doesn't start with a UNA segment"))
     }
     if (message.length() < 9){
-      Failure(
-        new Exception( s"The UNA segment length is less than 9 characters")
-      )
+      throw new Exception( s"The UNA segment length is less than 9 characters")
     }
 
     //UNA:+./*'
@@ -121,6 +116,6 @@ object NCPDPPreProcessor {
       )
     }
   } catch {
-    case e: Throwable => Failure( e )
+    case e: Exception => Failure( e )
   }
 }
