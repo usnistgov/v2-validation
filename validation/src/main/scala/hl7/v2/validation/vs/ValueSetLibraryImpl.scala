@@ -35,9 +35,10 @@ object ValueSetLibraryImpl {
     XOMDocumentBuilder.build( vsXML, xsd ) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
-      val tblSet   = root.getFirstChildElement("ValueSetDefinitions")
+      //val tblSet   = root.getFirstChildElement("ValueSetDefinitions")
+      val tbls = root.getChildElements("ValueSetDefinitions")
       val noVal    = noValidation( noValDef )
-      val lib      = tableSet(tblSet)
+      val lib      = tables(tbls)
       ValueSetLibraryImpl(noVal, lib)
     }
 
@@ -51,6 +52,14 @@ object ValueSetLibraryImpl {
       tableDefs.foldLeft(Map[String, ValueSet]()) { (acc, x) =>
         val vs = valueSet(x)
         acc + (vs.id -> vs)
+      }
+    }
+  
+  private def tables(e: nu.xom.Elements): Map[String, ValueSet] =
+    if( e == null ) Map()
+    else {
+      e.foldLeft(Map[String, ValueSet]()){ (acc, x) =>
+        acc ++ tableSet(x)
       }
     }
 

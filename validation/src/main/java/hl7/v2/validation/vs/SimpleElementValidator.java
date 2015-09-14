@@ -39,8 +39,14 @@ public class SimpleElementValidator {
      */
     public static Entry check(Location location, String value, ValueSetSpec spec,
                               ValueSetLibrary library) {
+    	
         if( spec == null )
             return null;
+        
+        if(spec.valueSetId().contains(":")){
+        	return null;
+        }
+    		
 
         // Return a detection if the value set is excluded from the validation
         if( library.isExcludedFromTheValidation( spec.valueSetId() ) )
@@ -99,7 +105,7 @@ public class SimpleElementValidator {
      * Returns true if the code check should be skipped
      */
     private static boolean skipCodeCheck(String vsID, String value) {
-        return vsID.matches("(HL7)?0396") &&
+        return vsID.matches("(HL7)?0396(_[a-zA-Z0-9]+)?") &&
                 (value.matches("HL7[0-9]{4}") || value.matches("99[a-zA-Z0-9]{3}"));
     }
 

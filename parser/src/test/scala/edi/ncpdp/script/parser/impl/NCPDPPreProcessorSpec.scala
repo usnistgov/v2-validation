@@ -17,7 +17,7 @@ class NCPDPPreProcessorSpec extends Specification { def is = s2"""
    UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'
 
  should 
-   have 2 valid segments							 $e1
+   have 3 valid segments							 $e1
    have no invalid segments							 $e2
 
  The message 
@@ -35,7 +35,7 @@ class NCPDPPreProcessorSpec extends Specification { def is = s2"""
  The message 
    UN:+./*'UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'
  should 
-   generate an exception							 $e7       
+   generate an exception							 TODO       
 
                                                      """
   val m =

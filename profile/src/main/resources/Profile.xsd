@@ -163,7 +163,7 @@
 	<xs:simpleType name="DatatypeNameType">
 		<xs:restriction base="NonEmptyString">
 			<!-- <xs:pattern value="-|[a-zA-Z0-9]+"></xs:pattern> -->
-			<xs:pattern value="-|([a-zA-Z0-9]+(_[a-zA-Z0-9]+)?)"></xs:pattern>
+			<xs:pattern value="-|([a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)"></xs:pattern>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -256,7 +256,7 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="ID" type="DatatypeNameType" use="required"/>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Description" type="NonEmptyString" use="required"/>
 	</xs:complexType>

@@ -72,12 +72,22 @@ trait DefaultValidator extends Validator with expression.Evaluator {
       case Inconclusive(t) => Detections.predicateSpecErr(e, p, stackTrace(e, t::Nil))::Nil
     }
 
+  private def cleanFromNull(ls : List[Element]) : List[Element] = {
+    ls match {
+      case Nil => Nil
+      case x::xs => x match {
+        case n : NULLComplexField => cleanFromNull(xs)
+        case _ => x::cleanFromNull(xs)
+      }
+    }
+  }
   /**
     * Checks if the target path of the predicate satisfy the usage 'u'
     */
   private def checkUsage(e: Element, p: Predicate, u: PredicateUsage): List[Entry] =
     try {
-      val(contexts, path) = reducePath(e, p.target)
+      val(ccontexts, path) = reducePath(e, p.target)
+      val contexts = cleanFromNull(ccontexts)
       if( contexts.isEmpty )
         Detections.predicateSuccess(e, p) :: Nil //Nothing to do the parent is missing
       else {
