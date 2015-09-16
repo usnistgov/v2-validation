@@ -63,4 +63,19 @@ object Build extends Build {
    publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal), 
    otherResolvers += m2Repo )
 
+  lazy val xmlvalidation = Project("xmlvalidation", file("xmlvalidation"))
+    .dependsOn( validation % "test->test; compile->compile" )
+    .settings(basicSettings: _*)
+    .settings(moduleSettings: _*)
+    .settings( libraryDependencies ++=
+    compile(`commons-io`) ++
+      compile( `ph-schematron` )
+    )
+    .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
+    .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) =>
+    Classpaths.publishConfig(arts, None, resolverName = m2Repo.name, checksums = cs, logging = level)
+  },
+      publishM2 <<= Classpaths.publishTask(publishM2Configuration, deliverLocal),
+      otherResolvers += m2Repo )
+
 }

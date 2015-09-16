@@ -21,5 +21,7 @@ object Dependencies {
   val spec2         = "org.specs2"            %%  "specs2"            %  "2.3.11"
   val scalaCheck    = "org.scalacheck"        %%  "scalacheck"        %  "1.11.3"
   val vreport       = "com.github.hl7-tools"  %   "validation-report" %  "1.0.0"
+  val `commons-io`     = "commons-io"            %   "commons-io"        %  "2.4.0"
+  val `ph-schematron`  = "com.helger"            %   "ph-schematron"     %  "3.0.0"
 
 }
