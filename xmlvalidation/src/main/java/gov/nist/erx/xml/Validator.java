@@ -2,6 +2,7 @@ package gov.nist.erx.xml;
 
 import gov.nist.validation.report.Report;
 import gov.nist.validation.report.impl.EntryImpl;
+import hl7.v2.validation.report.Detections;
 
 import javax.xml.validation.Schema;
 
@@ -14,6 +15,7 @@ public class Validator {
         XMLReport report = new XMLReport();
         //TODO get exceptions if there are some and fill the report
         ErxXmlUtils.validateAgainstXSD(message,schema);
+        XMLDetections.csSuccess()
         //report.addStructureEntry(new XMLEntry());
         ErxXmlUtils.validateAgainstXSLT(message,schematron);
         return report;
