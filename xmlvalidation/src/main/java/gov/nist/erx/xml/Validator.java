@@ -16,10 +16,10 @@ public class Validator {
     public static Report validate(XMLFile xmlFile, Schema schema, String schematron){
         XMLReport report = new XMLReport();
         //TODO get exceptions if there are some and fill the report
-        Exception e = ErxXmlUtils.validateAgainstXSD(xmlFile.content,schema);
+        Exception e = ErxXmlUtils.validateAgainstXSD(xmlFile.getContent(),schema);
         if(e instanceof SAXParseException){
             SAXParseException saxError = (SAXParseException) e;
-            report.addStructureEntry(new XMLEntry(saxError.getLineNumber(),saxError.getColumnNumber(),xmlFile.path,"description","category","classification"));
+            report.addStructureEntry(new XMLEntry(saxError.getLineNumber(),saxError.getColumnNumber(),xmlFile.getPath(),"description","category","classification"));
         }
         //ErxXmlUtils.validateAgainstXSLT(xmlFile.content, schematron);
         return report;
