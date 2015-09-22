@@ -3,6 +3,7 @@ package gov.nist.erx.xml;
 import gov.nist.validation.report.Entry;
 import gov.nist.validation.report.Trace;
 import gov.nist.validation.report.impl.EntryImpl;
+import hl7.v2.instance.Element;
 import hl7.v2.instance.Location;
 import hl7.v2.validation.report.Detections;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 /**
  * Created by mcl1 on 9/16/15.
  */
-public class XMLDetections extends Detections{
+public class XMLDetections{
 
     //int line, int column, String path, String description, String category, String classification
     public static Entry contentError(Location l,String msg){

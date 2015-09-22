@@ -25,8 +25,6 @@ public class XMLEntry implements Entry {
     private Map<String, Object> metaData;
 
     public XMLEntry(int line, int column, String path, String description, String category, String classification) {
-        this.line = -1;
-        this.column = -1;
         this.line = line;
         this.column = column;
         this.path = path;

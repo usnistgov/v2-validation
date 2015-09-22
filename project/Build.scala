@@ -16,7 +16,7 @@ object Build extends Build {
   //----------------------------------------------------------------------------
 
   lazy val root = Project("root", file("."))
-    .aggregate(profile, parser, `validation`)
+    .aggregate(profile, parser, `validation`,xmlvalidation)
     .settings(basicSettings: _*)
     .settings(noPublishing: _*)
     .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) => 
@@ -69,7 +69,8 @@ object Build extends Build {
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++=
     compile(`commons-io`) ++
-      compile( `ph-schematron` )
+      compile( `ph-schematron` ) ++
+      compile( junit )
     )
     .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
     .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) =>

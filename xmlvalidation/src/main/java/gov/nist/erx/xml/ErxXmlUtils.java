@@ -25,7 +25,6 @@ public class ErxXmlUtils {
             javax.xml.validation.Validator validator = schema.newValidator();
             String result = "";
             validator.validate(new StreamSource(reader,result));
-
             return null;
         }
         catch(Exception ex)
