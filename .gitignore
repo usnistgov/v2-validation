@@ -9,3 +9,4 @@ target/
 .idea_modules/
 .DS_Store
 xmlvalidation/src/test/resources/xsd
+xmlvalidation/src/test/resources/xslt
