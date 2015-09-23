@@ -24,13 +24,4 @@ public class Validator {
         return report;
     }
 
-    public static Entry parseException(Exception e){
-        if(null == e){
-            //generate OK rapport
-            return null;
-        } else {
-            //e.get
-            return null;
-        }
-    }
 }
