@@ -1,10 +1,10 @@
 package gov.nist.erx.xml;
 
-import hl7.v2.instance.Location;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import sun.security.krb5.internal.crypto.EType;
+
+import java.util.ArrayList;
 
 /**
  * Created by mcl1 on 9/22/15.
@@ -12,11 +12,11 @@ import sun.security.krb5.internal.crypto.EType;
 public class XSDValidationErrorHandler implements ErrorHandler {
 
 
-    private XMLReport xmlReport;
+    private ArrayList<XMLEntry> xmlEntries;
     private XMLFile xmlFile;
 
     public XSDValidationErrorHandler(XMLFile xmlFile) {
-        this.xmlReport = new XMLReport();
+        this.xmlEntries = new ArrayList<XMLEntry>();
         this.xmlFile = xmlFile;
     }
 
@@ -36,11 +36,11 @@ public class XSDValidationErrorHandler implements ErrorHandler {
     }
 
     private void addEntry(String classification,SAXParseException ex){
-        xmlReport.addStructureEntry(new XMLEntry(ex.getLineNumber(),ex.getColumnNumber(),this.xmlFile.getPath(),ex.getMessage(),"category",classification));
+        xmlEntries.add(new XMLEntry(ex.getLineNumber(), ex.getColumnNumber(), this.xmlFile.getPath(), ex.getMessage(), "category", classification));
     }
 
-    public XMLReport getXmlReport() {
-        return xmlReport;
+    public ArrayList<XMLEntry> getXmlEntries() {
+        return xmlEntries;
     }
 
 }

@@ -17,7 +17,19 @@ public class XMLDetections{
 
     //int line, int column, String path, String description, String category, String classification
     public static Entry contentError(Location l,String msg){
-        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"","");
+        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"ERROR","");
+    }
+
+    public static Entry contentWarning(Location l,String msg){
+        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"WARNING","");
+    }
+
+    public static XMLEntry contentError(String msg){
+        return entry(msg,"","ERROR");
+    }
+
+    public static XMLEntry contentWarning(String msg){
+        return entry(msg,"","WARNING");
     }
 
     //Helpers (see hl7.v2.validation.report.Detections)
@@ -64,5 +76,13 @@ public class XMLDetections{
         String path = l.uidPath();
         return entry(line, column, path, description, category,
                 classification, stackTrace, metaData);
+    }
+    private static XMLEntry entry(String description, String category,
+                               String classification) {
+        int line    = 0;
+        int column  = 0;
+        String path = "";
+        return (XMLEntry) entry(line, column, path, description, category,
+                classification);
     }
 }

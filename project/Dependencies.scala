@@ -23,5 +23,7 @@ object Dependencies {
   val vreport       = "com.github.hl7-tools"  %   "validation-report" %  "1.0.0"
   val `commons-io`     = "commons-io"            %   "commons-io"        %  "2.4"
   val `ph-schematron`  = "com.helger"            %   "ph-schematron"     %  "3.0.0"
+  val xmlbeans = "org.apache.xmlbeans" % "xmlbeans" % "2.4.0"
+  val xalan = "xalan" % "xalan" % "2.7.2"
 
 }

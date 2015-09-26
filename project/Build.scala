@@ -70,7 +70,10 @@ object Build extends Build {
     .settings( libraryDependencies ++=
     compile(`commons-io`) ++
       compile( `ph-schematron` ) ++
-      compile( junit )
+      compile( junit ) ++
+      compile( xmlbeans ) ++
+      compile( `xml-util` )++
+      compile( `xalan` )
     )
     .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
     .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) =>

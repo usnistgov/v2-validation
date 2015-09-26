@@ -66,4 +66,15 @@ public class XMLReport implements Report{
         this.vs.add(e);
     }
 
+    public void addStructureEntries(ArrayList<XMLEntry> entries){
+        for(Entry e : entries) {
+            this.structure.add(e);
+        }
+    }
+
+    public int countStructureErrors(){
+        return this.structure.size();
+    }
+
+
 }
