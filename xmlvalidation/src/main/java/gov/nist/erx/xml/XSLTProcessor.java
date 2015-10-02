@@ -18,6 +18,7 @@ public class XSLTProcessor {
     private static final String ALL = "ALL";
     private static int file_num = 0;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+    private static ArrayList<String> fileNames = new ArrayList<>();
 
     public static ArrayList<XMLEntry> process(String schematron, String skeleton, String xmlFile, String phase) {
         return parseResult(processSecondStep(processFirstStep(schematron, skeleton), xmlFile), phase);
@@ -31,6 +32,7 @@ public class XSLTProcessor {
         String skeletonFile = writeFile(skeleton);
         file_num++;
         String resultFile = "Validator" + file_num + ".xsl";
+        fileNames.add(resultFile);
         xalan_process(schematronFile, skeletonFile, resultFile);
         return resultFile;
     }
@@ -39,6 +41,7 @@ public class XSLTProcessor {
         String xmlFile = writeFile(xml);
         file_num++;
         String resultFile = "Result" + file_num + ".txt";
+        fileNames.add(resultFile);
         xalan_process(xmlFile, firstStepResult, resultFile);
         return resultFile;
     }
@@ -50,23 +53,36 @@ public class XSLTProcessor {
             ArrayList<String> lines = new ArrayList<>();
             report = report.substring(XML_HEADER.length());
             String[] items = report.split("((?<=(" + WARNING + "|" + ERROR + "))|(?=(" + WARNING + "|" + ERROR + ")))");
-            System.out.println(report);
-            System.out.println(items);
-            for (int i = 1; i < items.length; i += 2) {
-                if (items[i].equals(WARNING)) {
-                    if (ALL.equals(phase) || WARNING.equals(phase)) {
-                        entries.add(XMLDetections.contentWarning(items[i + 1]));
+            if (items.length > 1) {
+                for (int i = 0; i < items.length; i++) {
+                    if ("".equals(items[i])) {
+                        i++;
                     }
-                } else if (items[i].equals(ERROR)) {
-                    if (ALL.equals(phase) || ERROR.equals(phase)) {
-                        entries.add(XMLDetections.contentError(items[i + 1]));
+                    if (items[i].equals(WARNING)) {
+                        if (ALL.equals(phase) || WARNING.equals(phase)) {
+                            entries.add(XMLDetections.contentWarning(items[i + 1]));
+                            i++;
+                        }
+                    } else if (items[i].equals(ERROR)) {
+                        if (ALL.equals(phase) || ERROR.equals(phase)) {
+                            entries.add(XMLDetections.contentError(items[i + 1]));
+                            i++;
+                        }
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            cleanFiles();
         }
         return entries;
+    }
+
+    private static void cleanFiles() {
+        for(String filename : fileNames){
+            FileUtils.deleteQuietly(new File(filename));
+        }
     }
 
     private static String writeFile(String content) {
@@ -78,6 +94,7 @@ public class XSLTProcessor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        fileNames.add(filename);
         return filename;
     }
 
