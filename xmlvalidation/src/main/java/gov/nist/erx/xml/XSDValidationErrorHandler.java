@@ -13,9 +13,9 @@ public class XSDValidationErrorHandler implements ErrorHandler {
 
 
     private ArrayList<XMLEntry> xmlEntries;
-    private XMLFile xmlFile;
+    private String xmlFile;
 
-    public XSDValidationErrorHandler(XMLFile xmlFile) {
+    public XSDValidationErrorHandler(String xmlFile) {
         this.xmlEntries = new ArrayList<XMLEntry>();
         this.xmlFile = xmlFile;
     }
@@ -36,7 +36,8 @@ public class XSDValidationErrorHandler implements ErrorHandler {
     }
 
     private void addEntry(String classification,SAXParseException ex){
-        xmlEntries.add(new XMLEntry(ex.getLineNumber(), ex.getColumnNumber(), this.xmlFile.getPath(), ex.getMessage(), "category", classification));
+        //TODO Use XMLDetections and find the PATH
+        xmlEntries.add(new XMLEntry(ex.getLineNumber(), ex.getColumnNumber(), "", ex.getMessage(), "category", classification));
     }
 
     public ArrayList<XMLEntry> getXmlEntries() {

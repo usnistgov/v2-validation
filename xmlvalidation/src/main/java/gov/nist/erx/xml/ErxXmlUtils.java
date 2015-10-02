@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class ErxXmlUtils {
 
-    public static ArrayList<XMLEntry> validateAgainstXSD(XMLFile xmlFile, Schema schema) {
-        StringReader reader = new StringReader(xmlFile.getContent());
+    public static ArrayList<XMLEntry> validateAgainstXSD(String xmlFile, Schema schema) {
+        StringReader reader = new StringReader(xmlFile);
         javax.xml.validation.Validator validator = schema.newValidator();
         XSDValidationErrorHandler errorHandler = new XSDValidationErrorHandler(xmlFile);
         validator.setErrorHandler(errorHandler);
