@@ -1,11 +1,13 @@
 package gov.nist.erx.xml;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -17,18 +19,17 @@ import java.util.ArrayList;
 public class Validator {
 
     private static final String XSD_PATH = "SCRIPT_XML_10_6-20121015.xsd";
-    private static final String SKELETON_PATH = "skeleton1-5.xsl";
+    private static final String SKELETON_PATH = "/skeleton1-5.xsl";
 
-    public static XMLReport validate(XMLFile xmlFile, String schematron, String phase) {
-        Schema schema = loadSchema();
-        String skeleton = loadSkeleton();
-        return validate(xmlFile, schema, schematron, skeleton, phase);
-    }
-
-    //TODO Remove schema and schematron args if xsd and xslt are stores in this project's resources
-    public static XMLReport validate(XMLFile xmlFile, Schema schema, String schematron, String skeleton, String phase) {
+    public static XMLReport validate(String xmlFile, Schema schema, String schematron, String skeleton, String phase) {
+        if(null==schema){
+            schema = loadSchema();
+        }
+        if(null == skeleton){
+            skeleton = loadSkeleton();
+        }
         ArrayList<XMLEntry> xsdEntries = ErxXmlUtils.validateAgainstXSD(xmlFile, schema);
-        ArrayList<XMLEntry> xsltEntries = ErxXmlUtils.validateAgainstXSLT(xmlFile.getContent(), schematron, skeleton, phase);
+        ArrayList<XMLEntry> xsltEntries = ErxXmlUtils.validateAgainstXSLT(xmlFile, schematron, skeleton, phase);
         XMLReport report = new XMLReport();
         report.addStructureEntries(xsdEntries);
         report.addStructureEntries(xsltEntries);
@@ -37,11 +38,11 @@ public class Validator {
 
     private static String loadSkeleton() {
         try {
-            InputStream is = Thread.currentThread().getContextClassLoader().getResource(SKELETON_PATH).openStream();
-            return IOUtils.toString(is, "UTF-8");
+            InputStream input = Validator.class.getResourceAsStream(SKELETON_PATH);
+            String res = IOUtils.toString(input);
+            return res;
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
             return null;
         }
     }
