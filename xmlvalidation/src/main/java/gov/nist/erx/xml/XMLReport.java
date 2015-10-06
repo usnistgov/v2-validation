@@ -40,20 +40,36 @@ public class XMLReport implements Report{
     @Override
     public String toText() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\\n\\n########  structure check: ");
-        sb.append(structure.size());
-        sb.append(" problems detected.\n");
-        sb.append(structure.toString());
-        sb.append("\\n\\n########  content check: ");
-        sb.append(content.size());
-        sb.append(" problems detected.\n");
-        sb.append(content.toString());
-        sb.append("\\n\\n########  value set check: ");
-        sb.append(vs.size());
-        sb.append(" problems detected.\n");
-        sb.append(vs.toString());
-        sb.append("\n");
+        if(structure.size()>0) {
+            sb.append("\n########  structure check: ");
+            sb.append(structure.size());
+            sb.append(" problems detected.");
+            sb.append(printEntries(structure));
+        }
+        if(content.size()>0) {
+            sb.append("\n########  content check: ");
+            sb.append(content.size());
+            sb.append(" problems detected.");
+            sb.append(printEntries(content));
+        }
+        if(vs.size()>0) {
+            sb.append("\n########  value set check: ");
+            sb.append(vs.size());
+            sb.append(" problems detected.");
+            sb.append(printEntries(vs));
+        }
         return sb.toString();
+    }
+
+    private String printEntries(List<Entry> list){
+        StringBuilder res = new StringBuilder();
+        if(list.size()>0) {
+            for (Entry e : list) {
+                res.append("\n");
+                res.append(e.toText());
+            }
+        }
+        return res.toString();
     }
 
     public void addStructureEntry(Entry e){
