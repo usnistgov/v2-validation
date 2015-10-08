@@ -12,12 +12,12 @@ object Main extends App {
   val profilePath = if (args.length == 0) null else args(0)
 	println("profilePath: " + profilePath)
 
-  val xml = if (profilePath != null) getClass.getResourceAsStream("/"+profilePath) else getClass.getResourceAsStream("/Profile-Ncpdp-Newrx.xml")
+  val xml = if (profilePath != null) getClass.getResourceAsStream("/"+profilePath) else getClass.getResourceAsStream("/newrx_profile_20150916-fv.xml")
   XMLDeserializer.deserialize(xml) match {
     case Success(s) => 
       val pp = new PrettyPrinter(200, 4)
       println( pp.format( XMLSerializer.serialize( s ) ) )
-    case Failure(f) => println("Error Message:\n"+f.getMessage)
+    case Failure(f) => println("Error Message:\n"+f)
   }
 
 }

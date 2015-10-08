@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValueSetLibrary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ValueSetLibraryIdentifier="LOI_empty" Description="Empty table library" 
+	Name="Vocab for LOI" OrganizationName="HL7 NIST" Status="Active" ValueSetLibraryVersion="1.0">
+	<NoValidation>
+	    <BindingIdentifier>LOINC</BindingIdentifier>
+        <BindingIdentifier>US_LAB_HL70396</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70076</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70003</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70354</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70103</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_HL70104</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70155</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_HL70203</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70001</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_HL70119</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70200</BindingIdentifier>		
+		<BindingIdentifier>USPS Alpha State Codes</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70190</BindingIdentifier>		
+		<BindingIdentifier>ICD-9CM ICD-10CM</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70052</BindingIdentifier>		
+		<BindingIdentifier>SNOMED_CT US_LAB_HL70487</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL7093</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_ HL70440</BindingIdentifier>
+		<BindingIdentifier>LOINC LOCAL</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_HL70936</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70359</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_HL70202</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70287</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70399</BindingIdentifier>		
+		<BindingIdentifier>US_LAB_HL70004</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70098</BindingIdentifier>
+		<BindingIdentifier>US_LAB_HL70136</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70301</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70005</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70339</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70485</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70912</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70072;US_LAB_HL70353</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70063</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70541</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70371</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70488</BindingIdentifier> 
+		<BindingIdentifier>SNOMED</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70189</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70542</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70543</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70131</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70483</BindingIdentifier> 
+		<BindingIdentifier>SCT;US_LAB_HL70487</BindingIdentifier> 
+		<BindingIdentifier>US_LAB_HL70085</BindingIdentifier> 
+		<BindingIdentifier>0064</BindingIdentifier> 
+		<BindingIdentifier>0202</BindingIdentifier> 
+		<BindingIdentifier>HL70072;HL70353</BindingIdentifier> 
+    </NoValidation>
+	<ValueSetDefinitions Group="NOTHING" Order="1"/>	
+</ValueSetLibrary>
