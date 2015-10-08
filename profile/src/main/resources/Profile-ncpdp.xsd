@@ -260,7 +260,7 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="ID" type="DatatypeNameType" use="required"/>
+		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Description" type="NonEmptyString" use="required"/>
 	</xs:complexType>
@@ -340,7 +340,7 @@
 	
 	<xs:complexType name="ConformanceProfileType">
 		<xs:sequence>
-			<xs:element name="MetaData" type="MetaDataType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MetaData" type="MetaDataType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="Encodings" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
@@ -381,8 +381,8 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="ID" type="NonEmptyString" use="optional"/>
-		<xs:attribute name="Type" use="optional">
+		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Type" use="required">
 			<xs:simpleType>
 				<xs:annotation>
 					<xs:documentation>
