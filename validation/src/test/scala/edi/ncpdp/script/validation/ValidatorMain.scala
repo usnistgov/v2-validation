@@ -18,19 +18,19 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
     result
   }
 
-  val xml = getClass.getResourceAsStream("/status_profile_20150824-fv.xml")
+  val xml = getClass.getResourceAsStream("/newrx_profile_20151006.xml")
 
   val profile = XMLDeserializer.deserialize( xml ) match {
     case Success(p) => p
     case Failure(e) => throw e
   }
 
-  val mm = profile.messages("STATUS")
+  val mm = profile.messages("NEWRX")
 
 
   val m =
     """/UNA:+./*'
-      /UIB+UNOA:0++MESSAGE_ID+++SENDER_ID:D+RECIPIENT_ID:P+20121012:101022'""".stripMargin('/')
+      /UIB+UNOL:0++MESSAGE_ID+++SENDER_ID:U+RECIPIENT_ID:P+20121012:101022'""".stripMargin('/')
 
   val m1 =
     """
@@ -56,14 +56,16 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
 
   val conformanceContext = hl7.v2.validation.content.DefaultConformanceContext().get
 
-  val vsLibStream = getClass.getResourceAsStream("/empty_ValueSetLibrary.xml")
+  val vsLibStream = getClass.getResourceAsStream("/newrx_valueset_20151006.xml")
   val valueSetLibrary = ValueSetLibraryImpl(vsLibStream).get
 
+/*
+  // NCPDPValidator
   val validator = new NCPDPValidator(profile, valueSetLibrary, conformanceContext)
 
   1 to 1 foreach { i =>
     time {
-      validator.validate( m, "STATUS" ) onComplete {
+      validator.validate( m, "NEWRX" ) onComplete {
         case Success( report ) =>
           println( report.toText )
           println( s"\n\n ${ report.toJson } \n\n" )
@@ -72,7 +74,18 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
       }
     }
   }
+*/
 
+  // SyncNCPDPValidator
+  val validator = new SyncNCPDPValidator(profile, valueSetLibrary, conformanceContext)
+
+  1 to 1 foreach { i =>
+    time {
+      val rep = validator.check( m, "NEWRX" )
+      println( rep.toText )
+      println( s"\n\n ${ rep.toJson } \n\n" )  
+    }
+  }
   /*import scala.concurrent.duration._
 
   1 to 200 foreach { i =>

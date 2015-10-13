@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ValueSetLibrary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ValueSetLibraryIdentifier="NEWRX-VALUESET" Name="NEWRX value set library" OrganizationName="NCPDP" ValueSetLibraryVersion="1.0" Status="Active" Description="Value sets used in the NEWRX message">
+    <ValueSetDefinitions Group="NEWRX_VALUES" Order="1">
+        <ValueSetDefinition BindingIdentifier="COO-010-02" Name="PayerID.Type">
+            <ValueElement Value="D3" DisplayName="D3" CodeSystem="COO-010-02" />
+            <ValueElement Value="94" DisplayName="94" CodeSystem="COO-010-02" />
+            <ValueElement Value="0B" DisplayName="0B" CodeSystem="COO-010-02" />
+            <ValueElement Value="1C" DisplayName="1C" CodeSystem="COO-010-02" />
+            <ValueElement Value="1D" DisplayName="1D" CodeSystem="COO-010-02" />
+            <ValueElement Value="1E" DisplayName="1E" CodeSystem="COO-010-02" />
+            <ValueElement Value="1G" DisplayName="1G" CodeSystem="COO-010-02" />
+            <ValueElement Value="1J" DisplayName="1J" CodeSystem="COO-010-02" />
+            <ValueElement Value="1M" DisplayName="1M" CodeSystem="COO-010-02" />
+            <ValueElement Value="2U" DisplayName="2U" CodeSystem="COO-010-02" />
+            <ValueElement Value="ADI" DisplayName="ADI" CodeSystem="COO-010-02" />
+            <ValueElement Value="BO" DisplayName="BO" CodeSystem="COO-010-02" />
+            <ValueElement Value="C1" DisplayName="C1" CodeSystem="COO-010-02" />
+            <ValueElement Value="DH" DisplayName="DH" CodeSystem="COO-010-02" />
+            <ValueElement Value="EA" DisplayName="EA" CodeSystem="COO-010-02" />
+            <ValueElement Value="EJ" DisplayName="EJ" CodeSystem="COO-010-02" />
+            <ValueElement Value="HI" DisplayName="HI" CodeSystem="COO-010-02" />
+            <ValueElement Value="IP" DisplayName="IP" CodeSystem="COO-010-02" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="COO-010-02" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="COO-010-02" />
+            <ValueElement Value="HPI" DisplayName="HPI" CodeSystem="COO-010-02" />
+            <ValueElement Value="PD" DisplayName="PD" CodeSystem="COO-010-02" />
+            <ValueElement Value="SY" DisplayName="SY" CodeSystem="COO-010-02" />
+            <ValueElement Value="G1" DisplayName="G1" CodeSystem="COO-010-02" />
+            <ValueElement Value="ZZ" DisplayName="ZZ" CodeSystem="COO-010-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="COO-080-05" Name="BenefitsCoordination*PlaceLocationQualifier">
+            <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="COO-080-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="COO-090-01" Name="BenefitsCoordination.Effective-ExpirationDate.Type">
+            <ValueElement Value="07" DisplayName="07" CodeSystem="COO-090-01" />
+            <ValueElement Value="36" DisplayName="36" CodeSystem="COO-090-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="COO-090-03" Name="BenefitsCoordination.Effective-ExpirationDate.Format">
+            <ValueElement Value="102" DisplayName="102" CodeSystem="COO-090-03" />
+            <ValueElement Value="203" DisplayName="203" CodeSystem="COO-090-03" />
+            <ValueElement Value="804" DisplayName="804" CodeSystem="COO-090-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="COO-100" Name="BenefitsCoordination.InsuranceTypeCode">
+            <ValueElement Value="P" DisplayName="P" CodeSystem="COO-100" />
+            <ValueElement Value="S" DisplayName="S" CodeSystem="COO-100" />
+            <ValueElement Value="T" DisplayName="T" CodeSystem="COO-100" />
+            <ValueElement Value="U" DisplayName="U" CodeSystem="COO-100" />
+            <ValueElement Value="PP" DisplayName="PP" CodeSystem="COO-100" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="OBS-010-01" Name="Observation.Measurement.Dimension">
+            <ValueElement Value="HT" DisplayName="HT" CodeSystem="OBS-010-01" />
+            <ValueElement Value="WG" DisplayName="WG" CodeSystem="OBS-010-01" />
+            <ValueElement Value="ZZS" DisplayName="ZZS" CodeSystem="OBS-010-01" />
+            <ValueElement Value="ZZD" DisplayName="ZZD" CodeSystem="OBS-010-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="OBS-010-06" Name="Observation.MeasurementDataQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="OBS-010-06" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="OBS-010-06" />
+            <ValueElement Value="3" DisplayName="3" CodeSystem="OBS-010-06" />
+            <ValueElement Value="4" DisplayName="4" CodeSystem="OBS-010-06" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="OBS-010-07" Name="Observation.MeasurementSourceCode">
+            <ValueElement Value="AA" DisplayName="AA" CodeSystem="OBS-010-07" />
+            <ValueElement Value="AB" DisplayName="AB" CodeSystem="OBS-010-07" />
+            <ValueElement Value="AC" DisplayName="AC" CodeSystem="OBS-010-07" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-010-01" Name="PrescribedDrug.UsageQualifier">
+            <ValueElement Value="P" DisplayName="P" CodeSystem="P_DRU-010-01" />
+            <ValueElement Value="D" DisplayName="D" CodeSystem="P_DRU-010-01" />
+            <ValueElement Value="R" DisplayName="R" CodeSystem="P_DRU-010-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-010-04" Name="PrescribedProductCodeQualifier">
+            <ValueElement Value="ND" DisplayName="ND" CodeSystem="P_DRU-010-04" />
+            <ValueElement Value="MF" DisplayName="MF" CodeSystem="P_DRU-010-04" />
+            <ValueElement Value="UP" DisplayName="UP" CodeSystem="P_DRU-010-04" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-010-09" Name="PrescribedDrugDBCodeQualifier">
+            <ValueElement Value="E" DisplayName="E" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="G" DisplayName="G" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="AF" DisplayName="AF" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FD" DisplayName="FD" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FG" DisplayName="FG" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FI" DisplayName="FI" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FL" DisplayName="FL" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FM" DisplayName="FM" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FN" DisplayName="FN" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="FS" DisplayName="FS" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="MC" DisplayName="MC" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="MD" DisplayName="MD" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="MG" DisplayName="MG" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="MM" DisplayName="MM" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="BPK" DisplayName="BPK" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="GPK" DisplayName="GPK" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="SBD" DisplayName="SBD" CodeSystem="P_DRU-010-09" />
+            <ValueElement Value="SCD" DisplayName="SCD" CodeSystem="P_DRU-010-09" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-010-13" Name="PrescribedFormSourceCode">
+            <ValueElement Value="AA" DisplayName="AA" CodeSystem="P_DRU-010-13" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-010-15" Name="PrescribedStrengthSourceCode">
+            <ValueElement Value="AB" DisplayName="AB" CodeSystem="P_DRU-010-15" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-010-17" Name="PrescribedDEASchedule">
+            <ValueElement Value="C38046" DisplayName="C38046" CodeSystem="P_DRU-010-17" />
+            <ValueElement Value="C48672" DisplayName="C48672" CodeSystem="P_DRU-010-17" />
+            <ValueElement Value="C48675" DisplayName="C48675" CodeSystem="P_DRU-010-17" />
+            <ValueElement Value="C48676" DisplayName="C48676" CodeSystem="P_DRU-010-17" />
+            <ValueElement Value="C48677" DisplayName="C48677" CodeSystem="P_DRU-010-17" />
+            <ValueElement Value="C48679" DisplayName="C48679" CodeSystem="P_DRU-010-17" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-020-03" Name="PrescribedQuantity.CodeListQualifier">
+            <ValueElement Value="38" DisplayName="38" CodeSystem="P_DRU-020-03" />
+            <ValueElement Value="40" DisplayName="40" CodeSystem="P_DRU-020-03" />
+            <ValueElement Value="87" DisplayName="87" CodeSystem="P_DRU-020-03" />
+            <ValueElement Value="QS" DisplayName="QS" CodeSystem="P_DRU-020-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-020-04" Name="PrescribedQuantity.UnitSourceCode">
+            <ValueElement Value="AC" DisplayName="AC" CodeSystem="P_DRU-020-04" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-040-01" Name="PrescribedMedication.DateType">
+            <ValueElement Value="ZDS" DisplayName="ZDS" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="85" DisplayName="85" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="LD" DisplayName="LD" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="07" DisplayName="07" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="35" DisplayName="35" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="36" DisplayName="36" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="BE" DisplayName="BE" CodeSystem="P_DRU-040-01" />
+            <ValueElement Value="PE" DisplayName="PE" CodeSystem="P_DRU-040-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-040-03" Name="PrescribedMedication.DateFormat">
+            <ValueElement Value="102" DisplayName="102" CodeSystem="P_DRU-040-03" />
+            <ValueElement Value="203" DisplayName="203" CodeSystem="P_DRU-040-03" />
+            <ValueElement Value="804" DisplayName="804" CodeSystem="P_DRU-040-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-050" Name="PrescribedSubstitutions">
+            <ValueElement Value="0" DisplayName="0" CodeSystem="P_DRU-050" />
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_DRU-050" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_DRU-050" />
+            <ValueElement Value="3" DisplayName="3" CodeSystem="P_DRU-050" />
+            <ValueElement Value="4" DisplayName="4" CodeSystem="P_DRU-050" />
+            <ValueElement Value="5" DisplayName="5" CodeSystem="P_DRU-050" />
+            <ValueElement Value="7" DisplayName="7" CodeSystem="P_DRU-050" />
+            <ValueElement Value="8" DisplayName="8" CodeSystem="P_DRU-050" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-060-01" Name="PrescribedRefills.Qualifier">
+            <ValueElement Value="R" DisplayName="R" CodeSystem="P_DRU-060-01" />
+            <ValueElement Value="PRN" DisplayName="PRN" CodeSystem="P_DRU-060-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-070-01" Name="PrescribedDiagnosis*[Origin]">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_DRU-070-01" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_DRU-070-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-070-03" Name="PrescribedDiagnosis.Primary.Qualifier">
+            <ValueElement Value="E" DisplayName="E" CodeSystem="P_DRU-070-03" />
+            <ValueElement Value="F" DisplayName="F" CodeSystem="P_DRU-070-03" />
+            <ValueElement Value="M" DisplayName="M" CodeSystem="P_DRU-070-03" />
+            <ValueElement Value="ABF" DisplayName="ABF" CodeSystem="P_DRU-070-03" />
+            <ValueElement Value="DX" DisplayName="DX" CodeSystem="P_DRU-070-03" />
+            <ValueElement Value="ICD9" DisplayName="ICD9" CodeSystem="P_DRU-070-03" />
+            <ValueElement Value="ICD10" DisplayName="ICD10" CodeSystem="P_DRU-070-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-070-05" Name="PrescribedDiagnosis.Secondary.Qualifier">
+            <ValueElement Value="ABF" DisplayName="ABF" CodeSystem="P_DRU-070-05" />
+            <ValueElement Value="DX" DisplayName="DX" CodeSystem="P_DRU-070-05" />
+            <ValueElement Value="ICD9" DisplayName="ICD9" CodeSystem="P_DRU-070-05" />
+            <ValueElement Value="ICD10" DisplayName="ICD10" CodeSystem="P_DRU-070-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-080-02" Name="PrescribedPriorAuthorization.Qualifier">
+            <ValueElement Value="G1" DisplayName="G1" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="PD" DisplayName="PD" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="D3" DisplayName="D3" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="94" DisplayName="94" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="0B" DisplayName="0B" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="1C" DisplayName="1C" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="1D" DisplayName="1D" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="1E" DisplayName="1E" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="1G" DisplayName="1G" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="1M" DisplayName="1M" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="2U" DisplayName="2U" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="BO" DisplayName="BO" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="DH" DisplayName="DH" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="HI" DisplayName="HI" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="PD" DisplayName="PD" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="SY" DisplayName="SY" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="HPI" DisplayName="HPI" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="G1" DisplayName="G1" CodeSystem="P_DRU-080-02" />
+            <ValueElement Value="ZZ" DisplayName="ZZ" CodeSystem="P_DRU-080-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-100-01" Name="PrescribedDrugUseEvaluation.ServiceReasonCode">
+            <ValueElement Value="AD" DisplayName="AD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="AN" DisplayName="AN" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="AR" DisplayName="AR" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="AT" DisplayName="AT" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="CD" DisplayName="CD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="CH" DisplayName="CH" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="CS" DisplayName="CS" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DA" DisplayName="DA" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DC" DisplayName="DC" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DD" DisplayName="DD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DF" DisplayName="DF" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DI" DisplayName="DI" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DL" DisplayName="DL" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DM" DisplayName="DM" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DR" DisplayName="DR" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="DS" DisplayName="DS" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="ED" DisplayName="ED" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="ER" DisplayName="ER" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="EX" DisplayName="EX" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="HD" DisplayName="HD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="IC" DisplayName="IC" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="ID" DisplayName="ID" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="LD" DisplayName="LD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="LK" DisplayName="LK" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="LR" DisplayName="LR" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="MC" DisplayName="MC" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="MN" DisplayName="MN" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="MS" DisplayName="MS" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="MX" DisplayName="MX" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NA" DisplayName="NA" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="ND" DisplayName="ND" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NN" DisplayName="NN" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NP" DisplayName="NP" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NR" DisplayName="NR" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="NS" DisplayName="NS" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="OH" DisplayName="OH" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PA" DisplayName="PA" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PC" DisplayName="PC" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PG" DisplayName="PG" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PH" DisplayName="PH" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PN" DisplayName="PN" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PP" DisplayName="PP" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PR" DisplayName="PR" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="PS" DisplayName="PS" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="RE" DisplayName="RE" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="RF" DisplayName="RF" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="SC" DisplayName="SC" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="SD" DisplayName="SD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="SE" DisplayName="SE" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="SF" DisplayName="SF" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="SR" DisplayName="SR" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="SX" DisplayName="SX" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="TD" DisplayName="TD" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="TN" DisplayName="TN" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="TP" DisplayName="TP" CodeSystem="P_DRU-100-01" />
+            <ValueElement Value="UD" DisplayName="UD" CodeSystem="P_DRU-100-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-100-02" Name="PrescribedDrugUseEvaluation.ProfessionalServiceCode">
+            <ValueElement Value="00" DisplayName="00" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="AS" DisplayName="AS" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="CC" DisplayName="CC" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="DE" DisplayName="DE" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="DP" DisplayName="DP" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="FE" DisplayName="FE" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="GP" DisplayName="GP" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="MA" DisplayName="MA" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="MB" DisplayName="MB" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="MP" DisplayName="MP" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="M0" DisplayName="M0" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="MR" DisplayName="MR" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="PA" DisplayName="PA" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="PE" DisplayName="PE" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="PH" DisplayName="PH" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="PM" DisplayName="PM" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="P0" DisplayName="P0" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="PT" DisplayName="PT" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="R0" DisplayName="R0" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="RT" DisplayName="RT" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="SC" DisplayName="SC" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="SW" DisplayName="SW" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="TC" DisplayName="TC" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="TH" DisplayName="TH" CodeSystem="P_DRU-100-02" />
+            <ValueElement Value="ZZ" DisplayName="ZZ" CodeSystem="P_DRU-100-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-100-03" Name="PrescribedDrugUseEvaluation.ServiceResultCode">
+            <ValueElement Value="00" DisplayName="00" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1A" DisplayName="1A" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1B" DisplayName="1B" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1C" DisplayName="1C" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1D" DisplayName="1D" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1E" DisplayName="1E" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1F" DisplayName="1F" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1G" DisplayName="1G" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1H" DisplayName="1H" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1J" DisplayName="1J" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="1K" DisplayName="1K" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="2A" DisplayName="2A" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="2B" DisplayName="2B" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3A" DisplayName="3A" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3B" DisplayName="3B" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3C" DisplayName="3C" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3D" DisplayName="3D" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3E" DisplayName="3E" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3F" DisplayName="3F" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3G" DisplayName="3G" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3H" DisplayName="3H" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3J" DisplayName="3J" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3K" DisplayName="3K" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3M" DisplayName="3M" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="3N" DisplayName="3N" CodeSystem="P_DRU-100-03" />
+            <ValueElement Value="4A" DisplayName="4A" CodeSystem="P_DRU-100-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-100-05" Name="PrescribedDrugUseEvaluation*CoAgentQualifier">
+            <ValueElement Value="01" DisplayName="01" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="02" DisplayName="02" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="03" DisplayName="03" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="04" DisplayName="04" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="07" DisplayName="07" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="08" DisplayName="08" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="09" DisplayName="09" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="11" DisplayName="11" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="12" DisplayName="12" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="14" DisplayName="14" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="15" DisplayName="15" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="16" DisplayName="16" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="17" DisplayName="17" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="18" DisplayName="18" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="19" DisplayName="19" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="20" DisplayName="20" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="21" DisplayName="21" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="22" DisplayName="22" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="23" DisplayName="23" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="24" DisplayName="24" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="25" DisplayName="25" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="26" DisplayName="26" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="27" DisplayName="27" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="28" DisplayName="28" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="29" DisplayName="29" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="30" DisplayName="30" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="31" DisplayName="31" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="32" DisplayName="32" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="33" DisplayName="33" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="37" DisplayName="37" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="38" DisplayName="38" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="39" DisplayName="39" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="40" DisplayName="40" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="41" DisplayName="41" CodeSystem="P_DRU-100-05" />
+            <ValueElement Value="99" DisplayName="99" CodeSystem="P_DRU-100-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-100-06" Name="PrescribedDrugUseEvaluation.ClinicalSignificanceCode">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_DRU-100-06" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_DRU-100-06" />
+            <ValueElement Value="3" DisplayName="3" CodeSystem="P_DRU-100-06" />
+            <ValueElement Value="9" DisplayName="9" CodeSystem="P_DRU-100-06" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-110" Name="PrescribedDrugCoverageStatusCode">
+            <ValueElement Value="PR" DisplayName="PR" CodeSystem="P_DRU-110" />
+            <ValueElement Value="AP" DisplayName="AP" CodeSystem="P_DRU-110" />
+            <ValueElement Value="PA" DisplayName="PA" CodeSystem="P_DRU-110" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="P_DRU-110" />
+            <ValueElement Value="NR" DisplayName="NR" CodeSystem="P_DRU-110" />
+            <ValueElement Value="DC" DisplayName="DC" CodeSystem="P_DRU-110" />
+            <ValueElement Value="UN" DisplayName="UN" CodeSystem="P_DRU-110" />
+            <ValueElement Value="ST" DisplayName="ST" CodeSystem="P_DRU-110" />
+            <ValueElement Value="SI" DisplayName="SI" CodeSystem="P_DRU-110" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-120" Name="PrescribedPriorAuthorizationStatus">
+            <ValueElement Value="A" DisplayName="A" CodeSystem="P_DRU-120" />
+            <ValueElement Value="D" DisplayName="D" CodeSystem="P_DRU-120" />
+            <ValueElement Value="R" DisplayName="R" CodeSystem="P_DRU-120" />
+            <ValueElement Value="N" DisplayName="N" CodeSystem="P_DRU-120" />
+            <ValueElement Value="F" DisplayName="F" CodeSystem="P_DRU-120" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-130" Name="PrescribedDoNotFill">
+            <ValueElement Value="Y" DisplayName="Y" CodeSystem="P_DRU-130" />
+            <ValueElement Value="H" DisplayName="H" CodeSystem="P_DRU-130" />
+            <ValueElement Value="E" DisplayName="E" CodeSystem="P_DRU-130" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-140-01" Name="PrescribedNeededNoLaterThan.Qualifier">
+            <ValueElement Value="74" DisplayName="74" CodeSystem="P_DRU-140-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-140-03" Name="PrescribedNeededNoLaterThan.Format">
+            <ValueElement Value="203" DisplayName="203" CodeSystem="P_DRU-140-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_DRU-150-01" Name="Prescribed[NeededNoLaterThan]*TimeZoneIdentifier">
+            <ValueElement Value="UT" DisplayName="UT" CodeSystem="P_DRU-150-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-010-02" Name="PrescribedSIG.RepeatingSIG.MultipleSigModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-010-02" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-010-02" />
+            <ValueElement Value="THEN" DisplayName="THEN" CodeSystem="P_SIG-010-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-030-01" Name="PrescribedSIG*SigFreeTextStringIndicator">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-030-01" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-030-01" />
+            <ValueElement Value="3" DisplayName="3" CodeSystem="P_SIG-030-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-040-01" Name="PrescribedSIG*DoseCompositeIndicator">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-040-01" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-040-01" />
+            <ValueElement Value="3" DisplayName="3" CodeSystem="P_SIG-040-01" />
+            <ValueElement Value="4" DisplayName="4" CodeSystem="P_SIG-040-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-040-03" Name="PrescribedSIG*DoseDeliveryMethodCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-040-03" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-040-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-040-06" Name="PrescribedSIG*DoseDeliveryMethodModifierCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-040-06" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-040-06" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-040-10" Name="PrescribedSIG*DoseFormCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-040-10" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-040-10" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-040-12" Name="PrescribedSIG*DoseRangeModifier">
+            <ValueElement Value="TO" DisplayName="TO" CodeSystem="P_SIG-040-12" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-040-12" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-050-03" Name="PrescribedSIG.DoseCalculation.DosingBasisUnitofMeasureCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-050-03" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-050-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-050-05" Name="PrescribedSIG.DoseCalculation.BodyMetricQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-050-05" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-050-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-050-09" Name="PrescribedSIG.DoseCalculation.CalculatedDoseUnitofMeasureCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-050-09" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-050-09" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-050-11" Name="PrescribedSIG.DoseCalculation.DosingBasisRangeModifier">
+            <ValueElement Value="TO" DisplayName="TO" CodeSystem="P_SIG-050-11" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-050-11" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-060-02" Name="PrescribedSIG*VehicleNameCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-060-02" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-060-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-060-06" Name="PrescribedSIG*VehicleUnitOfMeasureCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-060-06" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-060-06" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-060-08" Name="PrescribedSIG*MultipleVehicleModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-060-08" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-060-08" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-070-02" Name="PrescribedSIG*RouteofAdministrationCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-070-02" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-070-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-070-04" Name="PrescribedSIG*MultipleRouteofAdministrationModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-070-04" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-070-04" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-080-02" Name="PrescribedSIG*SiteofAdministrationCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-080-02" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-080-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-080-04" Name="PrescribedSIG*SiteofAdministration.MultipleAdministrationTimingModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-080-04" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-080-04" />
+            <ValueElement Value="NOT" DisplayName="NOT" CodeSystem="P_SIG-080-04" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-02" Name="PrescribedSIG*AdministrationTimingCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-090-02" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-090-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-04" Name="PrescribedSIG*MultipleAdministrationTimingModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-090-04" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-090-04" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-07" Name="PrescribedSIG*RateUnitofMeasureCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-090-07" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-090-07" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-10" Name="PrescribedSIG*TimePeriodBasisCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-090-10" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-090-10" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-14" Name="PrescribedSIG*FrequencyUnitsCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-090-14" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-090-14" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-16" Name="PrescribedSIG*VariableFrequencyModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-090-16" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-090-16" />
+            <ValueElement Value="TO" DisplayName="TO" CodeSystem="P_SIG-090-16" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-19" Name="PrescribedSIG*IntervalUnitsCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-090-19" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-090-19" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-090-21" Name="PrescribedSIG*VariableIntervalModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-090-21" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-090-21" />
+            <ValueElement Value="TO" DisplayName="TO" CodeSystem="P_SIG-090-21" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-100-03" Name="PrescribedSIG*DurationTextCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-100-03" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-100-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-110-03" Name="PrescribedSIG*MaximumDoseRestrictionCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-110-03" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-110-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-110-07" Name="PrescribedSIG*MaximumDoseRestrictionVariableUnitsCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-110-07" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-110-07" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-110-09" Name="PrescribedSIG*MaximumDoseRestrictionVariableDurationModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-110-09" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-110-09" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-120-02" Name="PrescribedSIG*IndicationPrecursorCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-120-02" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-120-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-120-05" Name="PrescribedSIG*IndicationTextCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-120-05" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-120-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-120-10" Name="PrescribedSIG*IndicationValueUnitofMeasureCodeQualifier">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="P_SIG-120-10" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="P_SIG-120-10" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-120-12" Name="PrescribedSIG*IndicationVariableModifier">
+            <ValueElement Value="AND" DisplayName="AND" CodeSystem="P_SIG-120-12" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="P_SIG-120-12" />
+            <ValueElement Value="TO" DisplayName="TO" CodeSystem="P_SIG-120-12" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="P_SIG-130-01" Name="PrescribedSIG*StopIndicator">
+            <ValueElement Value="Y" DisplayName="Y" CodeSystem="P_SIG-130-01" />
+            <ValueElement Value="N" DisplayName="N" CodeSystem="P_SIG-130-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-010" Name="PatientRelationship">
+            <ValueElement Value="1" DisplayName="1" CodeSystem="PTT-010" />
+            <ValueElement Value="2" DisplayName="2" CodeSystem="PTT-010" />
+            <ValueElement Value="3" DisplayName="3" CodeSystem="PTT-010" />
+            <ValueElement Value="4" DisplayName="4" CodeSystem="PTT-010" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-040" Name="Patient.Gender">
+            <ValueElement Value="M" DisplayName="M" CodeSystem="PTT-040" />
+            <ValueElement Value="F" DisplayName="F" CodeSystem="PTT-040" />
+            <ValueElement Value="U" DisplayName="U" CodeSystem="PTT-040" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-050-02" Name="Patient.ID.Type">
+            <ValueElement Value="D3" DisplayName="D3" CodeSystem="PTT-050-02" />
+            <ValueElement Value="94" DisplayName="94" CodeSystem="PTT-050-02" />
+            <ValueElement Value="0B" DisplayName="0B" CodeSystem="PTT-050-02" />
+            <ValueElement Value="1C" DisplayName="1C" CodeSystem="PTT-050-02" />
+            <ValueElement Value="1D" DisplayName="1D" CodeSystem="PTT-050-02" />
+            <ValueElement Value="1E" DisplayName="1E" CodeSystem="PTT-050-02" />
+            <ValueElement Value="1G" DisplayName="1G" CodeSystem="PTT-050-02" />
+            <ValueElement Value="1J" DisplayName="1J" CodeSystem="PTT-050-02" />
+            <ValueElement Value="1M" DisplayName="1M" CodeSystem="PTT-050-02" />
+            <ValueElement Value="2U" DisplayName="2U" CodeSystem="PTT-050-02" />
+            <ValueElement Value="ADI" DisplayName="ADI" CodeSystem="PTT-050-02" />
+            <ValueElement Value="BO" DisplayName="BO" CodeSystem="PTT-050-02" />
+            <ValueElement Value="C1" DisplayName="C1" CodeSystem="PTT-050-02" />
+            <ValueElement Value="DH" DisplayName="DH" CodeSystem="PTT-050-02" />
+            <ValueElement Value="EA" DisplayName="EA" CodeSystem="PTT-050-02" />
+            <ValueElement Value="EJ" DisplayName="EJ" CodeSystem="PTT-050-02" />
+            <ValueElement Value="HI" DisplayName="HI" CodeSystem="PTT-050-02" />
+            <ValueElement Value="IP" DisplayName="IP" CodeSystem="PTT-050-02" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="PTT-050-02" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="PTT-050-02" />
+            <ValueElement Value="HPI" DisplayName="HPI" CodeSystem="PTT-050-02" />
+            <ValueElement Value="PD" DisplayName="PD" CodeSystem="PTT-050-02" />
+            <ValueElement Value="SY" DisplayName="SY" CodeSystem="PTT-050-02" />
+            <ValueElement Value="G1" DisplayName="G1" CodeSystem="PTT-050-02" />
+            <ValueElement Value="ZZ" DisplayName="ZZ" CodeSystem="PTT-050-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-060-03" Name="Patient*State ">
+            <ValueElement Value="AL" DisplayName="AL" CodeSystem="PTT-060-03" />
+            <ValueElement Value="AK" DisplayName="AK" CodeSystem="PTT-060-03" />
+            <ValueElement Value="AZ" DisplayName="AZ" CodeSystem="PTT-060-03" />
+            <ValueElement Value="AR" DisplayName="AR" CodeSystem="PTT-060-03" />
+            <ValueElement Value="AS" DisplayName="AS" CodeSystem="PTT-060-03" />
+            <ValueElement Value="CA" DisplayName="CA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="CO" DisplayName="CO" CodeSystem="PTT-060-03" />
+            <ValueElement Value="CT" DisplayName="CT" CodeSystem="PTT-060-03" />
+            <ValueElement Value="DE" DisplayName="DE" CodeSystem="PTT-060-03" />
+            <ValueElement Value="DC" DisplayName="DC" CodeSystem="PTT-060-03" />
+            <ValueElement Value="FM" DisplayName="FM" CodeSystem="PTT-060-03" />
+            <ValueElement Value="FL" DisplayName="FL" CodeSystem="PTT-060-03" />
+            <ValueElement Value="GA" DisplayName="GA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="GU" DisplayName="GU" CodeSystem="PTT-060-03" />
+            <ValueElement Value="HI" DisplayName="HI" CodeSystem="PTT-060-03" />
+            <ValueElement Value="ID" DisplayName="ID" CodeSystem="PTT-060-03" />
+            <ValueElement Value="IL" DisplayName="IL" CodeSystem="PTT-060-03" />
+            <ValueElement Value="IN" DisplayName="IN" CodeSystem="PTT-060-03" />
+            <ValueElement Value="IA" DisplayName="IA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="KS" DisplayName="KS" CodeSystem="PTT-060-03" />
+            <ValueElement Value="KY" DisplayName="KY" CodeSystem="PTT-060-03" />
+            <ValueElement Value="LA" DisplayName="LA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="ME" DisplayName="ME" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MH" DisplayName="MH" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MD" DisplayName="MD" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MA" DisplayName="MA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MI" DisplayName="MI" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MN" DisplayName="MN" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MS" DisplayName="MS" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MO" DisplayName="MO" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MT" DisplayName="MT" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NE" DisplayName="NE" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NV" DisplayName="NV" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NH" DisplayName="NH" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NJ" DisplayName="NJ" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NM" DisplayName="NM" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NY" DisplayName="NY" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="PTT-060-03" />
+            <ValueElement Value="ND" DisplayName="ND" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MP" DisplayName="MP" CodeSystem="PTT-060-03" />
+            <ValueElement Value="OH" DisplayName="OH" CodeSystem="PTT-060-03" />
+            <ValueElement Value="OK" DisplayName="OK" CodeSystem="PTT-060-03" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="PTT-060-03" />
+            <ValueElement Value="PW" DisplayName="PW" CodeSystem="PTT-060-03" />
+            <ValueElement Value="PA" DisplayName="PA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="PR" DisplayName="PR" CodeSystem="PTT-060-03" />
+            <ValueElement Value="RI" DisplayName="RI" CodeSystem="PTT-060-03" />
+            <ValueElement Value="SC" DisplayName="SC" CodeSystem="PTT-060-03" />
+            <ValueElement Value="SD" DisplayName="SD" CodeSystem="PTT-060-03" />
+            <ValueElement Value="TN" DisplayName="TN" CodeSystem="PTT-060-03" />
+            <ValueElement Value="TX" DisplayName="TX" CodeSystem="PTT-060-03" />
+            <ValueElement Value="UT" DisplayName="UT" CodeSystem="PTT-060-03" />
+            <ValueElement Value="VT" DisplayName="VT" CodeSystem="PTT-060-03" />
+            <ValueElement Value="VA" DisplayName="VA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="VI" DisplayName="VI" CodeSystem="PTT-060-03" />
+            <ValueElement Value="WA" DisplayName="WA" CodeSystem="PTT-060-03" />
+            <ValueElement Value="WV" DisplayName="WV" CodeSystem="PTT-060-03" />
+            <ValueElement Value="WI" DisplayName="WI" CodeSystem="PTT-060-03" />
+            <ValueElement Value="WY" DisplayName="WY" CodeSystem="PTT-060-03" />
+            <ValueElement Value="AB" DisplayName="AB" CodeSystem="PTT-060-03" />
+            <ValueElement Value="BC" DisplayName="BC" CodeSystem="PTT-060-03" />
+            <ValueElement Value="MB" DisplayName="MB" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NB" DisplayName="NB" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NS" DisplayName="NS" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NT" DisplayName="NT" CodeSystem="PTT-060-03" />
+            <ValueElement Value="NU" DisplayName="NU" CodeSystem="PTT-060-03" />
+            <ValueElement Value="ON" DisplayName="ON" CodeSystem="PTT-060-03" />
+            <ValueElement Value="PE" DisplayName="PE" CodeSystem="PTT-060-03" />
+            <ValueElement Value="QC" DisplayName="QC" CodeSystem="PTT-060-03" />
+            <ValueElement Value="SK" DisplayName="SK" CodeSystem="PTT-060-03" />
+            <ValueElement Value="YT" DisplayName="YT" CodeSystem="PTT-060-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-060-05" Name="Patient*PlaceLocationQualifier">
+            <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="PTT-060-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-070-02" Name="Patient*Communication.Qualifier">
+            <ValueElement Value="BN" DisplayName="BN" CodeSystem="PTT-070-02" />
+            <ValueElement Value="CP" DisplayName="CP" CodeSystem="PTT-070-02" />
+            <ValueElement Value="FX" DisplayName="FX" CodeSystem="PTT-070-02" />
+            <ValueElement Value="HP" DisplayName="HP" CodeSystem="PTT-070-02" />
+            <ValueElement Value="NP" DisplayName="NP" CodeSystem="PTT-070-02" />
+            <ValueElement Value="TE" DisplayName="TE" CodeSystem="PTT-070-02" />
+            <ValueElement Value="WP" DisplayName="WP" CodeSystem="PTT-070-02" />
+            <ValueElement Value="EM" DisplayName="EM" CodeSystem="PTT-070-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PVD-010" Name="Provider.Type">
+            <ValueElement Value="P2" DisplayName="P2" CodeSystem="PVD-010" />
+            <ValueElement Value="PC" DisplayName="PC" CodeSystem="PVD-010" />
+            <ValueElement Value="SU" DisplayName="SU" CodeSystem="PVD-010" />
+            <ValueElement Value="SK" DisplayName="SK" CodeSystem="PVD-010" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PVD-020-02" Name="Provider.ID.Type">
+            <ValueElement Value="0B" DisplayName="0B" CodeSystem="PVD-020-02" />
+            <ValueElement Value="1C" DisplayName="1C" CodeSystem="PVD-020-02" />
+            <ValueElement Value="1D" DisplayName="1D" CodeSystem="PVD-020-02" />
+            <ValueElement Value="1E" DisplayName="1E" CodeSystem="PVD-020-02" />
+            <ValueElement Value="1G" DisplayName="1G" CodeSystem="PVD-020-02" />
+            <ValueElement Value="1J" DisplayName="1J" CodeSystem="PVD-020-02" />
+            <ValueElement Value="1M" DisplayName="1M" CodeSystem="PVD-020-02" />
+            <ValueElement Value="2U" DisplayName="2U" CodeSystem="PVD-020-02" />
+            <ValueElement Value="94" DisplayName="94" CodeSystem="PVD-020-02" />
+            <ValueElement Value="ADI" DisplayName="ADI" CodeSystem="PVD-020-02" />
+            <ValueElement Value="BO" DisplayName="BO" CodeSystem="PVD-020-02" />
+            <ValueElement Value="C1" DisplayName="C1" CodeSystem="PVD-020-02" />
+            <ValueElement Value="D3" DisplayName="D3" CodeSystem="PVD-020-02" />
+            <ValueElement Value="DH" DisplayName="DH" CodeSystem="PVD-020-02" />
+            <ValueElement Value="EA" DisplayName="EA" CodeSystem="PVD-020-02" />
+            <ValueElement Value="EJ" DisplayName="EJ" CodeSystem="PVD-020-02" />
+            <ValueElement Value="G1" DisplayName="G1" CodeSystem="PVD-020-02" />
+            <ValueElement Value="GI" DisplayName="GI" CodeSystem="PVD-020-02" />
+            <ValueElement Value="HI" DisplayName="HI" CodeSystem="PVD-020-02" />
+            <ValueElement Value="HPI" DisplayName="HPI" CodeSystem="PVD-020-02" />
+            <ValueElement Value="IP" DisplayName="IP" CodeSystem="PVD-020-02" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="PVD-020-02" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="PVD-020-02" />
+            <ValueElement Value="PD" DisplayName="PD" CodeSystem="PVD-020-02" />
+            <ValueElement Value="SY" DisplayName="SY" CodeSystem="PVD-020-02" />
+            <ValueElement Value="WI" DisplayName="WI" CodeSystem="PVD-020-02" />
+            <ValueElement Value="ZZ" DisplayName="ZZ" CodeSystem="PVD-020-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PVD-040-01" Name="Provider.Specialty.Codeset">
+            <ValueElement Value="A" DisplayName="A" CodeSystem="PVD-040-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PVD-080-03" Name="Provider*State ">
+            <ValueElement Value="AL" DisplayName="AL" CodeSystem="PVD-080-03" />
+            <ValueElement Value="AK" DisplayName="AK" CodeSystem="PVD-080-03" />
+            <ValueElement Value="AZ" DisplayName="AZ" CodeSystem="PVD-080-03" />
+            <ValueElement Value="AR" DisplayName="AR" CodeSystem="PVD-080-03" />
+            <ValueElement Value="AS" DisplayName="AS" CodeSystem="PVD-080-03" />
+            <ValueElement Value="CA" DisplayName="CA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="CO" DisplayName="CO" CodeSystem="PVD-080-03" />
+            <ValueElement Value="CT" DisplayName="CT" CodeSystem="PVD-080-03" />
+            <ValueElement Value="DE" DisplayName="DE" CodeSystem="PVD-080-03" />
+            <ValueElement Value="DC" DisplayName="DC" CodeSystem="PVD-080-03" />
+            <ValueElement Value="FM" DisplayName="FM" CodeSystem="PVD-080-03" />
+            <ValueElement Value="FL" DisplayName="FL" CodeSystem="PVD-080-03" />
+            <ValueElement Value="GA" DisplayName="GA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="GU" DisplayName="GU" CodeSystem="PVD-080-03" />
+            <ValueElement Value="HI" DisplayName="HI" CodeSystem="PVD-080-03" />
+            <ValueElement Value="ID" DisplayName="ID" CodeSystem="PVD-080-03" />
+            <ValueElement Value="IL" DisplayName="IL" CodeSystem="PVD-080-03" />
+            <ValueElement Value="IN" DisplayName="IN" CodeSystem="PVD-080-03" />
+            <ValueElement Value="IA" DisplayName="IA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="KS" DisplayName="KS" CodeSystem="PVD-080-03" />
+            <ValueElement Value="KY" DisplayName="KY" CodeSystem="PVD-080-03" />
+            <ValueElement Value="LA" DisplayName="LA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="ME" DisplayName="ME" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MH" DisplayName="MH" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MD" DisplayName="MD" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MA" DisplayName="MA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MI" DisplayName="MI" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MN" DisplayName="MN" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MS" DisplayName="MS" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MO" DisplayName="MO" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MT" DisplayName="MT" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NE" DisplayName="NE" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NV" DisplayName="NV" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NH" DisplayName="NH" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NJ" DisplayName="NJ" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NM" DisplayName="NM" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NY" DisplayName="NY" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NC" DisplayName="NC" CodeSystem="PVD-080-03" />
+            <ValueElement Value="ND" DisplayName="ND" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MP" DisplayName="MP" CodeSystem="PVD-080-03" />
+            <ValueElement Value="OH" DisplayName="OH" CodeSystem="PVD-080-03" />
+            <ValueElement Value="OK" DisplayName="OK" CodeSystem="PVD-080-03" />
+            <ValueElement Value="OR" DisplayName="OR" CodeSystem="PVD-080-03" />
+            <ValueElement Value="PW" DisplayName="PW" CodeSystem="PVD-080-03" />
+            <ValueElement Value="PA" DisplayName="PA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="PR" DisplayName="PR" CodeSystem="PVD-080-03" />
+            <ValueElement Value="RI" DisplayName="RI" CodeSystem="PVD-080-03" />
+            <ValueElement Value="SC" DisplayName="SC" CodeSystem="PVD-080-03" />
+            <ValueElement Value="SD" DisplayName="SD" CodeSystem="PVD-080-03" />
+            <ValueElement Value="TN" DisplayName="TN" CodeSystem="PVD-080-03" />
+            <ValueElement Value="TX" DisplayName="TX" CodeSystem="PVD-080-03" />
+            <ValueElement Value="UT" DisplayName="UT" CodeSystem="PVD-080-03" />
+            <ValueElement Value="VT" DisplayName="VT" CodeSystem="PVD-080-03" />
+            <ValueElement Value="VA" DisplayName="VA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="VI" DisplayName="VI" CodeSystem="PVD-080-03" />
+            <ValueElement Value="WA" DisplayName="WA" CodeSystem="PVD-080-03" />
+            <ValueElement Value="WV" DisplayName="WV" CodeSystem="PVD-080-03" />
+            <ValueElement Value="WI" DisplayName="WI" CodeSystem="PVD-080-03" />
+            <ValueElement Value="WY" DisplayName="WY" CodeSystem="PVD-080-03" />
+            <ValueElement Value="AB" DisplayName="AB" CodeSystem="PVD-080-03" />
+            <ValueElement Value="BC" DisplayName="BC" CodeSystem="PVD-080-03" />
+            <ValueElement Value="MB" DisplayName="MB" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NB" DisplayName="NB" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NS" DisplayName="NS" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NT" DisplayName="NT" CodeSystem="PVD-080-03" />
+            <ValueElement Value="NU" DisplayName="NU" CodeSystem="PVD-080-03" />
+            <ValueElement Value="ON" DisplayName="ON" CodeSystem="PVD-080-03" />
+            <ValueElement Value="PE" DisplayName="PE" CodeSystem="PVD-080-03" />
+            <ValueElement Value="QC" DisplayName="QC" CodeSystem="PVD-080-03" />
+            <ValueElement Value="SK" DisplayName="SK" CodeSystem="PVD-080-03" />
+            <ValueElement Value="YT" DisplayName="YT" CodeSystem="PVD-080-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PVD-080-05" Name="Provider*PlaceLocationQualifier">
+            <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="PVD-080-05" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PVD-090-02" Name="Provider*Communication.Qualifier">
+            <ValueElement Value="BN" DisplayName="BN" CodeSystem="PVD-090-02" />
+            <ValueElement Value="CP" DisplayName="CP" CodeSystem="PVD-090-02" />
+            <ValueElement Value="FX" DisplayName="FX" CodeSystem="PVD-090-02" />
+            <ValueElement Value="HP" DisplayName="HP" CodeSystem="PVD-090-02" />
+            <ValueElement Value="NP" DisplayName="NP" CodeSystem="PVD-090-02" />
+            <ValueElement Value="TE" DisplayName="TE" CodeSystem="PVD-090-02" />
+            <ValueElement Value="WP" DisplayName="WP" CodeSystem="PVD-090-02" />
+            <ValueElement Value="EM" DisplayName="EM" CodeSystem="PVD-090-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="REQ-010" Name="ChangeRequestType">
+            <ValueElement Value="C1" DisplayName="C1" CodeSystem="REQ-010" />
+            <ValueElement Value="C2" DisplayName="C2" CodeSystem="REQ-010" />
+            <ValueElement Value="C3" DisplayName="C3" CodeSystem="REQ-010" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="REQ-070-01" Name="CensusEffectiveDate.Type">
+            <ValueElement Value="07" DisplayName="07" CodeSystem="REQ-070-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="REQ-070-03" Name="CensusEffectiveDate.Format">
+            <ValueElement Value="102" DisplayName="102" CodeSystem="REQ-070-03" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-010-01" Name="SyntaxIdentifier">
+            <ValueElement Value="UNOA" DisplayName="UNOA" CodeSystem="UIB-010-01" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-010-02" Name="SyntaxVersionNumber">
+            <ValueElement Value="0" DisplayName="0" CodeSystem="UIB-010-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-060-02" Name="From.Qualifier">
+            <ValueElement Value="P" DisplayName="P" CodeSystem="UIB-060-02" />
+            <ValueElement Value="C" DisplayName="C" CodeSystem="UIB-060-02" />
+            <ValueElement Value="M" DisplayName="M" CodeSystem="UIB-060-02" />
+            <ValueElement Value="D" DisplayName="D" CodeSystem="UIB-060-02" />
+            <ValueElement Value="ZZZ" DisplayName="ZZZ" CodeSystem="UIB-060-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-070-02" Name="To.Qualifier">
+            <ValueElement Value="P" DisplayName="P" CodeSystem="UIB-070-02" />
+            <ValueElement Value="C" DisplayName="C" CodeSystem="UIB-070-02" />
+            <ValueElement Value="M" DisplayName="M" CodeSystem="UIB-070-02" />
+            <ValueElement Value="D" DisplayName="D" CodeSystem="UIB-070-02" />
+            <ValueElement Value="ZZZ" DisplayName="ZZZ" CodeSystem="UIB-070-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIH-010-02" Name="Message.version">
+            <ValueElement Value="010" DisplayName="010" CodeSystem="UIH-010-02" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIH-010-03" Name="Message.release">
+            <ValueElement Value="006" DisplayName="006" CodeSystem="UIH-010-03" />
+        </ValueSetDefinition>
+    </ValueSetDefinitions>
+</ValueSetLibrary>

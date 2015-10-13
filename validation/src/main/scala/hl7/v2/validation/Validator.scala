@@ -37,8 +37,11 @@ trait Validator { this: Parser with structure.Validator
         parse( message, model ) match {
           case Success( m ) => 
             val structErrors   = checkStructure( m )
+            println("st")
             val contentErrors  = checkContent  ( m )
+            println("ct")
             val valueSetErrors = Future { vs.Validator.checkValueSet(m, valueSetLibrary) }
+            println("vt")
             for {
               r1 <- structErrors
               r2 <- contentErrors

@@ -165,7 +165,7 @@
 	<xs:simpleType name="DatatypeNameType">
 		<xs:restriction base="NonEmptyString">
 			<!-- <xs:pattern value="-|[a-zA-Z0-9]+"></xs:pattern> -->
-			<xs:pattern value="-|([a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)"></xs:pattern>
+			<xs:pattern value="-|([a-zA-Z0-9]+([_-][a-zA-Z0-9]+)*)"></xs:pattern>
 		</xs:restriction>
 	</xs:simpleType>
 	

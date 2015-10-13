@@ -40,20 +40,26 @@ public class SimpleElementValidator {
     public static Entry check(Location location, String value, ValueSetSpec spec,
                               ValueSetLibrary library) {
     	
-        if( spec == null )
-            return null;
+        System.out.println("value: "+value);
+
+        if( spec == null ){
+            System.out.println("spec is null");
+            return null;}
         
         if(spec.valueSetId().contains(":")){
+            System.out.println("spec valueSetId contains :");
         	return null;
         }
     		
 
         // Return a detection if the value set is excluded from the validation
-        if( library.isExcludedFromTheValidation( spec.valueSetId() ) )
-            return Detections.vsNoVal(location, spec.valueSetId());
+        if( library.isExcludedFromTheValidation( spec.valueSetId() ) ) {
+            System.out.println("validation is excluded");
+            return Detections.vsNoVal(location, spec.valueSetId());}
 
         try {
             ValueSet vs = library.get( spec.valueSetId() );
+            System.out.println("vs-value: "+vs);
             return checkValueSet(location, value, vs, spec);
         } catch ( ValueSetNotFoundException e) {
             return Detections.vsNotFound(location, value, spec);

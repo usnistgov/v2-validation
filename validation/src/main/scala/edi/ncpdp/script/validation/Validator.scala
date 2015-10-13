@@ -41,6 +41,6 @@ class SyncNCPDPValidator(
 
   @throws[Exception]
   def check(message: String, id: String): Report =
-    Await.result(validate(message, id), 10.second)
+    Await.result(validate(message, id), 5.second)
 
 }
