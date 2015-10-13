@@ -37,11 +37,8 @@ trait Validator { this: Parser with structure.Validator
         parse( message, model ) match {
           case Success( m ) => 
             val structErrors   = checkStructure( m )
-            println("st")
             val contentErrors  = checkContent  ( m )
-            println("ct")
             val valueSetErrors = Future { vs.Validator.checkValueSet(m, valueSetLibrary) }
-            println("vt")
             for {
               r1 <- structErrors
               r2 <- contentErrors
@@ -88,6 +85,6 @@ class SyncHL7Validator(
 
   @throws[Exception]
   def check(message: String, id: String): Report =
-    Await.result(validate(message, id), 10.second)
+    Await.result(validate(message, id), 5.second)
 
 }

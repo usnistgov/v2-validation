@@ -25,7 +25,6 @@ public class Validator {
      */
     public static List<Entry> checkValueSet(Message message, ValueSetLibrary library) {
         List<Entry> result = new java.util.ArrayList<Entry>();
-        System.out.println("vs0");
         checkValueSet(result, message.asGroup(), library);
         return result;
     }
@@ -49,12 +48,10 @@ public class Validator {
     private static void checkValueSet(List<Entry> result, Element e, ValueSetLibrary library) {
         if( e instanceof Simple ) {            
             Entry x = SimpleElementValidator.check((Simple) e, getSpec(e.req()), library);
-            System.out.println("vs1"+x);
             if( x != null )
                 result.add(x);
         } else {
             Entry x = ComplexElementValidator.check((Complex) e, getSpec(e.req()), library);
-            System.out.println("vs2"+x);
             if( x != null )
                 result.add(x);
 

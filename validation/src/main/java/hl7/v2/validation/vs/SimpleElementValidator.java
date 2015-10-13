@@ -39,15 +39,11 @@ public class SimpleElementValidator {
      */
     public static Entry check(Location location, String value, ValueSetSpec spec,
                               ValueSetLibrary library) {
-    	
-        System.out.println("value: "+value);
 
         if( spec == null ){
-            System.out.println("spec is null");
             return null;}
         
         if(spec.valueSetId().contains(":")){
-            System.out.println("spec valueSetId contains :");
         	return null;
         }
     		

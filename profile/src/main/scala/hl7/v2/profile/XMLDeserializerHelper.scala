@@ -19,8 +19,8 @@ object XMLDeserializerHelper {
     implicit val sgs = segments( sgElems )
     val mgs = messages( mgElems )
     val p = Profile( id, typ, schemaVer, mgs, sgs, dts )
-    val pp = new PrettyPrinter(200, 4)
-    println( pp.format( XMLSerializer.serialize( p ) ) )
+    //val pp = new PrettyPrinter(200, 4)
+    //println( pp.format( XMLSerializer.serialize( p ) ) )
     return p
   }
 

@@ -20,7 +20,7 @@ object XMLDeserializer{
   /**
     * Returns the profile XSD schema as InputStream
     */
-  def xsdInternal: InputStream = getClass.getResourceAsStream("/Profile-ncpdp.xsd")
+  //def xsdInternal: InputStream = getClass.getResourceAsStream("/Profile-ncpdp.xsd")
 
   /**
     * Create a profile from XML
@@ -30,6 +30,6 @@ object XMLDeserializer{
   //def deserialize( xml: InputStream ): Try[Profile] =
   //  XOMDocumentBuilder.build(xml, xsdInternal) map { doc =>  profile( doc.getRootElement ) }
   def deserialize( xml: InputStream ): Try[Profile] =
-    XOMDocumentBuilder.build(xml) map { doc =>  profile( doc.getRootElement ) }
+    XOMDocumentBuilder.build(xml, getClass.getResourceAsStream("/Profile-ncpdp.xsd")) map { doc =>  profile( doc.getRootElement ) }
     
 }
