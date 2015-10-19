@@ -7,6 +7,7 @@ import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mcl1 on 9/15/15.
@@ -28,10 +29,23 @@ public class ErxXmlUtils {
         return errorHandler.getXmlEntries();
     }
 
-    public static ArrayList<XMLEntry> validateAgainstXSLT(String xml, String schematronSchema, String skeleton, String phase) {
+    public static ArrayList<XMLEntry> validateAgainstXSLT(String xml, List<String> schematronSchema, String skeleton, String phase) {
         //For more information, see http://www.xfront.com/schematron/dynamic.html
-        ArrayList<XMLEntry> xmlEntries = XSLTProcessor.process(schematronSchema, skeleton, xml, phase);
-        return xmlEntries;
+        ArrayList<ArrayList<XMLEntry>> entries = new ArrayList<>();
+        for(String schematron : schematronSchema) {
+             entries.add(XSLTProcessor.process(schematron, skeleton, xml, phase));
+        }
+        return flatten(entries);
+    }
+
+    private static ArrayList<XMLEntry> flatten(ArrayList<ArrayList<XMLEntry>> entries) {
+        ArrayList<XMLEntry> flat = new ArrayList<>();
+        for(ArrayList<XMLEntry> xmlEntriesList : entries){
+            for(XMLEntry entry : xmlEntriesList){
+                flat.add(entry);
+            }
+        }
+        return flat;
     }
 
 }
