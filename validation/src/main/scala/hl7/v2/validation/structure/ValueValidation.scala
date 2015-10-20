@@ -57,7 +57,7 @@ object ValueValidation extends EscapeSeqHandler  {
       case Date(x)     => checkDate(x)     map { m => Detections.format(l, m) }
       case Time(x)     => checkTime(x)     map { m => Detections.format(l, m) }
       case DateTime(x) => checkDateTime(x) map { m => Detections.format(l, m) }
-      case _ if containSeparators(v) => Some(  Detections.unescaped(l) )
+      case _ if containSeparators(v) && !(l.path.equals("UNA-1.1")) => Some(  Detections.unescaped(l) )
       case _ => None
     }
 

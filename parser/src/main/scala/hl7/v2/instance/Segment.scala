@@ -1,6 +1,6 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{SegmentRef => SM, Field => FM, DynMapping}
+import hl7.v2.profile.{SegmentRef => SM, Field => FM, Primitive, Composite, DynMapping}
 
 import scala.util.Try
 
@@ -37,13 +37,20 @@ object Segment extends EscapeSeqHandler {
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
     val nb = ctr.countFor(name);
     val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$nb]")
-    val vs  = split( s.fs, v drop 4 , 5)
+    var vs: Array[(Int, String)] = Array((5,v drop 3))
+    if (!(v startsWith "UNA")) {
+      vs = split(s.fs, v drop 4, 6)
+    }
     // Attempt to resolve dynamic data types abort if errors
     val fml = resolveDyn(m.ref.fields, vs, m.ref.mappings).getOrElse(m.ref.fields)//m.ref.fields
     val (hasExtra, lfs) =
-      if( v startsWith "MSH" ) (vs.size > fml.size - 1) -> mshFields(fml, vs, loc)
-      else (vs.size > fml.size) -> fields( fml, vs, loc )
-    Segment(m, loc, i, lfs.flatten, hasExtra)
+      if ( v startsWith "UNA") (vs.size > fml.size) -> unaField(fml, vs, loc)
+      else if ( v startsWith "MSH") (vs.size > fml.size -1) -> mshFields(fml, vs, loc)
+        else (vs.size > fml.size) -> fields( fml, vs, loc )
+    val flatten =
+      if(lfs.size>1) lfs.flatten
+      else lfs.head
+    Segment(m, loc, i, flatten, hasExtra)
   }
 
   /**
@@ -63,6 +70,17 @@ object Segment extends EscapeSeqHandler {
     val `MSH.2` = field(l, fml.tail.head, escape( vs(0)._2 ), 1, 5) //FIXME: Do we have to escape here ?
     val _fields = fields(fml.tail.tail, vs drop 1 , l)
     `MSH.1`.toList  :: `MSH.2`.toList :: _fields
+  }
+
+  private def unaField( fml: List[FM], vs: Array[(Int, String)], l: Location )
+                       (implicit s: Separators) = {
+    var value = vs(0)._2 + s.ts.get
+    var composite = fml.head.datatype.asInstanceOf[Composite].components.head
+    var child = SimpleComponent(composite.datatype.asInstanceOf[Primitive],composite.req,l.copy(EType.Component,composite.datatype.desc,l.path+"-1.1",l.line,3,l.uidPath+"[1]-1[1].1"),Value(composite.datatype.asInstanceOf[Primitive],value))
+    var datatype = fml.head.datatype
+    var UNA = ComplexField(fml.head.datatype.asInstanceOf[Composite],fml.head.req,l.copy(EType.Field,datatype.desc,l.path+"-1",l.line,3,l.uidPath+"[1]-1[1]"),1,child::Nil,value.size>6)
+    //val UNA = field(l,fml.head,vs(0)._2,1,5)
+    List(UNA::Nil)
   }
 
   /**

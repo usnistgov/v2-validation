@@ -95,7 +95,7 @@ object NCPDPPreProcessor {
     val ec = message(6)
     val rs = message(7)
     
-    val ss = '^'
+    val ss = 'º'
     val tc = None
 
     val dnChar = message(5)
