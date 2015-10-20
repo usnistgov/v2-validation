@@ -75,12 +75,22 @@ object Segment extends EscapeSeqHandler {
   private def unaField( fml: List[FM], vs: Array[(Int, String)], l: Location )
                        (implicit s: Separators) = {
     var value = vs(0)._2 + s.ts.get
-    var composite = fml.head.datatype.asInstanceOf[Composite].components.head
-    var child = SimpleComponent(composite.datatype.asInstanceOf[Primitive],composite.req,l.copy(EType.Component,composite.datatype.desc,l.path+"-1.1",l.line,3,l.uidPath+"[1]-1[1].1"),Value(composite.datatype.asInstanceOf[Primitive],value))
-    var datatype = fml.head.datatype
-    var UNA = ComplexField(fml.head.datatype.asInstanceOf[Composite],fml.head.req,l.copy(EType.Field,datatype.desc,l.path+"-1",l.line,3,l.uidPath+"[1]-1[1]"),1,child::Nil,value.size>6)
-    //val UNA = field(l,fml.head,vs(0)._2,1,5)
-    List(UNA::Nil)
+    if(fml.head.datatype.isInstanceOf[Composite]){
+      val composite = fml.head.datatype.asInstanceOf[Composite].components.head
+      val child = SimpleComponent(composite.datatype.asInstanceOf[Primitive],composite.req,l.copy(EType.Component,composite.datatype.desc,l.path+"-1.1",l.line,3,l.uidPath+"[1]-1[1].1"),Value(composite.datatype.asInstanceOf[Primitive],value))
+      val datatype = fml.head.datatype
+      val UNA = ComplexField(fml.head.datatype.asInstanceOf[Composite],fml.head.req,l.copy(EType.Field,datatype.desc,l.path+"-1",l.line,3,l.uidPath+"[1]-1[1]"),1,child::Nil,value.size>6)
+      //val UNA = field(l,fml.head,vs(0)._2,1,5)
+      List(UNA::Nil)
+    } else {
+      //if (fml.head.datatype.isInstanceOf[Primitive]){
+      val datatype = fml.head.datatype
+      //var child = SimpleComponent(datatype.asInstanceOf[Primitive],fml.head.req,l.copy(EType.Component,datatype.desc,l.path+"-1.1",l.line,3,l.uidPath+"[1]-1[1].1"),Value(datatype.asInstanceOf[Primitive],value))
+      val UNA = SimpleField(datatype.asInstanceOf[Primitive], fml.head.req, l.copy(EType.Component, datatype.desc, l.path + "-1.1", l.line, 3, l.uidPath + "[1]-1[1].1"), 1, Value(datatype.asInstanceOf[Primitive], value))
+      //var UNA = ComplexField(fml.head.datatype.asInstanceOf[Composite],fml.head.req,l.copy(EType.Field,datatype.desc,l.path+"-1",l.line,3,l.uidPath+"[1]-1[1]"),1,child::Nil,value.size>6)
+      //val UNA = field(l,fml.head,vs(0)._2,1,5)
+      List(UNA :: Nil)
+    }
   }
 
   /**
