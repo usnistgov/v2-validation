@@ -140,7 +140,7 @@
     </Segments>
     <Datatypes>
         <Datatype ID="UIB-010_NEWRX" Name="Syntax identifier" Description="SyntaxIdentifierComposite">
-            <Component Name="UIB-010-01 - Syntax identifier" Usage="R" Datatype="ST" MinLength="4" MaxLength="4" Binding="UIB-010-01" BindingStrength="R" />
+            <Component Name="UIB-010-01 - Syntax identifier" Usage="R" Datatype="a4" MinLength="4" MaxLength="4" Binding="UIB-010-01" BindingStrength="R" />
             <Component Name="UIB-010-02 - Syntax version number" Usage="R" Datatype="an1" MinLength="1" MaxLength="1" Binding="UIB-010-02" BindingStrength="R" />
             <Component Name="UIB-010-03 - Service Code Directory Version Number" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
             <Component Name="UIB-010-04 - Service Code Directory Controlling Agency" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />

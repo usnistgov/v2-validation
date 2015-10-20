@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConformanceProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="STATUS-PROFILE" Type="Constrainable">
+    <MetaData Name="SCRIPT" OrgName="NCPDP" Version="10.6" Status="Draft" />
+    <Messages>
+        <Message ID="STATUS" Type="SCRIPT" Event="STATUS" StructID="STA_TUS" Description="Status message">
+            <Segment Ref="UNA_STATUS" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIB_STATUS" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIH_STATUS" Usage="R" Min="1" Max="1" />
+            <Segment Ref="STS_STATUS" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIT_STATUS" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIZ_STATUS" Usage="R" Min="1" Max="1" />
+        </Message>
+    </Messages>
+    <Segments>
+        <Segment ID="UNA_STATUS" Name="UNA" Description="UNA Service String Advice">
+            <Field Min="1" Max="1" ItemNo="UNA-010" Name="Delimiters" Usage="R" Datatype="ST" MinLength="6" MaxLength="6" />
+        </Segment>
+        <Segment ID="UIB_STATUS" Name="UIB" Description="Interactive Interchange Control Header">
+            <Field Min="1" Max="1" ItemNo="UIB-010" Name="Syntax identifier" Usage="R" Datatype="UIB-010_STATUS" MinLength="1" MaxLength="5" />
+            <Field Min="0" Max="0" ItemNo="UIB-020" Name="Dialogue Reference" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIB-030" Name="Transaction Reference" Usage="C" Datatype="UIB-030_STATUS" MinLength="0" MaxLength="73" />
+            <Field Min="0" Max="0" ItemNo="UIB-040" Name="Scenario identifier" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="UIB-050" Name="Dialogue identifier" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="1" Max="1" ItemNo="UIB-060" Name="Interchange Sender" Usage="R" Datatype="UIB-060_STATUS" MinLength="1" MaxLength="108" />
+            <Field Min="1" Max="1" ItemNo="UIB-070" Name="Interchange Recipient" Usage="R" Datatype="UIB-070_STATUS" MinLength="1" MaxLength="108" />
+            <Field Min="1" Max="1" ItemNo="UIB-080" Name="DateTimeOfInitiation" Usage="R" Datatype="UIB-080_STATUS" MinLength="1" MaxLength="23" />
+            <Field Min="0" Max="0" ItemNo="UIB-090" Name="Duplicate indicator" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIB-100" Name="Test Indicator" Usage="C" Datatype="NM" MinLength="1" MaxLength="1" />
+        </Segment>
+        <Segment ID="UIH_STATUS" Name="UIH" Description="Interactive MessageHeader">
+            <Field Min="1" Max="1" ItemNo="UIH-010" Name="Interactive Message Identifier" Usage="R" Datatype="UIH-010_STATUS" MinLength="1" MaxLength="24" />
+            <Field Min="0" Max="1" ItemNo="UIH-020" Name="Message Reference Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="UIH-030" Name="Dialogue Reference" Usage="C" Datatype="UIH-030_STATUS" MinLength="0" MaxLength="108" />
+            <Field Min="0" Max="0" ItemNo="UIH-040" Name="Status of transfer, interactive" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIH-050" Name="Date Time of Initiation (UIH segment)" Usage="C" Datatype="UIH-050_STATUS" MinLength="0" MaxLength="23" />
+            <Field Min="0" Max="1" ItemNo="UIH-060" Name="Test Indicator" Usage="C" Datatype="NM" MinLength="1" MaxLength="1" />
+        </Segment>
+        <Segment ID="STS_STATUS" Name="STS" Description="Status segment">
+            <Field Min="1" Max="1" ItemNo="STS-010" Name="Status Type, Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_9015_STS-010" BindingStrength="R" />
+            <Field Min="0" Max="10" ItemNo="STS-020" Name="Code List Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1131_STS-020" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="STS-030" Name="Free Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="70" />
+        </Segment>
+        <Segment ID="UIT_STATUS" Name="UIT" Description="UIT Interactive Message Trailer">
+            <Field Min="0" Max="1" ItemNo="UIT-010" Name="Message reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="UIT-020" Name="Number of segments in message" Usage="C" Datatype="NM" MinLength="1" MaxLength="10" />
+        </Segment>
+        <Segment ID="UIZ_STATUS" Name="UIZ" Description="UIZ Interactive Interchange Trailer">
+            <Field Min="0" Max="0" ItemNo="UIZ-010" Name="Dialogue reference" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIZ-020" Name="Interchange control count" Usage="C" Datatype="NM" MinLength="1" MaxLength="6" />
+            <Field Min="0" Max="0" ItemNo="UIZ-030" Name="Duplicate indicator" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Segment>
+    </Segments>
+    <Datatypes>
+        <Datatype ID="UIB-010_STATUS" Name="Syntax identifier" Description="SyntaxIdentifierComposite">
+            <Component Name="UIB-010-01 - Syntax identifier" Usage="R" Datatype="ST" MinLength="4" MaxLength="4" Binding="UIB-010-01" BindingStrength="R" />
+            <Component Name="UIB-010-02 - Syntax version number" Usage="R" Datatype="ST" MinLength="1" MaxLength="1" Binding="UIB-010-02" BindingStrength="R" />
+            <Component Name="UIB-010-03 - Service Code Directory Version Number" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="UIB-010-04 - Service Code Directory Controlling Agency" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="UIB-030_STATUS" Name="Transaction Reference" Description="TransactionReference">
+            <Component Name="UIB-030-01 - Transaction control reference" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-030-02 - Initiator Reference Identifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-030-03 - Controlling agency, coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+        </Datatype>
+        <Datatype ID="UIB-060_STATUS" Name="Interchange Sender" Description="InterchangeSender">
+            <Component Name="UIB-060-01 - Sender identification - level one" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-060-02 - Level one identification code qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="IG_UIB-060-02" BindingStrength="R" />
+            <Component Name="UIB-060-03 - Sender identification - level two" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-060-04 - Sender identification - level three" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="UIB-070_STATUS" Name="Interchange Recipient" Description="InterchangeRecipient">
+            <Component Name="UIB-070-01 - Recipient ID - level one" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-070-02 - Level one identification code qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="IG_UIB-070-02" BindingStrength="R" />
+            <Component Name="UIB-070-03 - Recipient identification - level two" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-070-04 - Recipient identification - level three" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="UIB-080_STATUS" Name="DateTimeOfInitiation" Description="DateTimeOfInitiation">
+            <Component Name="UIB-080-01 - Date of Initiation" Usage="R" Datatype="NM" MinLength="1" MaxLength="8" />
+            <Component Name="UIB-080-02 - Event Time" Usage="R" Datatype="NM" MinLength="1" MaxLength="15" />
+            <Component Name="UIB-080-03 - Time offset" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="UIH-010_STATUS" Name="Interactive Message Identifier" Description="InteractiveMessageIdentifier">
+            <Component Name="UIH-010-01 - Message type" Usage="R" Datatype="ST" MinLength="1" MaxLength="6" />
+            <Component Name="UIH-010-02 - Message version number" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="UIH-010-02" BindingStrength="R" />
+            <Component Name="UIH-010-03 - Message release number" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="UIH-010-03" BindingStrength="R" />
+            <Component Name="UIH-010-04 - Message function" Usage="R" Datatype="ST" MinLength="1" MaxLength="6" />
+            <Component Name="UIH-010-05 - Controlling Agency, Coded" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="UIH-010-06 - Association assigned code" Usage="C" Datatype="ST" MinLength="1" MaxLength="6" />
+        </Datatype>
+        <Datatype ID="UIH-030_STATUS" Name="Dialogue Reference" Description="DialogueReference.UIH">
+            <Component Name="UIH-030-01 - Initiator control reference" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIH-030-02 - Initiator Reference Identifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIH-030-03 - Controlling Agency, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="UIH-030-04 - Responder Control Reference" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="UIH-050_STATUS" Name="Date Time of Initiation (UIH segment)" Description="DateTimeOfInitiation[UIH]">
+            <Component Name="UIH-050-01 - Date of Initiation" Usage="C" Datatype="NM" MinLength="1" MaxLength="8" />
+            <Component Name="UIH-050-02 - Event Time" Usage="C" Datatype="NM" MinLength="1" MaxLength="15" />
+            <Component Name="UIH-050-03 - Time offset" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="NOT_USED" Name="NOT_USED" Description="NOT_USED (base SCRIPT datatype)">
+            <Component Name="NOT_USED" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="ST" Name="ST" Description="ST (base datatype)" />
+        <Datatype ID="NM" Name="NM" Description="NM (base datatype)" />
+    </Datatypes>
+</ConformanceProfile>
