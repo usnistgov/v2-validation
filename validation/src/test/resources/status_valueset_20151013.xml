@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ValueSetLibrary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ValueSetLibraryIdentifier="STATUS-VALUESET" Name="STATUS value set library" OrganizationName="NCPDP" ValueSetLibraryVersion="1.0" Status="Active" Description="Value sets used in the STATUS message">
+    <ValueSetDefinitions Group="STATUS_VALUES" Order="1">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_STS-020" Name="Code List Qualifier Reject Code - STS Segment">
+            <ValueElement Value="001" DisplayName="Sender ID not on file." CodeSystem="ECL_1131" />
+            <ValueElement Value="002" DisplayName="Receiver ID not on file" CodeSystem="ECL_1131" />
+            <ValueElement Value="003" DisplayName="Invalid password for sender" CodeSystem="ECL_1131" />
+            <ValueElement Value="004" DisplayName="Invalid password for receiver" CodeSystem="ECL_1131" />
+            <ValueElement Value="005" DisplayName="No password on file for sender" CodeSystem="ECL_1131" />
+            <ValueElement Value="006" DisplayName="No password on file for receiver" CodeSystem="ECL_1131" />
+            <ValueElement Value="007" DisplayName="Internal processing error has occurred" CodeSystem="ECL_1131" />
+            <ValueElement Value="008" DisplayName="Request timed out before response could be received" CodeSystem="ECL_1131" />
+            <ValueElement Value="009" DisplayName="Required segment UIB is missing" CodeSystem="ECL_1131" />
+            <ValueElement Value="010" DisplayName="Required segment UIH is missing" CodeSystem="ECL_1131" />
+            <ValueElement Value="011" DisplayName="Required segment UIT is missing" CodeSystem="ECL_1131" />
+            <ValueElement Value="012" DisplayName="Required segment UIZ is missing" CodeSystem="ECL_1131" />
+            <ValueElement Value="013" DisplayName="Unknown segment has been encountered" CodeSystem="ECL_1131" />
+            <ValueElement Value="014" DisplayName="Too many UIB segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="015" DisplayName="Too many UIH segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="016" DisplayName="Too many UIT segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="017" DisplayName="Too many UIZ segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="018" DisplayName="Password is blank" CodeSystem="ECL_1131" />
+            <ValueElement Value="019" DisplayName="Too many segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="020" DisplayName="Unknown data element encountered" CodeSystem="ECL_1131" />
+            <ValueElement Value="021" DisplayName="Unsupported version in message" CodeSystem="ECL_1131" />
+            <ValueElement Value="022" DisplayName="Unsupported release in message" CodeSystem="ECL_1131" />
+            <ValueElement Value="023" DisplayName="Error found in an unused field" CodeSystem="ECL_1131" />
+            <ValueElement Value="024" DisplayName="Message ending problem" CodeSystem="ECL_1131" />
+            <ValueElement Value="025" DisplayName="UIB trace number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="026" DisplayName="UIB initiator reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="027" DisplayName="UIB control agency is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="028" DisplayName="UIB sender identification is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="029" DisplayName="UIB date is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="030" DisplayName="UIB time is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="031" DisplayName="UIB time offset is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="032" DisplayName="UIB duplicate flag is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="033" DisplayName="UIB test flag is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="034" DisplayName="UIH message type is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="035" DisplayName="UIH function is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="036" DisplayName="UIH association code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="037" DisplayName="UIH prescription number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="038" DisplayName="UIH initiator reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="039" DisplayName="UIH initiator reference identifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="040" DisplayName="UIH control agency is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="041" DisplayName="UIH responder control reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="042" DisplayName="REQ message function is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="043" DisplayName="REQ reason code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="044" DisplayName="REQ reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="045" DisplayName="REQ old password is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="046" DisplayName="REQ new password is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="047" DisplayName="RES response type is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="048" DisplayName="RES response code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="049" DisplayName="RES reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="050" DisplayName="RES free text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="051" DisplayName="STS status code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="052" DisplayName="STS reject code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="053" DisplayName="STS free text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="054" DisplayName="PVD provider type is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="055" DisplayName="PVD reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="056" DisplayName="PVD reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="057" DisplayName="PVD agency qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="058" DisplayName="PVD specialty, coded is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="059" DisplayName="PVD prescriber last name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="060" DisplayName="PVD prescriber first name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="061" DisplayName="PVD prescriber middle name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="062" DisplayName="PVD prescriber name suffix is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="063" DisplayName="PVD prescriber name prefix is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="064" DisplayName="PVD prescriber postal code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="065" DisplayName="PVD clinic name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="066" DisplayName="PVD clinic street is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="067" DisplayName="PVD clinic city is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="068" DisplayName="PVD clinic country is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="069" DisplayName="PVD clinic postal code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="070" DisplayName="PVD clinic place qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="071" DisplayName="PVD clinic place name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="072" DisplayName="PVD communication reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="073" DisplayName="PVD communication qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="074" DisplayName="PVD agent last name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="075" DisplayName="PVD agent first name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="076" DisplayName="PVD agent middle name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="077" DisplayName="PVD agent name suffix is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="078" DisplayName="PVD agent name prefix is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="079" DisplayName="PTT patient relationship is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="080" DisplayName="PTT patient birth date is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="081" DisplayName="PTT patient last name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="082" DisplayName="PTT patient first name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="083" DisplayName="PTT patient middle name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="084" DisplayName="PTT patient name suffix is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="085" DisplayName="PTT patient name prefix is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="086" DisplayName="PTT patient gender is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="087" DisplayName="PTT patient reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="088" DisplayName="PTT patient reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="089" DisplayName="PTT patient street is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="090" DisplayName="PTT patient city is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="091" DisplayName="PTT patient country is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="092" DisplayName="PTT patient postal code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="093" DisplayName="PTT patient place qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="094" DisplayName="PTT patient place name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="095" DisplayName="PTT communication reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="096" DisplayName="PTT communication reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="097" DisplayName="COO payer reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="098" DisplayName="COO payer reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="099" DisplayName="COO payer name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="100" DisplayName="COO service type is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="101" DisplayName="COO cardholder reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="102" DisplayName="COO cardholder reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="103" DisplayName="COO cardholder name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="104" DisplayName="COO group reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="105" DisplayName="COO group name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="106" DisplayName="COO group street is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="107" DisplayName="COO group city is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="108" DisplayName="COO group country is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="109" DisplayName="COO group postal code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="110" DisplayName="COO group place qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="111" DisplayName="COO group place name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="112" DisplayName="COO datetime qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="113" DisplayName="COO datetime is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="114" DisplayName="COO datetime format qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="115" DisplayName="COO insurance type is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="116" DisplayName="COO holder street is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="117" DisplayName="COO holder city is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="118" DisplayName="COO holder country is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="119" DisplayName="COO holder postal code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="120" DisplayName="COO holder place qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="121" DisplayName="COO holder place name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="122" DisplayName="COO holder reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="123" DisplayName="COO holder reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="124" DisplayName="COO response code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="125" DisplayName="DRU drug disposition code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="126" DisplayName="DRU drug name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="127" DisplayName="DRU drug item number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="128" DisplayName="DRU drug agency is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="129" DisplayName="DRU drug agency qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="130" DisplayName="DRU drug strength is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="131" DisplayName="DRU drug strength qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="132" DisplayName="DRU drug reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="133" DisplayName="DRU drug reference qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="134" DisplayName="DRU dosage quantity qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="135" DisplayName="DRU dosage quantity is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="136" DisplayName="DRU dosage info qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="137" DisplayName="DRU dosage info is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="138" DisplayName="DRU dosage free text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="139" DisplayName="DRU datetime qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="140" DisplayName="DRU datetime is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="141" DisplayName="DRU datetime format qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="142" DisplayName="DRU substitution code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="143" DisplayName="DRU refill quantity qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="144" DisplayName="DRU refill quantity is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="145" DisplayName="DRU clinical info qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="146" DisplayName="DRU clinical info level1 reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="147" DisplayName="DRU clinical info level1 qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="148" DisplayName="DRU clinical info level2 reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="149" DisplayName="DRU clinical info level2 qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="150" DisplayName="DRU prior authorization reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="151" DisplayName="DRU prior authorization qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="152" DisplayName="DRU free text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="153" DisplayName="OBS measurement dimension is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="154" DisplayName="OBS measurement value is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="155" DisplayName="OBS measurement qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="156" DisplayName="OBS datetime is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="157" DisplayName="OBS datetime qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="158" DisplayName="OBS free text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="159" DisplayName="UIT reference number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="160" DisplayName="UIT segment count is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="161" DisplayName="UIZ dial reference is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="162" DisplayName="UIZ dial identifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="163" DisplayName="UIZ control agency is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="164" DisplayName="UIZ responder control ref is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="165" DisplayName="UIZ message count is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="166" DisplayName="Too many elements in COO segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="167" DisplayName="Too many elements in DRU segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="168" DisplayName="Too many elements in OBS segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="169" DisplayName="Too many elements in PTT segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="170" DisplayName="Too many elements in PVD segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="171" DisplayName="Too many elements in REQ segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="172" DisplayName="Too many elements in RES segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="173" DisplayName="Too many elements in STS segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="174" DisplayName="Too many elements in UIB segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="175" DisplayName="Too many elements in UIH segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="176" DisplayName="Too many elements in UIT segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="177" DisplayName="Too many elements in UIZ segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="178" DisplayName="Too many COO segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="179" DisplayName="Too many DRU segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="180" DisplayName="Too many OBS segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="181" DisplayName="Too many PTT segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="182" DisplayName="Too many PVD segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="183" DisplayName="Too many REQ segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="184" DisplayName="Too many RES segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="185" DisplayName="Too many STS segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="186" DisplayName="Too many UNA segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="187" DisplayName="Too many COO element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="188" DisplayName="Too many DRU element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="189" DisplayName="Too many OBS element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="190" DisplayName="Too many PTT element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="191" DisplayName="Too many PVD element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="192" DisplayName="Too many REQ element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="193" DisplayName="Too many RES element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="194" DisplayName="Too many STS element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="195" DisplayName="Too many UIB element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="196" DisplayName="Too many UIH element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="197" DisplayName="Too many UIT element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="198" DisplayName="Too many UIZ element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="199" DisplayName="Segment count mismatch in UIT" CodeSystem="ECL_1131" />
+            <ValueElement Value="200" DisplayName="Message missing required REQ segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="201" DisplayName="Message missing required RES segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="202" DisplayName="Message missing required STS segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="203" DisplayName="Message missing required PVD segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="204" DisplayName="Message missing required PTT segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="205" DisplayName="Message missing required COO segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="206" DisplayName="Message missing required DRU segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="207" DisplayName="Message missing required OBS segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="208" DisplayName="Sender no longer active" CodeSystem="ECL_1131" />
+            <ValueElement Value="209" DisplayName="Receiver no longer active" CodeSystem="ECL_1131" />
+            <ValueElement Value="210" DisplayName="Unable to process transaction Please resubmit" CodeSystem="ECL_1131" />
+            <ValueElement Value="211" DisplayName="DUE Reason For Service Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="212" DisplayName="DUE Professional Service Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="213" DisplayName="DUE Result Of Service Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="214" DisplayName="DUE Co-Agent ID is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="215" DisplayName="DUE Co-Agent ID Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="216" DisplayName="Drug Coverage Status Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="217" DisplayName="COO Date/Time/Period Expiration date - of needed history is less than Effective Date (Begin) of needed history" CodeSystem="ECL_1131" />
+            <ValueElement Value="218" DisplayName="COO Patient Identifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="219" DisplayName="COO Cannot process Medication History due to value of Condition/Response, coded (Patient Consent Indicator)" CodeSystem="ECL_1131" />
+            <ValueElement Value="220" DisplayName="Message is a duplicate" CodeSystem="ECL_1131" />
+            <ValueElement Value="221" DisplayName="Needed No Later Than Reason Date/Time Period Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="222" DisplayName="Needed No Later Than Reason Date/Time/Period is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="223" DisplayName="Needed No Later Than Reason Date/Time/Period Format Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="224" DisplayName="DRU Time Zone Identifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="225" DisplayName="DRU Time Zone Difference Quantity is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="226" DisplayName="Needed No Later Than Reason is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="227" DisplayName="Message missing required SRC Segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="228" DisplayName="SRC Source Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="229" DisplayName="SRC Source Description is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="230" DisplayName="SRC Source Reference Number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="231" DisplayName="SRC Source Reference Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="232" DisplayName="SRC Reference Number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="233" DisplayName="SRC Fill Number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="234" DisplayName="Too many SRC Segments" CodeSystem="ECL_1131" />
+            <ValueElement Value="235" DisplayName="Too many SRC element repetitions" CodeSystem="ECL_1131" />
+            <ValueElement Value="236" DisplayName="Too many elements in SRC Segment" CodeSystem="ECL_1131" />
+            <ValueElement Value="237" DisplayName="SIG Sig Sequence Position Number is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="238" DisplayName="SIG Multiple Sig Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="239" DisplayName="SIG SNOMED Version is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="240" DisplayName="SIG FMT Version is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="241" DisplayName="SIG Sig Free Text String Indicator is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="242" DisplayName="SIG Sig Free Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="243" DisplayName="SIG Dose Composite Indicator is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="244" DisplayName="SIG Dose Delivery Method Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="245" DisplayName="SIG Dose Delivery Method Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="246" DisplayName="SIG Dose Delivery Method Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="247" DisplayName="SIG Dose Delivery Method Modifier Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="248" DisplayName="SIG Dose Delivery Method Modifier Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="249" DisplayName="SIG Dose Delivery Method Modifier Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="250" DisplayName="SIG Dose Quantity is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="251" DisplayName="SIG Dose Form Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="252" DisplayName="SIG Dose Form Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="253" DisplayName="SIG Dose Form Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="254" DisplayName="SIG Dose Range Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="255" DisplayName="SIG Dosing Basis Numeric Value is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="256" DisplayName="SIG Dosing Basis Unit of Measure Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="257" DisplayName="SIG Dosing Basis Unit of Measure Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="257" DisplayName="SIG Dosing Basis Unit of Measure Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="258" DisplayName="SIG Dosing Basis Unit of Measure Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="259" DisplayName="SIG Body Metric Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="260" DisplayName="SIG Body Metric Value is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="261" DisplayName="SIG Calculated Dose Numeric is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="262" DisplayName="SIG Calculated Dose Unit of Measure Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="263" DisplayName="SIG Calculated Dose Unit of Measure Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="264" DisplayName="SIG Calculated Dose Unit of Measure Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="265" DisplayName="SIG Dosing Basis Range Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="266" DisplayName="SIG Vehicle Name is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="267" DisplayName="SIG Vehicle Name Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="268" DisplayName="SIG Vehicle Name Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="269" DisplayName="SIG Vehicle Quantity is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="270" DisplayName="SIG Vehicle Unit Of Measure Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="271" DisplayName="SIG Vehicle Unit Of Measure Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="272" DisplayName="SIG Vehicle Unit Of Measure Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="273" DisplayName="SIG Multiple Vehicle Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="274" DisplayName="SIG Route of Administration Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="275" DisplayName="SIG Route of Administration Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="276" DisplayName="SIG Route of Administration Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="277" DisplayName="SIG Multiple Route of Administration Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="278" DisplayName="SIG Site of Administration Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="279" DisplayName="SIG Site of Administration Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="280" DisplayName="SIG Site of Administration Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="281" DisplayName="SIG Multiple Administration Timing Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="282" DisplayName="SIG Administration Timing Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="283" DisplayName="SIG Administration Timing Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="284" DisplayName="SIG Administration Timing Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="285" DisplayName="SIG Multiple Administration Timing Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="286" DisplayName="SIG Rate of Administration is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="287" DisplayName="SIG Rate Unit of Measure Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="288" DisplayName="SIG Rate Unit of Measure Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="289" DisplayName="SIG Rate Unit of Measure Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="290" DisplayName="SIG Time Period Basis Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="291" DisplayName="SIG Time Period Basis Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="292" DisplayName="SIG Time Period Basis Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="293" DisplayName="SIG Frequency Numeric Value is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="294" DisplayName="SIG Frequency Units Text is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="295" DisplayName="SIG Frequency Units Code Qualifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="296" DisplayName="SIG Frequency Units Code is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="297" DisplayName="SIG Variable Frequency Modifier is invalid" CodeSystem="ECL_1131" />
+            <ValueElement Value="298" DisplayName="SIG Interval Numeric Value is invalid" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_9015_STS-010" Name="Status Type, coded">
+            <ValueElement Value="000" DisplayName="Transaction successful" CodeSystem="ECL_9015" />
+            <ValueElement Value="001" DisplayName="Transaction successful, message(s) waiting to be retrieved" CodeSystem="ECL_9015" />
+            <ValueElement Value="002" DisplayName="No more messages" CodeSystem="ECL_9015" />
+            <ValueElement Value="003" DisplayName="Transaction successful, no messages to be retrieved" CodeSystem="ECL_9015" />
+            <ValueElement Value="005" DisplayName="Transaction successful, password soon to expire" CodeSystem="ECL_9015" />
+            <ValueElement Value="010" DisplayName="Successful - accepted by ultimate receiver" CodeSystem="ECL_9015" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_UIB-060-02" Name="Implementation guide - identification code qualifier">
+            <ValueElement Value="P" DisplayName="Pharmacy" CodeSystem="IG" />
+            <ValueElement Value="C" DisplayName="Clinic" CodeSystem="IG" />
+            <ValueElement Value="M" DisplayName="Mailbox" CodeSystem="IG" />
+            <ValueElement Value="D" DisplayName="Prescriber" CodeSystem="IG" />
+            <ValueElement Value="ZZZ" DisplayName="Mutually Defined" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_UIB-070-02" Name="Implementation guide - identification code qualifier">
+            <ValueElement Value="P" DisplayName="Pharmacy" CodeSystem="IG" />
+            <ValueElement Value="C" DisplayName="Clinic" CodeSystem="IG" />
+            <ValueElement Value="M" DisplayName="Mailbox" CodeSystem="IG" />
+            <ValueElement Value="D" DisplayName="Prescriber" CodeSystem="IG" />
+            <ValueElement Value="ZZZ" DisplayName="Mutually Defined" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-010-01" Name="SyntaxIdentifier">
+            <ValueElement Value="UNOA" DisplayName="UNOA" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-010-02" Name="SyntaxVersionNumber">
+            <ValueElement Value="0" DisplayName="0" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIH-010-02" Name="Message.version">
+            <ValueElement Value="010" DisplayName="010" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIH-010-03" Name="Message.release">
+            <ValueElement Value="006" DisplayName="006" CodeSystem="IG" />
+        </ValueSetDefinition>
+    </ValueSetDefinitions>
+</ValueSetLibrary>
