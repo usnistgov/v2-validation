@@ -22,14 +22,14 @@ case class Separators( fs: Char, cs: Char, rs: Char, ec: Char, ss: Char, tc: Opt
     if( tc.isDefined ) tc.get.toString::l.reverse
     if( dn.isDefined ) {
       println("dn.isDefined --> "+dn.get.toString)
-      l = l ::: List('a')
+      l = l ::: List(dn.get)
     }
     if( ts.isDefined ) {
       println("ts.isDefined --> "+ts.get.toString)
       l = l ::: List(ts.get)
     }
     println("separators list size after tc, dn, ts: "+l.size)
-    l.reverse
+    l
   }
 
 }
