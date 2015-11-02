@@ -17,11 +17,19 @@ case class Separators( fs: Char, cs: Char, rs: Char, ec: Char, ss: Char, tc: Opt
    * Returns a list containing the separators
    */
   def toList = {
-    val l = List( fs, cs, rs, ec, ss) 
-    if( tc.isDefined ) l:::List(tc.get)
-    if( dn.isDefined ) l:::List(dn.get)
-    if( ts.isDefined ) l:::List(ts.get)
-    l
+    var l = List( fs, cs, rs, ec, ss)
+    println("separators list size: "+l.size+" | tc.isDefined? "+tc.isDefined+" | dn.isDefined? "+dn.isDefined+" "+dn.get.toString+" | ts.isDefined? "+ts.isDefined+" "+ts.get.toString)
+    if( tc.isDefined ) tc.get.toString::l.reverse
+    if( dn.isDefined ) {
+      println("dn.isDefined --> "+dn.get.toString)
+      l = l ::: List('a')
+    }
+    if( ts.isDefined ) {
+      println("ts.isDefined --> "+ts.get.toString)
+      l = l ::: List(ts.get)
+    }
+    println("separators list size after tc, dn, ts: "+l.size)
+    l.reverse
   }
 
 }
