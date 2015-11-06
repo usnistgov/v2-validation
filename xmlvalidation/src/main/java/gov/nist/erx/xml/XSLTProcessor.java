@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class XSLTProcessor {
 
-    private static final String WARNING = "WARNING";
-    private static final String ERROR = "ERROR";
+    private static final String WARNING = "Warning";
+    private static final String ERROR = "Error";
     private static final String ALL = "ALL";
     private static int file_num = 0;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
