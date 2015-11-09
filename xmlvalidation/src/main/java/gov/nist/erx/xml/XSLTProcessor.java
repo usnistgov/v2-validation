@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class XSLTProcessor {
 
-    private static final String WARNING = "WARNING";
-    private static final String ERROR = "ERROR";
+    private static final String WARNING = "Warning";
+    private static final String ERROR = "Error";
     private static final String ALL = "ALL";
     private static int file_num = 0;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -52,20 +52,21 @@ public class XSLTProcessor {
             String report = FileUtils.readFileToString(new File(result));
             ArrayList<String> lines = new ArrayList<>();
             report = report.substring(XML_HEADER.length());
-            String[] items = report.split("((?<=(" + WARNING + "|" + ERROR + "))|(?=(" + WARNING + "|" + ERROR + ")))");
+            String[] items = report.split("((?<=(" + WARNING.toUpperCase() + "|" + ERROR.toUpperCase() + "))|(?=(" + WARNING.toUpperCase() + "|" + ERROR.toUpperCase() + ")))");
             if (items.length > 1) {
                 for (int i = 0; i < items.length; i++) {
+                    String message = items[i].substring(2);
                     if ("".equals(items[i])) {
                         i++;
                     }
-                    if (items[i].equals(WARNING)) {
+                    if (items[i].equals(WARNING.toUpperCase())) {
                         if (ALL.equals(phase) || WARNING.equals(phase)) {
-                            entries.add(XMLDetections.contentWarning(items[i + 1]));
+                            entries.add(XMLDetections.contentWarning(message));
                             i++;
                         }
-                    } else if (items[i].equals(ERROR)) {
+                    } else if (items[i].equals(ERROR.toUpperCase())) {
                         if (ALL.equals(phase) || ERROR.equals(phase)) {
-                            entries.add(XMLDetections.contentError(items[i + 1]));
+                            entries.add(XMLDetections.contentError(message));
                             i++;
                         }
                     }
