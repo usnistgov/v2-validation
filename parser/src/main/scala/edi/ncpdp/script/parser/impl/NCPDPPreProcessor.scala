@@ -34,7 +34,8 @@ object NCPDPPreProcessor {
       case (xs, s) =>
         implicit val fs = s.fs
         implicit val cs = s.cs.toString
-        println("fs:^"+fs.toString+"^ | cs:^"+cs+"^")
+        val ts = s.ts.get.toString
+        println("fs:^"+fs.toString+"^ | cs:^"+cs+"^ | ts:^"+ts+"^ ts.isDefined? "+s.ts.isDefined)
         partition( xs ) match {
           case (Nil, invalid) =>
             println("invalid: "+invalid)

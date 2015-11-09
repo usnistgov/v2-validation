@@ -17,19 +17,19 @@ public class XMLDetections{
 
     //int line, int column, String path, String description, String category, String classification
     public static Entry contentError(Location l,String msg){
-        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"ERROR","");
+        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"Error","");
     }
 
     public static Entry contentWarning(Location l,String msg){
-        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"WARNING","");
+        return new XMLEntry(l.line(),l.column(),l.path(),l.desc(),"Warning","");
     }
 
     public static XMLEntry contentError(String msg){
-        return entry(msg,"","ERROR");
+        return entry(msg,"","Error");
     }
 
     public static XMLEntry contentWarning(String msg){
-        return entry(msg,"","WARNING");
+        return entry(msg,"","Warning");
     }
 
     //Helpers (see hl7.v2.validation.report.Detections)

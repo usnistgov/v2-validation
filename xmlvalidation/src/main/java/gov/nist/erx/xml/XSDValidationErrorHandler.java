@@ -22,17 +22,17 @@ public class XSDValidationErrorHandler implements ErrorHandler {
 
     @Override
     public void warning(SAXParseException exception) throws SAXException {
-        this.addEntry("WARNING", exception);
+        this.addEntry("Warning", exception);
     }
 
     @Override
     public void error(SAXParseException exception) throws SAXException {
-        this.addEntry("ERROR",exception);
+        this.addEntry("Error",exception);
     }
 
     @Override
     public void fatalError(SAXParseException exception) throws SAXException {
-        this.addEntry("FATAL",exception);
+        this.addEntry("Error",exception);
     }
 
     private void addEntry(String classification,SAXParseException ex){
