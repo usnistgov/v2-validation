@@ -105,7 +105,7 @@ trait DefaultNCPDPParser extends Parser {
 
   private def isExpected( l: Line, m: GM ) = {
     var isExpected = false
-    val specialSegments = Map("PVD" -> 2,"DRU" -> 1,"SIG" -> 1,"SRC" ->1)
+    val specialSegments = Map("DRU" -> 1,"SIG" -> 1,"SRC" ->1, "PVD" ->2)
     if (l._2 startsWith headName(m)) {
       var isSpecial = false
       var fieldLength = 0
@@ -129,8 +129,8 @@ trait DefaultNCPDPParser extends Parser {
     isExpected
   }
 
-  private def isExpected( l: Line, m: SM ) = {
-    /*var isExpected = false
+  private def isExpected( l: Line, m: SM) = {
+    var isExpected = false
     val specialSegments = Map("PVD" -> 2,"DRU" -> 1,"SIG" -> 1,"SRC" ->1)
     if (l._2 startsWith m.ref.name) {
       var isSpecial = false
@@ -145,14 +145,18 @@ trait DefaultNCPDPParser extends Parser {
         var id = findId(l._2, m.ref.name, fieldLength)
         if (id != "") {
           val compareId = m.ref.id
-          isExpected = compareId startsWith id
+          if(l._2 startsWith "PVD"){
+            isExpected = compareId contains id
+          } else {
+            isExpected = compareId startsWith id
+          }
         }
       } else {
         isExpected = true
       }
     }
-    isExpected*/
-    l._2 startsWith m.ref.name
+    isExpected
+    //l._2 startsWith m.ref.name
   }
 
   /**
@@ -177,13 +181,21 @@ trait DefaultNCPDPParser extends Parser {
 
   def findId(line: String,segmentName: String,fieldLength:Int) = {
     var segId = ""
-    val segMap = Map("P" -> "Prescribed","PC" -> "Prescribed", "D" -> "Dispensed","P1" -> "Dispensed","P2" -> "Dispensed", "R" -> "Requested")
+    val segMap = Map("P" -> "Prescribed", "D" -> "Dispensed", "R" -> "Requested")
+    val pvdList = List("PC","P2","SU","SK")
     segMap foreach { x =>
       val start = segmentName.length+1
       if(line.length >= start+fieldLength) {
         val name = line.substring(start, start + fieldLength)
-        if (name equals x._1) {
+        if ((segmentName != "PVD") && (name equals x._1)) {
           segId = x._2 + "_" + segmentName
+        } else if (segmentName == "PVD"){
+          val pvdType = line.substring("PVD".length+1,"PVD".length+1+2)
+          pvdList foreach { currentPvdType =>
+            if(currentPvdType.equals(pvdType)){
+              segId = segmentName + "_" + currentPvdType
+            }
+          }
         }
       }
     }
