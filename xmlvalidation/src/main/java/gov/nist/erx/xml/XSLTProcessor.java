@@ -54,28 +54,33 @@ public class XSLTProcessor {
             report = report.substring(XML_HEADER.length());
             String[] items = report.split("((?<=(" + WARNING.toUpperCase() + "|" + ERROR.toUpperCase() + "))|(?=(" + WARNING.toUpperCase() + "|" + ERROR.toUpperCase() + ")))");
             if (items.length > 1) {
-                for (int i = 0; i < items.length; i++) {
-                    String message = items[i].substring(2);
+                for (int i = 0; i < items.length; i+=2) {
                     if ("".equals(items[i])) {
                         i++;
                     }
-                    if (items[i].equals(WARNING.toUpperCase())) {
-                        if (ALL.equals(phase) || WARNING.equals(phase)) {
-                            entries.add(XMLDetections.contentWarning(message));
-                            i++;
-                        }
-                    } else if (items[i].equals(ERROR.toUpperCase())) {
-                        if (ALL.equals(phase) || ERROR.equals(phase)) {
-                            entries.add(XMLDetections.contentError(message));
-                            i++;
-                        }
-                    }
+                    entries = parseEntry(entries,items[i],items[i+1],phase);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             cleanFiles();
+        }
+        return entries;
+    }
+
+    private static ArrayList<XMLEntry> parseEntry(ArrayList<XMLEntry> entries, String classification, String message, String phase){
+        if(message.length()>2){
+            message = message.substring(2);
+        }
+        if (classification.equals(WARNING.toUpperCase())) {
+            if (ALL.equals(phase) || WARNING.equals(phase)) {
+                entries.add(XMLDetections.contentWarning(message));
+            }
+        } else if (classification.equals(ERROR.toUpperCase())) {
+            if (ALL.equals(phase) || ERROR.equals(phase)) {
+                entries.add(XMLDetections.contentError(message));
+            }
         }
         return entries;
     }
