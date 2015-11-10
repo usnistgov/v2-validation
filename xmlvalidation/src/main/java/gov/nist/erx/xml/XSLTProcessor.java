@@ -55,7 +55,7 @@ public class XSLTProcessor {
             String[] items = report.split("((?<=(" + WARNING.toUpperCase() + "|" + ERROR.toUpperCase() + "))|(?=(" + WARNING.toUpperCase() + "|" + ERROR.toUpperCase() + ")))");
             if (items.length > 1) {
                 for (int i = 0; i < items.length; i++) {
-                    String message = items[i].substring(2);
+                    String message = items[i+1].substring(2);
                     if ("".equals(items[i])) {
                         i++;
                     }
