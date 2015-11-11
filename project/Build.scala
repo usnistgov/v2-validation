@@ -73,7 +73,8 @@ object Build extends Build {
       compile( junit ) ++
       compile( xmlbeans ) ++
       compile( `xml-util` )++
-      compile( `xalan` )
+      compile( `xalan` )++
+      compile(commonslang)
     )
     .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
     .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) =>

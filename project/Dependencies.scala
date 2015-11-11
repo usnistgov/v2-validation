@@ -25,5 +25,7 @@ object Dependencies {
   val `ph-schematron`  = "com.helger"            %   "ph-schematron"     %  "3.0.0"
   val xmlbeans = "org.apache.xmlbeans" % "xmlbeans" % "2.4.0"
   val xalan = "xalan" % "xalan" % "2.7.2"
+  val commonslang = "org.apache.commons" % "commons-lang3" % "3.0"
+
 
 }
