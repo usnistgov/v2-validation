@@ -7,6 +7,8 @@ import hl7.v2.validation.vs.ValueSetLibraryImpl
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
+import scala.io.Source
+
 
 object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure.DefaultValidator {
 
@@ -79,13 +81,63 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
   // SyncNCPDPValidator
   val validator = new SyncNCPDPValidator(profile, valueSetLibrary, conformanceContext)
 
-  1 to 1 foreach { i =>
+  /*1 to 1 foreach { i =>
     time {
       val rep = validator.check( m, "NEWRX" )
       println( rep.toText )
       println( s"\n\n ${ rep.toJson } \n\n" )  
     }
+  }*/
+
+  //Test valueSet validation
+  val statusProfile =  XMLDeserializer.deserialize( getClass.getResourceAsStream("/rxfill_profile_20151014.xml") ) match {
+    case Success(p) => p
+    case Failure(e) => throw e
   }
+  val isStatusValueSet = getClass.getResourceAsStream("/rxfill_valueset_20151013.xml")
+  val statusValueSet = ValueSetLibraryImpl(isStatusValueSet).get
+  val message = Source.fromInputStream(getClass.getResourceAsStream("/RxFillMessage.txt")).mkString
+  val valueSetValidator = new SyncNCPDPValidator(statusProfile, statusValueSet, conformanceContext)
+  1 to 1 foreach { i =>
+    time {
+      println("enter the value set test")
+      val report = valueSetValidator.check(message, "RXFILL")
+      println(report.toText)
+      println(s"\n\n ${report.toJson} \n\n")
+    }
+  }
+
+  /*val isStatusValueSet = getClass.getResourceAsStream("/status_valueset_20151013.xml")
+  val statusValueSet = ValueSetLibraryImpl(isStatusValueSet).get
+  val badValueSetMessage = Source.fromInputStream(getClass.getResourceAsStream("/badValueSetMessage.txt")).mkString
+  val valueSetValidator = new SyncNCPDPValidator(statusProfile, statusValueSet, conformanceContext)
+  1 to 1 foreach { i =>
+    time {
+      println("enter the value set test")
+      val report = valueSetValidator.check(badValueSetMessage, "STATUS")
+      println(report.toText)
+      println(s"\n\n ${report.toJson} \n\n")
+    }
+  }
+
+  val statusProfileComplex =  XMLDeserializer.deserialize( getClass.getResourceAsStream("/status_profile_20151006.xml") ) match {
+    case Success(p) => p
+    case Failure(e) => throw e
+  }
+
+  val valueSetValidatorComplex = new SyncNCPDPValidator(statusProfileComplex, statusValueSet, conformanceContext)
+  1 to 1 foreach { i =>
+    time {
+      println("enter the value set test")
+      val report = valueSetValidator.check(badValueSetMessage, "STATUS")
+      println(report.toText)
+      println(s"\n\n ${report.toJson} \n\n")
+    }
+  }*/
+
+
+
+
   /*import scala.concurrent.duration._
 
   1 to 200 foreach { i =>

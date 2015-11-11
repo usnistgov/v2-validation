@@ -16,6 +16,7 @@ import scala.util.Try
 
 trait DefaultNCPDPParser extends Parser {
 
+
   /**
     * Parses the message and returns the message instance model
     * @param message - The message to be parsed
@@ -49,6 +50,7 @@ trait DefaultNCPDPParser extends Parser {
   private def processChildren(models: List[SGM], stack: Stack)
                              (implicit separators: Separators, ctr : Counter): (LSG, Stack) = {
     var isHead = true
+
     models.foldLeft( (List[SegOrGroup](), stack) ) { (acc, x) =>
       x match {
         case sm: SM =>
@@ -82,7 +84,9 @@ trait DefaultNCPDPParser extends Parser {
     if(isHead) ( segment(sm, stack.head, 1) :: Nil, stack.tail )
     else {
       val(x, remainingStack) = stack span (l => isExpected(l, sm))
-      val ls = x.zipWithIndex map { t => segment(sm, t._1, t._2 + 1) }
+      val ls = x.zipWithIndex map {
+        t => segment(sm, t._1, t._2 + 1)
+      }
       (ls.reverse, remainingStack)
     }
 
@@ -97,9 +101,63 @@ trait DefaultNCPDPParser extends Parser {
   private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr : Counter) =
     Segment(m, l._2, i, l._1)
 
-  private def isExpected( l: Line, m: GM ) = l._2 startsWith headName(m)
 
-  private def isExpected( l: Line, m: SM ) = l._2 startsWith m.ref.name
+
+  private def isExpected( l: Line, m: GM ) = {
+    var isExpected = false
+    val specialSegments = Map("DRU" -> 1,"SIG" -> 1,"SRC" ->1, "PVD" ->2)
+    if (l._2 startsWith headName(m)) {
+      var isSpecial = false
+      var fieldLength = 0
+      specialSegments.foreach{ specialSegment =>
+        if(l._2 startsWith specialSegment._1) {
+          fieldLength = specialSegment._2
+          isSpecial = true
+        }
+      }
+      if(isSpecial) {
+        var id = findId(l._2, headName(m), fieldLength)
+        if (id != "") {
+          val compareId = headId(m)
+          isExpected = compareId startsWith id
+        }
+      }
+      else {
+        isExpected = true
+      }
+    }
+    isExpected
+  }
+
+  private def isExpected( l: Line, m: SM) = {
+    var isExpected = false
+    val specialSegments = Map("PVD" -> 2,"DRU" -> 1,"SIG" -> 1,"SRC" ->1)
+    if (l._2 startsWith m.ref.name) {
+      var isSpecial = false
+      var fieldLength = 0
+      specialSegments.foreach{ specialSegment =>
+        if(l._2 startsWith specialSegment._1) {
+          fieldLength = specialSegment._2
+          isSpecial = true
+        }
+      }
+      if(isSpecial) {
+        var id = findId(l._2, m.ref.name, fieldLength)
+        if (id != "") {
+          val compareId = m.ref.id
+          if(l._2 startsWith "PVD"){
+            isExpected = compareId contains id
+          } else {
+            isExpected = compareId startsWith id
+          }
+        }
+      } else {
+        isExpected = true
+      }
+    }
+    isExpected
+    //l._2 startsWith m.ref.name
+  }
 
   /**
     * Returns the group head name
@@ -109,6 +167,39 @@ trait DefaultNCPDPParser extends Parser {
   private def headName(m: GM): String = m.structure.head match {
     case s: SM => s.ref.name
     case g: GM => headName(g)
+  }
+
+  /**
+   * Returns the group head name
+   * @param m - The group model
+   * @return The group head id
+   */
+  private def headId(m: GM): String = m.structure.head match {
+    case s: SM => s.ref.id
+    case g: GM => headId(g)
+  }
+
+  def findId(line: String,segmentName: String,fieldLength:Int) = {
+    var segId = ""
+    val segMap = Map("P" -> "Prescribed", "D" -> "Dispensed", "R" -> "Requested")
+    val pvdList = List("PC","P2","SU","SK")
+    segMap foreach { x =>
+      val start = segmentName.length+1
+      if(line.length >= start+fieldLength) {
+        val name = line.substring(start, start + fieldLength)
+        if ((segmentName != "PVD") && (name equals x._1)) {
+          segId = x._2 + "_" + segmentName
+        } else if (segmentName == "PVD"){
+          val pvdType = line.substring("PVD".length+1,"PVD".length+1+2)
+          pvdList foreach { currentPvdType =>
+            if(currentPvdType.equals(pvdType)){
+              segId = segmentName + "_" + currentPvdType
+            }
+          }
+        }
+      }
+    }
+    segId
   }
 
 }

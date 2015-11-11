@@ -33,8 +33,14 @@ object Segment extends EscapeSeqHandler {
   def apply(m: SM, v: String, i: Int, l: Int)
            (implicit s: Separators, ctr : Counter): Segment = {
     require( isValid( s.fs, s.cs, v ), s"Invalid segment instance '$v'" )
-    val name = m.ref.name
+    var name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
+    val specialSegments = Map("DRU" -> 1,"SIG" -> 1,"SRC" ->1)
+    specialSegments.foreach { specialSegment =>
+      if(specialSegment._1.equals(name)){
+        name+=":"+v.substring(name.size+1,name.size+1+specialSegment._2);
+      }
+    }
     val nb = ctr.countFor(name);
     val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$nb]")
     var vs: Array[(Int, String)] = Array((5,v drop 3))
