@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ValueSetLibrary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ValueSetLibraryIdentifier="RXFILL-VALUESET" Name="RXFILL value set library" OrganizationName="NCPDP" ValueSetLibraryVersion="1.0" Status="Active" Description="Value sets used in the RXFILL message">
     <ValueSetDefinitions Group="RXFILL_VALUES" Order="1">
-        <ValueSetDefinition BindingIdentifier="ECL_1131_D_DRU-020-03" Name="Code List Qualifier - Quantity Qualifier - DRU Segment (X12 DE 673)">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_D_DRU-020-03" Name="Code List Qualifier  Quantity Qualifier - DRU Segment (X12 DE 673)">
             <ValueElement Value="38" DisplayName="Original Quantity" CodeSystem="ECL_1131" />
             <ValueElement Value="40" DisplayName="Remaining Quantity" CodeSystem="ECL_1131" />
             <ValueElement Value="87" DisplayName="Quantity Received" CodeSystem="ECL_1131" />
             <ValueElement Value="QS" DisplayName="Quantity sufficient as determined by the dispensing pharmacy" CodeSystem="ECL_1131" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_1131_D_DRU-070-03" Name="Code List Qualifier - Diagnosis Code Qualifier (Primary) - DRU Segment">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_D_DRU-070-03" Name="Code List Qualifier  Diagnosis Code Qualifier (Primary) - DRU Segment">
             <ValueElement Value="E" DisplayName="Micromedex/Medical Economics" CodeSystem="ECL_1131" />
             <ValueElement Value="F" DisplayName="First DataBank" CodeSystem="ECL_1131" />
             <ValueElement Value="M" DisplayName="Medi-Span Product Line" CodeSystem="ECL_1131" />
@@ -16,19 +16,19 @@
             <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
             <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_1131_D_DRU-070-05" Name="Code List Qualifier - Diagnosis Code Qualifier (Secondary) - DRU Segment (X12 DE 235)">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_D_DRU-070-05" Name="Code List Qualifier  Diagnosis Code Qualifier (Secondary) - DRU Segment (X12 DE 235)">
             <ValueElement Value="ABF" DisplayName="ICD-10" CodeSystem="ECL_1131" />
             <ValueElement Value="DX" DisplayName="ICD-9" CodeSystem="ECL_1131" />
             <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
             <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-020-03" Name="Code List Qualifier - Quantity Qualifier - DRU Segment (X12 DE 673)">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-020-03" Name="Code List Qualifier  Quantity Qualifier - DRU Segment (X12 DE 673)">
             <ValueElement Value="38" DisplayName="Original Quantity" CodeSystem="ECL_1131" />
             <ValueElement Value="40" DisplayName="Remaining Quantity" CodeSystem="ECL_1131" />
             <ValueElement Value="87" DisplayName="Quantity Received" CodeSystem="ECL_1131" />
             <ValueElement Value="QS" DisplayName="Quantity sufficient as determined by the dispensing pharmacy" CodeSystem="ECL_1131" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-070-03" Name="Code List Qualifier - Diagnosis Code Qualifier (Primary) - DRU Segment">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-070-03" Name="Code List Qualifier  Diagnosis Code Qualifier (Primary) - DRU Segment">
             <ValueElement Value="E" DisplayName="Micromedex/Medical Economics" CodeSystem="ECL_1131" />
             <ValueElement Value="F" DisplayName="First DataBank" CodeSystem="ECL_1131" />
             <ValueElement Value="M" DisplayName="Medi-Span Product Line" CodeSystem="ECL_1131" />
@@ -37,7 +37,7 @@
             <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
             <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-070-05" Name="Code List Qualifier - Diagnosis Code Qualifier (Secondary) - DRU Segment (X12 DE 235)">
+        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-070-05" Name="Code List Qualifier  Diagnosis Code Qualifier (Secondary) - DRU Segment (X12 DE 235)">
             <ValueElement Value="ABF" DisplayName="ICD-10" CodeSystem="ECL_1131" />
             <ValueElement Value="DX" DisplayName="ICD-9" CodeSystem="ECL_1131" />
             <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
@@ -86,6 +86,35 @@
             <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
             <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
         </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_FA_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2��� Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
         <ValueSetDefinition BindingIdentifier="ECL_1153_P_DRU-010-09" Name="Appendix B 2 - Drug Reference Values">
             <ValueElement Value="E" DisplayName="Medical Economics Generic Formulation Code (GFC)" CodeSystem="ECL_1153" />
             <ValueElement Value="G" DisplayName="Medical Economics Generic Master (GM)" CodeSystem="ECL_1153" />
@@ -129,6 +158,64 @@
             <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
             <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
         </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_PH_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2��� Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_PR_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2��� Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
         <ValueSetDefinition BindingIdentifier="ECL_1153_PTT-050-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
             <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
             <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
@@ -156,7 +243,7 @@
             <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
             <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_1153_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+        <ValueSetDefinition BindingIdentifier="ECL_1153_SU_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
             <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
             <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
             <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
@@ -494,14 +581,17 @@
             <ValueElement Value="3N" DisplayName="Medication Administered" CodeSystem="ECL_441-E6" />
             <ValueElement Value="4A" DisplayName="Prescribed with acknowledgements" CodeSystem="ECL_441-E6" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_4705_PVD-010" Name="Provider Coded (X12 DE 1221)">
-            <ValueElement Value="P2" DisplayName="Pharmacy" CodeSystem="ECL_4705" />
-            <ValueElement Value="PC" DisplayName="Primary Care Physician" CodeSystem="ECL_4705" />
-            <ValueElement Value="SU" DisplayName="Supervising" CodeSystem="ECL_4705" />
+        <ValueSetDefinition BindingIdentifier="ECL_4705_FA_PVD-010" Name="Provider Coded (X12 DE 1221)">
             <ValueElement Value="SK" DisplayName="Skilled Nursing Facility" CodeSystem="ECL_4705" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_4709_PVD-040-01" Name="Agency Qualifier, coded (X12 DE 559) ">
-            <ValueElement Value="A" DisplayName="Health Care Provider Taxonomy code set" CodeSystem="ECL_4709" />
+        <ValueSetDefinition BindingIdentifier="ECL_4705_PH_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="P2" DisplayName="Pharmacy" CodeSystem="ECL_4705" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4705_PR_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="PC" DisplayName="Primary Care Physician" CodeSystem="ECL_4705" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4705_SU_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="SU" DisplayName="Supervising" CodeSystem="ECL_4705" />
         </ValueSetDefinition>
         <ValueSetDefinition BindingIdentifier="ECL_475-J9 _D_DRU-100-05" Name="DUR Co-Agent ID Qualifier">
             <ValueElement Value="01" DisplayName="Universal Product Code (UPC)" CodeSystem="ECL_475-J9 " />
@@ -1053,79 +1143,35 @@
             <ValueElement Value="SK" DisplayName="Saskatchewan" CodeSystem="ECL_Appendix_C" />
             <ValueElement Value="YT" DisplayName="Yukon" CodeSystem="ECL_Appendix_C" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_Appendix_C_PVD-080-03" Name="State codes">
-            <ValueElement Value="AL" DisplayName="Alabama" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="AK" DisplayName="Alaska" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="AZ" DisplayName="Arizona" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="AR" DisplayName="Arkansas" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="AS" DisplayName="American Samoa" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="CA" DisplayName="California" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="CO" DisplayName="Colorado" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="CT" DisplayName="Connecticut" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="DE" DisplayName="Delaware" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="DC" DisplayName="District Of Columbia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="FM" DisplayName="Federated States Of Micronesia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="FL" DisplayName="Florida" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="GA" DisplayName="Georgia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="GU" DisplayName="Guam" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="HI" DisplayName="Hawaii" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="ID" DisplayName="Idaho" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="IL" DisplayName="Illinois" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="IN" DisplayName="Indiana" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="IA" DisplayName="Iowa" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="KS" DisplayName="Kansas" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="KY" DisplayName="Kentucky" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="LA" DisplayName="Louisiana" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="ME" DisplayName="Maine" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MH" DisplayName="Marshall Islands" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MD" DisplayName="Maryland" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MA" DisplayName="Massachusetts" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MI" DisplayName="Michigan" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MN" DisplayName="Minnesota" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MS" DisplayName="Mississippi" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MO" DisplayName="Missouri" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MT" DisplayName="Montana" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NE" DisplayName="Nebraska" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NV" DisplayName="Nevada" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NH" DisplayName="New Hampshire" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NJ" DisplayName="New Jersey" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NM" DisplayName="New Mexico" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NY" DisplayName="New York" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NC" DisplayName="North Carolina" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="ND" DisplayName="North Dakota" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MP" DisplayName="Northern Mariana Islands" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="OH" DisplayName="Ohio" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="OK" DisplayName="Oklahoma" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="OR" DisplayName="Oregon" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="PW" DisplayName="Palau" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="PA" DisplayName="Pennsylvania" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="PR" DisplayName="Puerto Rico" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="RI" DisplayName="Rhode Island" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="SC" DisplayName="South Carolina" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="SD" DisplayName="South Dakota" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="TN" DisplayName="Tennessee" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="TX" DisplayName="Texas" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="UT" DisplayName="Utah" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="VT" DisplayName="Vermont" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="VA" DisplayName="Virginia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="VI" DisplayName="Virgin Islands" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="WA" DisplayName="Washington" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="WV" DisplayName="West Virginia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="WI" DisplayName="Wisconsin" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="WY" DisplayName="Wyoming" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="AB" DisplayName="Alberta" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="BC" DisplayName="British Columbia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="MB" DisplayName="Manitoba" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NB" DisplayName="New Brunswick" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NF" DisplayName="NF" CodeSystem="IG" />
-            <ValueElement Value="NS" DisplayName="Nova Scotia" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NT" DisplayName="Northwest Territories" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="NU" DisplayName="Nunavut" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="ON" DisplayName="Ontario" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="PE" DisplayName="Prince Edward Island" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="QC" DisplayName="Quebec" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="SK" DisplayName="Saskatchewan" CodeSystem="ECL_Appendix_C" />
-            <ValueElement Value="YT" DisplayName="Yukon" CodeSystem="ECL_Appendix_C" />
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_FA_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PH_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PR_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
         </ValueSetDefinition>
         <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PTT-070-02" Name="Communication types">
             <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
@@ -1137,7 +1183,7 @@
             <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
             <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
         </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PVD-090-02" Name="Communication types">
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_SU_PVD-090-02" Name="Communication types">
             <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
             <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
             <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
@@ -1189,9 +1235,6 @@
             <ValueElement Value="ZZZ" DisplayName="Mutually Defined" CodeSystem="IG" />
         </ValueSetDefinition>
         <ValueSetDefinition BindingIdentifier="PTT-060-05" Name="Patient*PlaceLocationQualifier">
-            <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="IG" />
-        </ValueSetDefinition>
-        <ValueSetDefinition BindingIdentifier="PVD-080-05" Name="Provider*PlaceLocationQualifier">
             <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="IG" />
         </ValueSetDefinition>
         <ValueSetDefinition BindingIdentifier="UIB-010-01" Name="SyntaxIdentifier">

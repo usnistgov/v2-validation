@@ -8,7 +8,10 @@
             <Segment Ref="UIH_RXFILL" Usage="R" Min="1" Max="1" />
             <Segment Ref="REQ_RXFILL" Usage="C" Min="0" Max="1" />
             <Segment Ref="RES_RXFILL" Usage="R" Min="1" Max="1" />
-            <Segment Ref="PVD_RXFILL" Usage="R" Min="2" Max="4" />
+            <Segment Ref="PVD_P2_RXFILL" Usage="R" Min="1" Max="1" />
+            <Segment Ref="PVD_PC_RXFILL" Usage="R" Min="1" Max="1" />
+            <Segment Ref="PVD_SU_RXFILL" Usage="C" Min="0" Max="1" />
+            <Segment Ref="PVD_SK_RXFILL" Usage="C" Min="0" Max="1" />
             <Segment Ref="PTT_RXFILL" Usage="R" Min="1" Max="1" />
             <Group ID="Dispensed_Medication_Group_RXFILL" Name="Dispensed Medication Group" Usage="C" Min="0" Max="1">
                 <Segment Ref="Dispensed_DRU_RXFILL" Usage="R" Min="1" Max="1" />
@@ -61,17 +64,52 @@
             <Field Min="0" Max="1" ItemNo="RES-030" Name="Reference Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Field Min="0" Max="1" ItemNo="RES-040" Name="Free Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="70" />
         </Segment>
-        <Segment ID="PVD_RXFILL" Name="PVD" Description="Provider segment">
-            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_PVD-010" BindingStrength="R" />
-            <Field Min="0" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="C" Datatype="PVD-020_RXFILL" MinLength="0" MaxLength="38" />
+        <Segment ID="PVD_P2_RXFILL" Name="PVD" Description="Provider segment - Pharmacy">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_PH_PVD-010" BindingStrength="R" />
+            <Field Min="1" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="R" Datatype="PH_PVD-020_RXFILL" MinLength="1" MaxLength="38" />
             <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
-            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="PVD-040_RXFILL" MinLength="0" MaxLength="13" />
-            <Field Min="0" Max="1" ItemNo="PVD-050" Name="Name" Usage="C" Datatype="PVD-050_RXFILL" MinLength="0" MaxLength="125" />
+            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="PH_PVD-040_RXFILL" MinLength="0" MaxLength="20" />
+            <Field Min="0" Max="1" ItemNo="PVD-050" Name="Name" Usage="C" Datatype="PH_PVD-050_RXFILL" MinLength="0" MaxLength="125" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="1" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="1" Max="1" ItemNo="PVD-080" Name="Address" Usage="R" Datatype="PH_PVD-080_RXFILL" MinLength="1" MaxLength="119" />
+            <Field Min="1" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="R" Datatype="PH_PVD-090_RXFILL" MinLength="1" MaxLength="83" />
+            <Field Min="0" Max="0" ItemNo="PVD-100" Name="Name" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+        </Segment>
+        <Segment ID="PVD_PC_RXFILL" Name="PVD" Description="Provider segment - Prescriber">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_PR_PVD-010" BindingStrength="R" />
+            <Field Min="0" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="C" Datatype="PR_PVD-020_RXFILL" MinLength="0" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="PR_PVD-040_RXFILL" MinLength="0" MaxLength="20" />
+            <Field Min="1" Max="1" ItemNo="PVD-050" Name="Name" Usage="R" Datatype="PR_PVD-050_RXFILL" MinLength="1" MaxLength="125" />
             <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
             <Field Min="0" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
-            <Field Min="0" Max="1" ItemNo="PVD-080" Name="Address" Usage="C" Datatype="PVD-080_RXFILL" MinLength="0" MaxLength="119" />
-            <Field Min="0" Max="*" ItemNo="PVD-090" Name="Communication Number" Usage="C" Datatype="PVD-090_RXFILL" MinLength="0" MaxLength="83" />
-            <Field Min="0" Max="1" ItemNo="PVD-100" Name="Name" Usage="C" Datatype="PVD-100_RXFILL" MinLength="0" MaxLength="125" />
+            <Field Min="0" Max="1" ItemNo="PVD-080" Name="Address" Usage="C" Datatype="PR_PVD-080_RXFILL" MinLength="0" MaxLength="119" />
+            <Field Min="1" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="R" Datatype="PR_PVD-090_RXFILL" MinLength="1" MaxLength="83" />
+            <Field Min="0" Max="1" ItemNo="PVD-100" Name="Name" Usage="C" Datatype="PR_PVD-100_RXFILL" MinLength="0" MaxLength="125" />
+        </Segment>
+        <Segment ID="PVD_SU_RXFILL" Name="PVD" Description="Provider segment - Supervisor">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_SU_PVD-010" BindingStrength="R" />
+            <Field Min="0" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="C" Datatype="SU_PVD-020_RXFILL" MinLength="0" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="SU_PVD-040_RXFILL" MinLength="0" MaxLength="20" />
+            <Field Min="1" Max="1" ItemNo="PVD-050" Name="Name" Usage="R" Datatype="SU_PVD-050_RXFILL" MinLength="1" MaxLength="125" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="PVD-080" Name="Address" Usage="C" Datatype="SU_PVD-080_RXFILL" MinLength="0" MaxLength="119" />
+            <Field Min="1" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="R" Datatype="SU_PVD-090_RXFILL" MinLength="1" MaxLength="83" />
+            <Field Min="0" Max="0" ItemNo="PVD-100" Name="Name" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+        </Segment>
+        <Segment ID="PVD_SK_RXFILL" Name="PVD" Description="Provider segment - Facility">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_FA_PVD-010" BindingStrength="R" />
+            <Field Min="0" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="C" Datatype="FA_PVD-020_RXFILL" MinLength="0" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="PVD-040" Name="Provider Specialty" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="PVD-050" Name="Name" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="PVD-080" Name="Address" Usage="C" Datatype="FA_PVD-080_RXFILL" MinLength="0" MaxLength="119" />
+            <Field Min="0" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="C" Datatype="FA_PVD-090_RXFILL" MinLength="0" MaxLength="83" />
         </Segment>
         <Segment ID="PTT_RXFILL" Name="PTT" Description="Patient segment">
             <Field Min="0" Max="1" ItemNo="PTT-010" Name="Individual Relationship, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_9701_PTT-010" BindingStrength="R" />
@@ -207,40 +245,112 @@
             <Component Name="UIH-050-02 - Event Time" Usage="C" Datatype="NM" MinLength="1" MaxLength="15" />
             <Component Name="UIH-050-03 - Time offset" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
         </Datatype>
-        <Datatype ID="PVD-020_RXFILL" Name="Reference Number" Description="ProviderIdentification">
+        <Datatype ID="PH_PVD-020_RXFILL" Name="Reference Number" Description="PharmacyIdentification">
             <Component Name="PVD-020-01 - Reference number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
-            <Component Name="PVD-020-02 - Reference Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_PVD-020-02" BindingStrength="R" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_PH_PVD-020-02" BindingStrength="R" />
         </Datatype>
-        <Datatype ID="PVD-040_RXFILL" Name="Provider Specialty" Description="ProviderSpecialty">
-            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4709_PVD-040-01" BindingStrength="R" />
+        <Datatype ID="PH_PVD-040_RXFILL" Name="Provider Specialty" Description="PharmacySpecialty">
+            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
             <Component Name="PVD-040-02 - Provider Specialty Code" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
-            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
         </Datatype>
-        <Datatype ID="PVD-050_RXFILL" Name="Name" Description="Provider.Name">
+        <Datatype ID="PH_PVD-050_RXFILL" Name="Name" Description="Pharmacist">
             <Component Name="PVD-050-01 - Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Component Name="PVD-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Component Name="PVD-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Component Name="PVD-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
             <Component Name="PVD-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
         </Datatype>
-        <Datatype ID="PVD-080_RXFILL" Name="Address" Description="Provider.Address">
-            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
-            <Component Name="PVD-080-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
-            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_Appendix_C_PVD-080-03" BindingStrength="R" />
-            <Component Name="PVD-080-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
-            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="PVD-080-05" BindingStrength="R" />
+        <Datatype ID="PH_PVD-080_RXFILL" Name="Address" Description="Pharmacy.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="R" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="R" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
             <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
         </Datatype>
-        <Datatype ID="PVD-090_RXFILL" Name="Communication Number" Description="Provider*Communication">
-            <Component Name="PVD-090-01 - Communication Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="80" />
-            <Component Name="PVD-090-02 - Code List Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_PVD-090-02" BindingStrength="R" />
+        <Datatype ID="PH_PVD-090_RXFILL" Name="Communication Number" Description="Pharmacy*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_PH_PVD-090-02" BindingStrength="R" />
         </Datatype>
-        <Datatype ID="PVD-100_RXFILL" Name="Name" Description="Provider*Agent">
+        <Datatype ID="PR_PVD-020_RXFILL" Name="Reference Number" Description="PrescriberIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_PR_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PR_PVD-040_RXFILL" Name="Provider Specialty" Description="PrescriberSpecialty">
+            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-040-02 - Provider Specialty Code" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PR_PVD-050_RXFILL" Name="Name" Description="Prescriber.Name">
+            <Component Name="PVD-050-01 - Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PR_PVD-080_RXFILL" Name="Address" Description="Prescriber.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="PR_PVD-090_RXFILL" Name="Communication Number" Description="Prescriber*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_PR_PVD-090-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PR_PVD-100_RXFILL" Name="Name" Description="PrescriberAgent">
             <Component Name="PVD-100-01 - Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Component Name="PVD-100-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Component Name="PVD-100-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
             <Component Name="PVD-100-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
             <Component Name="PVD-100-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="SU_PVD-020_RXFILL" Name="Reference Number" Description="SupervisorIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_SU_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="SU_PVD-040_RXFILL" Name="Provider Specialty" Description="SupervisorSpecialty">
+            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-040-02 - Provider Specialty Code" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="SU_PVD-050_RXFILL" Name="Name" Description="Supervisor.Name">
+            <Component Name="PVD-050-01 - Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="SU_PVD-080_RXFILL" Name="Address" Description="Supervisor.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="SU_PVD-090_RXFILL" Name="Communication Number" Description="Supervisor*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_SU_PVD-090-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="FA_PVD-020_RXFILL" Name="Reference Number" Description="FacilityIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_FA_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="FA_PVD-080_RXFILL" Name="Address" Description="Facility.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="FA_PVD-090_RXFILL" Name="Communication Number" Description="Facility*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_FA_PVD-090-02" BindingStrength="R" />
         </Datatype>
         <Datatype ID="PTT-030_RXFILL" Name="Name" Description="Patient.Name">
             <Component Name="PTT-030-01 - Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />

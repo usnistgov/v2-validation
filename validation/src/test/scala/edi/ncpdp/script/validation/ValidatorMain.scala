@@ -90,11 +90,11 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
   }*/
 
   //Test valueSet validation
-  val statusProfile =  XMLDeserializer.deserialize( getClass.getResourceAsStream("/rxfill_profile_20151014.xml") ) match {
+  val statusProfile =  XMLDeserializer.deserialize( getClass.getResourceAsStream("/rxfill_profile_20151104.xml") ) match {
     case Success(p) => p
     case Failure(e) => throw e
   }
-  val isStatusValueSet = getClass.getResourceAsStream("/rxfill_valueset_20151013.xml")
+  val isStatusValueSet = getClass.getResourceAsStream("/rxfill_valueset_20151104.xml")
   val statusValueSet = ValueSetLibraryImpl(isStatusValueSet).get
   val message = Source.fromInputStream(getClass.getResourceAsStream("/RxFillMessage.txt")).mkString
   val valueSetValidator = new SyncNCPDPValidator(statusProfile, statusValueSet, conformanceContext)
