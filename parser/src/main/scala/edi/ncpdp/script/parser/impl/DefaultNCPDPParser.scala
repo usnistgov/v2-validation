@@ -179,7 +179,7 @@ trait DefaultNCPDPParser extends Parser {
     case g: GM => headId(g)
   }
 
-  def findId(line: String,segmentName: String,fieldLength:Int) = {
+  private def findId(line: String,segmentName: String,fieldLength:Int) = {
     var segId = ""
     val segMap = Map("P" -> "Prescribed", "D" -> "Dispensed", "R" -> "Requested")
     val pvdList = List("PC","P2","SU","SK")
