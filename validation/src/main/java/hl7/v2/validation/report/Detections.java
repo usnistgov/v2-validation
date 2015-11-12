@@ -177,16 +177,81 @@ public class Detections {
 	/**
 	 * @return A report entry for a constraint failure detection
 	 */
+	
+	public static Entry csFailure(Location errLoc, Element context,
+			Constraint c, List<Trace> stack,boolean cnt) {
+		if(cnt)
+			return cntFailure(errLoc, context, c, stack);
+		else
+			return csFailure(errLoc, context, c, stack);
+	}
+	
 	public static Entry csFailure(Location errLoc, Element context,
 			Constraint c, List<Trace> stack) {
 		return csEntry("constraint-failure", errLoc, context, c, stack);
+	}
+	
+	public static Entry cntFailure(Location errLoc, Element context,
+			Constraint c, List<Trace> stack) {
+		return csEntry("content-failure", errLoc, context, c, stack);
+	}
+	
+	public static Entry cntFailureCustom(Location errLoc, Element context,
+			Constraint c, List<Trace> stack, String config, String val, String expected) {
+		String category = conf.getString("report.content-failure.category");
+		String classification = conf.getString("report.content-failure.classification");
+		String template = conf.getString("report.content-failure.template");
+		Map<String, Object> metaData = new HashMap<String, Object>();
+		if (c.reference().isDefined())
+			metaData.put("reference", c.reference().get());
+		
+		if(conf.hasPath("context-based."+config)){
+			String description_template = conf.getString("context-based."+config);
+			String description = String.format(description_template, val, errLoc.prettyString(), expected);
+			String str  = String.format(template, c.id(), description);
+			return entry(errLoc, str, category, classification, stack, metaData);
+		}
+		else {
+			String str  = String.format(template, c.id(), c.description());
+			return entry(errLoc, str, category, classification, stack, metaData);
+		}
+	}
+	
+	public static Entry cntFailureVTF(Location errLoc, Element context,
+			Constraint c, List<Trace> stack, String val) {
+		String category = conf.getString("report.content-failure.category");
+		String classification = conf.getString("report.content-failure.classification");
+		String template = conf.getString("report.content-failure.template");
+		
+		String str  = String.format(template, c.id(), c.description());
+		String desc = String.format(str, val, errLoc.prettyString());
+		
+		Map<String, Object> metaData = new HashMap<String, Object>();
+		if (c.reference().isDefined())
+			metaData.put("reference", c.reference().get());
+		return entry(errLoc, desc, category, classification, stack, metaData);
 	}
 
 	/**
 	 * @return A report entry for a constraint failure detection
 	 */
+	
+	public static Entry csSuccess(Element context, Constraint c, boolean cnt) {
+		
+		if(cnt)
+			return cntSuccess(context, c);
+		else
+			return csSuccess(context, c);
+	}
+	
+	
+	
 	public static Entry csSuccess(Element context, Constraint c) {
 		return csEntry("constraint-success", context, c, null);
+	}
+	
+	public static Entry cntSuccess(Element context, Constraint c) {
+		return csEntry("content-success", context, c, null);
 	}
 
 	/**
@@ -195,6 +260,19 @@ public class Detections {
 	public static Entry csSpecError(Element context, Constraint c,
 			List<Trace> stack) {
 		return csEntry("constraint-spec-error", context, c, stack);
+	}
+	
+	public static Entry cntSpecError(Element context, Constraint c,
+			List<Trace> stack) {
+		return csEntry("constent-spec-error", context, c, stack);
+	}
+	
+	public static Entry csSpecError(Element context, Constraint c,
+			List<Trace> stack, boolean cnt) {
+		if(cnt)
+			return cntSpecError(context, c, stack);
+		else
+			return csSpecError(context, c, stack);
 	}
 
 	/**
@@ -297,9 +375,20 @@ public class Detections {
 		return vsEntry("vs-error", desc, l, vs, spec);
 	}
 	
+	public static Entry bindingLocation(Location l, String msg, ValueSet vs,
+			ValueSetSpec spec) {
+		String desc = vsTemplate1("binding-location", msg);
+		return vsEntry("binding-location", desc, l, vs, spec);
+	}
+	
 	public static Entry vsError(Location l, String msg) {
 		String desc = vsTemplate1("vs-error", msg);
 		return vsEntry("vs-error", desc, l);
+	}
+	
+	public static Entry bindingLocation(Location l, String msg) {
+		String desc = vsTemplate1("binding-location", msg);
+		return vsEntry("binding-location", desc, l);
 	}
 
 	/**

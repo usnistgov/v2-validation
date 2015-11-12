@@ -78,31 +78,36 @@ public class CodedElementValidatorM extends CodedElementValidator {
 				return Detections.codedElem(s2.location(), msg, null);
 			}
 		} catch (Exception e) {
-			return Detections.vsError(c.location(), e.getMessage());
+			return Detections.bindingLocation(c.location(), e.getMessage());
 		}
 	}
 	
-	private static Entry checkXORM(Complex c, int p1, int p2, ValueSetLibrary library,
+	
+	private static List<Entry> checkXORM(Complex c, int p1, int p2, ValueSetLibrary library,
 			ValueSetSpec spec, Map<String, String> bindings) {
+		
+		List<Entry> detections = new ArrayList<Entry>();
 		Entry e1 = checkPositionM(c, p1, spec, library, bindings);
 		Entry e2 = checkPositionM(c, p2, spec, library, bindings);
-		if ((e1 == null && e2 != null) || (e1 != null && e2 == null))
-			return null; // No detection
-
-		List<String> reasons = new ArrayList<String>();
-		if (e1 != null)
-			reasons.add(e1.getDescription());
-		if (e2 != null)
-			reasons.add(e2.getDescription());
-
-		List<Trace> stack = Arrays.asList(new Trace("", reasons));
-
-		String msg = "One of the triplet (but not both) should be valued from one of the specified value sets"
-				+ spec.valueSetId();
-		return Detections.codedElem(c.location(), msg, stack);
+		
+		if (e2 != null){
+			detections.add(e2);
+		}
+		
+		if(e1 != null){
+			detections.add(e1);
+		}
+		
+		if(e1 == null && e2 == null){
+			String msg = "One of the triplet (but not both) should be valued from one of the specified value sets"
+					+ spec.valueSetId();
+			detections.add(Detections.codedElem(c.location(), msg, null));
+		}
+		
+		return detections; // No detection
 	}
 	
-	public static Entry checkMultiple(Complex c, ValueSetSpec spec,
+	public static List<Entry> checkMultiple(Complex c, ValueSetSpec spec,
 			ValueSetLibrary library) {
 		try {
 
@@ -111,14 +116,14 @@ public class CodedElementValidatorM extends CodedElementValidator {
 
 			// -- Resolve Binding Location
 			if (spec.bindingLocation().isEmpty())
-				return Detections.vsError(c.location(),
-						"The binding location is missing");
+				return listify(Detections.vsError(c.location(),
+						"The binding location is missing"));
 
 			BindingLocation bl = spec.bindingLocation().get();
 
 			if (bl instanceof BindingLocation.Position) {
 				int p = ((BindingLocation.Position) bl).value();
-				return checkPositionM(c, p, spec, library, map);
+				return listify(checkPositionM(c, p, spec, library, map));
 			} else if (bl instanceof BindingLocation.XOR) {
 				int p1 = ((BindingLocation.XOR) bl).position1();
 				int p2 = ((BindingLocation.XOR) bl).position2();
@@ -126,11 +131,11 @@ public class CodedElementValidatorM extends CodedElementValidator {
 
 			} else {
 				String msg = "Invalid binding location " + bl;
-				return Detections.vsError(c.location(), msg);
+				return listify(Detections.vsError(c.location(), msg));
 			}
 
 		} catch (ValueSetSpecException e) {
-			return Detections.vsError(c.location(), e.getMessage());
+			return listify(Detections.vsError(c.location(), e.getMessage()));
 		}
 	}
 }

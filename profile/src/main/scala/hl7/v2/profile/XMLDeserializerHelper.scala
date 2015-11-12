@@ -140,16 +140,20 @@ object XMLDeserializerHelper {
     f(name, map(dtId), req)
   }
 
+  def hid(a: String) = {
+    if (a.equalsIgnoreCase("true")) true else false
+  }
   /**
    * Creates a requirement(Req) object from xom.Element
    */
   def requirement(p: Int, desc: String, e: Element): Req = {
     val usage = Usage.fromString(e.attribute("Usage"))
+    val hide = hid(e.attribute("Hide"));
     val card = cardinality(e)
     val len = length(e)
     val vss = vsSpec(e)
     val confLen = asOption(e.attribute("ConfLength"))
-    Req(p, desc, usage, card, len, confLen, vss)
+    Req(p, desc, usage, card, len, confLen, vss,hide)
   }
 
   /**
@@ -195,9 +199,9 @@ object XMLDeserializerHelper {
       case Some(vsid) =>
         // The following will throw if either the binding strength or location is invalid
 
-          val bs = asOption(e.attribute("BindingStrength")) map { x => BindingStrength(x).get }
-          val bl = asOption(e.attribute("BindingLocation")) map { x => BindingLocation(x).get }
-          ValueSetSpec(vsid, bs, bl) :: Nil
+        val bs = asOption(e.attribute("BindingStrength")) map { x => BindingStrength(x).get }
+        val bl = asOption(e.attribute("BindingLocation")) map { x => BindingLocation(x).get }
+        ValueSetSpec(vsid, bs, bl) :: Nil
 
     }
 

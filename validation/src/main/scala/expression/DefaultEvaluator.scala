@@ -179,7 +179,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Failure(e)   => inconclusive(vs, context.location, e)
       case Success(Nil) => Pass
       case Success(x :: Nil) =>
-        val r = checkValueSet(x, vs.spec, l)
+        val r = checkValueSet(x, vs.spec, l)   
         if (isVSViolated(r)) Failures.valueSet(vs, r) else Pass
       case Success(xs) =>
         val msg = "Path resolution returned more than one element"
@@ -326,10 +326,12 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Failure(f)   => inconclusive(e, context.location, f)
           case Success(Nil) => Pass
           case Success(ys) => {
+            
             val L = ys.foldLeft(List[(Simple, Int)]())({ (acc, l) =>
               acc ++ (l zip (Stream from 1))
             }) zip (Stream from 1)
-
+            
+            
             val a = L.foldLeft(List[(Simple, Int)]()) { (acc, x) =>
               toInt(x._1._1.value.raw) match {
                 case None    => (x._1._1, -1) :: acc
@@ -358,6 +360,11 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case e: Exception => None
     }
   }
+  
+  def debug(l : List[((Simple,Int),Int)]) = {
+      l.map { x => ((x._1._1.value.raw,x._1._2),x._2) }
+  }
+  
   def parent(l: List[Element], path: String): Try[List[List[Simple]]] = {
     l match {
       case Nil => Success(Nil);

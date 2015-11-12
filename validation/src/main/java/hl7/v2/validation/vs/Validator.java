@@ -8,6 +8,7 @@ import hl7.v2.instance.Simple;
 import hl7.v2.profile.Req;
 import hl7.v2.profile.ValueSetSpec;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,12 @@ import java.util.List;
  */
 public class Validator {
 
+	public static List<Entry> listify(Entry e){
+		List<Entry> detections = new ArrayList<Entry>();
+		detections.add(e);
+		return detections;
+	}
+	
     /**
      * Checks every data element value set and return the list of problem
      * @param message - The message to be validated
@@ -41,9 +48,16 @@ public class Validator {
                                       ValueSetLibrary library) {
         if( e instanceof Simple)
             return SimpleElementValidator.check((Simple) e, spec, library);
-        else
-            return ComplexElementValidator.check((Complex) e, spec, library);
+        else{
+        	List<Entry> l = ComplexElementValidator.check((Complex) e, spec, library);
+        	if( l != null && l.size() > 0)
+        		return l.get(0);
+        	else
+        		return null;
+        }
+            
     }
+    
 
     private static void checkValueSet(List<Entry> result, Element e, ValueSetLibrary library) {
         if( e instanceof Simple ) {
@@ -51,10 +65,12 @@ public class Validator {
             if( x != null )
                 result.add(x);
         } else {
-            Entry x = ComplexElementValidator.check((Complex) e, getSpec(e.req()), library);
-            if( x != null )
-                result.add(x);
-
+            List<Entry> l = ComplexElementValidator.check((Complex) e, getSpec(e.req()), library);
+            if(l != null)
+	            for(Entry x : l){
+	            	if( x != null )
+	                    result.add(x);
+	            }
             // Check the children
             scala.collection.Iterator<Element> it = ((Complex) e).children().iterator();
             while( it.hasNext() )

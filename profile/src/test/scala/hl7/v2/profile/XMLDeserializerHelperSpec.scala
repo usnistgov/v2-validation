@@ -67,7 +67,15 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
         <E Usage="R" MinLength="1" MaxLength="*" Binding="tt"/>
         -> Req(1, "", Usage.R, None, Some(Range(1, "*")), None, vs),
         <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2"/>
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs)
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="true" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,true),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="TRUE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,true),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="false" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,false)
     )
 
     l map ( t => XMLDeserializerHelper.requirement(1, "", t._1) === t._2 )
