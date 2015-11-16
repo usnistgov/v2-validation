@@ -1,6 +1,7 @@
 package gov.nist.erx.xml;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.xmlbeans.XmlException;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -36,7 +37,8 @@ public class Validator {
             skeleton = loadSkeleton();
         }
         ArrayList<XMLEntry> xsdEntries = ErxXmlUtils.validateAgainstXSD(xmlFile, schema);
-        ArrayList<XMLEntry> xsltEntries = ErxXmlUtils.validateAgainstXSLT(xmlFile, schematrons, skeleton, phase);
+        ArrayList<XMLEntry> xsltEntries = null;
+        xsltEntries = ErxXmlUtils.validateAgainstXSLT(xmlFile, schematrons, skeleton, phase);
         XMLReport report = new XMLReport();
         report.addStructureEntries(xsdEntries);
         report.addStructureEntries(xsltEntries);

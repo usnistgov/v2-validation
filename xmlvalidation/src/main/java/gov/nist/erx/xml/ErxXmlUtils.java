@@ -1,5 +1,7 @@
 package gov.nist.erx.xml;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.xmlbeans.XmlException;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -33,7 +35,12 @@ public class ErxXmlUtils {
         //For more information, see http://www.xfront.com/schematron/dynamic.html
         ArrayList<ArrayList<XMLEntry>> entries = new ArrayList<>();
         for(String schematron : schematronSchema) {
-             entries.add(XSLTProcessor.process(schematron, skeleton, xml, phase));
+            //entries.add(XSLTProcessor.process(schematron, skeleton, xml, phase));
+            try {
+                entries.add(SchematronValidator.validateAgainstSchematron(xml, IOUtils.toInputStream(schematron), IOUtils.toInputStream(skeleton), phase));
+            } catch (XmlException e) {
+                e.printStackTrace();
+            }
         }
         return flatten(entries);
     }

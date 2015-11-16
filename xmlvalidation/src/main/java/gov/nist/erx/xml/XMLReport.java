@@ -83,8 +83,10 @@ public class XMLReport implements Report{
     }
 
     public void addStructureEntries(ArrayList<XMLEntry> entries){
-        for(Entry e : entries) {
-            this.structure.add(e);
+        if(null!=entries) {
+            for (Entry e : entries) {
+                this.structure.add(e);
+            }
         }
     }
 
