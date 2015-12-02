@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Message version="010" release="006" HighestVersionSupported="" xmlns="http://www.ncpdp.org/schema/SCRIPT" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ncpdp.org/schema/SCRIPT Script_10.6_XML\SCRIPT_XML_10_6.xsd">
+
+	<Header>
+		<To Qualifier="P">RECIPIENT_ID</To>
+		<From Qualifier="D">SENDER_ID</From>
+		<MessageID>MU103</MessageID>
+		<SentTime>2012-03-24T14:05:00</SentTime>
+		<Security>
+			<Sender>
+				<SecondaryIdentification>PASSWORD</SecondaryIdentification>
+				<TertiaryIdentification>3RYIDENTIFIER</TertiaryIdentification>
+			</Sender>
+			<Receiver></Receiver>
+		</Security>
+		<PrescriberOrderNumber>ORDMU203</PrescriberOrderNumber>
+	</Header>
+	<Body>
+		<NewRx>
+			<Pharmacy>
+				<Identification>
+					<NCPDPID>0999031</NCPDPID>
+					<NPI>2030000006</NPI>
+				</Identification>
+				<StoreName>Test Three Pharmacy</StoreName>
+				<Address>
+					<AddressLine1>90003 3RD ST</AddressLine1>
+					<AddressLine2>3rd FL</AddressLine2>
+					<City>Washington</City>
+					<State >DC</State >
+					<ZipCode>20000</ZipCode>
+				</Address>
+				<CommunicationNumbers>
+					<Communication>
+						<Number>2025551212</Number>
+						<Qualifier>TE</Qualifier>
+					</Communication>
+				</CommunicationNumbers>
+			</Pharmacy>
+			<Prescriber>
+				<Identification>
+					<NPI>1010000002</NPI>
+					<DEANumber>AP9010000</DEANumber>
+				</Identification>
+				<ClinicName>Clinic One</ClinicName>
+				<Name>
+					<LastName>PrescriberOne</LastName>
+					<FirstName>One</FirstName>
+					<MiddleName>Pastest</MiddleName>
+				</Name>
+				<Address>
+					<AddressLine1>90001 1ST AVE</AddressLine1>
+					<AddressLine2>STE 100</AddressLine2>
+					<City>Washington</City>
+					<State >DC</State >
+					<ZipCode>20000</ZipCode>
+				</Address>
+				<CommunicationNumbers>
+					<Communication>
+						<Number>2025551212</Number>
+						<Qualifier>TE</Qualifier>
+					</Communication>
+				</CommunicationNumbers>
+			</Prescriber>
+			<Patient >
+				<Name>
+					<LastName>PatientThree</LastName>
+					<FirstName>Three</FirstName>
+					<MiddleName>Test</MiddleName>
+				</Name>
+				<Gender>M</Gender>
+				<DateOfBirth>
+					<Date>1960-01-03</Date>
+				</DateOfBirth>
+				<Address>
+					<AddressLine1>3 Test BLVD</AddressLine1>
+					<AddressLine2>APT 3</AddressLine2>
+					<City>Washington</City>
+					<State >DC</State >
+					<ZipCode>20000</ZipCode>
+				</Address>
+				<CommunicationNumbers>
+					<Communication>
+						<Number>2025551212</Number>
+						<Qualifier>TE</Qualifier>
+					</Communication>
+				</CommunicationNumbers>
+			</Patient >
+			<MedicationPrescribed>
+				<DrugDescription>Catapres 0.1 MG Oral Tablet</DrugDescription>
+				<DrugCoded>
+					<ProductCode>00597000601</ProductCode>
+					<ProductCodeQualifier>ND</ProductCodeQualifier>
+					<Strength>0.1</Strength>
+					<DrugDBCode>884175</DrugDBCode>
+					<DrugDBCodeQualifier>SBD</DrugDBCodeQualifier>
+					<FormSourceCode>AA</FormSourceCode>
+					<FormCode>C42998</FormCode>
+					<StrengthSourceCode>AB</StrengthSourceCode>
+					<StrengthCode>C28253</StrengthCode>
+				</DrugCoded>
+				<Quantity>
+					<Value>60</Value>
+					<CodeListQualifier>38</CodeListQualifier>
+					<UnitSourceCode>AC</UnitSourceCode>
+					<PotencyUnitCode>C48542</PotencyUnitCode>
+				</Quantity>
+				<DaysSupply>30</DaysSupply>
+				<Directions>Take 1 tablet by mouth two times a day</Directions>
+				<Refills>
+					<Qualifier>R</Qualifier>
+					<Value>1</Value>
+				</Refills>
+				<Substitutions>0</Substitutions>
+				<WrittenDate>
+					<Date>2012-03-24</Date>
+				</WrittenDate>
+			</MedicationPrescribed>
+		</NewRx>
+	</Body>
+</Message>
+<!-- ************************************************ -->
+<!-- Scenario: MU2-03: New Prescription - Catapres 0.1 mg tablet | MU2 Test 03 | Ambulatory | Three PatientThree -->
+<!-- ************************************************ -->
