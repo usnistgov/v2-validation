@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConformanceContext UUID="NEWRX-CANCEL-a18478">
+<Constraints>
+<Group>
+<ByName Name="NEW_RX1">
+<Constraint ID="PVDPC_Identifier" Target="4[1].2[1].1[1]">
+   <Description>Expected element missing - Identifier. The value does not match the expected value: 'AP9010000'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].2[1].1[1]" Text="AP9010000"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC_Qualifier" Target="4[1].2[1].2[1]">
+   <Description>Expected element missing - Qualifier. The value does not match the expected value: 'DH'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].2[1].2[1]" Text="DH"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC_Identifier_1" Target="4[1].2[2].1[1]">
+   <Description>Expected element missing - Identifier. The value does not match the expected value: '1010000002'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].2[2].1[1]" Text="1010000002"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC_Qualifier_1" Target="4[1].2[2].2[1]">
+   <Description>Expected element missing - Qualifier. The value does not match the expected value: 'HPI'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].2[2].2[1]" Text="HPI"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Postcode.[1].8[1]" Target="4[1].8[1].4[1]">
+   <Description>Expected element missing - Postcode. The value does not match the expected value: '11101' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].8[1].4[1]" Text="11101"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Street.[1].8[1]" Target="4[1].8[1].1[1]">
+   <Description>Expected element missing - Street. The value does not match the expected value: '15521-A Jackson Avenue' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].8[1].1[1]" Text="15521-A Jackson Avenue"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Country Sub-entity.[1].8[1]" Target="4[1].8[1].3[1]">
+   <Description>Expected element missing - Country Sub-entity. The value does not match the expected value: 'NY' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].8[1].3[1]" Text="NY"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-City.[1].8[1]" Target="4[1].8[1].2[1]">
+   <Description>Expected element missing - City. The value does not match the expected value: 'Long Island City' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].8[1].2[1]" Text="Long Island City"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Provider_Coded.[1].1[1]" Target="4[1].1[1]">
+   <Description>Expected element missing - Provider_Coded. The value does not match the expected value: 'PC' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].1[1]" Text="PC"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Communication_Nmbr.[1].9[1]" Target="4[1].9[1].1[1]">
+   <Description>Expected element missing - Communication_Nmbr. The value does not match the expected value: '7185551212' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].9[1].1[1]" Text="7185551212"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Code_List_Qual.[1].9[1]" Target="4[1].9[1].2[1]">
+   <Description>Expected element missing - Code_List_Qual. The value does not match the expected value: 'TE' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].9[1].2[1]" Text="TE"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Ref_Nmbr.[1].2[1]" Target="4[1].2[1].1[1]">
+   <Description>Expected element missing - Ref_Nmbr. The value does not match the expected value: '' </Description>
+        <Assertion>
+           <Presence Path ="4[1].2[1].1[1]"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Ref_Qual.[1].2[1]" Target="4[1].2[1].2[1]">
+   <Description>Expected element missing - Ref_Qual. The value does not match the expected value: '' </Description>
+        <Assertion>
+           <Presence Path ="4[1].2[1].2[1]"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-Party_Name.[1].5[1]" Target="4[1].5[1].1[1]">
+   <Description>Expected element missing - Party_Name. The value does not match the expected value: 'Bates' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].5[1].1[1]" Text="Bates"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDPC-First_Name.[1].5[1]" Target="4[1].5[1].2[1]">
+   <Description>Expected element missing - First_Name. The value does not match the expected value: 'Anna' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].5[1].2[1]" Text="Anna"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDP2_Identifier" Target="5[1].2[1].1[1]">
+   <Description>Expected element missing - Identifier. The value does not match the expected value: 'AP9010000'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="5[1].2[1].1[1]" Text="AP9010000"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDP2_Qualifier" Target="5[1].2[1].2[1]">
+   <Description>Expected element missing - Qualifier. The value does not match the expected value: 'DH'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="5[1].2[1].2[1]" Text="DH"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDP2_Identifier_1" Target="5[1].2[2].1[1]">
+   <Description>Expected element missing - Identifier. The value does not match the expected value: '1010000002'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="5[1].2[2].1[1]" Text="1010000002"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PVDP2_Qualifier_1" Target="5[1].2[2].2[1]">
+   <Description>Expected element missing - Qualifier. The value does not match the expected value: 'HPI'</Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="5[1].2[2].2[1]" Text="HPI"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Postcode.[1].6[1]" Target="6[1].6[1].4[1]">
+           <Description>Expected element missing - Postcode. The value does not match the expected value: '12540' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].6[1].4[1]" Text="12540"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Street.[1].6[1]" Target="6[1].6[1].1[1]">
+           <Description>Expected element missing - Street. The value does not match the expected value: '4447 Lake Forest Drive' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].6[1].1[1]" Text="4447 Lake Forest Drive"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Country.[1].6[1]" Target="6[1].6[1].3[1]">
+           <Description>Expected element missing - Country. The value does not match the expected value: 'NY' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].6[1].3[1]" Text="NY"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-City.[1].6[1]" Target="6[1].6[1].2[1]">
+           <Description>Expected element missing - City. The value does not match the expected value: 'La Grange (Dutchess)' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].6[1].2[1]" Text="La Grange (Dutchess)"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Gender_Coded.[1].4[1]" Target="6[1].4[1]">
+           <Description>Expected element missing - Gender_Coded. The value does not match the expected value: 'F' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].4[1]" Text="F"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Individual_Relationship_Coded.[1].1[1]" Target="6[1].1[1]">
+           <Description>Expected element missing - Individual_Relationship_Coded. The value does not match the expected value: '1' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].1[1]" Text="1"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Party_Name.[1].3[1]" Target="6[1].3[1].1[1]">
+           <Description>Expected element missing - Party_Name. The value does not match the expected value: 'Adirondack' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].3[1].1[1]" Text="Adirondack"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-First_Name.[1].3[1]" Target="6[1].3[1].2[1]">
+           <Description>Expected element missing - First_Name. The value does not match the expected value: 'Susanne' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].3[1].2[1]" Text="Susanne"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Communication_Nmbr.[1].7[1]" Target="6[1].7[1].1[1]">
+           <Description>Expected element missing - Communication_Nmbr. The value does not match the expected value: '9795551216' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].7[1].1[1]" Text="9795551216"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Code_List_Qual.[1].7[1]" Target="6[1].7[1].2[1]">
+           <Description>Expected element missing - Code_List_Qual. The value does not match the expected value: 'TE' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].7[1].2[1]" Text="TE"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Century_Date.[1].2[1]" Target="6[1].2[1]">
+           <Description>Expected element missing - Century_Date. The value does not match the expected value: '19550108' </Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="6[1].2[1]" Text="19550108"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Ref_Nmbr.[1].5[1]" Target="6[1].5[1].1[1]">
+           <Description>Expected element missing - Ref_Nmbr.</Description>
+             <Assertion>
+                <Presence Path ="6[1].5[1].1[1]"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="PTT-Ref_Qual.[1].5[1]" Target="6[1].5[1].2[1]">
+           <Description>Expected element missing - Ref_Qual.</Description>
+             <Assertion>
+                <Presence Path ="6[1].5[1].2[1]"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Quantity_Qual.[1].6[1]" Target="7[1].6[1].1[1]">
+           <Description>Expected element missing - Quantity_Qual.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].6[1].1[1]" Text="R"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Quantity.[1].6[1]" Target="7[1].6[1].2[1]">
+           <Description>Expected element missing - Quantity.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].6[1].2[1]" Text="R:2"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-DateTime_Prd_Qual.[1].4[1]" Target="7[1].4[1].1[1]">
+           <Description>Expected element missing - DateTime_Prd_Qual.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].4[1].1[1]" Text="85"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Free_Text_010.[1].1[1]" Target="7[1].1[1].6[1]">
+           <Description>Expected element missing - Free_Text_010.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].6[1]" Text="50"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Item_Nmbr.[1].1[1]" Target="7[1].1[1].3[1]">
+           <Description>Expected element missing - Item_Nmbr.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].3[1]" Text="00143125701"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Ref_Qual.[1].1[1]" Target="7[1].1[1].9[1]">
+           <Description>Expected element missing - Ref_Qual.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].9[1]" Text="SBD"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Item_Desc.[1].1[1]" Target="7[1].1[1].2[1]">
+           <Description>Expected element missing - Item_Desc.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].2[1]" Text="Hydrochlorothiazide 50 mg tablet"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Source_Code_List2.[1].1[1]" Target="7[1].1[1].15[1]">
+           <Description>Expected element missing - Source_Code_List2.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].15[1]" Text="AB"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Item_Form_Code.[1].1[1]" Target="7[1].1[1].14[1]">
+           <Description>Expected element missing - Item_Form_Code.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].14[1]" Text="C42998"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Ref_Nmbr.[1].1[1]" Target="7[1].1[1].8[1]">
+           <Description>Expected element missing - Ref_Nmbr.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].8[1]" Text="197770 SCD"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Item_Desc_ID.[1].1[1]" Target="7[1].1[1].1[1]">
+           <Description>Expected element missing - Item_Desc_ID.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].1[1]" Text="P"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Code_List_Resp_Agency.[1].1[1]" Target="7[1].1[1].4[1]">
+           <Description>Expected element missing - Code_List_Resp_Agency.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].4[1]" Text="ND"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Item_Strength_Code.[1].1[1]" Target="7[1].1[1].16[1]">
+           <Description>Expected element missing - Item_Strength_Code.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].16[1]" Text="C28253"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Source_Code_List.[1].1[1]" Target="7[1].1[1].13[1]">
+           <Description>Expected element missing - Source_Code_List.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].1[1].13[1]" Text="AA"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Dosage1.[1].3[1]" Target="7[1].3[1].2[1]">
+           <Description>Expected element missing - Dosage1.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].3[1].2[1]" Text="Take 1 tablet every morning."/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Drug_Source_Code_List3.[1].2[1]" Target="7[1].2[1].4[1]">
+           <Description>Expected element missing - Drug_Source_Code_List3.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].2[1].4[1]" Text="AC"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Drug_Code_List_Qual3.[1].2[1]" Target="7[1].2[1].3[1]">
+           <Description>Expected element missing - Drug_Code_List_Qual3.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].2[1].3[1]" Text="38"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Drug_Quantity.[1].2[1]" Target="7[1].2[1].2[1]">
+           <Description>Expected element missing - Drug_Quantity.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].2[1].2[1]" Text="30"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Drug_Potency_Unit_Code.[1].2[1]" Target="7[1].2[1].5[1]">
+           <Description>Expected element missing - Drug_Potency_Unit_Code.</Description>
+             <Assertion>
+               <PlainText IgnoreCase="false" Path="7[1].2[1].5[1]" Text="C48542"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Product_Service_Sub_Coded.[1].5[1]" Target="7[1].5[1]">
+           <Description>Expected element missing - Product_Service_Sub_Coded.</Description>
+             <Assertion>
+                <PlainText IgnoreCase="false" Path="7[1].5[1]" Text="0"/> 
+        </Assertion>
+</Constraint>
+<Constraint ID="DRU-Diagnosis-Element-ICD10-7.[1].2[1]" Target="7[1].2[1]">
+           <Description>Expected Reason for Prescription - ICD10 Code </Description>
+             <Assertion>
+                <StringList Path="9[1].1[1]" CSV="I10"/> 
+        </Assertion>
+</Constraint>
+</ByName>
+</Group>
+</Constraints>
+</ConformanceContext>

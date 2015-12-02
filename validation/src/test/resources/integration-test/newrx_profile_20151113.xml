@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConformanceProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="NEWRX-PROFILE" Type="Constrainable">
+    <MetaData Name="SCRIPT" OrgName="NCPDP" Version="10.6" Status="Draft" />
+    <Messages>
+        <Message ID="NEWRX" Type="SCRIPT" Event="NEWRX" StructID="NEW_RX1" Description="New prescription message">
+            <Segment Ref="UNA_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIB_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIH_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="REQ_NEWRX" Usage="C" Min="0" Max="1" />
+            <Segment Ref="PVD_PC_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="PVD_SU_NEWRX" Usage="C" Min="0" Max="1" />
+            <Segment Ref="PVD_SK_NEWRX" Usage="C" Min="0" Max="1" />
+            <Segment Ref="PVD_P2_NEWRX" Usage="C" Min="0" Max="1" />
+            <Segment Ref="PTT_NEWRX" Usage="R" Min="1" Max="1" />
+            <Group ID="Prescribed_Medication_Group_NEWRX" Name="Prescribed Medication Group" Usage="R" Min="1" Max="1">
+                <Segment Ref="Prescribed_DRU_NEWRX" Usage="R" Min="1" Max="1" />
+                <Segment Ref="Prescribed_SIG_NEWRX" Usage="C" Min="0" Max="*" />
+            </Group>
+            <Segment Ref="OBS_NEWRX" Usage="C" Min="0" Max="1" />
+            <Segment Ref="COO_NEWRX" Usage="C" Min="0" Max="3" />
+            <Segment Ref="UIT_NEWRX" Usage="R" Min="1" Max="1" />
+            <Segment Ref="UIZ_NEWRX" Usage="R" Min="1" Max="1" />
+        </Message>
+    </Messages>
+    <Segments>
+        <Segment ID="UNA_NEWRX" Name="UNA" Description="UNA Service String Advice">
+            <Field Min="1" Max="1" ItemNo="UNA-010" Name="Delimiters" Usage="R" Datatype="ST" MinLength="6" MaxLength="6" />
+        </Segment>
+        <Segment ID="UIB_NEWRX" Name="UIB" Description="Interactive Interchange Control Header">
+            <Field Min="1" Max="1" ItemNo="UIB-010" Name="Syntax identifier" Usage="R" Datatype="UIB-010_NEWRX" MinLength="1" MaxLength="5" />
+            <Field Min="0" Max="0" ItemNo="UIB-020" Name="Dialogue Reference" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIB-030" Name="Transaction Reference" Usage="C" Datatype="UIB-030_NEWRX" MinLength="0" MaxLength="73" />
+            <Field Min="0" Max="0" ItemNo="UIB-040" Name="Scenario identifier" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="UIB-050" Name="Dialogue identifier" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="1" Max="1" ItemNo="UIB-060" Name="Interchange Sender" Usage="R" Datatype="UIB-060_NEWRX" MinLength="1" MaxLength="108" />
+            <Field Min="1" Max="1" ItemNo="UIB-070" Name="Interchange Recipient" Usage="R" Datatype="UIB-070_NEWRX" MinLength="1" MaxLength="108" />
+            <Field Min="1" Max="1" ItemNo="UIB-080" Name="DateTimeOfInitiation" Usage="R" Datatype="UIB-080_NEWRX" MinLength="1" MaxLength="23" />
+            <Field Min="0" Max="0" ItemNo="UIB-090" Name="Duplicate indicator" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIB-100" Name="Test Indicator" Usage="C" Datatype="NM" MinLength="1" MaxLength="1" />
+        </Segment>
+        <Segment ID="UIH_NEWRX" Name="UIH" Description="Interactive MessageHeader">
+            <Field Min="1" Max="1" ItemNo="UIH-010" Name="Interactive Message Identifier" Usage="R" Datatype="UIH-010_NEWRX" MinLength="1" MaxLength="24" />
+            <Field Min="0" Max="1" ItemNo="UIH-020" Name="Message Reference Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="UIH-030" Name="Dialogue Reference" Usage="C" Datatype="UIH-030_NEWRX" MinLength="0" MaxLength="108" />
+            <Field Min="0" Max="0" ItemNo="UIH-040" Name="Status of transfer, interactive" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIH-050" Name="Date Time of Initiation (UIH segment)" Usage="C" Datatype="UIH-050_NEWRX" MinLength="0" MaxLength="23" />
+            <Field Min="0" Max="1" ItemNo="UIH-060" Name="Test Indicator" Usage="C" Datatype="NM" MinLength="1" MaxLength="1" />
+        </Segment>
+        <Segment ID="REQ_NEWRX" Name="REQ" Description="Request segment">
+            <Field Min="0" Max="1" ItemNo="REQ-010" Name="Message Function, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4343_REQ-010" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="REQ-020" Name="Code List Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Field Min="0" Max="1" ItemNo="REQ-030" Name="Reference Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="0" ItemNo="REQ-040" Name="Sender Identification - level two" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="REQ-050" Name="Sender Identification - level three" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="REQ-060" Name="Change of Prescription Status Flag" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="REQ-070" Name="Date" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+        </Segment>
+        <Segment ID="PVD_PC_NEWRX" Name="PVD" Description="Provider segment - Prescriber">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_PR_PVD-010" BindingStrength="R" />
+            <Field Min="1" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="R" Datatype="PR_PVD-020_NEWRX" MinLength="1" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="PR_PVD-040_NEWRX" MinLength="0" MaxLength="20" />
+            <Field Min="1" Max="1" ItemNo="PVD-050" Name="Name" Usage="R" Datatype="PR_PVD-050_NEWRX" MinLength="1" MaxLength="125" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="1" Max="1" ItemNo="PVD-080" Name="Address" Usage="R" Datatype="PR_PVD-080_NEWRX" MinLength="1" MaxLength="119" />
+            <Field Min="1" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="R" Datatype="PR_PVD-090_NEWRX" MinLength="1" MaxLength="83" />
+            <Field Min="0" Max="1" ItemNo="PVD-100" Name="Name" Usage="C" Datatype="PR_PVD-100_NEWRX" MinLength="0" MaxLength="125" />
+        </Segment>
+        <Segment ID="PVD_SU_NEWRX" Name="PVD" Description="Provider segment - Supervisor">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_SU_PVD-010" BindingStrength="R" />
+            <Field Min="1" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="R" Datatype="SU_PVD-020_NEWRX" MinLength="1" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="SU_PVD-040_NEWRX" MinLength="0" MaxLength="20" />
+            <Field Min="1" Max="1" ItemNo="PVD-050" Name="Name" Usage="R" Datatype="SU_PVD-050_NEWRX" MinLength="1" MaxLength="125" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="1" Max="1" ItemNo="PVD-080" Name="Address" Usage="R" Datatype="SU_PVD-080_NEWRX" MinLength="1" MaxLength="119" />
+            <Field Min="1" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="R" Datatype="SU_PVD-090_NEWRX" MinLength="1" MaxLength="83" />
+            <Field Min="0" Max="0" ItemNo="PVD-100" Name="Name" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+        </Segment>
+        <Segment ID="PVD_SK_NEWRX" Name="PVD" Description="Provider segment - Facility">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_FA_PVD-010" BindingStrength="R" />
+            <Field Min="1" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="R" Datatype="FA_PVD-020_NEWRX" MinLength="1" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="PVD-040" Name="Provider Specialty" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="PVD-050" Name="Name" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="PVD-080" Name="Address" Usage="C" Datatype="FA_PVD-080_NEWRX" MinLength="0" MaxLength="119" />
+            <Field Min="0" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="C" Datatype="FA_PVD-090_NEWRX" MinLength="0" MaxLength="83" />
+        </Segment>
+        <Segment ID="PVD_P2_NEWRX" Name="PVD" Description="Provider segment - Pharmacy">
+            <Field Min="1" Max="1" ItemNo="PVD-010" Name="Provider Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_4705_PH_PVD-010" BindingStrength="R" />
+            <Field Min="1" Max="3" ItemNo="PVD-020" Name="Reference Number" Usage="R" Datatype="PH_PVD-020_NEWRX" MinLength="1" MaxLength="38" />
+            <Field Min="0" Max="0" ItemNo="PVD-030" Name="Health care service location" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="PVD-040" Name="Provider Specialty" Usage="C" Datatype="PH_PVD-040_NEWRX" MinLength="0" MaxLength="20" />
+            <Field Min="0" Max="1" ItemNo="PVD-050" Name="Name" Usage="C" Datatype="PH_PVD-050_NEWRX" MinLength="0" MaxLength="125" />
+            <Field Min="0" Max="0" ItemNo="PVD-060" Name="Postcode Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="1" Max="1" ItemNo="PVD-070" Name="Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="PVD-080" Name="Address" Usage="C" Datatype="PH_PVD-080_NEWRX" MinLength="0" MaxLength="119" />
+            <Field Min="1" Max="1" ItemNo="PVD-090" Name="Communication Number" Usage="R" Datatype="PH_PVD-090_NEWRX" MinLength="1" MaxLength="83" />
+            <Field Min="0" Max="0" ItemNo="PVD-100" Name="Name" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+        </Segment>
+        <Segment ID="PTT_NEWRX" Name="PTT" Description="Patient segment">
+            <Field Min="0" Max="1" ItemNo="PTT-010" Name="Individual Relationship, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_9701_PTT-010" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="PTT-020" Name="Century Date" Usage="C" Datatype="NM" MinLength="8" MaxLength="8" />
+            <Field Min="1" Max="1" ItemNo="PTT-030" Name="Name" Usage="R" Datatype="PTT-030_NEWRX" MinLength="1" MaxLength="125" />
+            <Field Min="1" Max="1" ItemNo="PTT-040" Name="Gender, Coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="1" Binding="IG_PTT-040" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="PTT-050" Name="Reference Number" Usage="C" Datatype="PTT-050_NEWRX" MinLength="0" MaxLength="38" />
+            <Field Min="0" Max="1" ItemNo="PTT-060" Name="Address" Usage="C" Datatype="PTT-060_NEWRX" MinLength="0" MaxLength="119" />
+            <Field Min="0" Max="1" ItemNo="PTT-070" Name="Communication Number" Usage="C" Datatype="PTT-070_NEWRX" MinLength="0" MaxLength="83" />
+            <Field Min="0" Max="1" ItemNo="PTT-080" Name="Location" Usage="C" Datatype="PTT-080_NEWRX" MinLength="0" MaxLength="55" />
+        </Segment>
+        <Segment ID="Prescribed_DRU_NEWRX" Name="DRU" Description="Prescribed Medication segment">
+            <Field Min="1" Max="1" ItemNo="DRU-010" Name="Drug" Usage="R" Datatype="P_DRU-010_NEWRX" MinLength="1" MaxLength="338" />
+            <Field Min="1" Max="2" ItemNo="DRU-020" Name="Quantity Composite" Usage="R" Datatype="P_DRU-020_NEWRX" MinLength="1" MaxLength="56" />
+            <Field Min="1" Max="1" ItemNo="DRU-030" Name="Directions Composite" Usage="R" Datatype="P_DRU-030_NEWRX" MinLength="1" MaxLength="140" />
+            <Field Min="1" Max="9" ItemNo="DRU-040" Name="Medication Date Composite" Usage="R" Datatype="P_DRU-040_NEWRX" MinLength="1" MaxLength="41" />
+            <Field Min="0" Max="1" ItemNo="DRU-050" Name="Product/Service Substitution, coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_408_P_DRU-050" BindingStrength="R" />
+            <Field Min="1" Max="2" ItemNo="DRU-060" Name="Quantity [Refills]" Usage="R" Datatype="P_DRU-060_NEWRX" MinLength="1" MaxLength="38" />
+            <Field Min="0" Max="2" ItemNo="DRU-070" Name="Diagnosis" Usage="C" Datatype="P_DRU-070_NEWRX" MinLength="0" MaxLength="43" />
+            <Field Min="0" Max="1" ItemNo="DRU-080" Name="Reference Number" Usage="C" Datatype="P_DRU-080_NEWRX" MinLength="0" MaxLength="38" />
+            <Field Min="0" Max="1" ItemNo="DRU-090" Name="Free Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="210" />
+            <Field Min="0" Max="5" ItemNo="DRU-100" Name="Drug Use Evaluation" Usage="C" Datatype="P_DRU-100_NEWRX" MinLength="0" MaxLength="129" />
+            <Field Min="0" Max="5" ItemNo="DRU-110" Name="Drug Coverage Status Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7885_P_DRU-110" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="DRU-120" Name="Prior Authorization Status" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7891_P_DRU-120" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="DRU-130" Name="Do Not Fill / Profile Flag" Usage="C" Datatype="ST" MinLength="1" MaxLength="1" Binding="ECL_7892_P_DRU-130" BindingStrength="R" />
+            <Field Min="0" Max="1" ItemNo="DRU-140" Name="Needed No Later Than" Usage="C" Datatype="P_DRU-140_NEWRX" MinLength="0" MaxLength="41" />
+            <Field Min="0" Max="1" ItemNo="DRU-150" Name="Time Zone" Usage="C" Datatype="P_DRU-150_NEWRX" MinLength="0" MaxLength="7" />
+            <Field Min="0" Max="1" ItemNo="DRU-160" Name="Needed No Later Than Reason" Usage="C" Datatype="ST" MinLength="1" MaxLength="70" />
+        </Segment>
+        <Segment ID="Prescribed_SIG_NEWRX" Name="SIG" Description="Prescribed Structured Sig Segment">
+            <Field Min="1" Max="1" ItemNo="SIG-010" Name="Repeating Sig" Usage="R" Datatype="P_SIG-010_NEWRX" MinLength="1" MaxLength="6" />
+            <Field Min="1" Max="1" ItemNo="SIG-020" Name="Code System" Usage="R" Datatype="P_SIG-020_NEWRX" MinLength="1" MaxLength="28" />
+            <Field Min="1" Max="1" ItemNo="SIG-030" Name="Free Text" Usage="R" Datatype="P_SIG-030_NEWRX" MinLength="1" MaxLength="141" />
+            <Field Min="1" Max="1" ItemNo="SIG-040" Name="Dose" Usage="R" Datatype="P_SIG-040_NEWRX" MinLength="1" MaxLength="222" />
+            <Field Min="0" Max="1" ItemNo="SIG-050" Name="Dose Calculation Composite" Usage="C" Datatype="P_SIG-050_NEWRX" MinLength="0" MaxLength="191" />
+            <Field Min="0" Max="1" ItemNo="SIG-060" Name="Vehicle Composite" Usage="C" Datatype="P_SIG-060_NEWRX" MinLength="0" MaxLength="155" />
+            <Field Min="0" Max="1" ItemNo="SIG-070" Name="Route of Administrationn Composite" Usage="C" Datatype="P_SIG-070_NEWRX" MinLength="0" MaxLength="70" />
+            <Field Min="0" Max="1" ItemNo="SIG-080" Name="Site of Administration Composite" Usage="C" Datatype="P_SIG-080_NEWRX" MinLength="0" MaxLength="70" />
+            <Field Min="0" Max="1" ItemNo="SIG-090" Name="SIG Timing Composite" Usage="C" Datatype="P_SIG-090_NEWRX" MinLength="0" MaxLength="384" />
+            <Field Min="0" Max="1" ItemNo="SIG-100" Name="Duration Composite" Usage="C" Datatype="P_SIG-100_NEWRX" MinLength="0" MaxLength="78" />
+            <Field Min="0" Max="1" ItemNo="SIG-110" Name="Maximum Dose Restriction Composite" Usage="C" Datatype="P_SIG-110_NEWRX" MinLength="0" MaxLength="173" />
+            <Field Min="0" Max="1" ItemNo="SIG-120" Name="Indication Composite" Usage="C" Datatype="P_SIG-120_NEWRX" MinLength="0" MaxLength="272" />
+            <Field Min="0" Max="1" ItemNo="SIG-130" Name="Stop Composite" Usage="C" Datatype="P_SIG-130_NEWRX" MinLength="0" MaxLength="1" />
+        </Segment>
+        <Segment ID="OBS_NEWRX" Name="OBS" Description="Observation Segment">
+            <Field Min="0" Max="10" ItemNo="OBS-010" Name="Observation" Usage="C" Datatype="OBS-010_NEWRX" MinLength="0" MaxLength="80" />
+            <Field Min="0" Max="2" ItemNo="OBS-020" Name="Free Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="70" />
+        </Segment>
+        <Segment ID="COO_NEWRX" Name="COO" Description="Coordination of Benefits">
+            <Field Min="0" Max="*" ItemNo="COO-010" Name="Reference Number" Usage="C" Datatype="COO-010_NEWRX" MinLength="0" MaxLength="38" />
+            <Field Min="0" Max="1" ItemNo="COO-020" Name="Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="0" ItemNo="COO-030" Name="Service Type Coded" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="COO-040" Name="Reference Number" Usage="C" Datatype="COO-040_NEWRX" MinLength="0" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="COO-050" Name="Name" Usage="C" Datatype="COO-050_NEWRX" MinLength="0" MaxLength="125" />
+            <Field Min="0" Max="1" ItemNo="COO-060" Name="Reference Number (Group ID)" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="0" ItemNo="COO-070" Name="Party Name (Group Name)" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="COO-080" Name="Address" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="2" ItemNo="COO-090" Name="Date/Time Period" Usage="C" Datatype="COO-090_NEWRX" MinLength="0" MaxLength="41" />
+            <Field Min="0" Max="0" ItemNo="COO-100" Name="Insurance Type, Coded" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" Binding="ECL_4703_COO-100" BindingStrength="R" />
+            <Field Min="0" Max="0" ItemNo="COO-110" Name="Address" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="COO-120" Name="Reference number" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="COO-130" Name="Condition/Response, coded" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="COO-140" Name="Patient Identifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="0" ItemNo="COO-150" Name="Communication Number" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+        </Segment>
+        <Segment ID="UIT_NEWRX" Name="UIT" Description="UIT Interactive Message Trailer">
+            <Field Min="0" Max="1" ItemNo="UIT-010" Name="Message reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Field Min="0" Max="1" ItemNo="UIT-020" Name="Number of segments in message" Usage="C" Datatype="NM" MinLength="1" MaxLength="10" />
+        </Segment>
+        <Segment ID="UIZ_NEWRX" Name="UIZ" Description="UIZ Interactive Interchange Trailer">
+            <Field Min="0" Max="0" ItemNo="UIZ-010" Name="Dialogue reference" Usage="X" Datatype="NOT_USED" MinLength="0" MaxLength="0" />
+            <Field Min="0" Max="1" ItemNo="UIZ-020" Name="Interchange control count" Usage="C" Datatype="NM" MinLength="1" MaxLength="6" />
+            <Field Min="0" Max="0" ItemNo="UIZ-030" Name="Duplicate indicator" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Segment>
+    </Segments>
+    <Datatypes>
+        <Datatype ID="UIB-010_NEWRX" Name="Syntax identifier" Description="SyntaxIdentifierComposite">
+            <Component Name="UIB-010-01 - Syntax identifier" Usage="R" Datatype="ST" MinLength="4" MaxLength="4" Binding="UIB-010-01" BindingStrength="R" />
+            <Component Name="UIB-010-02 - Syntax version number" Usage="R" Datatype="ST" MinLength="1" MaxLength="1" Binding="UIB-010-02" BindingStrength="R" />
+            <Component Name="UIB-010-03 - Service Code Directory Version Number" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="UIB-010-04 - Service Code Directory Controlling Agency" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="UIB-030_NEWRX" Name="Transaction Reference" Description="TransactionReference">
+            <Component Name="UIB-030-01 - Transaction control reference" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-030-02 - Initiator Reference Identifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-030-03 - Controlling agency, coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+        </Datatype>
+        <Datatype ID="UIB-060_NEWRX" Name="Interchange Sender" Description="InterchangeSender">
+            <Component Name="UIB-060-01 - Sender identification - level one" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-060-02 - Level one identification code qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="IG_UIB-060-02" BindingStrength="R" />
+            <Component Name="UIB-060-03 - Sender identification - level two" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-060-04 - Sender identification - level three" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="UIB-070_NEWRX" Name="Interchange Recipient" Description="InterchangeRecipient">
+            <Component Name="UIB-070-01 - Recipient ID - level one" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-070-02 - Level one identification code qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="IG_UIB-070-02" BindingStrength="R" />
+            <Component Name="UIB-070-03 - Recipient identification - level two" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIB-070-04 - Recipient identification - level three" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="UIB-080_NEWRX" Name="DateTimeOfInitiation" Description="DateTimeOfInitiation">
+            <Component Name="UIB-080-01 - Date of Initiation" Usage="R" Datatype="NM" MinLength="1" MaxLength="8" />
+            <Component Name="UIB-080-02 - Event Time" Usage="R" Datatype="NM" MinLength="1" MaxLength="15" />
+            <Component Name="UIB-080-03 - Time offset" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="UIH-010_NEWRX" Name="Interactive Message Identifier" Description="InteractiveMessageIdentifier">
+            <Component Name="UIH-010-01 - Message type" Usage="R" Datatype="ST" MinLength="1" MaxLength="6" />
+            <Component Name="UIH-010-02 - Message version number" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="UIH-010-02" BindingStrength="R" />
+            <Component Name="UIH-010-03 - Message release number" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="UIH-010-03" BindingStrength="R" />
+            <Component Name="UIH-010-04 - Message function" Usage="R" Datatype="ST" MinLength="1" MaxLength="6" />
+            <Component Name="UIH-010-05 - Controlling Agency, Coded" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="UIH-010-06 - Association assigned code" Usage="C" Datatype="ST" MinLength="1" MaxLength="6" />
+        </Datatype>
+        <Datatype ID="UIH-030_NEWRX" Name="Dialogue Reference" Description="DialogueReference.UIH">
+            <Component Name="UIH-030-01 - Initiator control reference" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIH-030-02 - Initiator Reference Identifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="UIH-030-03 - Controlling Agency, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="UIH-030-04 - Responder Control Reference" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="UIH-050_NEWRX" Name="Date Time of Initiation (UIH segment)" Description="DateTimeOfInitiation[UIH]">
+            <Component Name="UIH-050-01 - Date of Initiation" Usage="C" Datatype="NM" MinLength="1" MaxLength="8" />
+            <Component Name="UIH-050-02 - Event Time" Usage="C" Datatype="NM" MinLength="1" MaxLength="15" />
+            <Component Name="UIH-050-03 - Time offset" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="PR_PVD-020_NEWRX" Name="Reference Number" Description="PrescriberIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_PR_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PR_PVD-040_NEWRX" Name="Provider Specialty" Description="PrescriberSpecialty">
+            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-040-02 - Provider Specialty Code" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PR_PVD-050_NEWRX" Name="Name" Description="Prescriber.Name">
+            <Component Name="PVD-050-01 - Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PR_PVD-080_NEWRX" Name="Address" Description="Prescriber.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="R" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="R" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="PR_PVD-090_NEWRX" Name="Communication Number" Description="Prescriber*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_PR_PVD-090-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PR_PVD-100_NEWRX" Name="Name" Description="PrescriberAgent">
+            <Component Name="PVD-100-01 - Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-100-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-100-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-100-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-100-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="SU_PVD-020_NEWRX" Name="Reference Number" Description="SupervisorIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_SU_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="SU_PVD-040_NEWRX" Name="Provider Specialty" Description="SupervisorSpecialty">
+            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-040-02 - Provider Specialty Code" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="SU_PVD-050_NEWRX" Name="Name" Description="Supervisor.Name">
+            <Component Name="PVD-050-01 - Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="SU_PVD-080_NEWRX" Name="Address" Description="Supervisor.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="R" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="R" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="SU_PVD-090_NEWRX" Name="Communication Number" Description="Supervisor*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_SU_PVD-090-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="FA_PVD-020_NEWRX" Name="Reference Number" Description="FacilityIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_FA_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="FA_PVD-080_NEWRX" Name="Address" Description="Facility.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="FA_PVD-090_NEWRX" Name="Communication Number" Description="Facility*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_FA_PVD-090-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PH_PVD-020_NEWRX" Name="Reference Number" Description="PharmacyIdentification">
+            <Component Name="PVD-020-01 - Reference number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-020-02 - Reference Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_PH_PVD-020-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PH_PVD-040_NEWRX" Name="Provider Specialty" Description="PharmacySpecialty">
+            <Component Name="PVD-040-01 - Agency Qualfier, Coded" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-040-02 - Provider Specialty Code" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="PVD-040-03 - Provider Specialty Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PH_PVD-050_NEWRX" Name="Name" Description="Pharmacist">
+            <Component Name="PVD-050-01 - Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PVD-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PH_PVD-080_NEWRX" Name="Address" Description="Pharmacy.Address">
+            <Component Name="PVD-080-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PVD-080-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" />
+            <Component Name="PVD-080-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PVD-080-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="PVD-080-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="PH_PVD-090_NEWRX" Name="Communication Number" Description="Pharmacy*Communication">
+            <Component Name="PVD-090-01 - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PVD-090-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_PH_PVD-090-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PTT-030_NEWRX" Name="Name" Description="Patient.Name">
+            <Component Name="PTT-030-01 - Party Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-030-02 - First Name" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-030-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-030-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PTT-030-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="PTT-050_NEWRX" Name="Reference Number" Description="Patient.Identification">
+            <Component Name="PTT-050-01 - Reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-050-02 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_PTT-050-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PTT-060_NEWRX" Name="Address" Description="Patient.Address">
+            <Component Name="PTT-060-01 - Street and Number/P.O. Box" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-060-02 - City Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-060-03 - Country Sub-entity identification" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_Appendix_C_PTT-060-03" BindingStrength="R" />
+            <Component Name="PTT-060-04 - Postcode Identification" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+            <Component Name="PTT-060-05 - Place Location Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="PTT-060-05" BindingStrength="R" />
+            <Component Name="PTT-060-06 - Place Location" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+        </Datatype>
+        <Datatype ID="PTT-070_NEWRX" Name="Communication Number" Description="Patient*Communication">
+            <Component Name="PTT-070-01  - Communication Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="80" />
+            <Component Name="PTT-070-02 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_Appendix_K_PTT-070-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="PTT-080_NEWRX" Name="Location" Description="PatientLocation">
+            <Component Name="PTT-080-01 - Facility Unit" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="PTT-080-03 - Bed" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="PTT-080-02 - Room" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="P_DRU-010_NEWRX" Name="Drug" Description="DrugComposite">
+            <Component Name="DRU-010-01 - Item Description Identification" Usage="R" Datatype="ST" MinLength="1" MaxLength="1" Binding="IG_P_DRU-010-01" BindingStrength="R" />
+            <Component Name="DRU-010-02 - Item Description" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-010-03 - Item Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-010-04 - Code List Responsibility Agency" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_3055_P_DRU-010-04" BindingStrength="R" />
+            <Component Name="DRU-010-05 - Code List Qualifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="DRU-010-06 - Free Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="70" />
+            <Component Name="DRU-010-07 - Code List Qualifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="DRU-010-08 - Reference Number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-010-09 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_P_DRU-010-09" BindingStrength="R" />
+            <Component Name="DRU-010-10 - Item Description" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-010-11 - Item Description" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-010-12 - Item Description" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-010-13 - Source Code List" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7991_P_DRU-010-13" BindingStrength="R" />
+            <Component Name="DRU-010-14 - Item Form Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="DRU-010-15 - Source Code List" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7991_P_DRU-010-15" BindingStrength="R" />
+            <Component Name="DRU-010-16 - Item Strength Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="DRU-010-17 - DEA Schedule" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" Binding="ECL_7996_P_DRU-010-17" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_DRU-020_NEWRX" Name="Quantity Composite" Description="Quantity">
+            <Component Name="DRU-020-01 - Quantity qualifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="DRU-020-02 - Quantity" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-020-03 - Code List Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1131_P_DRU-020-03" BindingStrength="R" />
+            <Component Name="DRU-020-04 - Source Code List" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7991_P_DRU-020-04" BindingStrength="R" />
+            <Component Name="DRU-020-05 - Potency Unit Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="15" />
+        </Datatype>
+        <Datatype ID="P_DRU-030_NEWRX" Name="Directions Composite" Description="DirectionsComposite">
+            <Component Name="DRU-030-01 - Dosage Identification" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="DRU-030-02 - Dosage[1]" Usage="R" Datatype="ST" MinLength="1" MaxLength="70" />
+            <Component Name="DRU-030-03 - Dosage[2]" Usage="C" Datatype="ST" MinLength="1" MaxLength="70" />
+        </Datatype>
+        <Datatype ID="P_DRU-040_NEWRX" Name="Medication Date Composite" Description="MedicationDateComposite">
+            <Component Name="DRU-040-01 - Date/Time Period Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2005_P_DRU-040-01" BindingStrength="R" />
+            <Component Name="DRU-040-02 - Date/Time Period" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-040-03 - Date/Time Period Format Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2379_P_DRU-040-03" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_DRU-060_NEWRX" Name="Quantity [Refills]" Description="Refills">
+            <Component Name="DRU-060-01 - Quantity Qualifier [Refills]" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="IG_P_DRU-060-01" BindingStrength="R" />
+            <Component Name="DRU-060-02 - Quantity Value [Refills]" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-060-03 - Code List Qualifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="P_DRU-070_NEWRX" Name="Diagnosis" Description="DiagnosisComposite">
+            <Component Name="DRU-070-01 - Clinical Information Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_6810_P_DRU-070-01" BindingStrength="R" />
+            <Component Name="DRU-070-02 - Clinical Information - Primary" Usage="R" Datatype="ST" MinLength="1" MaxLength="17" />
+            <Component Name="DRU-070-03 - Code List Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1131_P_DRU-070-03" BindingStrength="R" />
+            <Component Name="DRU-070-04 - Clinical Information - Secondary" Usage="C" Datatype="ST" MinLength="1" MaxLength="17" />
+            <Component Name="DRU-070-05 - Code List Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1131_P_DRU-070-05" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_DRU-080_NEWRX" Name="Reference Number" Description="PriorAuthorization ">
+            <Component Name="DRU-080-01 - Reference Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-080-02 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_P_DRU-080-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_DRU-100_NEWRX" Name="Drug Use Evaluation" Description="DrugUseEvaluation">
+            <Component Name="DRU-100-01 - DUE Reason For Service Code" Usage="R" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_439-E4_P_DRU-100-01" BindingStrength="R" />
+            <Component Name="DRU-100-02 - DUE Professional Service Code" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_440 -E5_P_DRU-100-02" BindingStrength="R" />
+            <Component Name="DRU-100-03 - DUE Result of Service Code" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_441-E6_P_DRU-100-03" BindingStrength="R" />
+            <Component Name="DRU-100-04 - DUE Co-Agent ID" Usage="C" Datatype="ST" MinLength="1" MaxLength="19" />
+            <Component Name="DRU-100-05 - DUE Co-Agent ID Qualifier" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_475-J9 _P_DRU-100-05" BindingStrength="R" />
+            <Component Name="DRU-100-06 - DUE Clinical Significance Code" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_528-FS_P_DRU-100-06" BindingStrength="R" />
+            <Component Name="DRU-100-07 - DUE Acknowledgement Reason" Usage="C" Datatype="ST" MinLength="1" MaxLength="100" />
+        </Datatype>
+        <Datatype ID="P_DRU-140_NEWRX" Name="Needed No Later Than" Description="NeededNoLaterThan.Composite">
+            <Component Name="DRU-140-01 - Date/Time/Period Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2005_P_DRU-140-01" BindingStrength="R" />
+            <Component Name="DRU-140-02 - Date/Time/Period" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="DRU-140-03 - Date/Time/Period Format Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2379_P_DRU-140-03" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_DRU-150_NEWRX" Name="Time Zone" Description="[NeededNoLaterThan]TimeZone">
+            <Component Name="DRU-150-01 - Time Zone Identifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2029_P_DRU-150-01" BindingStrength="R" />
+            <Component Name="DRU-150-02 - Time Zone Difference Quantity" Usage="C" Datatype="NM" MinLength="1" MaxLength="4" />
+        </Datatype>
+        <Datatype ID="P_SIG-010_NEWRX" Name="Repeating Sig" Description="SIG.RepeatingSIG">
+            <Component Name="SIG-010-01 - Sig Sequence Position Number" Usage="R" Datatype="NM" MinLength="1" MaxLength="2" />
+            <Component Name="SIG-010-02 - Multiple Sig Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="4" Binding="ECL_7899_P_SIG-010-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-020_NEWRX" Name="Code System" Description="SIG.CodeSystem">
+            <Component Name="SIG-020-01 - SNOMED Version" Usage="C" Datatype="ST" MinLength="1" MaxLength="14" />
+            <Component Name="SIG-020-02 - FMT Version" Usage="C" Datatype="ST" MinLength="1" MaxLength="14" />
+        </Datatype>
+        <Datatype ID="P_SIG-030_NEWRX" Name="Free Text" Description="SIG.FreeText[Composite]">
+            <Component Name="SIG-030-01 - Sig Free Text String Indicator" Usage="R" Datatype="NM" MinLength="1" MaxLength="1" Binding="ECL_7902_P_SIG-030-01" BindingStrength="R" />
+            <Component Name="SIG-030-02 - Sig Free Text" Usage="R" Datatype="ST" MinLength="1" MaxLength="140" />
+        </Datatype>
+        <Datatype ID="P_SIG-040_NEWRX" Name="Dose" Description="SIG.Dose">
+            <Component Name="SIG-040-01 - Dose Composite Indicator" Usage="R" Datatype="NM" MinLength="1" MaxLength="1" Binding="ECL_7903_P_SIG-040-01" BindingStrength="R" />
+            <Component Name="SIG-040-02 - Dose Delivery Method Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-040-03 - Dose Delivery Method Code Qualifier " Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7905_P_SIG-040-03" BindingStrength="R" />
+            <Component Name="SIG-040-04 - Dose Delivery Method Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-040-05 - Dose Delivery Method Modifier Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-040-06 - Dose Delivery Method Modifier Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7908_P_SIG-040-06" BindingStrength="R" />
+            <Component Name="SIG-040-07 - Dose Delivery Method Modifier Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-040-08 - Dose Quantity" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-040-09 - Dose Form Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-040-10 - Dose Form Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7912_P_SIG-040-10" BindingStrength="R" />
+            <Component Name="SIG-040-11 - Dose Form Code " Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-040-12 - Dose Range Modifier" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_7914_P_SIG-040-12" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-050_NEWRX" Name="Dose Calculation Composite" Description="SIG.DoseCalculation">
+            <Component Name="SIG-050-01 - Dosing Basis Numeric Value" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-050-02 - Dosing Basis Unit of Measure Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-050-03 - Dosing Basis Unit of Measure Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7917_P_SIG-050-03" BindingStrength="R" />
+            <Component Name="SIG-050-04 - Dosing Basis Unit of Measure Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-050-05 - Body Metric Qualifier" Usage="C" Datatype="NM" MinLength="1" MaxLength="1" Binding="ECL_7919_P_SIG-050-05" BindingStrength="R" />
+            <Component Name="SIG-050-06 - Body Metric Value" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-050-07 - Calculated Dose Numeric" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-050-08 - Calculated Dose Unit of Measure Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-050-09 - Calculated Dose Unit of Measure Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7923_P_SIG-050-09" BindingStrength="R" />
+            <Component Name="SIG-050-10 - Calculated Dose Unit of Measure Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-050-11 - Dosing Basis Range Modifier" Usage="C" Datatype="ST" MinLength="2" MaxLength="2" Binding="ECL_7925_P_SIG-050-11" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-060_NEWRX" Name="Vehicle Composite" Description="SIG.Vehicle">
+            <Component Name="SIG-060-01 - VehicleName" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-060-02 - Vehicle Name Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7927_P_SIG-060-02" BindingStrength="R" />
+            <Component Name="SIG-060-03 - Vehicle Name Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-060-04 - Vehicle Quantity" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-060-05 - Vehicle Unit Of Measure Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-060-06 - Vehicle Unit Of Measure Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7931_P_SIG-060-06" BindingStrength="R" />
+            <Component Name="SIG-060-07 - Vehicle Unit Of Measure Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-060-08 - Multiple Vehicle Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7933_P_SIG-060-08" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-070_NEWRX" Name="Route of Administrationn Composite" Description="SIG.RouteOfAdministration">
+            <Component Name="SIG-070-01 - Route of Administration Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-070-02 - Route of Administration Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7935_P_SIG-070-02" BindingStrength="R" />
+            <Component Name="SIG-070-03 - Route of Administration Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-070-04 - Multiple Route of Administration Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7937_P_SIG-070-04" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-080_NEWRX" Name="Site of Administration Composite" Description="SIG.SiteofAdministration">
+            <Component Name="SIG-080-01 - Site of Administration Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-080-02 - Site of Administration Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7939_P_SIG-080-02" BindingStrength="R" />
+            <Component Name="SIG-080-03 - Site of Administration Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-080-04 - Multiple Site of Administration Timing Modifier" Usage="C" Datatype="ST" MinLength="3" MaxLength="3" Binding="ECL_7941_P_SIG-080-04" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-090_NEWRX" Name="SIG Timing Composite" Description="SIG.Timing">
+            <Component Name="SIG-090-01 - Administration Timing Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-090-02 - Administration Timing Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7943_P_SIG-090-02" BindingStrength="R" />
+            <Component Name="SIG-090-03 - Administration Timing Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-090-04 - Multiple Administration Timing Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7945_P_SIG-090-04" BindingStrength="R" />
+            <Component Name="SIG-090-05 - Rate of Administration" Usage="C" Datatype="ST" MinLength="1" MaxLength="11" />
+            <Component Name="SIG-090-06 - Rate Unit of Measure Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-090-07 - Rate Unit of Measure Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7948_P_SIG-090-07" BindingStrength="R" />
+            <Component Name="SIG-090-08 - Rate Unit of Measure Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-090-09 - Time Period Basis Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-090-10 - Time Period Basis Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7951_P_SIG-090-10" BindingStrength="R" />
+            <Component Name="SIG-090-11 - Time Period Basis Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-090-12 - Frequency Numeric Value" Usage="C" Datatype="ST" MinLength="1" MaxLength="11" />
+            <Component Name="SIG-090-13 - Frequency Units Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-090-14 - Frequency Units Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7955_P_SIG-090-14" BindingStrength="R" />
+            <Component Name="SIG-090-15 - Frequency Units Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-090-16 - Variable Frequency Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7957_P_SIG-090-16" BindingStrength="R" />
+            <Component Name="SIG-090-17 - Interval Numeric Value" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-090-18 - Interval Units Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-090-19 - Interval Units Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7960_P_SIG-090-19" BindingStrength="R" />
+            <Component Name="SIG-090-20 - Interval Units Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-090-21 - Variable Interval Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7962_P_SIG-090-21" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-100_NEWRX" Name="Duration Composite" Description="SIG.Duration">
+            <Component Name="SIG-100-01 - DurationNumericValue" Usage="R" Datatype="ST" MinLength="1" MaxLength="11" />
+            <Component Name="SIG-100-02 - Duration Text" Usage="R" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-100-03 - Duration Text Code Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7965_P_SIG-100-03" BindingStrength="R" />
+            <Component Name="SIG-100-04 - Duration Text Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="15" />
+        </Datatype>
+        <Datatype ID="P_SIG-110_NEWRX" Name="Maximum Dose Restriction Composite" Description="SIG*MaximumDoseRestriction">
+            <Component Name="SIG-110-01 - Maximum Dose Restriction Numeric Value" Usage="R" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-110-02 - Maximum Dose Restriction Units Text" Usage="R" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-110-03 - Maximum Dose Restriction Code Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7969_P_SIG-110-03" BindingStrength="R" />
+            <Component Name="SIG-110-04 - Maximum Dose Restriction Units Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-110-05 - Maximum Dose Restriction Variable Numeric Value" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-110-06 - Maximum Dose Restriction Variable Units Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-110-07 - Maximum Dose Restriction Variable Units Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7973_P_SIG-110-07" BindingStrength="R" />
+            <Component Name="SIG-110-08 - Maximum Dose Restriction Variable Units Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-110-09 - Maximum Dose Restriction Variable Duration Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7975_P_SIG-110-09" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-120_NEWRX" Name="Indication Composite" Description="SIG.Indication">
+            <Component Name="SIG-120-01 - Indication Precursor Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-120-02 - Indication Precursor Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7977_P_SIG-120-02" BindingStrength="R" />
+            <Component Name="SIG-120-03 - Indication Precursor Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-120-04 - Indication Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-120-05 - Indication Text Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7980_P_SIG-120-05" BindingStrength="R" />
+            <Component Name="SIG-120-06 - Indication Text Code" Usage="C" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-120-07 - Indication Value Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-120-08 - Indication Value Unit" Usage="C" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="SIG-120-09 - Indication Value Unit of Measure Text" Usage="C" Datatype="ST" MinLength="1" MaxLength="50" />
+            <Component Name="SIG-120-10 - Indication Value Unit of Measure Code Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="2" Binding="ECL_7985_P_SIG-120-10" BindingStrength="R" />
+            <Component Name="SIG-120-11 - Indication Value Unit of Measure Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="15" />
+            <Component Name="SIG-120-12 - Indication Variable Modifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7987_P_SIG-120-12" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="P_SIG-130_NEWRX" Name="Stop Composite" Description="SIG.Stop">
+            <Component Name="SIG-130-01 - StopIndicator" Usage="R" Datatype="NM" MinLength="1" MaxLength="1" Binding="ECL_7988_P_SIG-130-01" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="OBS-010_NEWRX" Name="Observation" Description="Observation.Composite">
+            <Component Name="OBS-010-01 - Measurement Dimension, coded" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_6311_OBS-010-01" BindingStrength="R" />
+            <Component Name="OBS-010-02 - Measurement Value" Usage="R" Datatype="NM" MinLength="1" MaxLength="18" />
+            <Component Name="OBS-010-03 - Measurement unit qualifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+            <Component Name="OBS-010-04 - Date/Time/Period" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="OBS-010-05 - Date/Time/Period Format Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" />
+            <Component Name="OBS-010-06 - Measurement Data Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7887_OBS-010-06" BindingStrength="R" />
+            <Component Name="OBS-010-07 - Source Code List" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_7991_OBS-010-07" BindingStrength="R" />
+            <Component Name="OBS-010-08 - Measurement Unit Code" Usage="R" Datatype="ST" MinLength="1" MaxLength="15" />
+        </Datatype>
+        <Datatype ID="COO-010_NEWRX" Name="Reference Number" Description="PayerIdentification">
+            <Component Name="COO-010-01 - Reference number" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="COO-010-02 - Reference Qualifier" Usage="C" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_1153_COO-010-02" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="COO-040_NEWRX" Name="Reference Number" Description="BenefitsCoordination.ReferenceNumber">
+            <Component Name="COO-040-01 - Reference Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="COO-040-02 - Reference Qualifier" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="COO-050_NEWRX" Name="Name" Description="BenefitsCoordination.CardholderName">
+            <Component Name="COO-050-01 - Party Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="COO-050-02 - First Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="COO-050-03 - Middle Name" Usage="C" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="COO-050-04 - Name Suffix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+            <Component Name="COO-050-05 - Name Prefix" Usage="C" Datatype="ST" MinLength="1" MaxLength="10" />
+        </Datatype>
+        <Datatype ID="COO-090_NEWRX" Name="Date/Time Period" Description="BenefitsCoordination.Effective-ExpirationDate">
+            <Component Name="COO-090-01 - Date/Time Period Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2005_COO-090-01" BindingStrength="R" />
+            <Component Name="COO-090-02 - Date/Time Period" Usage="R" Datatype="ST" MinLength="1" MaxLength="35" />
+            <Component Name="COO-090-03 - Date/Time Period Format Qualifier" Usage="R" Datatype="ST" MinLength="1" MaxLength="3" Binding="ECL_2379_COO-090-03" BindingStrength="R" />
+        </Datatype>
+        <Datatype ID="NOT_USED" Name="NOT_USED" Description="NOT_USED (base SCRIPT datatype)">
+            <Component Name="NOT_USED" Usage="X" Datatype="ST" MinLength="0" MaxLength="0" />
+        </Datatype>
+        <Datatype ID="ST" Name="ST" Description="ST (base datatype)" />
+        <Datatype ID="NM" Name="NM" Description="NM (base datatype)" />
+    </Datatypes>
+</ConformanceProfile>

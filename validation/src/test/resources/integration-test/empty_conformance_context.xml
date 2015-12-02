@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConformanceContext UUID="RULES_EMPTY" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="file:///D:/sourceforge/lri-nist/mu-nist/resource-bundle-generator/src/main/resources/schema/ConformanceContext.xsd">
+	<MetaData>
+		<Description>Empty conformance context.</Description>
+	</MetaData>
+	<Predicates>
+		<Datatype>
+		</Datatype>
+		<Segment>
+		</Segment>
+		<Group>
+			<ByName Name="NEW_RX1">
+			<Constraint ID="TEST_001" Target="3[1].1[1].1[1]">
+			 <Description>Testing UIH</Description>
+			      <Assertion>
+			         <PlainText IgnoreCase="false" Path="3[1].1[1].1[1]" Text="SCRIPT"/> 
+			      </Assertion>
+			</Constraint>
+			</ByName>
+		</Group>
+	</Predicates>
+</ConformanceContext>
