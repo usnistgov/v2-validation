@@ -6,54 +6,54 @@
 	  Salifou Sidi M. Malick        -        Prometheus Computing        -        s.malick@prometheuscomputing.com
 	  ============================================================================================================= -->
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"> 
-	
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
 	<!--  =============================================================================================================
 		    =========================         Root  Element  Definition           =======================================
 		    ============================================================================================================= -->
-	
+
 	<xs:element name="ConformanceProfile" type="ConformanceProfileType">
 		<!--  Datatype ID must be unique within Datatypes element-->
 		<xs:key name="DatatypeKey">
-			<xs:selector xpath="./Datatypes/Datatype"></xs:selector>
-			<xs:field xpath="@ID"></xs:field>
+			<xs:selector xpath="./Datatypes/Datatype"/>
+			<xs:field xpath="@ID"/>
 		</xs:key>
 		<!--  Segment ID must be unique within Segments element-->
 		<xs:key name="SegmentKey">
-			<xs:selector xpath="./Segments/Segment"></xs:selector>
-			<xs:field xpath="@ID"></xs:field>
+			<xs:selector xpath="./Segments/Segment"/>
+			<xs:field xpath="@ID"/>
 		</xs:key>
 		<!--  Message ID must be unique within Messages element-->
 		<xs:key name="MessageKey">
-			<xs:selector xpath="./Messages/Message"></xs:selector>
-			<xs:field xpath="@ID"></xs:field>
+			<xs:selector xpath="./Messages/Message"/>
+			<xs:field xpath="@ID"/>
 		</xs:key>
 		<!--  Component must reference an existing Datatype -->
 		<xs:keyref refer="DatatypeKey" name="ComponentDatatypeKeyRef">
-			<xs:selector xpath="./Datatypes/Datatype/Component"></xs:selector>
-			<xs:field xpath="@Datatype"></xs:field>
+			<xs:selector xpath="./Datatypes/Datatype/Component"/>
+			<xs:field xpath="@Datatype"/>
 		</xs:keyref>
 		<!--  Field must reference an existing Datatype -->
 		<xs:keyref refer="DatatypeKey" name="FieldDatatypeKeyRef">
-			<xs:selector xpath=".//Segments/Segment/Field"></xs:selector>
-			<xs:field xpath="@Datatype"></xs:field>
+			<xs:selector xpath=".//Segments/Segment/Field"/>
+			<xs:field xpath="@Datatype"/>
 		</xs:keyref>
 		<!--  Mapping/Case must reference an existing Datatype -->
 		<xs:keyref refer="DatatypeKey" name="MappingCaseDatatypeKeyRef">
-			<xs:selector xpath=".//Case"></xs:selector>
-			<xs:field xpath="@Datatype"></xs:field>
+			<xs:selector xpath=".//Case"/>
+			<xs:field xpath="@Datatype"/>
 		</xs:keyref>
 		<!--  Segment in a message must reference an existing Segment -->
 		<xs:keyref refer="SegmentKey" name="MSegmentKeyRef">
-			<xs:selector xpath=".//Segment"></xs:selector>
-			<xs:field xpath="@Ref"></xs:field>
+			<xs:selector xpath=".//Segment"/>
+			<xs:field xpath="@Ref"/>
 		</xs:keyref>
 	</xs:element>
-	
+
 	<!--  =============================================================================================================
 		    =========================         Attribute Group Definitions         =======================================
 		    ============================================================================================================= -->
-	
+
 	<xs:attributeGroup name="RepeatableProperties">
 		<xs:attribute name="Min" type="PositiveInteger" use="required">
 			<xs:annotation>
@@ -63,7 +63,7 @@
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="Max" type="IntegerOrStar"   use="required">
+		<xs:attribute name="Max" type="IntegerOrStar" use="required">
 			<xs:annotation>
 				<xs:documentation>
 					This identifies the maximum number of repetitions of the element that are permitted in a message instance. This attribute should 
@@ -73,7 +73,7 @@
 			</xs:annotation>
 		</xs:attribute>
 	</xs:attributeGroup>
-	
+
 	<xs:attributeGroup name="DataElementProperties">
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Usage" type="UsageType" use="required"/>
@@ -101,29 +101,30 @@
 		<xs:attribute name="BindingStrength" type="BindingStrengthType" use="optional"/>
 		<xs:attribute name="BindingLocation" type="BindingLocationType" use="optional"/>
 	</xs:attributeGroup>
-	
+
 	<!--  =============================================================================================================
 		    =========================       Simple Types Definitions              =======================================
 		    ============================================================================================================= -->
-	
+
 	<xs:simpleType name="PositiveInteger">
 		<xs:restriction base="xs:integer">
 			<xs:pattern value="[0-9]+"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="IntegerOrStar">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="\d+|\*"></xs:pattern>
+			<xs:pattern value="\d+|\*"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="NonEmptyString">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[\s]*[\S].*"/> <!-- \S is the negation of \s  -->
+			<xs:pattern value="[\s]*[\S].*"/>
+			<!-- \S is the negation of \s  -->
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="UsageType">
 		<xs:annotation>
 			<xs:documentation>
@@ -147,40 +148,43 @@
 			<xs:enumeration value="CE"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="MsgStructIDType">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[A-Z0-9]{3}(_[A-Z0-9]{3})?"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="ConfLengthType">
 		<xs:restriction base="NonEmptyString">
-			<xs:pattern value="\d*[#=]{0,1}"></xs:pattern>
+			<xs:pattern value="\d*[#=]{0,1}"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="DatatypeNameType">
 		<xs:restriction base="NonEmptyString">
 			<!-- <xs:pattern value="-|[a-zA-Z0-9]+"></xs:pattern> -->
-			<xs:pattern value="-|([a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)"></xs:pattern>
+			<xs:pattern value="-|([a-zA-Z0-9]+(_[a-zA-Z0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="SegmentNameType">
 		<xs:restriction base="NonEmptyString">
-			<xs:pattern value="[A-Z]{2}[0-9]{1}"></xs:pattern>
+			<xs:pattern value="[A-Z]{2}[0-9]{1}"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="BindingStrengthType">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="R"/> <!-- Required -->
-			<xs:enumeration value="S"/> <!-- Suggested -->
-			<xs:enumeration value="U"/> <!-- Undermined -->
+			<xs:enumeration value="R"/>
+			<!-- Required -->
+			<xs:enumeration value="S"/>
+			<!-- Suggested -->
+			<xs:enumeration value="U"/>
+			<!-- Undermined -->
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="BindingLocationType">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="\d+|(\d+:\d+)"/>
@@ -190,7 +194,7 @@
 	<!--  =============================================================================================================
 		    =========================         Complex Types Definitions           =======================================
 		    ============================================================================================================= -->
-	
+
 	<xs:complexType name="DymanicMappingType">
 		<xs:sequence>
 			<xs:element name="Mapping" minOccurs="1" maxOccurs="unbounded">
@@ -200,12 +204,14 @@
 							<xs:complexType>
 								<xs:attribute name="Value" type="NonEmptyString" use="required"/>
 								<xs:attribute name="Datatype" type="DatatypeNameType" use="required"/>
-                                <!--FIXME Allow Usage, Cardinality, Length and Value Set -->
+								<!--FIXME Allow Usage, Cardinality, Length and Value Set -->
 							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
 					<xs:attribute name="Position" type="PositiveInteger" use="required">
-						<xs:annotation><xs:documentation>The data element which data type is 'varies'</xs:documentation></xs:annotation>
+						<xs:annotation>
+							<xs:documentation>The data element which data type is 'varies'</xs:documentation>
+						</xs:annotation>
 					</xs:attribute>
 					<xs:attribute name="Reference" type="PositiveInteger" use="required">
 						<xs:annotation>
@@ -216,11 +222,11 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:complexType name="DataElementType" abstract="true">
 		<xs:attributeGroup ref="DataElementProperties"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="FieldType">
 		<xs:complexContent>
 			<xs:extension base="DataElementType">
@@ -229,7 +235,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="SegmentType">
 		<xs:annotation>
 			<xs:documentation>Documents the characteristics of a single HL7 segment within the context of a particular message or segment group.</xs:documentation>
@@ -240,9 +246,10 @@
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Label" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="Description" type="NonEmptyString" use="required"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="DatatypeType">
 		<xs:annotation>
 			<xs:documentation>Provides descriptive information about the life-cycle of the HL7 v2x Static Definition, as well as authorship and control information.</xs:documentation>
@@ -256,17 +263,18 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="ID" type="DatatypeNameType" use="required"/>
+		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Label" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="Description" type="NonEmptyString" use="required"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="SegmentRefType">
 		<xs:attribute name="Ref" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Usage" type="UsageType" use="required"/>
 		<xs:attributeGroup ref="RepeatableProperties"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="GroupType">
 		<xs:annotation>
 			<xs:documentation>Documents the characteristics of a grouping of HL7 segments within the context of a particular message or segment group.</xs:documentation>
@@ -277,13 +285,14 @@
 		<xs:attribute name="Usage" type="UsageType" use="required"/>
 		<xs:attributeGroup ref="RepeatableProperties"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="MessageType">
 		<xs:annotation>
-			<xs:documentation></xs:documentation>
+			<xs:documentation/>
 		</xs:annotation>
 		<xs:group ref="GroupStructure" minOccurs="1" maxOccurs="1"/>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Name" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="Type" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Event" type="NonEmptyString" use="required"/>
 		<xs:attribute name="StructID" type="MsgStructIDType" use="required">
@@ -297,7 +306,7 @@
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
-	
+
 	<xs:complexType name="MetaDataType">
 		<xs:attribute name="Name" type="NonEmptyString" use="required">
 			<xs:annotation>
@@ -332,8 +341,10 @@
 				<xs:documentation>This provides a list of key-words that relate to the profile and that may be useful in profile searches.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="Date" type="NonEmptyString" use="optional">
+		</xs:attribute>
 	</xs:complexType>
-	
+
 	<xs:complexType name="ConformanceProfileType">
 		<xs:sequence>
 			<xs:element name="MetaData" type="MetaDataType" minOccurs="0" maxOccurs="1"/>
@@ -358,21 +369,24 @@
 			<xs:element name="Messages" minOccurs="1" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Message" type="MessageType" minOccurs="1" maxOccurs="unbounded"/>                        
+						<xs:element name="Message" type="MessageType" minOccurs="1"
+							maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="Segments" minOccurs="1" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Segment" type="SegmentType" minOccurs="1" maxOccurs="unbounded"/>                        
+						<xs:element name="Segment" type="SegmentType" minOccurs="1"
+							maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="Datatypes" minOccurs="1" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Datatype" type="DatatypeType" minOccurs="1" maxOccurs="unbounded"/>                        
+						<xs:element name="Datatype" type="DatatypeType" minOccurs="1"
+							maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -407,9 +421,9 @@
 					<xs:enumeration value="2.5.1"/>
 					<xs:enumeration value="2.6"/>
 					<xs:enumeration value="2.7"/>
-					<xs:enumeration value="2.8"/>	
+					<xs:enumeration value="2.8"/>
 				</xs:restriction>
-			</xs:simpleType>			
+			</xs:simpleType>
 		</xs:attribute>
 		<!-- Need to review the schema versions values -->
 		<xs:attribute name="SchemaVersion" use="optional">
@@ -418,12 +432,12 @@
 					<xs:enumeration value="1.0"/>
 					<xs:enumeration value="1.5"/>
 					<xs:enumeration value="2.0"/>
-					<xs:enumeration value="2.5"/>	
+					<xs:enumeration value="2.5"/>
 				</xs:restriction>
 			</xs:simpleType>
 		</xs:attribute>
 	</xs:complexType>
-	
+
 	<xs:group name="GroupStructure">
 		<xs:sequence>
 			<xs:choice minOccurs="1" maxOccurs="unbounded">
@@ -435,5 +449,5 @@
 			</xs:choice>
 		</xs:sequence>
 	</xs:group>
-	
+
 </xs:schema>

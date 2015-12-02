@@ -53,5 +53,9 @@ case class ValueSet(
     seqAsJavaList( codes filter(c => c.value == value) )
 
   def contains(value: String) = codes.exists( c => c.value == value )
+  
+  def codesList() = {
+    seqAsJavaList(codes)
+  }
 
 }

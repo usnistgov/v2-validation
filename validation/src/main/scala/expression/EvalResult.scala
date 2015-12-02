@@ -5,7 +5,7 @@ import hl7.v2.instance.Location
 /**
   * Trait representing the result of an expression evaluation
   */
-sealed trait EvalResult
+sealed trait EvalResult 
 
 object EvalResult {
 
@@ -13,12 +13,14 @@ object EvalResult {
     * A successful expression evaluation result
     */
   case object Pass extends EvalResult
+ 
 
   /**
     * A failed expression evaluation result
     */
-  case class Fail( stack: List[Trace] ) extends EvalResult
+  case class Fail( stack: List[Trace]) extends EvalResult
 
+  case class EvalData( result : EvalResult, found : String, expected : String)
   /**
     * An inconclusive expression evaluation result
     *

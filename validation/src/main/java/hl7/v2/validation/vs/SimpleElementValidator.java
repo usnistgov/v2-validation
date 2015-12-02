@@ -44,7 +44,7 @@ public class SimpleElementValidator {
             return null;}
         
         if(spec.valueSetId().contains(":")){
-        	return null;
+        	return Detections.vsError(location, "Value Set Specification error, multiple bindings can only be specified for CodedElements");
         }
     		
 
