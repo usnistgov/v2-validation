@@ -23,21 +23,24 @@ object Utils {
           case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
         }
-        e.location.copy(et, desc=r.description, path=pp)
+        e.location.copy(et, desc=r.description, path=pp, uidPath=s"$pp[1]")
       case g: Group   =>
         val (et, pp)  = g.model.structure.filter( _.req == r ) match {
           case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
         }
-        e.location.copy(et, desc=r.description, path=pp)
+        e.location.copy(et, desc=r.description, path=pp, uidPath=s"$pp[1]")
       case s: Segment =>
         e.location.copy(EType.Field, desc=r.description,
-          path=s"${e.location.path}-${r.position}")
+          path=s"${e.location.path}-${r.position}",
+          uidPath=s"${e.location.uidPath}-${r.position}[1]")
       case f: Field =>
         e.location.copy(EType.Component, desc=r.description,
-          path=s"${e.location.path}.${r.position}")
+          path=s"${e.location.path}.${r.position}",
+          uidPath=s"${e.location.uidPath}.${r.position}")
       case c: Component =>
         c.location.copy(EType.SubComponent, desc=r.description,
-          path=s"${c.location.path}.${r.position}")
+          path=s"${c.location.path}.${r.position}",
+          uidPath=s"${e.location.uidPath}.${r.position}")
     }
 }

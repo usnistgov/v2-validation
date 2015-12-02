@@ -83,12 +83,13 @@ trait StructValidationSpec
       List(
           W(EType.Segment, "Software Segment", "SFT", 2, 1,"SFT[1]"),
           X(EType.Segment, "User Authentication Credential Segment", "UAC",3 , 1,"UAC[1]"),
-          R(EType.Field, "Set ID - PID", "PID-1", 4,1,"PID[1]"),
+          R(EType.Field, "Set ID - PID", "PID-1", 4,1,"PID[1]-1[1]"),
           W(EType.Field, "Patient ID", "PID-2", 4, 6,"PID[1]-2[1]"),
           X(EType.Component, "ID Number", "PID-3.1", 4, 9,"PID[1]-3[2].1"),
           X(EType.Group, "ORDER", "ORDER", 7, 1,"ORDER[1]")
       )
     validate(m) must containTheSameElementsAs( expected )
+
   }
 
   /**

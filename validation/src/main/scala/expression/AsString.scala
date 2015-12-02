@@ -97,11 +97,15 @@ object AsString {
     case x: OR  => s"${expression(NOT(x.exp1), c)} AND ${expression(NOT(x.exp2), c)}"
     case x: NOT => expression(e, c)
     case x: XOR    => throw new Exception("Invalid use of NOT expression")
-    case x: Plugin => throw new Exception("Invalid use of NOT expression")
-    case x: IMPLY  => throw new Exception("Invalid use of NOT expression")
-    case x: EXIST  => throw new Exception("Invalid use of NOT expression")
-    case x: FORALL => throw new Exception("Invalid use of NOT expression")
-    case x: SetId  => throw new Exception("Invalid use of NOT expression")
+    case x: Plugin => s"NOT ${expression(x, c)}"
+    case x: IMPLY  => s"${expression(x.exp1, c)} AND ${expression(NOT(x.exp2), c)}"
+    case x: EXIST  => x.list.map( toNOT(_, c) ).mkString(" AND ")
+    case x: FORALL => x.list.map( toNOT(_, c) ).mkString(" OR ")
+    case x: SetId  => s"NOT ${expression(x, c)}"
     case x  => expression(x, c).replaceAllLiterally("SHALL", "SHALL not")
+  }
+  
+  private def toNOT(e: Expression, c: Element) = {
+    expression(NOT(e),c)
   }
 }
