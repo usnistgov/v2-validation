@@ -156,6 +156,19 @@
 					<xs:field xpath="@ID"></xs:field>
 				</xs:key>
 			</xs:element>
+			
+			<xs:element name="Message" type="ContextType" minOccurs="0" maxOccurs="1">
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="MessageByNameContextTypeKey">
+					<xs:selector xpath="./ByName"></xs:selector>
+					<xs:field xpath="@Name"></xs:field>
+				</xs:key>
+				<!--  The ID attribute of a by-id context must be unique -->
+				<xs:key name="MessageByIDContextTypeKey">
+					<xs:selector xpath="./ByID"></xs:selector>
+					<xs:field xpath="@ID"></xs:field>
+				</xs:key>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	
@@ -218,6 +231,19 @@
 				</xs:key>
 				<!--  The Name attribute of a by-name context must be unique -->
 				<xs:key name="PGroupByIDContextTypeKey">
+					<xs:selector xpath="./ByID"></xs:selector>
+					<xs:field xpath="@ID"></xs:field>
+				</xs:key>
+			</xs:element>
+			
+			<xs:element name="Message" type="PredicateContextType" minOccurs="0" maxOccurs="1">
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PMessageByNameContextTypeKey">
+					<xs:selector xpath="./ByName"></xs:selector>
+					<xs:field xpath="@Name"></xs:field>
+				</xs:key>
+				<!--  The Name attribute of a by-name context must be unique -->
+				<xs:key name="PMessageByIDContextTypeKey">
 					<xs:selector xpath="./ByID"></xs:selector>
 					<xs:field xpath="@ID"></xs:field>
 				</xs:key>
