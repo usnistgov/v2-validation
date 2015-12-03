@@ -47,4 +47,9 @@ object BuildSettings {
     publishTo    := None
   )
 
+  lazy val m2Repo =
+    Resolver.file("publish-m2-custom-local",
+      file("/vagrant/.m2") )
+
+
 }
