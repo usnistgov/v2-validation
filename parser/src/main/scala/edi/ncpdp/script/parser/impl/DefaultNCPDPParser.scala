@@ -28,7 +28,7 @@ trait DefaultNCPDPParser extends Parser {
       val PPR(valid, invalid, separators) = t
       implicit val s = separators
       implicit val ctr = Counter(scala.collection.mutable.Map[String,Int]())
-      val(children, unexpected) = processChildren( model.structure , valid)
+      val(children, unexpected) = processChildren( model.structure , valid,null)
       val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
       val ils = invalid map ( x => Line( x._1, x._2 ) ) //FIXME Update PreProcessor to use Line
       val uls = unexpected map ( x => Line( x._1, x._2 ) ) //FIXME Update PreProcessor to use Line
@@ -47,14 +47,14 @@ trait DefaultNCPDPParser extends Parser {
     * Creates the children of a message or a group. Returns a pair consisting
     * of the list of children elements and the remaining stack.
     */
-  private def processChildren(models: List[SGM], stack: Stack)
+  private def processChildren(models: List[SGM], stack: Stack,groupPrefix:String)
                              (implicit separators: Separators, ctr : Counter): (LSG, Stack) = {
     var isHead = true
 
     models.foldLeft( (List[SegOrGroup](), stack) ) { (acc, x) =>
       x match {
         case sm: SM =>
-          val (ls, s) = processSegment(sm, acc._2, isHead)
+          val (ls, s) = processSegment(sm, acc._2, isHead,groupPrefix)
           isHead = false
           (ls ::: acc._1, s)
         case gm: GM =>
@@ -64,26 +64,32 @@ trait DefaultNCPDPParser extends Parser {
       }
     }}
 
+  private def getGroupPrefix(gm: GM): String = {
+    gm.id.split("_").head
+  }
+
   private def processGroup(gm: GM, stack: Stack)
                           (implicit separators: Separators, ctr : Counter): (List[Group], Stack) = {
 
-    def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) =
+    def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = {
+      val groupPrefix = getGroupPrefix(gm)
       s match {
-        case x::xs if isExpected(x, gm)  =>
-          val(children, ss) = processChildren( gm.structure, s)
-          val g = Group( gm, i, children.reverse )
-          loop( g::acc, ss , i +1)
+        case x :: xs if isExpected(x, gm,groupPrefix) =>
+          val (children, ss) = processChildren(gm.structure, s, groupPrefix)
+          val g = Group(gm, i, children.reverse)
+          loop(g :: acc, ss, i + 1)
         case _ => (acc, s)
       }
+    }
 
     loop(Nil, stack, 1)
   }
 
-  private def processSegment(sm: SM, stack: Stack, isHead: Boolean)
+  private def processSegment(sm: SM, stack: Stack, isHead: Boolean,groupPrefix:String)
                             (implicit s: Separators, ctr : Counter): (List[Segment], Stack) =
     if(isHead) ( segment(sm, stack.head, 1) :: Nil, stack.tail )
     else {
-      val(x, remainingStack) = stack span (l => isExpected(l, sm))
+      val(x, remainingStack) = stack span (l => isExpected(l, sm,groupPrefix))
       val ls = x.zipWithIndex map {
         t => segment(sm, t._1, t._2 + 1)
       }
@@ -103,7 +109,7 @@ trait DefaultNCPDPParser extends Parser {
 
 
 
-  private def isExpected( l: Line, m: GM ) = {
+  private def isExpected( l: Line, m: GM ,groupPrefix: String) = {
     var isExpected = false
     val specialSegments = Map("DRU" -> 1,"SIG" -> 1,"SRC" ->1, "PVD" ->2)
     if (l._2 startsWith headName(m)) {
@@ -116,7 +122,7 @@ trait DefaultNCPDPParser extends Parser {
         }
       }
       if(isSpecial) {
-        var id = findId(l._2, headName(m), fieldLength)
+        var id = findId(l._2, headName(m), fieldLength,groupPrefix)
         if (id != "") {
           val compareId = headId(m)
           isExpected = compareId startsWith id
@@ -129,7 +135,7 @@ trait DefaultNCPDPParser extends Parser {
     isExpected
   }
 
-  private def isExpected( l: Line, m: SM) = {
+  private def isExpected( l: Line, m: SM,groupPrefix:String) = {
     var isExpected = false
     val specialSegments = Map("PVD" -> 2,"DRU" -> 1,"SIG" -> 1,"SRC" ->1)
     if (l._2 startsWith m.ref.name) {
@@ -142,7 +148,7 @@ trait DefaultNCPDPParser extends Parser {
         }
       }
       if(isSpecial) {
-        var id = findId(l._2, m.ref.name, fieldLength)
+        var id = findId(l._2, m.ref.name, fieldLength,groupPrefix)
         if (id != "") {
           val compareId = m.ref.id
           if(l._2 startsWith "PVD"){
@@ -179,23 +185,35 @@ trait DefaultNCPDPParser extends Parser {
     case g: GM => headId(g)
   }
 
-  private def findId(line: String,segmentName: String,fieldLength:Int) = {
+  private def findId(line: String,segmentName: String,fieldLength:Int,groupPrefix:String) = {
     var segId = ""
     val segMap = Map("P" -> "Prescribed", "D" -> "Dispensed", "R" -> "Requested")
     val pvdList = List("PC","P2","SU","SK")
-    segMap foreach { x =>
-      val start = segmentName.length+1
-      if(line.length >= start+fieldLength) {
-        val name = line.substring(start, start + fieldLength)
-        if ((segmentName != "PVD") && (name equals x._1)) {
-          segId = x._2 + "_" + segmentName
-        } else if (segmentName == "PVD"){
-          val pvdType = line.substring("PVD".length+1,"PVD".length+1+2)
-          pvdList foreach { currentPvdType =>
-            if(currentPvdType.equals(pvdType)){
-              segId = segmentName + "_" + currentPvdType
+    if(groupPrefix!=null){
+        segId = groupPrefix+"_"+segmentName;
+    } /*else {
+      segMap foreach { x =>
+        val start = segmentName.length + 1
+        if (line.length >= start + fieldLength) {
+          val name = line.substring(start, start + fieldLength)
+          if ((segmentName != "PVD") && (name equals x._1)) {
+            segId = x._2 + "_" + segmentName
+          } else if (segmentName == "PVD") {
+            val pvdType = line.substring("PVD".length + 1, "PVD".length + 1 + 2)
+            pvdList foreach { currentPvdType =>
+              if (currentPvdType.equals(pvdType)) {
+                segId = segmentName + "_" + currentPvdType
+              }
             }
           }
+        }
+      }
+    }*/
+    if (segmentName == "PVD") {
+      val pvdType = line.substring("PVD".length + 1, "PVD".length + 1 + 2)
+      pvdList foreach { currentPvdType =>
+        if (currentPvdType.equals(pvdType)) {
+          segId = segmentName + "_" + currentPvdType
         }
       }
     }
