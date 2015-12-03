@@ -9,16 +9,16 @@ object XMLDeserializerHelper {
 
   def profile(e: Element): Profile = {
     val id = e.attribute("ID")
-    //val typ        = e.attribute("Type")
+    val typ        = e.attribute("Type")
     //val hl7Ver     = e.attribute("HL7Version")
-    //val schemaVer  = e.attribute("SchemaVersion")
+    val schemaVer  = e.attribute("SchemaVersion")
     val dtElems = e.getChildElements("Datatypes").get(0).getChildElements("Datatype")
     val sgElems = e.getChildElements("Segments").get(0).getChildElements("Segment")
     val mgElems = e.getChildElements("Messages").get(0).getChildElements("Message")
     implicit val dts = datatypes(dtElems)
     implicit val sgs = segments(sgElems)
     val mgs = messages(mgElems)
-    Profile(id, mgs, sgs, dts)
+    Profile(id,typ,schemaVer, mgs, sgs, dts)
   }
 
   def messages(elems: Elements)(implicit map: Map[String, Segment]) =
