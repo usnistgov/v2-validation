@@ -54,7 +54,16 @@ object Build extends Build {
 
   lazy val validation = Project("edi-validation", file("validation"))
     .dependsOn( parser % "test->test; compile->compile" )
-    .settings(basicSettings: _*)
+    .settings(basicSettings ++ Seq(sourceGenerators in Compile <+= (sourceManaged in Compile, version, name) map { (d, v, n) =>
+    val file = d / "info.scala"
+    IO.write(file, """package buildinfo
+                     |object Info {
+                     |  val version = "%s"
+                     |  val name = "%s"
+                     |}
+                     |""".stripMargin.format(v, n))
+    Seq(file)
+  }): _*)
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++= compile( config ) ++ compile( vreport ))
     .settings(publishM2Configuration <<= (packagedArtifacts, checksums in publish, ivyLoggingLevel) map { (arts, cs, level) => 
@@ -65,7 +74,16 @@ object Build extends Build {
 
   lazy val xmlvalidation = Project("xmlvalidation", file("xmlvalidation"))
     .dependsOn( validation % "test->test; compile->compile" )
-    .settings(basicSettings: _*)
+    .settings(basicSettings ++ Seq(sourceGenerators in Compile <+= (sourceManaged in Compile, version, name) map { (d, v, n) =>
+    val file = d / "info.scala"
+    IO.write(file, """package buildinfo
+                     |object Info {
+                     |  val version = "%s"
+                     |  val name = "%s"
+                     |}
+                     |""".stripMargin.format(v, n))
+    Seq(file)
+  }): _*)
     .settings(moduleSettings: _*)
     .settings( libraryDependencies ++=
     compile(`commons-io`) ++
