@@ -35,7 +35,7 @@ object NCPDPPreProcessor {
         implicit val fs = s.fs
         implicit val cs = s.cs.toString
         val ts = s.ts.get.toString
-        println("fs:^"+fs.toString+"^ | cs:^"+cs+"^ | ts:^"+ts+"^ ts.isDefined? "+s.ts.isDefined)
+        //println("fs:^"+fs.toString+"^ | cs:^"+cs+"^ | ts:^"+ts+"^ ts.isDefined? "+s.ts.isDefined)
         partition( xs ) match {
           case (Nil, invalid) =>
             println("invalid: "+invalid)
@@ -55,7 +55,7 @@ object NCPDPPreProcessor {
   private def splitOnUNA( message: String): (List[Line], Separators) = {
     getSeparators( message ) map { s =>
       val ts = s.ts.get.toString
-      println("ts:^"+ts+"^")
+      //println("ts:^"+ts+"^")
       val lines = ( (Stream from 1) zip ts.r.split( message ) ).toList.map(l=>(l._1,trimLineBreakLeft(l._2)))
       (lines, s)
     } match {

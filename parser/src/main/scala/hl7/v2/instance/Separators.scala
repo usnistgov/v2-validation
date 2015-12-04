@@ -18,17 +18,19 @@ case class Separators( fs: Char, cs: Char, rs: Char, ec: Char, ss: Char, tc: Opt
    */
   def toList = {
     var l = List( fs, cs, rs, ec, ss)
-    println("separators list size: "+l.size+" | tc.isDefined? "+tc.isDefined+" | dn.isDefined? "+dn.isDefined+" "+dn.get.toString+" | ts.isDefined? "+ts.isDefined+" "+ts.get.toString)
-    if( tc.isDefined ) tc.get.toString::l.reverse
+    //println("separators list size: "+l.size+" | tc.isDefined? "+tc.isDefined+" | dn.isDefined? "+dn.isDefined+" "+dn.get.toString+" | ts.isDefined? "+ts.isDefined+" "+ts.get.toString)
+    if( tc.isDefined ) {
+      l = l ::: List(tc.get)
+    }
     if( dn.isDefined ) {
-      println("dn.isDefined --> "+dn.get.toString)
+      //println("dn.isDefined --> "+dn.get.toString)
       l = l ::: List(dn.get)
     }
     if( ts.isDefined ) {
-      println("ts.isDefined --> "+ts.get.toString)
+      //println("ts.isDefined --> "+ts.get.toString)
       l = l ::: List(ts.get)
     }
-    println("separators list size after tc, dn, ts: "+l.size)
+    //println("separators list size after tc, dn, ts: "+l.size)
     l
   }
 
