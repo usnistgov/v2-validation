@@ -122,7 +122,7 @@ trait DefaultNCPDPParser extends Parser {
         }
       }
       if(isSpecial) {
-        var id = findId(l._2, headName(m), fieldLength,groupPrefix)
+        var id = findId(l._2, headName(m), fieldLength,null)
         if (id != "") {
           val compareId = headId(m)
           isExpected = compareId startsWith id
@@ -191,24 +191,17 @@ trait DefaultNCPDPParser extends Parser {
     val pvdList = List("PC","P2","SU","SK")
     if(groupPrefix!=null){
         segId = groupPrefix+"_"+segmentName;
-    } /*else {
+    } else {
       segMap foreach { x =>
         val start = segmentName.length + 1
         if (line.length >= start + fieldLength) {
           val name = line.substring(start, start + fieldLength)
           if ((segmentName != "PVD") && (name equals x._1)) {
             segId = x._2 + "_" + segmentName
-          } else if (segmentName == "PVD") {
-            val pvdType = line.substring("PVD".length + 1, "PVD".length + 1 + 2)
-            pvdList foreach { currentPvdType =>
-              if (currentPvdType.equals(pvdType)) {
-                segId = segmentName + "_" + currentPvdType
-              }
-            }
           }
         }
       }
-    }*/
+    }
     if (segmentName == "PVD") {
       val pvdType = line.substring("PVD".length + 1, "PVD".length + 1 + 2)
       pvdList foreach { currentPvdType =>
