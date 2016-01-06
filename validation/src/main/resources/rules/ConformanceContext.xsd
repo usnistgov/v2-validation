@@ -66,6 +66,7 @@
 			<xs:element name="Assertion" type="AssertionType" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Classification" type="ClassificationType" use="optional"/>
 		<xs:attribute name="Target" type="PathType" use="optional"/>
 	</xs:complexType>
 	
