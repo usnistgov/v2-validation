@@ -195,7 +195,8 @@ object DefaultConformanceContext {
     val id = e.attribute("ID") // match { case "" => None case x => Some(x) }
     val ref = reference(e.getFirstChildElement("Reference"))
     val desc = description(e.getFirstChildElement("Description"))
-    Constraint(id, ref, desc, assertion(e))
+    val clas = classification(e.attribute("Classification"))
+      Constraint(id, ref, clas, desc, assertion(e))
   }
 
   /**
@@ -212,6 +213,13 @@ object DefaultConformanceContext {
 
   private def description(e: nu.xom.Element): String =
     if (e != null) e.getValue else "Description is missing ... "
+
+  private def classification(e: String): Option[Classification] =
+    e match {
+      case "W" => Some(Classification.W())
+      case "A" => Some(Classification.A())
+      case _  => None
+    }
 
   private def reference(e: nu.xom.Element): Option[Reference] =
     if (e == null) None

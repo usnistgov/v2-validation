@@ -3,6 +3,7 @@ package hl7.v2.validation.content
 import expression.Expression
 
 import scala.beans.BeanProperty
+import com.typesafe.config.ConfigFactory
 
 case class Reference(
     @BeanProperty chapter: String,
@@ -21,6 +22,7 @@ case class Reference(
 case class Constraint( 
     id: String,
     reference: Option[Reference],
+    classification : Option[Classification],
     description: String,
     assertion: Expression
 )
@@ -36,6 +38,12 @@ case class Predicate(
     description: String,
     condition: Expression
 )
+
+sealed trait Classification
+object Classification {
+  case class W()  extends Classification 
+  case class A()  extends Classification
+}
 
 /**
   * Trait representing allowed values for predicate true and false attributes
