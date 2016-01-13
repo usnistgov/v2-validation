@@ -1,0 +1,1316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ValueSetLibrary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ValueSetLibraryIdentifier="RXCHG-VALUESET" Name="RXCHG value set library" OrganizationName="NCPDP" ValueSetLibraryVersion="1.0" Status="Active" Description="Value sets used in the RXCHG message">
+    <ValueSetDefinitions Group="RXCHG_VALUES" Order="1">
+        <ValueSetDefinition BindingIdentifier="COO-080-05" Name="BenefitsCoordination*PlaceLocationQualifier">
+            <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-020-03" Name="Code List Qualifier  Quantity Qualifier - DRU Segment (X12 DE 673)">
+            <ValueElement Value="38" DisplayName="Original Quantity" CodeSystem="ECL_1131" />
+            <ValueElement Value="40" DisplayName="Remaining Quantity" CodeSystem="ECL_1131" />
+            <ValueElement Value="87" DisplayName="Quantity Received" CodeSystem="ECL_1131" />
+            <ValueElement Value="QS" DisplayName="Quantity sufficient as determined by the dispensing pharmacy" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-070-03" Name="Code List Qualifier  Diagnosis Code Qualifier (Primary) - DRU Segment">
+            <ValueElement Value="E" DisplayName="Micromedex/Medical Economics" CodeSystem="ECL_1131" />
+            <ValueElement Value="F" DisplayName="First DataBank" CodeSystem="ECL_1131" />
+            <ValueElement Value="M" DisplayName="Medi-Span Product Line" CodeSystem="ECL_1131" />
+            <ValueElement Value="ABF" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+            <ValueElement Value="DX" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1131_P_DRU-070-05" Name="Code List Qualifier  Diagnosis Code Qualifier (Secondary) - DRU Segment (X12 DE 235)">
+            <ValueElement Value="ABF" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+            <ValueElement Value="DX" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1131_R_DRU-020-03" Name="Code List Qualifier  Quantity Qualifier - DRU Segment (X12 DE 673)">
+            <ValueElement Value="38" DisplayName="Original Quantity" CodeSystem="ECL_1131" />
+            <ValueElement Value="40" DisplayName="Remaining Quantity" CodeSystem="ECL_1131" />
+            <ValueElement Value="87" DisplayName="Quantity Received" CodeSystem="ECL_1131" />
+            <ValueElement Value="QS" DisplayName="Quantity sufficient as determined by the dispensing pharmacy" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1131_R_DRU-070-03" Name="Code List Qualifier  Diagnosis Code Qualifier (Primary) - DRU Segment">
+            <ValueElement Value="E" DisplayName="Micromedex/Medical Economics" CodeSystem="ECL_1131" />
+            <ValueElement Value="F" DisplayName="First DataBank" CodeSystem="ECL_1131" />
+            <ValueElement Value="M" DisplayName="Medi-Span Product Line" CodeSystem="ECL_1131" />
+            <ValueElement Value="ABF" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+            <ValueElement Value="DX" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1131_R_DRU-070-05" Name="Code List Qualifier  Diagnosis Code Qualifier (Secondary) - DRU Segment (X12 DE 235)">
+            <ValueElement Value="ABF" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+            <ValueElement Value="DX" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD9" DisplayName="ICD-9" CodeSystem="ECL_1131" />
+            <ValueElement Value="ICD10" DisplayName="ICD-10" CodeSystem="ECL_1131" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_COO-010-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_FA_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2 Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_P_DRU-010-09" Name="Appendix B 2 - Drug Reference Values">
+            <ValueElement Value="E" DisplayName="Medical Economics Generic Formulation Code (GFC)" CodeSystem="ECL_1153" />
+            <ValueElement Value="G" DisplayName="Medical Economics Generic Master (GM)" CodeSystem="ECL_1153" />
+            <ValueElement Value="AF" DisplayName="American Hospital Formulary Service (AHFS)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FD" DisplayName="First DataBank Routed Dosage Form ID (FDB Routed Dosage Form Med ID) " CodeSystem="ECL_1153" />
+            <ValueElement Value="FG" DisplayName="First DataBank Clinical Formulation ID Sequence Number (GCN_SEQ_NO)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FI" DisplayName="First DataBank Medication ID (FDB MedID)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FL" DisplayName="First DataBank Ingredient List ID (HICL_SEQ_NO)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FM" DisplayName="First DataBank Medication ID (FDB MedID)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FN" DisplayName="First DataBank Medication Name ID (FDB Med Name ID) " CodeSystem="ECL_1153" />
+            <ValueElement Value="FS" DisplayName="First Databank Smartkey" CodeSystem="ECL_1153" />
+            <ValueElement Value="MC" DisplayName="Multum Drug ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="MD" DisplayName="Medi-Span Product Line (DDID)" CodeSystem="ECL_1153" />
+            <ValueElement Value="MG" DisplayName="Medi-Span Generic Product Identifier (GPI)" CodeSystem="ECL_1153" />
+            <ValueElement Value="MM" DisplayName="Multum MMDC" CodeSystem="ECL_1153" />
+            <ValueElement Value="BPK" DisplayName="RxNorm Branded Package (BPCK)" CodeSystem="ECL_1153" />
+            <ValueElement Value="GPK" DisplayName="RxNorm Generic Package (GPCK) " CodeSystem="ECL_1153" />
+            <ValueElement Value="SBD" DisplayName="RxNorm Semantic Branded Drug (SBD)" CodeSystem="ECL_1153" />
+            <ValueElement Value="SCD" DisplayName="RxNorm Semantic Clinical Drug (SCD)" CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_P_DRU-080-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_PH_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2 Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_PR_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2 Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_PTT-050-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_R_DRU-010-09" Name="Appendix B 2 - Drug Reference Values">
+            <ValueElement Value="E" DisplayName="Medical Economics Generic Formulation Code (GFC)" CodeSystem="ECL_1153" />
+            <ValueElement Value="G" DisplayName="Medical Economics Generic Master (GM)" CodeSystem="ECL_1153" />
+            <ValueElement Value="AF" DisplayName="American Hospital Formulary Service (AHFS)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FD" DisplayName="First DataBank Routed Dosage Form ID (FDB Routed Dosage Form Med ID) " CodeSystem="ECL_1153" />
+            <ValueElement Value="FG" DisplayName="First DataBank Clinical Formulation ID Sequence Number (GCN_SEQ_NO)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FI" DisplayName="First DataBank Medication ID (FDB MedID)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FL" DisplayName="First DataBank Ingredient List ID (HICL_SEQ_NO)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FM" DisplayName="First DataBank Medication ID (FDB MedID)" CodeSystem="ECL_1153" />
+            <ValueElement Value="FN" DisplayName="First DataBank Medication Name ID (FDB Med Name ID) " CodeSystem="ECL_1153" />
+            <ValueElement Value="FS" DisplayName="First Databank Smartkey" CodeSystem="ECL_1153" />
+            <ValueElement Value="MC" DisplayName="Multum Drug ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="MD" DisplayName="Medi-Span Product Line (DDID)" CodeSystem="ECL_1153" />
+            <ValueElement Value="MG" DisplayName="Medi-Span Generic Product Identifier (GPI)" CodeSystem="ECL_1153" />
+            <ValueElement Value="MM" DisplayName="Multum MMDC" CodeSystem="ECL_1153" />
+            <ValueElement Value="BPK" DisplayName="RxNorm Branded Package (BPCK)" CodeSystem="ECL_1153" />
+            <ValueElement Value="GPK" DisplayName="RxNorm Generic Package (GPCK) " CodeSystem="ECL_1153" />
+            <ValueElement Value="SBD" DisplayName="RxNorm Semantic Branded Drug (SBD)" CodeSystem="ECL_1153" />
+            <ValueElement Value="SCD" DisplayName="RxNorm Semantic Clinical Drug (SCD)" CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_R_DRU-080-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_1153_SU_PVD-020-02" Name="Reference Qualifier (X12 DE 128)&#xA;">
+            <ValueElement Value="0B" DisplayName="State License Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="1C" DisplayName="Medicare Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1D" DisplayName="Medicaid Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1E" DisplayName="Dentist License Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1G" DisplayName="UPIN" CodeSystem="ECL_1153" />
+            <ValueElement Value="1J" DisplayName="Facility ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="1M" DisplayName="PPO Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="2U" DisplayName="Payer Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="94" DisplayName="Pharmacy or Prescriber File ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ADI" DisplayName="Processor Control Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="BO" DisplayName="BIN " CodeSystem="ECL_1153" />
+            <ValueElement Value="C1" DisplayName="Commercial" CodeSystem="ECL_1153" />
+            <ValueElement Value="D3" DisplayName="NCPDP Provider ID Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="DH" DisplayName="DEA Number " CodeSystem="ECL_1153" />
+            <ValueElement Value="EA" DisplayName="Medical Record Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="EJ" DisplayName="Patient Account Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="G1" DisplayName="Prior Authorization number" CodeSystem="ECL_1153" />
+            <ValueElement Value="GI" DisplayName="Certificate to Prescribe (CTP) number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HI" DisplayName="Health Identification Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="HPI" DisplayName="National Provider ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="IP" DisplayName="Individual Policy Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NC" DisplayName="Secondary Coverage Company Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="NF" DisplayName="NAIC Code" CodeSystem="ECL_1153" />
+            <ValueElement Value="PD" DisplayName="Sample prescription" CodeSystem="ECL_1153" />
+            <ValueElement Value="SY" DisplayName="Social Security Number" CodeSystem="ECL_1153" />
+            <ValueElement Value="WI" DisplayName="DATA 2 Waiver ID" CodeSystem="ECL_1153" />
+            <ValueElement Value="ZZ" DisplayName="Mutually Defined " CodeSystem="ECL_1153" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2005_COO-090-01" Name="Date/Time/Period Qualifier (X12 DE 432)">
+            <ValueElement Value="07" DisplayName="Effective Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="36" DisplayName="Expiration Date" CodeSystem="ECL_2005" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2005_P_DRU-040-01" Name="Date/Time/Period Qualifier (X12 DE 432)">
+            <ValueElement Value="ZDS" DisplayName="Days Supply" CodeSystem="ECL_2005" />
+            <ValueElement Value="85" DisplayName="Date Issued (Written Date)" CodeSystem="ECL_2005" />
+            <ValueElement Value="LD" DisplayName="Last Demand (Last Fill)" CodeSystem="ECL_2005" />
+            <ValueElement Value="07" DisplayName="Effective Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="35" DisplayName="Delivered on Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="36" DisplayName="Expiration Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="BE" DisplayName="Validated" CodeSystem="ECL_2005" />
+            <ValueElement Value="PE" DisplayName="Period End" CodeSystem="ECL_2005" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2005_P_DRU-140-01" Name="Date/Time/Period Qualifier (X12 DE 432)">
+            <ValueElement Value="74" DisplayName="Needed No Later Than Date" CodeSystem="ECL_2005" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2005_R_DRU-040-01" Name="Date/Time/Period Qualifier (X12 DE 432)">
+            <ValueElement Value="ZDS" DisplayName="Days Supply" CodeSystem="ECL_2005" />
+            <ValueElement Value="85" DisplayName="Date Issued (Written Date)" CodeSystem="ECL_2005" />
+            <ValueElement Value="LD" DisplayName="Last Demand (Last Fill)" CodeSystem="ECL_2005" />
+            <ValueElement Value="07" DisplayName="Effective Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="35" DisplayName="Delivered on Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="36" DisplayName="Expiration Date" CodeSystem="ECL_2005" />
+            <ValueElement Value="BE" DisplayName="Validated" CodeSystem="ECL_2005" />
+            <ValueElement Value="PE" DisplayName="Period End" CodeSystem="ECL_2005" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2005_R_DRU-140-01" Name="Date/Time/Period Qualifier (X12 DE 432)">
+            <ValueElement Value="74" DisplayName="Needed No Later Than Date" CodeSystem="ECL_2005" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2005_REQ-070-01" Name="Date/Time/Period Qualifier (X12 DE 432)">
+            <ValueElement Value="07" DisplayName="Effective Date" CodeSystem="ECL_2005" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2379_COO-090-03" Name="Date/Time/Period Format Qualifier">
+            <ValueElement Value="102" DisplayName="Date CCYYMMDD" CodeSystem="ECL_2379" />
+            <ValueElement Value="203" DisplayName="CCYYMMDDHHMM" CodeSystem="ECL_2379" />
+            <ValueElement Value="804" DisplayName="Quantity of Days" CodeSystem="ECL_2379" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2379_P_DRU-040-03" Name="Date/Time/Period Format Qualifier">
+            <ValueElement Value="102" DisplayName="Date CCYYMMDD" CodeSystem="ECL_2379" />
+            <ValueElement Value="203" DisplayName="CCYYMMDDHHMM" CodeSystem="ECL_2379" />
+            <ValueElement Value="804" DisplayName="Quantity of Days" CodeSystem="ECL_2379" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2379_P_DRU-140-03" Name="Date/Time/Period Format Qualifier">
+            <ValueElement Value="203" DisplayName="CCYYMMDDHHMM" CodeSystem="ECL_2379" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2379_R_DRU-040-03" Name="Date/Time/Period Format Qualifier">
+            <ValueElement Value="102" DisplayName="Date CCYYMMDD" CodeSystem="ECL_2379" />
+            <ValueElement Value="203" DisplayName="CCYYMMDDHHMM" CodeSystem="ECL_2379" />
+            <ValueElement Value="804" DisplayName="Quantity of Days" CodeSystem="ECL_2379" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2379_R_DRU-140-03" Name="Date/Time/Period Format Qualifier">
+            <ValueElement Value="203" DisplayName="CCYYMMDDHHMM" CodeSystem="ECL_2379" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_2379_REQ-070-03" Name="Date/Time/Period Format Qualifier">
+            <ValueElement Value="102" DisplayName="Date CCYYMMDD" CodeSystem="ECL_2379" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_3055_P_DRU-010-04" Name="Code List Responsibility Agency (X12 DE 235)">
+            <ValueElement Value="ND" DisplayName="National Drug Code (NDC)" CodeSystem="ECL_3055" />
+            <ValueElement Value="MF" DisplayName="Manufacturer Product Code (MFG)" CodeSystem="ECL_3055" />
+            <ValueElement Value="UP" DisplayName="Universal Product Code (UPC)" CodeSystem="ECL_3055" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_3055_R_DRU-010-04" Name="Code List Responsibility Agency (X12 DE 235)">
+            <ValueElement Value="ND" DisplayName="National Drug Code (NDC)" CodeSystem="ECL_3055" />
+            <ValueElement Value="MF" DisplayName="Manufacturer Product Code (MFG)" CodeSystem="ECL_3055" />
+            <ValueElement Value="UP" DisplayName="Universal Product Code (UPC)" CodeSystem="ECL_3055" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_408_P_DRU-050" Name="Dispense As Written (DAW)/ Product Selection Code">
+            <ValueElement Value="0" DisplayName="Substitution allowed by the prescriber" CodeSystem="ECL_408" />
+            <ValueElement Value="1" DisplayName="Substitution not allowed by the prescriber" CodeSystem="ECL_408" />
+            <ValueElement Value="2" DisplayName="Substitution Allowed-Patient Requested Product Dispensed" CodeSystem="ECL_408" />
+            <ValueElement Value="3" DisplayName="Substitution Allowed-Pharmacist Selected Product Dispensed" CodeSystem="ECL_408" />
+            <ValueElement Value="4" DisplayName="Substitution Allowed-Generic Drug Not in Stock" CodeSystem="ECL_408" />
+            <ValueElement Value="5" DisplayName="Substitution Allowed-Brand Drug Dispensed as a Generic" CodeSystem="ECL_408" />
+            <ValueElement Value="7" DisplayName="Substitution Not Allowed-Brand Drug Mandated by Law" CodeSystem="ECL_408" />
+            <ValueElement Value="8" DisplayName="Substitution Allowed-Generic Drug Not Available in Marketplace" CodeSystem="ECL_408" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_408_R_DRU-050" Name="Dispense As Written (DAW)/ Product Selection Code">
+            <ValueElement Value="0" DisplayName="Substitution allowed by the prescriber" CodeSystem="ECL_408" />
+            <ValueElement Value="1" DisplayName="Substitution not allowed by the prescriber" CodeSystem="ECL_408" />
+            <ValueElement Value="2" DisplayName="Substitution Allowed-Patient Requested Product Dispensed" CodeSystem="ECL_408" />
+            <ValueElement Value="3" DisplayName="Substitution Allowed-Pharmacist Selected Product Dispensed" CodeSystem="ECL_408" />
+            <ValueElement Value="4" DisplayName="Substitution Allowed-Generic Drug Not in Stock" CodeSystem="ECL_408" />
+            <ValueElement Value="5" DisplayName="Substitution Allowed-Brand Drug Dispensed as a Generic" CodeSystem="ECL_408" />
+            <ValueElement Value="7" DisplayName="Substitution Not Allowed-Brand Drug Mandated by Law" CodeSystem="ECL_408" />
+            <ValueElement Value="8" DisplayName="Substitution Allowed-Generic Drug Not Available in Marketplace" CodeSystem="ECL_408" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4343_REQ-010" Name="Message Function, coded">
+            <ValueElement Value="G" DisplayName="Generic Substitution" CodeSystem="ECL_4343" />
+            <ValueElement Value="T" DisplayName="Therapeutic Interchange/Substitution" CodeSystem="ECL_4343" />
+            <ValueElement Value="P" DisplayName="Prior Authorization Required" CodeSystem="ECL_4343" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_439-E4_P_DRU-100-01" Name="Reason for Service Code">
+            <ValueElement Value="AD" DisplayName="Additional Drug Needed" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="AN" DisplayName="Prescription Authentication" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="AR" DisplayName="Adverse Drug Reaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="AT" DisplayName="Additive Toxicity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="CD" DisplayName="Chronic Disease Management" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="CH" DisplayName="Call Help Desk" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="CS" DisplayName="Patient Complaint/Symptom" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DA" DisplayName="Drug-Allergy" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DC" DisplayName="Drug-Disease (Inferred)" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DD" DisplayName="Drug-Drug Interaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DF" DisplayName="Drug-Food interaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DI" DisplayName="Drug Incompatibility" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DL" DisplayName="Drug-Lab Conflict" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DM" DisplayName="Apparent Drug Misuse" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DR" DisplayName="Dose Range Conflict" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DS" DisplayName="Tobacco Use" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ED" DisplayName="Patient Education/Instruction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ER" DisplayName="Overuse" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="EX" DisplayName="Excessive Quantity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="HD" DisplayName="High Dose" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="IC" DisplayName="Iatrogenic Condition" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ID" DisplayName="Ingredient Duplication" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="LD" DisplayName="Low Dose" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="LK" DisplayName="Lock In Recipient" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="LR" DisplayName="Underuse" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MC" DisplayName="Drug-Disease (Reported)" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MN" DisplayName="Insufficient Duration" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MS" DisplayName="Missing Information/Clarification" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MX" DisplayName="Excessive Duration" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NA" DisplayName="Drug Not Available" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NC" DisplayName="Non-covered Drug Purchase" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ND" DisplayName="New Disease/Diagnosis" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NF" DisplayName="Non-Formulary Drug" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NN" DisplayName="Unnecessary Drug" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NP" DisplayName="New Patient Processing" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NR" DisplayName="Lactation/Nursing Interaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NS" DisplayName="Insufficient Quantity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="OH" DisplayName="Alcohol Conflict" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PA" DisplayName="Drug-Age" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PC" DisplayName="Patient Question/Concern" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PG" DisplayName="Drug-Pregnancy" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PH" DisplayName="Preventive Health Care" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PN" DisplayName="Prescriber Consultation" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PP" DisplayName="Plan Protocol" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PR" DisplayName="Prior Adverse Reaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PS" DisplayName="Product Selection Opportunity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="RE" DisplayName="Suspected Environmental Risk" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="RF" DisplayName="Health Provider Referral" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SC" DisplayName="Suboptimal Compliance" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SD" DisplayName="Suboptimal Drug/Indication" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SE" DisplayName="Side Effect" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SF" DisplayName="Suboptimal Dosage Form" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SR" DisplayName="Suboptimal Regimen" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SX" DisplayName="Drug-Gender" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="TD" DisplayName="Therapeutic" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="TN" DisplayName="Laboratory Test Needed" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="TP" DisplayName="Payer/Processor Question" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="UD" DisplayName="Duplicate Drug" CodeSystem="ECL_439-E4" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_439-E4_R_DRU-100-01" Name="Reason for Service Code">
+            <ValueElement Value="AD" DisplayName="Additional Drug Needed" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="AN" DisplayName="Prescription Authentication" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="AR" DisplayName="Adverse Drug Reaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="AT" DisplayName="Additive Toxicity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="CD" DisplayName="Chronic Disease Management" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="CH" DisplayName="Call Help Desk" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="CS" DisplayName="Patient Complaint/Symptom" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DA" DisplayName="Drug-Allergy" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DC" DisplayName="Drug-Disease (Inferred)" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DD" DisplayName="Drug-Drug Interaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DF" DisplayName="Drug-Food interaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DI" DisplayName="Drug Incompatibility" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DL" DisplayName="Drug-Lab Conflict" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DM" DisplayName="Apparent Drug Misuse" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DR" DisplayName="Dose Range Conflict" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="DS" DisplayName="Tobacco Use" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ED" DisplayName="Patient Education/Instruction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ER" DisplayName="Overuse" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="EX" DisplayName="Excessive Quantity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="HD" DisplayName="High Dose" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="IC" DisplayName="Iatrogenic Condition" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ID" DisplayName="Ingredient Duplication" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="LD" DisplayName="Low Dose" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="LK" DisplayName="Lock In Recipient" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="LR" DisplayName="Underuse" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MC" DisplayName="Drug-Disease (Reported)" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MN" DisplayName="Insufficient Duration" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MS" DisplayName="Missing Information/Clarification" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="MX" DisplayName="Excessive Duration" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NA" DisplayName="Drug Not Available" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NC" DisplayName="Non-covered Drug Purchase" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="ND" DisplayName="New Disease/Diagnosis" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NF" DisplayName="Non-Formulary Drug" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NN" DisplayName="Unnecessary Drug" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NP" DisplayName="New Patient Processing" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NR" DisplayName="Lactation/Nursing Interaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="NS" DisplayName="Insufficient Quantity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="OH" DisplayName="Alcohol Conflict" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PA" DisplayName="Drug-Age" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PC" DisplayName="Patient Question/Concern" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PG" DisplayName="Drug-Pregnancy" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PH" DisplayName="Preventive Health Care" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PN" DisplayName="Prescriber Consultation" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PP" DisplayName="Plan Protocol" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PR" DisplayName="Prior Adverse Reaction" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="PS" DisplayName="Product Selection Opportunity" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="RE" DisplayName="Suspected Environmental Risk" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="RF" DisplayName="Health Provider Referral" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SC" DisplayName="Suboptimal Compliance" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SD" DisplayName="Suboptimal Drug/Indication" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SE" DisplayName="Side Effect" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SF" DisplayName="Suboptimal Dosage Form" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SR" DisplayName="Suboptimal Regimen" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="SX" DisplayName="Drug-Gender" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="TD" DisplayName="Therapeutic" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="TN" DisplayName="Laboratory Test Needed" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="TP" DisplayName="Payer/Processor Question" CodeSystem="ECL_439-E4" />
+            <ValueElement Value="UD" DisplayName="Duplicate Drug" CodeSystem="ECL_439-E4" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_440 -E5_P_DRU-100-02" Name="Professional Service Code">
+            <ValueElement Value="00" DisplayName="No intervention" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="AS" DisplayName="Patient assessment" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="CC" DisplayName="Coordination of care" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="DE" DisplayName="Dosing evaluation/determination" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="DP" DisplayName="DP" CodeSystem="IG" />
+            <ValueElement Value="FE" DisplayName="Formulary enforcement" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="GP" DisplayName="Generic product selection" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MA" DisplayName="Medication administration" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MB" DisplayName="Overriding benefit" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MP" DisplayName="Patient will be monitored" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="M0" DisplayName="Prescriber consulted" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MR" DisplayName="Medication review" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PA" DisplayName="Previous patient tolerance" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PE" DisplayName="Patient education/instruction" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PH" DisplayName="Patient medication history " CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PM" DisplayName="Patient monitoring" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="P0" DisplayName="Patient consulted" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PT" DisplayName="Perform laboratory test" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="R0" DisplayName="R0" CodeSystem="IG" />
+            <ValueElement Value="RT" DisplayName="Recommend laboratory test" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="SC" DisplayName="Self-care consultation" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="SW" DisplayName="Literature search/review" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="TC" DisplayName="Payer/processor consulted" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="TH" DisplayName="Therapeutic product interchange" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="ZZ" DisplayName="Other Acknowledgement" CodeSystem="ECL_440 -E5" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_440 -E5_R_DRU-100-02" Name="Professional Service Code">
+            <ValueElement Value="00" DisplayName="No intervention" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="AS" DisplayName="Patient assessment" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="CC" DisplayName="Coordination of care" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="DE" DisplayName="Dosing evaluation/determination" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="DP" DisplayName="DP" CodeSystem="IG" />
+            <ValueElement Value="FE" DisplayName="Formulary enforcement" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="GP" DisplayName="Generic product selection" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MA" DisplayName="Medication administration" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MB" DisplayName="Overriding benefit" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MP" DisplayName="Patient will be monitored" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="M0" DisplayName="Prescriber consulted" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="MR" DisplayName="Medication review" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PA" DisplayName="Previous patient tolerance" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PE" DisplayName="Patient education/instruction" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PH" DisplayName="Patient medication history " CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PM" DisplayName="Patient monitoring" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="P0" DisplayName="Patient consulted" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="PT" DisplayName="Perform laboratory test" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="R0" DisplayName="R0" CodeSystem="IG" />
+            <ValueElement Value="RT" DisplayName="Recommend laboratory test" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="SC" DisplayName="Self-care consultation" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="SW" DisplayName="Literature search/review" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="TC" DisplayName="Payer/processor consulted" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="TH" DisplayName="Therapeutic product interchange" CodeSystem="ECL_440 -E5" />
+            <ValueElement Value="ZZ" DisplayName="Other Acknowledgement" CodeSystem="ECL_440 -E5" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_441-E6_P_DRU-100-03" Name="Result of Service Code">
+            <ValueElement Value="00" DisplayName="00" CodeSystem="IG" />
+            <ValueElement Value="1A" DisplayName="Filled As Is, False Positive" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1B" DisplayName="Filled Prescription As Is" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1C" DisplayName="Filled, With Different Dose" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1D" DisplayName="Filled, With Different Directions" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1E" DisplayName="Filled, With Different Drug" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1F" DisplayName="Filled, With Different Quantity" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1G" DisplayName="Filled, With Prescriber Approval" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1H" DisplayName="Brand-to-Generic Change" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1J" DisplayName="Rx-to-OTC Change" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1K" DisplayName="Filled with Different Dosage Form" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="2A" DisplayName="Prescription Not Filled" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="2B" DisplayName="Not Filled, Directions Clarified" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3A" DisplayName="Recommendation Accepted" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3B" DisplayName="Recommendation Not Accepted" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3C" DisplayName="Discontinued Drug" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3D" DisplayName="Regimen Changed" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3E" DisplayName="Therapy Changed" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3F" DisplayName="Therapy Changed-cost increased acknowledged" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3G" DisplayName="Drug Therapy Unchanged" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3H" DisplayName="Follow-Up/Report" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3J" DisplayName="Patient Referral" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3K" DisplayName="Instructions Understood" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3M" DisplayName="Compliance Aid Provided" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3N" DisplayName="Medication Administered" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="4A" DisplayName="Prescribed with acknowledgements" CodeSystem="ECL_441-E6" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_441-E6_R_DRU-100-03" Name="Result of Service Code">
+            <ValueElement Value="00" DisplayName="00" CodeSystem="IG" />
+            <ValueElement Value="1A" DisplayName="Filled As Is, False Positive" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1B" DisplayName="Filled Prescription As Is" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1C" DisplayName="Filled, With Different Dose" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1D" DisplayName="Filled, With Different Directions" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1E" DisplayName="Filled, With Different Drug" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1F" DisplayName="Filled, With Different Quantity" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1G" DisplayName="Filled, With Prescriber Approval" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1H" DisplayName="Brand-to-Generic Change" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1J" DisplayName="Rx-to-OTC Change" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="1K" DisplayName="Filled with Different Dosage Form" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="2A" DisplayName="Prescription Not Filled" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="2B" DisplayName="Not Filled, Directions Clarified" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3A" DisplayName="Recommendation Accepted" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3B" DisplayName="Recommendation Not Accepted" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3C" DisplayName="Discontinued Drug" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3D" DisplayName="Regimen Changed" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3E" DisplayName="Therapy Changed" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3F" DisplayName="Therapy Changed-cost increased acknowledged" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3G" DisplayName="Drug Therapy Unchanged" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3H" DisplayName="Follow-Up/Report" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3J" DisplayName="Patient Referral" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3K" DisplayName="Instructions Understood" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3M" DisplayName="Compliance Aid Provided" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="3N" DisplayName="Medication Administered" CodeSystem="ECL_441-E6" />
+            <ValueElement Value="4A" DisplayName="Prescribed with acknowledgements" CodeSystem="ECL_441-E6" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4703_COO-100" Name="Insurance Type, coded (X12 DE 1138)">
+            <ValueElement Value="P" DisplayName="Primary" CodeSystem="ECL_4703" />
+            <ValueElement Value="S" DisplayName="Secondary" CodeSystem="ECL_4703" />
+            <ValueElement Value="T" DisplayName="Tertiary" CodeSystem="ECL_4703" />
+            <ValueElement Value="U" DisplayName="Unknown" CodeSystem="ECL_4703" />
+            <ValueElement Value="PP" DisplayName="Private Pay" CodeSystem="ECL_4703" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4705_FA_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="SK" DisplayName="Skilled Nursing Facility" CodeSystem="ECL_4705" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4705_PH_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="P2" DisplayName="Pharmacy" CodeSystem="ECL_4705" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4705_PR_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="PC" DisplayName="Primary Care Physician" CodeSystem="ECL_4705" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_4705_SU_PVD-010" Name="Provider Coded (X12 DE 1221)">
+            <ValueElement Value="SU" DisplayName="Supervising" CodeSystem="ECL_4705" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_475-J9 _P_DRU-100-05" Name="DUR Co-Agent ID Qualifier">
+            <ValueElement Value="01" DisplayName="Universal Product Code (UPC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="02" DisplayName="Health Related Item (HRI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="03" DisplayName="National Drug Code (NDC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="04" DisplayName="Health Industry Business Communications Council (HIBCC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="07" DisplayName="Common Procedure Terminology (CPT4)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="08" DisplayName="Common Procedure Terminology (CPT5)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="09" DisplayName="Health Care Financing Administration Common Procedural Coding System (HCPCS)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="11" DisplayName="National Pharmaceutical Product Interface Code (NAPPI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="12" DisplayName="Global Trade Identification Number (GTIN)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="14" DisplayName="Medi-Span Product Line Generic Product Identifier (GPI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="15" DisplayName="First DataBank Formulation ID (GCN) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="16" DisplayName="Micromedex/Medical Economics Generic Formulation Code (GFC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="17" DisplayName="Medi-Span Product Line Drug Descriptor ID (DDID)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="18" DisplayName="First DataBank SmartKey" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="19" DisplayName="Micromedex/Medical Economics Generic Master (GM)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="20" DisplayName="International Classification of Diseases (ICD9)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="21" DisplayName="International Classification of Diseases-1-Clinical Modifications (ICD-1-CM) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="22" DisplayName="Medi-Span Product Line Diagnosis Code" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="23" DisplayName="National Criteria Care Institute (NCCI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="24" DisplayName="The Systematized Nomenclature of Human and Veterinary Medicine (SNOMED)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="25" DisplayName="Common Dental Terminology (CDT) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="26" DisplayName="American Psychiatric Association Diagnostic Statistical Manual of Mental Disorders (DSM IV)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="27" DisplayName="International Classification of Diseases-1-Procedure Coding System (ICD-1-PCS)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="28" DisplayName="First DataBank Medication Name ID (FDB Med Name ID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="29" DisplayName="First DataBank Routed Medication ID (FDB Routed Med ID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="30" DisplayName="First DataBank Routed Dosage Form ID (FDB Routed Dosage Form Med ID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="31" DisplayName="First DataBank Medication ID (FDB MedID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="32" DisplayName="First DataBank Clinical Formulation ID Sequence Number (GCN_SEQ_NO) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="33" DisplayName="First DataBank Ingredient List ID (HICL_SEQ_NO)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="37" DisplayName="37" CodeSystem="IG" />
+            <ValueElement Value="38" DisplayName="38" CodeSystem="IG" />
+            <ValueElement Value="39" DisplayName="39" CodeSystem="IG" />
+            <ValueElement Value="40" DisplayName="40" CodeSystem="IG" />
+            <ValueElement Value="41" DisplayName="41" CodeSystem="IG" />
+            <ValueElement Value="99" DisplayName="Other" CodeSystem="ECL_475-J9 " />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_475-J9 _R_DRU-100-05" Name="DUR Co-Agent ID Qualifier">
+            <ValueElement Value="01" DisplayName="Universal Product Code (UPC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="02" DisplayName="Health Related Item (HRI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="03" DisplayName="National Drug Code (NDC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="04" DisplayName="Health Industry Business Communications Council (HIBCC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="07" DisplayName="Common Procedure Terminology (CPT4)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="08" DisplayName="Common Procedure Terminology (CPT5)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="09" DisplayName="Health Care Financing Administration Common Procedural Coding System (HCPCS)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="11" DisplayName="National Pharmaceutical Product Interface Code (NAPPI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="12" DisplayName="Global Trade Identification Number (GTIN)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="14" DisplayName="Medi-Span Product Line Generic Product Identifier (GPI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="15" DisplayName="First DataBank Formulation ID (GCN) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="16" DisplayName="Micromedex/Medical Economics Generic Formulation Code (GFC)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="17" DisplayName="Medi-Span Product Line Drug Descriptor ID (DDID)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="18" DisplayName="First DataBank SmartKey" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="19" DisplayName="Micromedex/Medical Economics Generic Master (GM)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="20" DisplayName="International Classification of Diseases (ICD9)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="21" DisplayName="International Classification of Diseases-1-Clinical Modifications (ICD-1-CM) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="22" DisplayName="Medi-Span Product Line Diagnosis Code" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="23" DisplayName="National Criteria Care Institute (NCCI)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="24" DisplayName="The Systematized Nomenclature of Human and Veterinary Medicine (SNOMED)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="25" DisplayName="Common Dental Terminology (CDT) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="26" DisplayName="American Psychiatric Association Diagnostic Statistical Manual of Mental Disorders (DSM IV)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="27" DisplayName="International Classification of Diseases-1-Procedure Coding System (ICD-1-PCS)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="28" DisplayName="First DataBank Medication Name ID (FDB Med Name ID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="29" DisplayName="First DataBank Routed Medication ID (FDB Routed Med ID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="30" DisplayName="First DataBank Routed Dosage Form ID (FDB Routed Dosage Form Med ID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="31" DisplayName="First DataBank Medication ID (FDB MedID) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="32" DisplayName="First DataBank Clinical Formulation ID Sequence Number (GCN_SEQ_NO) " CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="33" DisplayName="First DataBank Ingredient List ID (HICL_SEQ_NO)" CodeSystem="ECL_475-J9 " />
+            <ValueElement Value="37" DisplayName="37" CodeSystem="IG" />
+            <ValueElement Value="38" DisplayName="38" CodeSystem="IG" />
+            <ValueElement Value="39" DisplayName="39" CodeSystem="IG" />
+            <ValueElement Value="40" DisplayName="40" CodeSystem="IG" />
+            <ValueElement Value="41" DisplayName="41" CodeSystem="IG" />
+            <ValueElement Value="99" DisplayName="Other" CodeSystem="ECL_475-J9 " />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_528-FS_P_DRU-100-06" Name="Clinical Significance Code">
+            <ValueElement Value="1" DisplayName="Major" CodeSystem="ECL_528-FS" />
+            <ValueElement Value="2" DisplayName="Moderate" CodeSystem="ECL_528-FS" />
+            <ValueElement Value="3" DisplayName="Minor" CodeSystem="ECL_528-FS" />
+            <ValueElement Value="9" DisplayName="Undetermined" CodeSystem="ECL_528-FS" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_528-FS_R_DRU-100-06" Name="Clinical Significance Code">
+            <ValueElement Value="1" DisplayName="Major" CodeSystem="ECL_528-FS" />
+            <ValueElement Value="2" DisplayName="Moderate" CodeSystem="ECL_528-FS" />
+            <ValueElement Value="3" DisplayName="Minor" CodeSystem="ECL_528-FS" />
+            <ValueElement Value="9" DisplayName="Undetermined" CodeSystem="ECL_528-FS" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_6311_OBS-010-01" Name="Measurement Dimension, coded">
+            <ValueElement Value="HT" DisplayName="Height" CodeSystem="ECL_6311" />
+            <ValueElement Value="WG" DisplayName="Weight" CodeSystem="ECL_6311" />
+            <ValueElement Value="ZZS" DisplayName="Blood Pressure - Systolic" CodeSystem="ECL_6311" />
+            <ValueElement Value="ZZD" DisplayName="Blood Pressure - Diastolic" CodeSystem="ECL_6311" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_6810_P_DRU-070-01" Name="Clinical Information Qualifier&#xA;Definition of Field Field">
+            <ValueElement Value="1" DisplayName="Prescriber/Prescriber Supplied" CodeSystem="ECL_6810" />
+            <ValueElement Value="2" DisplayName="Pharmacy Inferred" CodeSystem="ECL_6810" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_6810_R_DRU-070-01" Name="Clinical Information Qualifier&#xA;Definition of Field Field">
+            <ValueElement Value="1" DisplayName="Prescriber/Prescriber Supplied" CodeSystem="ECL_6810" />
+            <ValueElement Value="2" DisplayName="Pharmacy Inferred" CodeSystem="ECL_6810" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7885_P_DRU-110" Name="Drug Coverage Status Code">
+            <ValueElement Value="PR" DisplayName="Preferred" CodeSystem="ECL_7885" />
+            <ValueElement Value="AP" DisplayName="Approved" CodeSystem="ECL_7885" />
+            <ValueElement Value="PA" DisplayName="Prior Authorization Required " CodeSystem="ECL_7885" />
+            <ValueElement Value="NF" DisplayName="Non Formulary " CodeSystem="ECL_7885" />
+            <ValueElement Value="NR" DisplayName="Non Formulary " CodeSystem="ECL_7885" />
+            <ValueElement Value="DC" DisplayName="Differential Co-Pay " CodeSystem="ECL_7885" />
+            <ValueElement Value="UN" DisplayName="Unknown" CodeSystem="ECL_7885" />
+            <ValueElement Value="ST" DisplayName="Step Therapy Required " CodeSystem="ECL_7885" />
+            <ValueElement Value="SI" DisplayName="Signed Prescription (per DEA controlled substance rules)" CodeSystem="ECL_7885" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7885_R_DRU-110" Name="Drug Coverage Status Code">
+            <ValueElement Value="PR" DisplayName="Preferred" CodeSystem="ECL_7885" />
+            <ValueElement Value="AP" DisplayName="Approved" CodeSystem="ECL_7885" />
+            <ValueElement Value="PA" DisplayName="Prior Authorization Required " CodeSystem="ECL_7885" />
+            <ValueElement Value="NF" DisplayName="Non Formulary " CodeSystem="ECL_7885" />
+            <ValueElement Value="NR" DisplayName="Non Formulary " CodeSystem="ECL_7885" />
+            <ValueElement Value="DC" DisplayName="Differential Co-Pay " CodeSystem="ECL_7885" />
+            <ValueElement Value="UN" DisplayName="Unknown" CodeSystem="ECL_7885" />
+            <ValueElement Value="ST" DisplayName="Step Therapy Required " CodeSystem="ECL_7885" />
+            <ValueElement Value="SI" DisplayName="Signed Prescription (per DEA controlled substance rules)" CodeSystem="ECL_7885" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7887_OBS-010-06" Name="Measurement Data Qualifier">
+            <ValueElement Value="1" DisplayName="Data Element Measurement Dimension, coded" CodeSystem="ECL_7887" />
+            <ValueElement Value="2" DisplayName="SNOMED CT" CodeSystem="ECL_7887" />
+            <ValueElement Value="3" DisplayName="LOINC" CodeSystem="ECL_7887" />
+            <ValueElement Value="4" DisplayName="Other" CodeSystem="ECL_7887" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7891_P_DRU-120" Name="Prior Authorization Status">
+            <ValueElement Value="A" DisplayName="Approved" CodeSystem="ECL_7891" />
+            <ValueElement Value="D" DisplayName="Denied" CodeSystem="ECL_7891" />
+            <ValueElement Value="R" DisplayName="Requested" CodeSystem="ECL_7891" />
+            <ValueElement Value="N" DisplayName="Not Required" CodeSystem="ECL_7891" />
+            <ValueElement Value="F" DisplayName="Deferred" CodeSystem="ECL_7891" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7891_R_DRU-120" Name="Prior Authorization Status">
+            <ValueElement Value="A" DisplayName="Approved" CodeSystem="ECL_7891" />
+            <ValueElement Value="D" DisplayName="Denied" CodeSystem="ECL_7891" />
+            <ValueElement Value="R" DisplayName="Requested" CodeSystem="ECL_7891" />
+            <ValueElement Value="N" DisplayName="Not Required" CodeSystem="ECL_7891" />
+            <ValueElement Value="F" DisplayName="Deferred" CodeSystem="ECL_7891" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7892_P_DRU-130" Name="Do Not Fill/Profile Flag">
+            <ValueElement Value="Y" DisplayName="Yes. Medication that does not require dispensing" CodeSystem="ECL_7892" />
+            <ValueElement Value="H" DisplayName="Hold. Patient must request before dispensing" CodeSystem="ECL_7892" />
+            <ValueElement Value="E" DisplayName="Authorization for previously-dispensed emergency controlled substance" CodeSystem="ECL_7892" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7892_R_DRU-130" Name="Do Not Fill/Profile Flag">
+            <ValueElement Value="Y" DisplayName="Yes. Medication that does not require dispensing" CodeSystem="ECL_7892" />
+            <ValueElement Value="H" DisplayName="Hold. Patient must request before dispensing" CodeSystem="ECL_7892" />
+            <ValueElement Value="E" DisplayName="Authorization for previously-dispensed emergency controlled substance" CodeSystem="ECL_7892" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7899_P_SIG-010-02" Name="Multiple Sig Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7899" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7899" />
+            <ValueElement Value="THEN" DisplayName="See Siq Sequence Position for order of sequence of sigs" CodeSystem="ECL_7899" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7899_R_SIG-010-02" Name="Multiple Sig Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7899" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7899" />
+            <ValueElement Value="THEN" DisplayName="See Siq Sequence Position for order of sequence of sigs" CodeSystem="ECL_7899" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7902_P_SIG-030-01" Name="Sig Free Text String Indicator - SIG Segment">
+            <ValueElement Value="1" DisplayName="Capture what the doctor ordered" CodeSystem="ECL_7902" />
+            <ValueElement Value="2" DisplayName="Reconstructed from structured Sig" CodeSystem="ECL_7902" />
+            <ValueElement Value="3" DisplayName="Pure free text." CodeSystem="ECL_7902" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7902_R_SIG-030-01" Name="Sig Free Text String Indicator - SIG Segment">
+            <ValueElement Value="1" DisplayName="Capture what the doctor ordered" CodeSystem="ECL_7902" />
+            <ValueElement Value="2" DisplayName="Reconstructed from structured Sig" CodeSystem="ECL_7902" />
+            <ValueElement Value="3" DisplayName="Pure free text." CodeSystem="ECL_7902" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7903_P_SIG-040-01" Name="Dose Composite Indicator - SIG Segment">
+            <ValueElement Value="1" DisplayName="Specified - remaining fields populated" CodeSystem="ECL_7903" />
+            <ValueElement Value="2" DisplayName="As needed - skip rest of Dose Segment" CodeSystem="ECL_7903" />
+            <ValueElement Value="3" DisplayName="As directed - skip rest of Dose Segment" CodeSystem="ECL_7903" />
+            <ValueElement Value="4" DisplayName="Unspecified - see free text" CodeSystem="ECL_7903" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7903_R_SIG-040-01" Name="Dose Composite Indicator - SIG Segment">
+            <ValueElement Value="1" DisplayName="Specified - remaining fields populated" CodeSystem="ECL_7903" />
+            <ValueElement Value="2" DisplayName="As needed - skip rest of Dose Segment" CodeSystem="ECL_7903" />
+            <ValueElement Value="3" DisplayName="As directed - skip rest of Dose Segment" CodeSystem="ECL_7903" />
+            <ValueElement Value="4" DisplayName="Unspecified - see free text" CodeSystem="ECL_7903" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7905_P_SIG-040-03" Name="Dose Delivery Method Code Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7905" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7905" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7905_R_SIG-040-03" Name="Dose Delivery Method Code Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7905" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7905" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7908_P_SIG-040-06" Name="Dose Delivery Method Modifier Code Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7908" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7908" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7908_R_SIG-040-06" Name="Dose Delivery Method Modifier Code Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7908" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7908" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7912_P_SIG-040-10" Name="Dose Form Code Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7912" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7912" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7912_R_SIG-040-10" Name="Dose Form Code Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7912" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7912" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7914_P_SIG-040-12" Name="Dose Range Modifier - SIG Segment">
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7914" />
+            <ValueElement Value="OR" DisplayName="An option" CodeSystem="ECL_7914" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7914_R_SIG-040-12" Name="Dose Range Modifier - SIG Segment">
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7914" />
+            <ValueElement Value="OR" DisplayName="An option" CodeSystem="ECL_7914" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7917_P_SIG-050-03" Name="Dosing Basis Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7917" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7917" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7917_R_SIG-050-03" Name="Dosing Basis Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7917" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7917" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7919_P_SIG-050-05" Name="Body Metric Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="Kilogram" CodeSystem="ECL_7919" />
+            <ValueElement Value="2" DisplayName="Meter squared" CodeSystem="ECL_7919" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7919_R_SIG-050-05" Name="Body Metric Qualifier - SIG Segment">
+            <ValueElement Value="1" DisplayName="Kilogram" CodeSystem="ECL_7919" />
+            <ValueElement Value="2" DisplayName="Meter squared" CodeSystem="ECL_7919" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7923_P_SIG-050-09" Name="Calculated Dose Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7923" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7923" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7923_R_SIG-050-09" Name="Calculated Dose Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7923" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7923" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7925_P_SIG-050-11" Name="Dose Basis Range Modifier - SIG Segment">
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7925" />
+            <ValueElement Value="OR" DisplayName="An option" CodeSystem="ECL_7925" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7925_R_SIG-050-11" Name="Dose Basis Range Modifier - SIG Segment">
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7925" />
+            <ValueElement Value="OR" DisplayName="An option" CodeSystem="ECL_7925" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7927_P_SIG-060-02" Name="Vehicle Name Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7927" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7927" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7927_R_SIG-060-02" Name="Vehicle Name Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7927" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7927" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7931_P_SIG-060-06" Name="Vehicle Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7931" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7931" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7931_R_SIG-060-06" Name="Vehicle Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7931" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7931" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7933_P_SIG-060-08" Name="Multiple Vehicle Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7933" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7933" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7933_R_SIG-060-08" Name="Multiple Vehicle Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7933" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7933" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7935_P_SIG-070-02" Name="Route of Administration Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7935" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7935" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7935_R_SIG-070-02" Name="Route of Administration Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7935" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7935" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7937_P_SIG-070-04" Name="Multiple Route of Administration Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7937" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7937" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7937_R_SIG-070-04" Name="Multiple Route of Administration Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7937" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7937" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7939_P_SIG-080-02" Name="Site of Administration Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7939" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7939" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7939_R_SIG-080-02" Name="Site of Administration Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7939" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7939" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7941_P_SIG-080-04" Name="Multiple Site of Administration Timing Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7941" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7941" />
+            <ValueElement Value="NOT" DisplayName="Excluded from use" CodeSystem="ECL_7941" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7941_R_SIG-080-04" Name="Multiple Site of Administration Timing Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7941" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7941" />
+            <ValueElement Value="NOT" DisplayName="Excluded from use" CodeSystem="ECL_7941" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7943_P_SIG-090-02" Name="Administration Timing Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7943" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7943" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7943_R_SIG-090-02" Name="Administration Timing Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7943" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7943" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7945_P_SIG-090-04" Name="Multiple Administration Timing Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7945" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7945" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7945_R_SIG-090-04" Name="Multiple Administration Timing Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7945" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7945" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7948_P_SIG-090-07" Name="Rate Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7948" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7948" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7948_R_SIG-090-07" Name="Rate Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7948" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7948" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7951_P_SIG-090-10" Name="Time Period Basis Code Qualifier  SIG Segment7951  Time Period Basis Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7951" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7951" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7951_R_SIG-090-10" Name="Time Period Basis Code Qualifier  SIG Segment7951  Time Period Basis Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7951" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7951" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7955_P_SIG-090-14" Name="Frequency Units Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7955" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7955" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7955_R_SIG-090-14" Name="Frequency Units Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7955" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7955" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7957_P_SIG-090-16" Name="Variable Frequency Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7957" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7957" />
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7957" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7957_R_SIG-090-16" Name="Variable Frequency Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7957" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7957" />
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7957" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7960_P_SIG-090-19" Name="Interval Units Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7960" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7960" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7960_R_SIG-090-19" Name="Interval Units Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7960" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7960" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7962_P_SIG-090-21" Name="Variable Interval Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7962" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7962" />
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7962" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7962_R_SIG-090-21" Name="Variable Interval Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7962" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7962" />
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7962" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7965_P_SIG-100-03" Name="Duration Text Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7965" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7965" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7965_R_SIG-100-03" Name="Duration Text Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7965" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7965" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7969_P_SIG-110-03" Name="Maximum Dose Restriction Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7969" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7969" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7969_R_SIG-110-03" Name="Maximum Dose Restriction Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7969" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7969" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7973_P_SIG-110-07" Name="Maximum Dose Restriction Variable Units Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7973" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7973" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7973_R_SIG-110-07" Name="Maximum Dose Restriction Variable Units Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7973" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7973" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7975_P_SIG-110-09" Name="Maximum Dose Restriction Variable Duration Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7975" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7975" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7975_R_SIG-110-09" Name="Maximum Dose Restriction Variable Duration Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7975" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7975" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7977_P_SIG-120-02" Name="Indication Precursor Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7977" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7977" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7977_R_SIG-120-02" Name="Indication Precursor Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7977" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7977" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7980_P_SIG-120-05" Name="Indication Text Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7980" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7980" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7980_R_SIG-120-05" Name="Indication Text Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7980" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7980" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7985_P_SIG-120-10" Name="Indication Value Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7985" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7985" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7985_R_SIG-120-10" Name="Indication Value Unit of Measure Code Qualifier  SIG Segment">
+            <ValueElement Value="1" DisplayName="SNOMED CT" CodeSystem="ECL_7985" />
+            <ValueElement Value="2" DisplayName="FMT" CodeSystem="ECL_7985" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7987_P_SIG-120-12" Name="Indication Variable Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7987" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7987" />
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7987" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7987_R_SIG-120-12" Name="Indication Variable Modifier - SIG Segment">
+            <ValueElement Value="AND" DisplayName="All must apply/must be used" CodeSystem="ECL_7987" />
+            <ValueElement Value="OR" DisplayName="Any can apply/can be used" CodeSystem="ECL_7987" />
+            <ValueElement Value="TO" DisplayName="A range" CodeSystem="ECL_7987" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7988_P_SIG-130-01" Name="Stop Indicator - SIG Segment">
+            <ValueElement Value="Y" DisplayName="Yes" CodeSystem="ECL_7988" />
+            <ValueElement Value="N" DisplayName="No" CodeSystem="ECL_7988" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7988_R_SIG-130-01" Name="Stop Indicator - SIG Segment">
+            <ValueElement Value="Y" DisplayName="Yes" CodeSystem="ECL_7988" />
+            <ValueElement Value="N" DisplayName="No" CodeSystem="ECL_7988" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_OBS-010-07" Name="Source Code List">
+            <ValueElement Value="AA" DisplayName="NCI Pharmaceutical Dosage Form" CodeSystem="ECL_7991" />
+            <ValueElement Value="AB" DisplayName="NCI Units of Presentation" CodeSystem="ECL_7991" />
+            <ValueElement Value="AC" DisplayName="NCI Unit of Measure" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_P_DRU-010-13" Name="Source Code List">
+            <ValueElement Value="AA" DisplayName="NCPDP Drug StrengthForm Terminology (NCIt subset)" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_P_DRU-010-15" Name="Source Code List">
+            <ValueElement Value="AB" DisplayName="NCPDP StrengthUnitOfMeasure (NCIt subset)" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_P_DRU-020-04" Name="Source Code List">
+            <ValueElement Value="AC" DisplayName="NCPDP Drug QuantityUnitOfMeasure Terminology (NCIt subset)" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_R_DRU-010-13" Name="Source Code List">
+            <ValueElement Value="AA" DisplayName="NCPDP Drug StrengthForm Terminology (NCIt subset)" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_R_DRU-010-15" Name="Source Code List">
+            <ValueElement Value="AB" DisplayName="NCPDP StrengthUnitOfMeasure (NCIt subset)" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7991_R_DRU-020-04" Name="Source Code List">
+            <ValueElement Value="AC" DisplayName="NCPDP Drug QuantityUnitOfMeasure Terminology (NCIt subset)" CodeSystem="ECL_7991" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7996_P_DRU-010-17" Name="DEA Schedule">
+            <ValueElement Value="C38046" DisplayName="Unspecified" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48672" DisplayName="Schedule I Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48675" DisplayName="Schedule II Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48676" DisplayName="Schedule III Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48677" DisplayName="Schedule IV Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48679" DisplayName="Schedule V Substance" CodeSystem="ECL_7996" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_7996_R_DRU-010-17" Name="DEA Schedule">
+            <ValueElement Value="C38046" DisplayName="Unspecified" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48672" DisplayName="Schedule I Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48675" DisplayName="Schedule II Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48676" DisplayName="Schedule III Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48677" DisplayName="Schedule IV Substance" CodeSystem="ECL_7996" />
+            <ValueElement Value="C48679" DisplayName="Schedule V Substance" CodeSystem="ECL_7996" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_9701_PTT-010" Name="Individual Relationship, coded">
+            <ValueElement Value="1" DisplayName="Cardholder" CodeSystem="ECL_9701" />
+            <ValueElement Value="2" DisplayName="Spouse" CodeSystem="ECL_9701" />
+            <ValueElement Value="3" DisplayName="Child" CodeSystem="ECL_9701" />
+            <ValueElement Value="4" DisplayName="Other" CodeSystem="ECL_9701" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_C_PTT-060-03" Name="State codes">
+            <ValueElement Value="AL" DisplayName="Alabama" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="AK" DisplayName="Alaska" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="AZ" DisplayName="Arizona" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="AR" DisplayName="Arkansas" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="AS" DisplayName="American Samoa" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="CA" DisplayName="California" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="CO" DisplayName="Colorado" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="CT" DisplayName="Connecticut" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="DE" DisplayName="Delaware" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="DC" DisplayName="District Of Columbia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="FM" DisplayName="Federated States Of Micronesia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="FL" DisplayName="Florida" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="GA" DisplayName="Georgia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="GU" DisplayName="Guam" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="HI" DisplayName="Hawaii" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="ID" DisplayName="Idaho" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="IL" DisplayName="Illinois" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="IN" DisplayName="Indiana" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="IA" DisplayName="Iowa" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="KS" DisplayName="Kansas" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="KY" DisplayName="Kentucky" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="LA" DisplayName="Louisiana" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="ME" DisplayName="Maine" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MH" DisplayName="Marshall Islands" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MD" DisplayName="Maryland" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MA" DisplayName="Massachusetts" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MI" DisplayName="Michigan" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MN" DisplayName="Minnesota" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MS" DisplayName="Mississippi" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MO" DisplayName="Missouri" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MT" DisplayName="Montana" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NE" DisplayName="Nebraska" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NV" DisplayName="Nevada" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NH" DisplayName="New Hampshire" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NJ" DisplayName="New Jersey" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NM" DisplayName="New Mexico" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NY" DisplayName="New York" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NC" DisplayName="North Carolina" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="ND" DisplayName="North Dakota" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MP" DisplayName="Northern Mariana Islands" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="OH" DisplayName="Ohio" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="OK" DisplayName="Oklahoma" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="OR" DisplayName="Oregon" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="PW" DisplayName="Palau" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="PA" DisplayName="Pennsylvania" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="PR" DisplayName="Puerto Rico" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="RI" DisplayName="Rhode Island" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="SC" DisplayName="South Carolina" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="SD" DisplayName="South Dakota" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="TN" DisplayName="Tennessee" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="TX" DisplayName="Texas" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="UT" DisplayName="Utah" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="VT" DisplayName="Vermont" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="VA" DisplayName="Virginia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="VI" DisplayName="Virgin Islands" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="WA" DisplayName="Washington" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="WV" DisplayName="West Virginia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="WI" DisplayName="Wisconsin" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="WY" DisplayName="Wyoming" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="AB" DisplayName="Alberta" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="BC" DisplayName="British Columbia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="MB" DisplayName="Manitoba" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NB" DisplayName="New Brunswick" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NF" DisplayName="NF" CodeSystem="IG" />
+            <ValueElement Value="NS" DisplayName="Nova Scotia" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NT" DisplayName="Northwest Territories" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="NU" DisplayName="Nunavut" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="ON" DisplayName="Ontario" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="PE" DisplayName="Prince Edward Island" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="QC" DisplayName="Quebec" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="SK" DisplayName="Saskatchewan" CodeSystem="ECL_Appendix_C" />
+            <ValueElement Value="YT" DisplayName="Yukon" CodeSystem="ECL_Appendix_C" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_FA_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PH_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PR_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_PTT-070-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="ECL_Appendix_K_SU_PVD-090-02" Name="Communication types">
+            <ValueElement Value="BN" DisplayName="Beeper" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="CP" DisplayName="Cellular" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="FX" DisplayName="Fax" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="HP" DisplayName="Home" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="NP" DisplayName="Night" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="TE" DisplayName="Telephone" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="WP" DisplayName="Work" CodeSystem="ECL_Appendix_K" />
+            <ValueElement Value="EM" DisplayName="Electronic Mail " CodeSystem="ECL_Appendix_K" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_P_DRU-010-01" Name="Medication type (prescribed, dispensed, requested)">
+            <ValueElement Value="P" DisplayName="Prescribed medication" CodeSystem="IG" />
+            <ValueElement Value="D" DisplayName="Dispensed medication" CodeSystem="IG" />
+            <ValueElement Value="R" DisplayName="Requested medication" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_P_DRU-060-01" Name="Quantity qualifier">
+            <ValueElement Value="R" DisplayName="Number of refills authorized in a new prescription" CodeSystem="IG" />
+            <ValueElement Value="PRN" DisplayName="Authorization to dispense refills as needed" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_PTT-040" Name="Gender, coded">
+            <ValueElement Value="M" DisplayName="Male" CodeSystem="IG" />
+            <ValueElement Value="F" DisplayName="Female" CodeSystem="IG" />
+            <ValueElement Value="U" DisplayName="Unknown" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_R_DRU-010-01" Name="Medication type (prescribed, dispensed, requested)">
+            <ValueElement Value="P" DisplayName="Prescribed medication" CodeSystem="IG" />
+            <ValueElement Value="D" DisplayName="Dispensed medication" CodeSystem="IG" />
+            <ValueElement Value="R" DisplayName="Requested medication" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_R_DRU-060-01" Name="Quantity qualifier">
+            <ValueElement Value="R" DisplayName="Number of refills authorized in a new prescription" CodeSystem="IG" />
+            <ValueElement Value="PRN" DisplayName="Authorization to dispense refills as needed" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_UIB-060-02" Name="Implementation guide - identification code qualifier">
+            <ValueElement Value="P" DisplayName="Pharmacy" CodeSystem="IG" />
+            <ValueElement Value="C" DisplayName="Clinic" CodeSystem="IG" />
+            <ValueElement Value="M" DisplayName="Mailbox" CodeSystem="IG" />
+            <ValueElement Value="D" DisplayName="Prescriber" CodeSystem="IG" />
+            <ValueElement Value="ZZZ" DisplayName="Mutually Defined" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="IG_UIB-070-02" Name="Implementation guide - identification code qualifier">
+            <ValueElement Value="P" DisplayName="Pharmacy" CodeSystem="IG" />
+            <ValueElement Value="C" DisplayName="Clinic" CodeSystem="IG" />
+            <ValueElement Value="M" DisplayName="Mailbox" CodeSystem="IG" />
+            <ValueElement Value="D" DisplayName="Prescriber" CodeSystem="IG" />
+            <ValueElement Value="ZZZ" DisplayName="Mutually Defined" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="PTT-060-05" Name="Patient*PlaceLocationQualifier">
+            <ValueElement Value="AD2" DisplayName="AD2" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-010-01" Name="SyntaxIdentifier">
+            <ValueElement Value="UNOA" DisplayName="UNOA" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIB-010-02" Name="SyntaxVersionNumber">
+            <ValueElement Value="0" DisplayName="0" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIH-010-02" Name="Message.version">
+            <ValueElement Value="010" DisplayName="010" CodeSystem="IG" />
+        </ValueSetDefinition>
+        <ValueSetDefinition BindingIdentifier="UIH-010-03" Name="Message.release">
+            <ValueElement Value="006" DisplayName="006" CodeSystem="IG" />
+        </ValueSetDefinition>
+    </ValueSetDefinitions>
+</ValueSetLibrary>

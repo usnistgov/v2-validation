@@ -23,36 +23,32 @@ public class ValidatorTest {
     @Test
     public void testValidator() {
         //TODO tests
-        XMLReport report_error = validate("error.xml", "ALL");
-        XMLReport report_wellformed = validate("wellformed.xml", "ALL");
-        System.out.println(report_error.toText());
-        System.out.println(report_wellformed.toText());
-        Assert.assertEquals(report_error.countStructureErrors(), 3);
-        Assert.assertEquals(report_wellformed.countStructureErrors(), 0);
+        ArrayList<String> schemaspath = new ArrayList<>();
+        ArrayList<String> schematronspath = new ArrayList<>();
+        //schematronspath.add("global.sch");
+        schematronspath.add("CF_SCRIPT_10_6.sch");
+        schematronspath.add("SchematronValidationContext.sch");
+        //XMLReport report_error = validate("error.xml", "ALL",schemaspath,schematronspath);
+        //XMLReport report_wellformed = validate("wellformed.xml", "ALL",schemaspath,schematronspath);
+        XMLReport report_message = validate("Message.xml", "ALL",schemaspath,schematronspath);
+        //System.out.println(report_error.toText());
+        //System.out.println(report_wellformed.toText());
+        //Assert.assertEquals(report_error.countStructureErrors(), 3);
+        //Assert.assertEquals(report_wellformed.countStructureErrors(), 0);
+        System.out.println(report_message.toText());
 
     }
 
 
-    private XMLReport validate(String filepath, String phase) {
+    private XMLReport validate(String filepath, String phase,ArrayList<String> schemaspath,ArrayList<String> schematronspath) {
         XMLReport r = null;
         try {
-            URL schemaURL = Thread.currentThread().getContextClassLoader().getResource("xsd/SCRIPT_XML_10_6-20121015.xsd");
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = schemaFactory.newSchema(schemaURL);
-            InputStream isSchematron1 = Thread.currentThread().getContextClassLoader().getResource("xslt/TC_Tc_3.0_1.1_SchematronValidationContext.sch").openStream();
-            InputStream isSchematron2 = Thread.currentThread().getContextClassLoader().getResource("xslt/TC_Tc_3.0_1.1_SchematronValidationContext2.sch").openStream();
-            InputStream isSkeleton = Thread.currentThread().getContextClassLoader().getResource("xslt/skeleton1-5.xsl").openStream();
             ArrayList<String> schematrons = new ArrayList<>();
-            schematrons.add(IOUtils.toString(isSchematron1));
-            schematrons.add(IOUtils.toString(isSchematron2));
-            String skeleton = IOUtils.toString(isSkeleton);
-            isSkeleton.close();
-            isSchematron1.close();
-            isSchematron2.close();
-            r = Validator.validate(getXMLFileFromResources(filepath), schema, schematrons, skeleton, phase);
+            for(String schematronpath : schematronspath){
+                schematrons.add(IOUtils.toString(Thread.currentThread().getContextClassLoader().getResource(schematronpath).openStream()));
+            }
+            r = Validator.validate(getXMLFileFromResources(filepath), null, schematrons, null, phase);
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
             e.printStackTrace();
         }
         return r;

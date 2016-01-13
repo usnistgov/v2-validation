@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConformanceContext UUID="STATUS-a47842-a35015">
+<Constraints>
+<Group>
+<ByName Name="STA_TUS">
+<Constraint ID="STS_47842-35015" Target="4[1].1[1]">
+   <Description>Expected element missing - Req The value does not match the expected value: '000' </Description>
+        <Assertion>
+           <PlainText IgnoreCase="false" Path="4[1].1[1]" Text="000"/> 
+        </Assertion>
+</Constraint>
+</ByName>
+</Group>
+</Constraints>
+</ConformanceContext>

@@ -20,7 +20,7 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
     result
   }
 
-  val newrxProfile = XMLDeserializer.deserialize( getClass.getResourceAsStream("/integration-test/newrx_profile_20151113.xml") ) match {
+  val newrxProfile = XMLDeserializer.deserialize( getClass.getResourceAsStream("/integration-test/rxchg_profile_20151113.xml") ) match {
     case Success(p) => p
     case Failure(e) => throw e
   }  
@@ -28,20 +28,21 @@ object Main extends App with DefaultNCPDPParser with hl7.v2.validation.structure
   val context0 = getClass.getResourceAsStream("/integration-test/empty_conformance_context.xml")
   val context1 = getClass.getResourceAsStream("/integration-test/Constraints.xml")
   val context2 = getClass.getResourceAsStream("/integration-test/constraints-lite.xml")
-  
-  val conformanceContext = hl7.v2.validation.content.DefaultConformanceContext(context2).get
+  val contextRxchg = getClass.getResourceAsStream("/integration-test/Constraints_rxchg.xml")
 
-  val newrxVsLibStream = getClass.getResourceAsStream("/integration-test/newrx_valueset_20151112.xml")
+  val conformanceContext = hl7.v2.validation.content.DefaultConformanceContext(contextRxchg).get
+
+  val newrxVsLibStream = getClass.getResourceAsStream("/integration-test/rxchg_valueset_20151112.xml")
   val newrxValueSetLibrary = ValueSetLibraryImpl(newrxVsLibStream).get
 
-  val newrxMessage = Source.fromInputStream(getClass.getResourceAsStream("/integration-test/Message.txt")).mkString
+  val newrxMessage = Source.fromInputStream(getClass.getResourceAsStream("/integration-test/rxchg.txt")).mkString
 
   // SyncNCPDPValidator
   val validator = new SyncNCPDPValidator(newrxProfile, newrxValueSetLibrary, conformanceContext)
 
   1 to 1 foreach { i =>
     time {
-      val rep = validator.check( newrxMessage, "NEWRX" )
+      val rep = validator.check( newrxMessage, "RXCHG" )
       println( rep.toText )
       println( s"\n\n ${ rep.toJson } \n\n" )  
     }

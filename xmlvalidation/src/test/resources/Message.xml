@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="010" release="006" xmlns="http://www.ncpdp.org/schema/SCRIPT">
+    <Header>
+        <To Qualifier="P">RECIPIENT_ID</To>
+        <From Qualifier="D">SENDER_ID</From>
+        <MessageID>90927</MessageID>
+        <SentTime>2015-11-20T14:15:23</SentTime>
+        <PrescriberOrderNumber>ORDMU201</PrescriberOrderNumber>
+    </Header>
+    <Body>
+        <NewRx>
+            <Pharmacy>
+                <Identification>
+                    <NPI>3030000003</NPI>
+                    <NCPDPID>1629900</NCPDPID>
+                </Identification>
+                <StoreName>Mail Order Pharmacy 10.6MU NOCS</StoreName>
+                <Address>
+                    <AddressLine1>1629-90 Supply Ln</AddressLine1>
+                    <City>Saint Louis</City>
+                    <State>MO</State>
+                    <ZipCode>63105</ZipCode>
+                </Address>
+                <CommunicationNumbers>
+                    <Communication>
+                        <Number>3145553142</Number>
+                        <Qualifier>TE</Qualifier>
+                    </Communication>
+                </CommunicationNumbers>
+            </Pharmacy>
+            <Prescriber>
+                <Identification>
+                    <DEANumber>FF1234567</DEANumber>
+                    <NPI>1619967999</NPI>
+                </Identification>
+                <ClinicName>Clinic One</ClinicName>
+                <Name>
+                    <LastName>MacClare</LastName>
+                    <FirstName>Susan</FirstName>
+                </Name>
+                <Address>
+                    <AddressLine1>10105 Trailblazer Ct</AddressLine1>
+                    <City>Portland</City>
+                    <State>OR</State>
+                    <ZipCode>97215</ZipCode>
+                </Address>
+                <CommunicationNumbers>
+                    <Communication>
+                        <Number>5035552233</Number>
+                        <Qualifier>TE</Qualifier>
+                    </Communication>
+                </CommunicationNumbers>
+            </Prescriber>
+            <Patient>
+                <Identification>
+                    <MedicalRecordIdentificationNumberEHR>Patient1</MedicalRecordIdentificationNumberEHR>
+                </Identification>
+                <Name>
+                    <LastName>Biscayne</LastName>
+                    <FirstName>Sophia</FirstName>
+                </Name>
+                <Gender>F</Gender>
+                <DateOfBirth>
+                    <Date>1957-03-21</Date>
+                </DateOfBirth>
+                <Address>
+                    <AddressLine1>991 Monroe Avenue</AddressLine1>
+                    <City>Port Charlotte</City>
+                    <State>FL</State>
+                    <ZipCode>33952</ZipCode>
+                </Address>
+                <CommunicationNumbers>
+                    <Communication>
+                        <Number>9415551223</Number>
+                        <Qualifier>TE</Qualifier>
+                    </Communication>
+                </CommunicationNumbers>
+            </Patient>
+            <MedicationPrescribed>
+                <DrugDescription>Procardia XL 30 MG 24 HR Extended Release Oral Tablet</DrugDescription>
+                <DrugCoded>
+                    <ProductCode>00069265041</ProductCode>
+                    <ProductCodeQualifier>ND</ProductCodeQualifier>
+                    <Strength>30</Strength>
+                    <DrugDBCode>207772</DrugDBCode>
+                    <DrugDBCodeQualifier>SBD</DrugDBCodeQualifier>
+                    <FormSourceCode>AA</FormSourceCode>
+                    <FormCode>C42927</FormCode>
+                    <StrengthSourceCode>AB</StrengthSourceCode>
+                    <StrengthCode>C28253</StrengthCode>
+                </DrugCoded>
+                <Quantity>
+                    <Value>53</Value>
+                    <CodeListQualifier>38</CodeListQualifier>
+                    <UnitSourceCode>AC</UnitSourceCode>
+                    <PotencyUnitCode>C48542</PotencyUnitCode>
+                </Quantity>
+                <DaysSupply>30</DaysSupply>
+                <Directions>Take 1 tablet a day by mouth for seven days, then take 2 tablets by mouth once a day.</Directions>
+                <Refills>
+                    <Qualifier>R</Qualifier>
+                    <Value>0</Value>
+                </Refills>
+                <Substitutions>1</Substitutions>
+                <WrittenDate>
+                    <Date>2015-11-20</Date>
+                </WrittenDate>
+                <LastFillDate>
+                    <Date>2015-10-30</Date>
+                </LastFillDate>
+                <Diagnosis>
+                    <ClinicalInformationQualifier>1</ClinicalInformationQualifier>
+                    <Primary>
+                        <Qualifier>ABF</Qualifier>
+                        <Value>I204</Value>
+                    </Primary>
+                </Diagnosis>
+                <StructuredSIG>
+                    <RepeatingSIG>
+                        <SigSequencePositionNumber>1</SigSequencePositionNumber>
+                        <MultipleSigModifier>THEN</MultipleSigModifier>
+                    </RepeatingSIG>
+                    <CodeSystem>
+                        <SNOMEDVersion>20130731</SNOMEDVersion>
+                        <FMTVersion>14.01d</FMTVersion>
+                    </CodeSystem>
+                    <FreeText>
+                        <SigFreeTextStringIndicator>2</SigFreeTextStringIndicator>
+                        <SigFreeText>Take 1 tablet a day by mouth for seven days, then take 2 tablets by mouth once a day.</SigFreeText>
+                    </FreeText>
+                    <Dose>
+                        <DoseCompositeIndicator>1</DoseCompositeIndicator>
+                        <DoseDeliveryMethodText>take</DoseDeliveryMethodText>
+                        <DoseDeliveryMethodCodeQualifier>1</DoseDeliveryMethodCodeQualifier>
+                        <DoseDeliveryMethodCode>419652001</DoseDeliveryMethodCode>
+                        <DoseQuantity>1</DoseQuantity>
+                        <DoseFormText>tablet</DoseFormText>
+                        <DoseFormCodeQualifier>2</DoseFormCodeQualifier>
+                        <DoseFormCode>C42998</DoseFormCode>
+                    </Dose>
+                    <RouteofAdministration>
+                        <RouteofAdministrationText>by mouth</RouteofAdministrationText>
+                        <RouteofAdministrationCodeQualifier>1</RouteofAdministrationCodeQualifier>
+                        <RouteofAdministrationCode>26643006</RouteofAdministrationCode>
+                    </RouteofAdministration>
+                    <Timing>
+                        <FrequencyNumericValue>1</FrequencyNumericValue>
+                        <FrequencyUnitsText>day</FrequencyUnitsText>
+                        <FrequencyUnitsCodeQualifier>1</FrequencyUnitsCodeQualifier>
+                        <FrequencyUnitsCode>258703001</FrequencyUnitsCode>
+                    </Timing>
+                    <Duration>
+                        <DurationNumericValue>7</DurationNumericValue>
+                        <DurationText>day</DurationText>
+                        <DurationTextCodeQualifier>1</DurationTextCodeQualifier>
+                        <DurationTextCode>258703001</DurationTextCode>
+                    </Duration>
+                </StructuredSIG>
+                <StructuredSIG>
+                    <RepeatingSIG>
+                        <SigSequencePositionNumber>2</SigSequencePositionNumber>
+                    </RepeatingSIG>
+                    <CodeSystem>
+                        <SNOMEDVersion>20130731</SNOMEDVersion>
+                        <FMTVersion>14.01d</FMTVersion>
+                    </CodeSystem>
+                    <FreeText>
+                        <SigFreeTextStringIndicator>2</SigFreeTextStringIndicator>
+                        <SigFreeText>Take 1 tablet a day by mouth for seven days, then take 2 tablets by mouth once a day.</SigFreeText>
+                    </FreeText>
+                    <Dose>
+                        <DoseCompositeIndicator>1</DoseCompositeIndicator>
+                        <DoseDeliveryMethodText>take</DoseDeliveryMethodText>
+                        <DoseDeliveryMethodCodeQualifier>1</DoseDeliveryMethodCodeQualifier>
+                        <DoseDeliveryMethodCode>419652001</DoseDeliveryMethodCode>
+                        <DoseQuantity>2</DoseQuantity>
+                        <DoseFormText>tablet</DoseFormText>
+                        <DoseFormCodeQualifier>2</DoseFormCodeQualifier>
+                        <DoseFormCode>C42998</DoseFormCode>
+                    </Dose>
+                    <RouteofAdministration>
+                        <RouteofAdministrationText>by mouth</RouteofAdministrationText>
+                        <RouteofAdministrationCodeQualifier>1</RouteofAdministrationCodeQualifier>
+                        <RouteofAdministrationCode>26643006</RouteofAdministrationCode>
+                    </RouteofAdministration>
+                    <Timing>
+                        <FrequencyNumericValue>1</FrequencyNumericValue>
+                        <FrequencyUnitsText>day</FrequencyUnitsText>
+                        <FrequencyUnitsCodeQualifier>1</FrequencyUnitsCodeQualifier>
+                        <FrequencyUnitsCode>258703001</FrequencyUnitsCode>
+                    </Timing>
+                </StructuredSIG>
+            </MedicationPrescribed>
+        </NewRx>
+    </Body>
+</Message>
+<!--
+NIST_CEHRT_Change_Scenario_1_TestStep0 (Updated: 2016-01-07)
+-->
