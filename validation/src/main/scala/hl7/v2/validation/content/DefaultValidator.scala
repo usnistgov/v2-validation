@@ -102,7 +102,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
 
     evaluator.eval(c.assertion, e) match {
       case EvalData(a, found, expected) => a match {
-        case Pass => Detections.csSuccess(e, c)
+        case Pass => Detections.cntSuccess(e, c)
         case Fail(stack) =>
           val errLoc = approximativeErrorLocation(e, stack)
           Detections.cntFailureCustom(errLoc, e, c, stackTrace(e, stack), format(ref.testDataCategorization), found, expected)
