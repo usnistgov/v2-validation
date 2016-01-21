@@ -31,7 +31,6 @@ class VMap[T](
     VMap.merge[T](datatypeByName, map.datatypeByName),
     VMap.merge[T](messageByID, map.messageByID),
     VMap.merge[T](messageByName, map.messageByName))
-
 }
 
 object VMap {

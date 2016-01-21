@@ -250,7 +250,10 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def not(not: NOT, context: Element)(implicit l: ValueSetLibrary, s: Separators,
                                       dtz: Option[TimeZone]): EvalResult =
     eval(not.exp, context) match {
-      case Pass            => Failures.not(not, context)
+      case Pass            => not.exp match {
+        case Presence(p)   => Failures.not(not, query(context,p).get.head)
+        case _             => Failures.not(not, context)
+      }
       case f: Fail         => Pass
       case i: Inconclusive => i
     }

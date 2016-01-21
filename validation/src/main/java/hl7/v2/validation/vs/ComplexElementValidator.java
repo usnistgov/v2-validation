@@ -78,14 +78,13 @@ public class ComplexElementValidator {
 					return checkXOR(e, p1, p2, vs, spec);
 				} else {
 					String msg = "Invalid binding location " + bl;
-					return listify(Detections.vsError(e.location(), msg, vs, spec));
+					return listify(Detections.bindingLocation(e.location(), msg, vs, spec));
 				}
 
 			} catch (ValueSetNotFoundException er) {
 				String msg = "Value set '" + spec.valueSetId()
 						+ "' cannot be found in the library";
-				return listify(Detections
-						.codedElem(e.location(), msg, null, spec, null));
+				return listify(Detections.vsNotFound(e.location(), msg,spec));
 			}
 		}
 	}
