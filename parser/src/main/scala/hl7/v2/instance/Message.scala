@@ -28,6 +28,9 @@ case class Message(
       message+=segOrGroupAsString(segOrGroup,isFirst)
       isFirst=false
     }
+    if (message.endsWith("\n")) {
+      message = message.substring(0,message.length-"\n".length)
+    }
     message
   }
 
