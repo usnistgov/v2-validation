@@ -21,11 +21,21 @@ case class Message(
 
   lazy val location = asGroup.location
 
-  override def toString(): String = {
+  def getDataFromMessage(toBeFound: List[String]): Map[String,String] = {
+    var data = Map[String, String]()
+    for(segOrGroup <- children){
+      if(data.size<toBeFound.size){
+        data = findDataInSegOrGroup(segOrGroup,data,toBeFound)
+      }
+    }
+    data
+  }
+
+  def printString(toBeReplaced: Option[Map[String,String]] = None): String = {
     var message = ""
     var isFirst = true
     for(segOrGroup <- children) {
-      message+=segOrGroupAsString(segOrGroup,isFirst)
+      message+=segOrGroupAsString(segOrGroup,isFirst,toBeReplaced)
       isFirst=false
     }
     if (message.endsWith("\n")) {
@@ -44,7 +54,7 @@ case class Message(
     fields
   }
 
-  def segOrGroupAsString(segOrGroup: SegOrGroup, isFirstSegOrGroup: Boolean) : String = {
+  def segOrGroupAsString(segOrGroup: SegOrGroup, isFirstSegOrGroup: Boolean,toBeReplaced: Option[Map[String,String]] = None) : String = {
     if(segOrGroup.isInstanceOf[Group]){
       var res = ""
       for(subSegOrGroup <- (segOrGroup.asInstanceOf[Group]).children){
@@ -69,7 +79,7 @@ case class Message(
             if(!isFirstFieldInSegment){
               res += separators.rs
             }
-            res += fieldAsString(fieldInSegment)
+            res += fieldAsString(fieldInSegment,toBeReplaced)
             isFirstFieldInSegment=false
           }
           isFirst=false
@@ -96,7 +106,7 @@ case class Message(
     None
   }
 
-  def fieldAsString(field: Field): String ={
+  def fieldAsString(field: Field,toBeReplaced: Option[Map[String,String]] = None): String ={
     if(field.isInstanceOf[ComplexField]){
       val complexField = field.asInstanceOf[ComplexField]
       var res = ""
@@ -108,7 +118,7 @@ case class Message(
           if(!isFirst){
             res+=separators.cs
           }
-          res += componentAsString(componentInField.get)
+          res += componentAsString(componentInField.get,toBeReplaced)
           isFirst = false
         } else {
           //if(component.req.usage!="X") {
@@ -122,11 +132,19 @@ case class Message(
       res
     } else {
       val simpleField = field.asInstanceOf[SimpleField]
+      if(!toBeReplaced.isEmpty){
+        val map = toBeReplaced.get
+        for(key <- map.keys){
+          if(simpleField.req.description.startsWith(key)){
+            return map.get(key).get
+          }
+        }
+      }
       simpleField.value.raw
     }
   }
 
-  def componentAsString(component: Component):String = {
+  def componentAsString(component: Component,toBeReplaced: Option[Map[String,String]] = None):String = {
     if(component.isInstanceOf[ComplexComponent]){
       var res = ""
       val complexComponent = component.asInstanceOf[ComplexComponent]
@@ -141,8 +159,75 @@ case class Message(
       res
     } else {
       val simpleComponent = component.asInstanceOf[SimpleComponent]
+      if(!toBeReplaced.isEmpty){
+        val map = toBeReplaced.get
+        for(key <- map.keys){
+          if(simpleComponent.req.description.startsWith(key)){
+            return map.get(key).get
+          }
+        }
+      }
       simpleComponent.value.raw
     }
+  }
+
+  def findDataInComponent(component: Component, inData: Map[String, String], toBeFound: List[String]): Map[String,String] = {
+    var data = inData
+    if(component.isInstanceOf[ComplexComponent]){
+      val complexComponent = component.asInstanceOf[ComplexComponent]
+      for(simpleComponent <- complexComponent.children){
+        data = findDataInComponent(simpleComponent,data,toBeFound)
+      }
+    } else {
+      val simpleComponent = component.asInstanceOf[SimpleComponent]
+      for(fieldName <- toBeFound){
+        if(simpleComponent.req.description.startsWith(fieldName)){
+          data+=(fieldName->simpleComponent.value.raw)
+        }
+      }
+    }
+    data
+  }
+
+  def findDataInField(field: Field, inData: Map[String, String], toBeFound: List[String]): Map[String, String] = {
+    var data = inData
+    if(field.isInstanceOf[ComplexField]){
+      val complexField = field.asInstanceOf[ComplexField]
+      for(component <- complexField.datatype.components){
+        var componentInField = findSimpleComponentInField(component.req,complexField.children)
+        if(!componentInField.isEmpty) {
+          data = findDataInComponent(componentInField.get, data,toBeFound)
+        }
+      }
+    } else {
+      val simpleField = field.asInstanceOf[SimpleField]
+      for(fieldName <- toBeFound){
+        if(simpleField.req.description.startsWith(fieldName)){
+          data+=(fieldName->simpleField.value.raw)
+        }
+      }
+    }
+    data
+  }
+
+  def findDataInSegOrGroup(segOrGroup: SegOrGroup, inData: Map[String, String], toBeFound: List[String]): Map[String, String] = {
+    var data = inData
+    if(segOrGroup.isInstanceOf[Group]){
+      for(subSegOrGroup <- (segOrGroup.asInstanceOf[Group]).children){
+        data = findDataInSegOrGroup(subSegOrGroup,data,toBeFound)
+      }
+    } else {
+      val segment = segOrGroup.asInstanceOf[Segment]
+      for (field <- segment.model.ref.fields) {
+        val fieldsInSegment = findFieldsInSegment(field.req,segment.children)
+        if(fieldsInSegment.length>0){
+          for(fieldInSegment <- fieldsInSegment) {
+            data = findDataInField(fieldInSegment, data,toBeFound)
+          }
+        }
+      }
+    }
+    data
   }
 
 }
