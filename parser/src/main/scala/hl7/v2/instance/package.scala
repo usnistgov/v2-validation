@@ -20,8 +20,8 @@ package object instance {
    */
   def split(sep: Char, s: String, col: Int): Array[(Int, String)] = {
     var column = col
-    val trimmed = trimRight( s )
-    trimmed.split( sep ) map { ss => val r = column -> ss; column += ss.length + 1; r }
+    //val trimmed = trimRight( s )
+    s.split( sep ) map { ss => val r = column -> ss; column += ss.length + 1; r }
   }
 
   def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )

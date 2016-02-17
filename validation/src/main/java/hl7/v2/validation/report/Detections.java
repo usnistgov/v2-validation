@@ -266,7 +266,7 @@ public class Detections {
 
 	public static Entry cntSpecError(Element context, Constraint c,
 			List<Trace> stack) {
-		return csEntry("constent-spec-error", context, c, stack);
+		return csEntry("content-spec-error", context, c, stack);
 	}
 
 	public static Entry csSpecError(Element context, Constraint c,
