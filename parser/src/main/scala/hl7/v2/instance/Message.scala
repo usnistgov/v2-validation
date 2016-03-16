@@ -135,13 +135,25 @@ case class Message(
       if(!toBeReplaced.isEmpty){
         val map = toBeReplaced.get
         for(key <- map.keys){
-          if(simpleField.req.description.startsWith(key)){
+          if(comparePath(key,simpleField.location.path)){
             return map.get(key).get
           }
+          /*else if(simpleField.req.description.startsWith(key)){
+            return map.get(key).get
+          }*/
         }
       }
       simpleField.value.raw
     }
+  }
+
+  def comparePath(fieldName:String,path:String):Boolean={
+    val formattedPath = path.replace('.','-')
+    val formattedFileName = fieldName.filterNot(_ == '0')
+    if(formattedPath.equals(formattedFileName))
+      true
+    else
+      false
   }
 
   def componentAsString(component: Component,toBeReplaced: Option[Map[String,String]] = None):String = {
@@ -162,9 +174,12 @@ case class Message(
       if(!toBeReplaced.isEmpty){
         val map = toBeReplaced.get
         for(key <- map.keys){
-          if(simpleComponent.req.description.startsWith(key)){
+          if(comparePath(key,simpleComponent.location.path)){
             return map.get(key).get
           }
+          /*if(simpleComponent.req.description.startsWith(key)){
+            return map.get(key).get
+          }*/
         }
       }
       simpleComponent.value.raw
@@ -181,7 +196,7 @@ case class Message(
     } else {
       val simpleComponent = component.asInstanceOf[SimpleComponent]
       for(fieldName <- toBeFound){
-        if(simpleComponent.req.description.startsWith(fieldName)){
+        if(comparePath(fieldName,simpleComponent.location.path)){
           data+=(fieldName->simpleComponent.value.raw)
         }
       }
@@ -202,7 +217,7 @@ case class Message(
     } else {
       val simpleField = field.asInstanceOf[SimpleField]
       for(fieldName <- toBeFound){
-        if(simpleField.req.description.startsWith(fieldName)){
+        if(comparePath(fieldName,simpleField.location.path)){
           data+=(fieldName->simpleField.value.raw)
         }
       }
