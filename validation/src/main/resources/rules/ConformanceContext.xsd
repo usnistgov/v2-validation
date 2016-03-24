@@ -26,17 +26,49 @@
 	</xs:complexType>
 
 	<xs:complexType name="MetaDataType">
-		<xs:sequence>
-			<xs:element name="Description" type="NonEmptyString" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="Authors" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="Author" type="Author" minOccurs="1" maxOccurs="unbounded"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="Standard" type="StandardType" minOccurs="0" maxOccurs="1"/>
-		</xs:sequence>
+		<xs:attribute name="Name" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Name of this Constraints ex) Constraints for VXU-Z22/_Profile.xml</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OrgName" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Organization Name of this Constraints ex) NIST</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Version" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Version of this Constraints ex) 1.0.0</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Date" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Date of this Constraints ex) YYYYMMDD</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SpecificationName" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Provides a name that clearly and concisely defines the Constraints being described.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Status" use="optional">
+			<xs:annotation>
+				<xs:documentation>Status of this Constraints, as assigned by the author. There is no prescribed status scheme at this time. Possible values might include: 'Draft', 'Active', 'Superceded', 'Withdrawn'</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Draft"/>
+					<xs:enumeration value="Active"/>
+					<xs:enumeration value="Superceded"/>
+					<xs:enumeration value="Withdrawn"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="Topics" type="NonEmptyString" use="optional">
+			<xs:annotation>
+				<xs:documentation>This provides a list of key-words that relate to the Constraints and that may be useful in valueset searches.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 	
 	<xs:complexType name="ReferenceType">
@@ -260,7 +292,7 @@
 	
 	<xs:complexType name="ConformanceContextType">
 		<xs:sequence>
-			<xs:element name="MetaData" type="MetaDataType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MetaData" type="MetaDataType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="Predicates" type="PredicatesType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Constraints" type="ConstraintsType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
