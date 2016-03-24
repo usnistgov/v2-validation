@@ -90,9 +90,6 @@ case class Message(
       while(res.endsWith(""+separators.fs)){
         res = res.substring(0,res.length-1)
       }
-      if(!isFirstSegOrGroup){
-        res+=separators.ts.get
-      }
       res+"\n"
     }
   }
