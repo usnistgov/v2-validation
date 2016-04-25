@@ -14,4 +14,6 @@ trait ConformanceContext {
     * Returns the list of predicates defined for the specified element.
     */
   def predicatesFor(e: Element): List[Predicate]
+  
+  def orderIndifferentConstraints(): List[Context]
 }

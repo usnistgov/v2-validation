@@ -57,8 +57,8 @@ object VMap {
 
 class DefaultConformanceContext(
     val constraints: VMap[Constraint],
-    val predicates: VMap[Predicate]) extends ConformanceContext {
-
+    val predicates: VMap[Predicate],
+    val orderIndifferent: List[Context]) extends ConformanceContext {
   /**
    * Returns the list of constraints defined for the specified element.
    */
@@ -78,6 +78,8 @@ class DefaultConformanceContext(
     case s: Segment => segmentSpecs(s.model.ref, predicates)
     case g: Group => groupSpecs(g.model, predicates)
   }
+  
+  def orderIndifferentConstraints(): List[Context] = orderIndifferent
 
   private def datatypeSpecs[T](d: Datatype, map: VMap[T]): List[T] =
     map.datatypeByName.getOrElse(d.name, Nil) :::
@@ -126,19 +128,49 @@ object DefaultConformanceContext {
    */
   def apply(contexts: InputStream*): Try[ConformanceContext] =
     try {
-      val z = (VMap.empty[Constraint], VMap.empty[Predicate])
+      val z = (VMap.empty[Constraint], VMap.empty[Predicate], List[Context]())
       val l = contexts map { x => vMaps(x).get }
       val r = l.foldLeft(z) { (acc, x) =>
-        (acc._1 merge x._1, acc._2 merge x._2)
+        (acc._1 merge x._1, acc._2 merge x._2, acc._3 ++ x._3)
       }
-      Success(new DefaultConformanceContext(r._1, r._2))
+      Success(new DefaultConformanceContext(r._1, r._2, r._3))
     } catch { case e: Throwable => Failure(e) }
 
-  private def vMaps(confContext: InputStream): Try[(VMap[Constraint], VMap[Predicate])] =
+  private def vMaps(confContext: InputStream): Try[(VMap[Constraint], VMap[Predicate], List[Context])] =
     XOMDocumentBuilder.build(confContext, xsd, resourceResolver) map { doc =>
-      (constraints(doc), predicates(doc))
+      (constraints(doc), predicates(doc), orderIndifferent(doc))
     }
 
+    private def orderIndifferent(doc: nu.xom.Document): List[Context] = {
+    val e = doc.getRootElement.getFirstChildElement("OrderIndifferent")
+    if(e != null) {
+      val child = e.getChildElements
+      if( child != null) (e.getChildElements map context).toList
+      else Nil
+    }
+    else Nil
+  }
+  
+  private def pattern(e: nu.xom.Element): Pattern = {
+    val t = trigger(e.getFirstChildElement("Trigger"))
+    val constraints = (e.getFirstChildElement("Constraints").getChildElements map constraint).toList
+    val ctx = e.getFirstChildElement("Contexts")
+    val contexts    = if (ctx != null) (ctx.getChildElements map context).toList else Nil
+    Pattern(t,constraints,contexts)
+  }
+  
+  private def context(e: nu.xom.Element): Context = {
+    val path = e.attribute("List")
+    val patterns = (e.getChildElements map pattern).toList
+    Context(path,patterns)
+  }
+  
+  private def trigger(e: nu.xom.Element): Trigger = {
+    val message = e.getFirstChildElement("ErrorMessage").getValue
+    val assert  = assertion(e)
+    Trigger(message,assert)
+  }
+  
   private def constraints(doc: nu.xom.Document): VMap[Constraint] = {
     val e = doc.getRootElement.getFirstChildElement("Constraints") //FIXME Can throw is missing
     val (gByID, gByName) = init(extractNodes(e, "Group"), constraint)

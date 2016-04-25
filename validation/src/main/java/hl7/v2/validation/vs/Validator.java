@@ -6,7 +6,9 @@ import hl7.v2.instance.Element;
 import hl7.v2.instance.Message;
 import hl7.v2.instance.Simple;
 import hl7.v2.profile.Req;
+import hl7.v2.profile.Usage;
 import hl7.v2.profile.ValueSetSpec;
+import hl7.v2.validation.report.Detections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,14 +64,23 @@ public class Validator {
     private static void checkValueSet(List<Entry> result, Element e, ValueSetLibrary library) {
         if( e instanceof Simple ) {
             Entry x = SimpleElementValidator.check((Simple) e, getSpec(e.req()), library);
-            if( x != null )
-                result.add(x);
+            
+            if( x != null ){
+            	if(e.req().usage() instanceof Usage.O$)
+        			result.add(Detections.toAlert(x));
+        		else
+        			result.add(x);      
+            }
+            
         } else {
             List<Entry> l = ComplexElementValidator.check((Complex) e, getSpec(e.req()), library);
             if(l != null)
-	            for(Entry x : l){
+            	for(Entry x : l){
 	            	if( x != null )
-	                    result.add(x);
+	            		if(e.req().usage() instanceof Usage.O$)
+	            			result.add(Detections.toAlert(x));
+	            		else
+	            			result.add(x);      	
 	            }
             // Check the children
             scala.collection.Iterator<Element> it = ((Complex) e).children().iterator();

@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
 
-trait DefaultValidator extends Validator with expression.Evaluator {
+trait DefaultValidator extends Validator with expression.Evaluator with PatternFinder {
 
   /**
    * Check the message against the constraints defined
@@ -26,7 +26,7 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     implicit val separators = m.separators
     implicit val dtz = m.defaultTimeZone
     implicit val model = m.model
-    check(m.asGroup)
+    check(m.asGroup) ++ checkOI(m.asGroup)
   }
 
   /**
@@ -50,6 +50,12 @@ trait DefaultValidator extends Validator with expression.Evaluator {
     }
   }
 
+  private def checkOI(e: Element)(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM): List[Entry] = {
+    val contexts = conformanceContext.orderIndifferentConstraints()
+    checkContexts(e,contexts,routeConstraint)
+  }
+  
   /**
    * Checks the element against the constraint and returns a CEntry.
    * @param e - The element to be checked

@@ -13,4 +13,6 @@ object EmptyConformanceContext extends ConformanceContext {
     * Returns the list of predicates defined for the specified element.
     */
   override def predicatesFor(e: Element): List[Predicate] = Nil
+  
+  override def orderIndifferentConstraints(): List[Context] = Nil
 }

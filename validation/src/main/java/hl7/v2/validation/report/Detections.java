@@ -317,6 +317,18 @@ public class Detections {
 		String desc = String.format(template, predicateAsString(p));
 		return entry(e.location(), desc, category, classification, stack, null);
 	}
+	
+	/*
+	 * ========================================================================
+	 * Content (Context-Based Order Indifferent) related entries
+	 * =======================================================================
+	 */
+	
+	public static Entry HLcontentErr(String message, Element e){
+		String category = conf.getString("report.highlevel-content.category");
+		String classification = conf.getString("report.highlevel-content.classification");
+		return entry(e.location(), message, category, classification, null, null);
+	}
 
 	/*
 	 * ========================================================================
@@ -420,6 +432,13 @@ public class Detections {
 	 * Helpers
 	 * =======================================================================
 	 */
+	
+	public static Entry toAlert(Entry e){
+    	String classification = conf.getString("report.classification.alert");
+    	return new EntryImpl(e.getLine(), e.getColumn(), e.getPath(), e.getDescription(), e.getCategory(),
+				classification, e.getStackTrace(), e.getMetaData());
+    }
+	
 	private static Entry entry(int line, int column, String path,
 			String description, String category, String classification,
 			List<Trace> stackTrace, Map<String, Object> metaData) {

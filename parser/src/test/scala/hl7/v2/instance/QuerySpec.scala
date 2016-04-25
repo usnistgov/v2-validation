@@ -24,6 +24,10 @@ class QuerySpec extends Specification with Mocks { def is = s2"""
     Querying c2 for the path 2[3] should return c1                                                  $q7
     Querying c2 for the path 2[*] and casting the result as list of `Simple' should return an error $q8
     Querying c2 for the path 4[1] and casting the result as list of `Simple' should succeed         $q9
+    Querying c2 for the path  .   should return c2                                                  $q10    
+    Querying s0 for the path  .   should return s0                                                  $q11    
+    Querying c2 for the path  .   and casting the result as list of `Simple' should return an error $q12    
+    Querying s0 for the path  .   and casting the result as list of `Simple' should retrun s0       $q13    
 """
 
   def q1 = Seq("1", "1[a]", "0[1]", "1[2].", "1[2].a", "1[1]/2[2]" ) map { p =>
@@ -47,4 +51,13 @@ class QuerySpec extends Specification with Mocks { def is = s2"""
     beFailedTry.withThrowable[Error]("Path resolution returned at least one complex element")
 
   def q9 = queryAsSimple(c2, "4[1]") must beSuccessfulTry.withValue( ===( Seq[Simple]( s0 ) ) )
+  
+  def q10 = query(c2, ".") must beSuccessfulTry.withValue( ===( Seq[Element]( c2 ) ) )
+  
+  def q11 = query(s0, ".") must beSuccessfulTry.withValue( ===( Seq[Element]( s0 ) ) )
+  
+  def q12 = queryAsSimple(c2, ".") must
+    beFailedTry.withThrowable[Error]("Path resolution returned at least one complex element")
+    
+  def q13 = queryAsSimple(s0, ".") must beSuccessfulTry.withValue( ===( Seq[Simple]( s0 ) ) )
 }

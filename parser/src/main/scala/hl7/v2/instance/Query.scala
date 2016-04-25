@@ -19,7 +19,8 @@ object Query {
    * Query the context for the specified path.
    */
   def query( context: Element, path: String ): Try[List[Element]] = Try {
-    if( Path.isValid(path) ) _query(context, path)
+    if(path.equals(".")) List(context)
+    else if( Path.isValid(path) ) _query(context, path)
     else throw new Error(s"Invalid Path '$path'")
   }
 
