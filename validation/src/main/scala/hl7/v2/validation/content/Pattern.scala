@@ -5,7 +5,8 @@ import expression.Expression
 case class Pattern (
   trigger : Trigger,
   constraints : List[Constraint],
-  contexts  : List[Context]
+  contexts  : List[Context],
+  cardinality : Int
 )
 
 case class Context (

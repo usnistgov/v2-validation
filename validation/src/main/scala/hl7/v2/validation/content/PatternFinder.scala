@@ -67,14 +67,15 @@ trait PatternFinder extends expression.Evaluator {
         case Nil  => List[Element]()
       }
     }
-    
+
     val _match = find(el,p.trigger.expression)
     
-    if(_match.isEmpty) (List[Entry](Detections.HLcontentErr(p.trigger.errorMessage, root)), el)
+    if(_match.isEmpty) (List.fill(p.cardinality)(Detections.HLcontentErr(p.trigger.errorMessage, root)), el)
     else {
       val cstr_entries = _match map { checkConstraints(_,p.constraints,validator) }
       val cntx_entries = _match map { checkContexts(_,p.contexts,validator) }
-      (cstr_entries.flatten ::: cntx_entries.flatten, el diff _match)
+      val missing      = List.fill(math.max(0, (p.cardinality - _match.size)))(Detections.HLcontentErr(p.trigger.errorMessage, root))
+      (cstr_entries.flatten ::: cntx_entries.flatten ::: missing, el diff _match)
     }
   }
   

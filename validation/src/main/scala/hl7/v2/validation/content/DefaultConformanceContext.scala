@@ -153,10 +153,12 @@ object DefaultConformanceContext {
   
   private def pattern(e: nu.xom.Element): Pattern = {
     val t = trigger(e.getFirstChildElement("Trigger"))
-    val constraints = (e.getFirstChildElement("Constraints").getChildElements map constraint).toList
+    val cstr = e.getFirstChildElement("Constraints")
+    val constraints = if(cstr != null) (cstr.getChildElements map constraint).toList else Nil
     val ctx = e.getFirstChildElement("Contexts")
     val contexts    = if (ctx != null) (ctx.getChildElements map context).toList else Nil
-    Pattern(t,constraints,contexts)
+    val nb =        if (e.attribute("Cardinality") != "") e.attribute("Cardinality").toInt else 1
+    Pattern(t,constraints,contexts,nb)
   }
   
   private def context(e: nu.xom.Element): Context = {
