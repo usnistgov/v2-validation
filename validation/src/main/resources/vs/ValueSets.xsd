@@ -4,6 +4,7 @@
 	<xs:element name="ValueSetLibrary">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="MetaData" type="MetaDataType" minOccurs="1" maxOccurs="1"/>
 				<xs:element name="NoValidation" minOccurs="0" maxOccurs="1">
 					<xs:complexType>
 						<xs:sequence minOccurs="0" maxOccurs="unbounded">
@@ -56,12 +57,6 @@
 				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="ValueSetLibraryIdentifier" type="xs:string" use="required"/>
-			<xs:attribute name="Name" type="xs:string" use="required"/>
-			<xs:attribute name="OrganizationName" type="xs:string"/>
-			<xs:attribute name="ValueSetLibraryVersion" type="xs:string"/>
-			<xs:attribute name="Status" type="StatusType"/>
-			<xs:attribute name="Description" type="xs:string"/>
-			<xs:attribute name="DateCreated" type="xs:date"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:simpleType name="StabilityType">
@@ -79,14 +74,7 @@
 	<xs:simpleType name="ContentDefinitionType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Extensional"/>
-			<xs:enumeration value="intensional"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="StatusType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="Active"/>
-			<xs:enumeration value="Draft"/>
-			<xs:enumeration value="Superceded"/>
+			<xs:enumeration value="Intensional"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="UsageType">
@@ -96,4 +84,56 @@
 			<xs:enumeration value="E"/>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:simpleType name="NonEmptyString">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\s]*[\S].*"/>
+			<!-- \S is the negation of \s  -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="MetaDataType">
+		<xs:attribute name="Name" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Name of this ValueSets ex) ValueSet for VXU-Z22/_Profile.xml</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OrgName" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Organization Name of this ValueSets ex) NIST</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Version" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Version of this ValueSets ex) 1.0.0</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Date" type="NonEmptyString" use="required">
+			<xs:annotation>
+				<xs:documentation>Date of this ValueSets ex) YYYYMMDD</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SpecificationName" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Provides a name that clearly and concisely defines the valuesets being listed.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Status" use="optional">
+			<xs:annotation>
+				<xs:documentation>Status of this ValueSets, as assigned by the author. There is no prescribed status scheme at this time. Possible values might include: 'Draft', 'Active', 'Superceded', 'Withdrawn'</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Draft"/>
+					<xs:enumeration value="Active"/>
+					<xs:enumeration value="Superceded"/>
+					<xs:enumeration value="Withdrawn"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="Topics" type="NonEmptyString" use="optional">
+			<xs:annotation>
+				<xs:documentation>This provides a list of key-words that relate to the ValueSets and that may be useful in valueset searches.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
 </xs:schema>
