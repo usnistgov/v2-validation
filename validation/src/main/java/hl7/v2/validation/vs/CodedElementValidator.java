@@ -106,24 +106,57 @@ public class CodedElementValidator {
 		Entry e1 = checkPosition(c, p1, vs, spec);
 		Entry e2 = checkPosition(c, p2, vs, spec);
 		
-		if (e2 != null){
+
+		if(!pass(e1) && !pass(e2)){
+			detections.add(e1);
 			detections.add(e2);
 		}
-		
-		if(e1 != null){
-			detections.add(e1);
-		}
-		
-		if(e1 == null && e2 == null){
+		else if(pass(e1) && pass(e2)){
+			
+			if(e1 != null){
+				detections.add(e1);
+			}
+			
+			if(e2 != null){
+				detections.add(e2);
+			}
+			
 			String msg = "One of the triplet (but not both) should be valued from the"
 					+ " value set '" + vs.id() + "'";
 			detections.add(Detections.codedElem(c.location(), msg, vs, spec, null));
 		}
+		else if(!pass(e1) && pass(e2)){
+			
+			if(e2 != null){
+				detections.add(e2);
+			}
+			
+			detections.add(Detections.toAlert(e1));
+		}
+		else if(pass(e1) && !pass(e2)){
+			
+			if(e1 != null){
+				detections.add(e1);
+			}
+			
+			detections.add(Detections.toAlert(e2));
+		}
 		
-		return detections; // No detection
+		return detections; 
 	}
 	
-	
+	private static boolean pass(Entry e){
+		if(e == null)
+			return true;
+		else {
+			
+			if(e instanceof EnhancedEntry){
+				return ((EnhancedEntry) e).isOk();
+			}
+			else
+				return false;
+		}
+	}
 
 	private static Entry checkPosition(Complex c, int p, ValueSet vs,
 			ValueSetSpec spec) {

@@ -43,6 +43,14 @@ public class Detections {
 		String description = String.format(template, l.prettyString());
 		return entry(l, description, category, classification);
 	}
+	
+	public static Entry ousage(Location l, String value) {
+		String category = conf.getString("report.o-usage.category");
+		String classification = conf.getString("report.o-usage.classification");
+		String template = conf.getString("report.o-usage.template");
+		String desc = String.format(template, l.prettyString(), value);
+		return entry(l, desc, category, classification);
+	}
 
 	/**
 	 * @return A report entry for the X usage detection

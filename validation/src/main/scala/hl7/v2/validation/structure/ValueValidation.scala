@@ -5,11 +5,16 @@ import hl7.v2.instance._
 import hl7.v2.instance.util.ValueFormatCheckers._
 import hl7.v2.profile.Range
 import hl7.v2.validation.report.Detections
+import hl7.v2.profile.Usage
 
 object ValueValidation extends EscapeSeqHandler  {
 
+
   def check(s: Simple)(implicit x: Separators): List[Entry] =
-    checkValue(s.value, s.req.length, s.location)
+    s.req.usage match {
+    case Usage.O => Detections.ousage(s.location, s.value.raw) :: Nil
+    case _       => checkValue(s.value, s.req.length, s.location)
+  }
 
   /**
     * Checks the value format, length and presence of escape characters

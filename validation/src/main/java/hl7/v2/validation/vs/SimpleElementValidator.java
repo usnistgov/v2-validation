@@ -94,10 +94,10 @@ public class SimpleElementValidator {
      */
     private static Entry checkCodeUsage(Location location, String value, Code code,
                                         ValueSet vs, ValueSetSpec spec) {
-        if( code.usage() instanceof CodeUsage.E$ )
-            return Detections.evs(location, value, vs, spec);
-        if( code.usage() instanceof CodeUsage.P$ )
-            return Detections.pvs(location, value, vs, spec);
+    	 if( code.usage() instanceof CodeUsage.E$ )
+             return new EnhancedEntry(Detections.evs(location, value, vs, spec),true);
+         if( code.usage() instanceof CodeUsage.P$ )
+             return new EnhancedEntry(Detections.pvs(location, value, vs, spec),true);
          return null;
     }
 

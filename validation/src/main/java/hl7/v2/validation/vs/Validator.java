@@ -62,7 +62,14 @@ public class Validator {
     
 
     private static void checkValueSet(List<Entry> result, Element e, ValueSetLibrary library) {
-        if( e instanceof Simple ) {
+    	ValueSetSpec spec = getSpec(e.req());
+    	
+    	if(spec != null && e.req().usage() instanceof Usage.O$ ){
+    		return;
+    	}
+    	
+    	
+    	if( e instanceof Simple ) {
             Entry x = SimpleElementValidator.check((Simple) e, getSpec(e.req()), library);
             
             if( x != null ){
