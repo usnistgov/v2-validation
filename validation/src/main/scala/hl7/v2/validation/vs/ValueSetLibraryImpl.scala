@@ -31,8 +31,8 @@ object ValueSetLibraryImpl {
   /**
    * Builds and returns the value set map from the XML file
    */
-  def apply(vsXML: InputStream): Try[ValueSetLibrary] =
-    XOMDocumentBuilder.build( vsXML, xsd ) map { doc =>
+  def apply(vsXML: InputStream): Try[ValueSetLibrary] = {
+    XOMDocumentBuilder.build( vsXML, getClass.getResourceAsStream("/vs/ValueSets.xsd") ) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
       //val tblSet   = root.getFirstChildElement("ValueSetDefinitions")
@@ -41,6 +41,8 @@ object ValueSetLibraryImpl {
       val lib      = tables(tbls)
       ValueSetLibraryImpl(noVal, lib)
     }
+  }
+    
 
   private def noValidation(e: nu.xom.Element): Seq[String] =
     if(e == null) Nil else e.getChildElements("BindingIdentifier").map(_.getValue.trim).toList

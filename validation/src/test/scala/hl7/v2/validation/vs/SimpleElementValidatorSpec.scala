@@ -18,14 +18,13 @@ class SimpleElementValidatorSpec
       Return VSNotFound if the value set cannot be found in the library      $e2
       Return EmptyVS if the value set is empty                               $e3
       Return CodeNotFound if the code is not in the value set                $e4
-      Return EVS if the code is in the value set but the usage is E          $e5
-      Return PVS if the code is in the value set but the usage is P          $e6
       Return VSSpecError if more than one code is found in the value set     $e7
       Return no detection if the value is in the value set and the usage is R$e8
       Return no detection if the value match HL7nnn or 99ZZZ and vs is 0396  $e9
       Return no error if the value set is excluded from the validation       $e10
   """
-
+//      Return EVS if the code is in the value set but the usage is E          $e5
+//      Return PVS if the code is in the value set but the usage is P          $e6
   val l = Location(null, "", "", -1, -1)
 
   val bs: Option[BindingStrength] = None
@@ -71,8 +70,8 @@ class SimpleElementValidatorSpec
   def e2 = check( "x", "04" ) === Detections.vsNotFound(l, "x", "04")
   def e3 = check( "x", "01" ) === Detections.emptyVS(l, vs1, "01")
   def e4 = check( "C", "02" ) === Detections.codeNotFound(l, "C", vs2, "02")
-  def e5 = check( "A", "02" ) === Detections.evs(l, "A", vs2, "02")
-  def e6 = check( "B", "02" ) === Detections.pvs(l, "B", vs2, "02")
+//  def e5 = check( "A", "02" ) === new EnhancedEntry(Detections.evs(l, "A", vs2, "02"),true)
+//  def e6 = check( "B", "02" ) === new EnhancedEntry(Detections.pvs(l, "B", vs2, "02"),true)
   def e7 = check( "A", "03" ) === Detections.vsError(l, "Multiple occurrences of the code 'A' found.", vs3, "03")
 
   def e8 = check( "X", "02" ) === null

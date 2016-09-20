@@ -16,4 +16,8 @@ trait ConformanceContext {
   def predicatesFor(e: Element): List[Predicate]
   
   def orderIndifferentConstraints(): List[Context]
+  
+  def coConstraintsFor(e: Element): List[CoConstraint]
+  
+  def coConstraintsF(): VMap[CoConstraint]
 }

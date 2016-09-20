@@ -17,12 +17,12 @@ import java.util.Map;
 
 public class CodedElementValidatorM extends CodedElementValidator {
 
-	public static Map<String, String> getVSID(ValueSetSpec spec,
+	public static Map<String, ArrayList<String>> getVSID(ValueSetSpec spec,
 			ValueSetLibrary lib, String cs) throws ValueSetSpecException {
 
 		String[] bindings = spec.valueSetId().split(":");
 		int notFound = 0;
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 		for (String b : bindings) {
 			try {
 				String codeSys = checkCodeSys(b, lib);
@@ -30,7 +30,15 @@ public class CodedElementValidatorM extends CodedElementValidator {
 					throw new ValueSetSpecException(
 							"Value Set Specification error, the value sets specified for multiple bindings should have codes from the same Code System");
 				} else {
-					map.put(codeSys, b);
+					if(map.containsKey(codeSys)){
+						map.get(codeSys).add(b);
+					}
+					else {
+						ArrayList<String> tmp = new ArrayList<String>();
+						tmp.add(b);
+						map.put(codeSys, tmp);
+					}
+						
 				}
 			} catch (ValueSetNotFoundException e) {
 				notFound++;
@@ -63,15 +71,27 @@ public class CodedElementValidatorM extends CodedElementValidator {
 	}
 	
 	private static Entry checkPositionM(Complex c, int p, ValueSetSpec spec,
-			ValueSetLibrary library, Map<String, String> bindings) {
+			ValueSetLibrary library, Map<String, ArrayList<String>> bindings) {
 		try {
 			Simple s1 = query(c, p);
 			Simple s2 = query(c, p + 2); // FIXME Can make the error msg more explicit
 			
 			String codeSys = s2.value().raw();
 			if(bindings.containsKey(codeSys)){
-				ValueSet vs = library.get(bindings.get(codeSys));
-				return checkValueSet(s1.location(), s1.value().raw(), vs, spec);
+				ArrayList<String> bds = bindings.get(codeSys);
+				String id = "";
+				String delim = "";
+				for(String binding : bds){
+					id += delim + binding;
+					delim = " or ";
+					ValueSet vs = library.get(binding);
+					Entry e = checkValueSet(s1.location(), s1.value().raw(), vs, spec);
+					if(pass(e)){
+						return e;
+					}
+				}
+				return Detections.codeNotFound(s1.location(), s1.value().raw(), id, spec);
+				
 			}
 			else {
 				String msg = "Code System : "+codeSys+", not found in any of the Value Sets bindings";
@@ -84,27 +104,53 @@ public class CodedElementValidatorM extends CodedElementValidator {
 	
 	
 	private static List<Entry> checkXORM(Complex c, int p1, int p2, ValueSetLibrary library,
-			ValueSetSpec spec, Map<String, String> bindings) {
+			ValueSetSpec spec, Map<String, ArrayList<String>> bindings) {
 		
 		List<Entry> detections = new ArrayList<Entry>();
 		Entry e1 = checkPositionM(c, p1, spec, library, bindings);
 		Entry e2 = checkPositionM(c, p2, spec, library, bindings);
+		String bindingIds = "";
 		
-		if (e2 != null){
+		for(String k : bindings.keySet()){
+			bindingIds += k+" ";
+		}
+		
+		if(!pass(e1) && !pass(e2)){
+			detections.add(e1);
 			detections.add(e2);
 		}
-		
-		if(e1 != null){
-			detections.add(e1);
+		else if(pass(e1) && pass(e2)){
+			
+			if(e1 != null){
+				detections.add(e1);
+			}
+			
+			if(e2 != null){
+				detections.add(e2);
+			}
+			
+			String msg = "One of the triplet (but not both) should be valued from the"
+					+ " value set '" + bindingIds + "'";
+			detections.add(Detections.codedElem(c.location(), msg, null, spec, null));
+		}
+		else if(!pass(e1) && pass(e2)){
+			
+			if(e2 != null){
+				detections.add(e2);
+			}
+			
+			detections.add(Detections.toAlert(e1));
+		}
+		else if(pass(e1) && !pass(e2)){
+			
+			if(e1 != null){
+				detections.add(e1);
+			}
+			
+			detections.add(Detections.toAlert(e2));
 		}
 		
-		if(e1 == null && e2 == null){
-			String msg = "One of the triplet (but not both) should be valued from one of the specified value sets"
-					+ spec.valueSetId();
-			detections.add(Detections.codedElem(c.location(), msg, null));
-		}
-		
-		return detections; // No detection
+		return detections; 
 	}
 	
 	public static List<Entry> checkMultiple(Complex c, ValueSetSpec spec,
@@ -112,7 +158,7 @@ public class CodedElementValidatorM extends CodedElementValidator {
 		try {
 
 			// -- Get Map of Valid (CodeSys -> VS)
-			Map<String, String> map = getVSID(spec, library, spec.valueSetId());
+			Map<String, ArrayList<String>> map = getVSID(spec, library, spec.valueSetId());
 
 			// -- Resolve Binding Location
 			if (spec.bindingLocation().isEmpty())

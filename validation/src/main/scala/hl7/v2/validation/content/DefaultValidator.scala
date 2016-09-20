@@ -37,16 +37,21 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
    */
   private def check(e: Element)(implicit s: Separators,
     dtz: Option[TimeZone], model: MM): List[Entry] = {
-    val cl: List[Constraint] = conformanceContext.constraintsFor(e)
-    val pl: List[Predicate] = conformanceContext.predicatesFor(e)
+    val cl : List[Constraint] = conformanceContext.constraintsFor(e)
+    val pl : List[Predicate] = conformanceContext.predicatesFor(e)
+    val ccl: List[CoConstraint] = conformanceContext.coConstraintsFor(e)
 
     val r = pl.foldLeft(cl map { routeConstraint(e, _) }) { (acc, p) =>
       check(e, p) ::: acc
     }
+    
+    val rCc = ccl.foldLeft(r) { (acc, cc) =>
+      checkCC(e, cc) ::: acc
+    }
 
     e match {
-      case c: Complex => c.children.foldLeft(r) { (acc, cc) => acc ::: check(cc) }
-      case _ => r
+      case c: Complex => c.children.foldLeft(rCc) { (acc, cc) => acc ::: check(cc) }
+      case _ => rCc
     }
   }
 
@@ -99,6 +104,31 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
           Detections.csFailure(errLoc, e, c, stackTrace(e, stack),content)
       case Inconclusive(trace) => Detections.csSpecError(e, c, stackTrace(e, trace :: Nil),content)
     }
+  
+   private def checkCC(e: Element, c: CoConstraint)(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM): List[Entry] =
+      c.constraints.foldLeft(List[Entry]()){
+       (acc, x) => checkCC(e, c.description, x.key, x.assertions) ++ acc
+   }
+   
+   private def checkCC(e: Element, str : String, k: Expression, a: List[Expression])(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM): List[Entry] =
+     eval(k, e) match {
+      case Pass => checkCCList(e, str, a, k)
+      case Fail(stack) => Nil
+      case Inconclusive(trace) => Nil
+    }
+    
+   private def checkCCList(e: Element, str : String, a: List[Expression], k: Expression)(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM): List[Entry] = 
+    a.foldLeft(List[Entry]()){
+       (acc, x) => eval(x, e) match {
+         case Pass => Detections.coConstraintSuccess(e, str, k, x) :: acc
+         case Fail(stack) => Detections.coConstraintFailure(e, str, k, x) :: acc
+         case Inconclusive(trace) => Detections.coConstraintFailure(e, str, k, x) :: acc
+       }
+     }
+   
 
   private def checkCB(e: Element, c: Constraint, ref: Reference)(implicit s: Separators,
     dtz: Option[TimeZone], model: MM): Entry = {

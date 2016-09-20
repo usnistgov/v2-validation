@@ -16,10 +16,17 @@ public class EnhancedEntry implements Entry {
 		this.setOk(p);
 	}
 	
+	
 	@Override
 	public String getCategory() {
 		// TODO Auto-generated method stub
 		return e.getCategory();
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return e.toString();
 	}
 
 	@Override

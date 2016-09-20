@@ -39,6 +39,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "Plugin"      => plugin( e )
     case "ValueSet"    => valueSet( e )
     case "isNULL"      => isNull( e )
+    case "PlainCoConstraint" => plainCo( e )
     case _ => throw new Error(s"[Error] Unknown expression node $e")
   } 
 
@@ -57,6 +58,15 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("Path")
     val text = e.attribute("Text")
     val ignoreCase = toBoolean( e.attribute("IgnoreCase") )
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    PlainText( path , text, ignoreCase, atLeastOnce)
+  }
+  
+    // Value Expressions
+  private def plainCo( e: Element ): PlainText = {
+    val path = e.attribute("KeyPath")
+    val text = e.attribute("KeyValue")
+    val ignoreCase = if (e.attribute("IgnoreCase") != "") toBoolean( e.attribute("IgnoreCase") ) else true
     val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
     PlainText( path , text, ignoreCase, atLeastOnce)
   }

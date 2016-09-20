@@ -12,8 +12,10 @@ object Query {
    * Query the context for the specified path and attempt
    * to cast the result as a sequence of simple.
    */
-  def queryAsSimple(context: Element, path: String): Try[List[Simple]] =
+  def queryAsSimple(context: Element, path: String): Try[List[Simple]] = {
     query( context, path ) flatMap asSimple
+  }
+    
 
   /**
    * Query the context for the specified path.
@@ -44,7 +46,7 @@ object Query {
    */
   private def asSimple ( l: List[Element] ): Try[List[Simple]] = Try {
     l map { case s: Simple => s; case _ => throw new MatchError() }
-  } orElse Failure( new Error("Path resolution returned at least one complex element") )
+  } orElse Failure( new Error("Path resolution returned at least one complex element\n debug : "+l) )
 
   /**
    * Returns the children at the specified position and instance

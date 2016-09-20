@@ -3,6 +3,8 @@ package hl7.v2.validation.report;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import expression.AsString;
+import expression.Expression;
 import gov.nist.validation.report.Entry;
 import gov.nist.validation.report.Trace;
 import gov.nist.validation.report.impl.EntryImpl;
@@ -285,6 +287,22 @@ public class Detections {
 			return csSpecError(context, c, stack);
 	}
 
+	public static Entry coConstraintSuccess(Element e, String descr, Expression cond, Expression exp) {
+		String category = conf.getString("report.coconstraint-success.category");
+		String classification = conf.getString("report.coconstraint-success.classification");
+		String template = conf.getString("report.coconstraint-success.template");
+		String desc = String.format(template, descr, AsString.expression(cond, e), AsString.expression(exp, e));
+		return entry(e.location(), desc, category, classification);
+	}
+	
+	public static Entry coConstraintFailure(Element e, String descr, Expression cond, Expression exp) {
+		String category = conf.getString("report.coconstraint-failure.category");
+		String classification = conf.getString("report.coconstraint-failure.classification");
+		String template = conf.getString("report.coconstraint-failure.template");
+		String desc = String.format(template, descr, AsString.expression(cond, e), AsString.expression(exp, e));
+		return entry(e.location(), desc, category, classification);
+	}
+	
 	/**
 	 * @return A report entry for a predicate failure detection
 	 */
@@ -369,6 +387,13 @@ public class Detections {
 		String desc = vsTemplate3("code-not-found", value, l.prettyString(),
 				vs.id());
 		return vsEntry("code-not-found", desc, l, vs, spec);
+	}
+	
+	public static Entry codeNotFound(Location l, String value, String vs,
+			ValueSetSpec spec) {
+		String desc = vsTemplate3("code-not-found", value, l.prettyString(),
+				vs);
+		return vsEntry("code-not-found", desc, l, null, spec);
 	}
 
 	/**

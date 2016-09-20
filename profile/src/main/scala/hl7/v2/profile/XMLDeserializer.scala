@@ -18,13 +18,16 @@ object XMLDeserializer {
   /**
     * Returns the profile XSD schema as InputStream
     */
-  def xsd: InputStream = getClass.getResourceAsStream("/Profile.xsd")
+//  def xsd: InputStream = getClass.getResourceAsStream("/Profile.xsd")
+  def xsd_name = "/Profile.xsd"
 
   /**
     * Create a profile from XML
     * @param xml - The XML file
     * @return A future containing the profile object or a failure
     */
-  def deserialize( xml: InputStream ): Try[Profile] =
-    XOMDocumentBuilder.build(xml, xsd) map { doc => profile( doc.getRootElement ) }
+  def deserialize( xml: InputStream ): Try[Profile] = {
+    XOMDocumentBuilder.build(xml, getClass.getResourceAsStream("/Profile.xsd")) map { doc => profile( doc.getRootElement ) }
+  }
+    
 }

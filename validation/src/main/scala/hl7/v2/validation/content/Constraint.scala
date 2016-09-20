@@ -16,6 +16,21 @@ case class Reference(
     @BeanProperty testDataCategorization: String
 )
 
+
+/**
+  * A coConstraint 
+  */
+case class CoConstraint( 
+    description: String,
+    comments: String,
+    constraints: List[PlainCoConstraint]
+)
+
+case class PlainCoConstraint(
+    key: Expression,
+    assertions: List[Expression]
+)
+
 /**
   * A constraint describes an assertion that shall always be verified
   */

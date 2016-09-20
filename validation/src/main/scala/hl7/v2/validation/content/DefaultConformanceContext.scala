@@ -58,7 +58,8 @@ object VMap {
 class DefaultConformanceContext(
     val constraints: VMap[Constraint],
     val predicates: VMap[Predicate],
-    val orderIndifferent: List[Context]) extends ConformanceContext {
+    val orderIndifferent: List[Context],
+    val coConstraints: VMap[CoConstraint]) extends ConformanceContext {
   /**
    * Returns the list of constraints defined for the specified element.
    */
@@ -78,7 +79,19 @@ class DefaultConformanceContext(
     case s: Segment => segmentSpecs(s.model.ref, predicates)
     case g: Group => groupSpecs(g.model, predicates)
   }
+
+  /**
+   * Returns the list of coConstraints defined for the specified element.
+   */
+  def coConstraintsF(): VMap[CoConstraint] = coConstraints
   
+  def coConstraintsFor(e: Element): List[CoConstraint] = e match {
+    case c: Component => datatypeSpecs(c.datatype, coConstraints)
+    case f: Field => datatypeSpecs(f.datatype, coConstraints)
+    case s: Segment => segmentSpecs(s.model.ref, coConstraints)
+    case g: Group => groupSpecs(g.model, coConstraints)
+  }
+
   def orderIndifferentConstraints(): List[Context] = orderIndifferent
 
   private def datatypeSpecs[T](d: Datatype, map: VMap[T]): List[T] =
@@ -128,51 +141,59 @@ object DefaultConformanceContext {
    */
   def apply(contexts: InputStream*): Try[ConformanceContext] =
     try {
-      val z = (VMap.empty[Constraint], VMap.empty[Predicate], List[Context]())
+      val z = (VMap.empty[Constraint], VMap.empty[Predicate], List[Context](), VMap.empty[CoConstraint])
       val l = contexts map { x => vMaps(x).get }
       val r = l.foldLeft(z) { (acc, x) =>
-        (acc._1 merge x._1, acc._2 merge x._2, acc._3 ++ x._3)
+        (acc._1 merge x._1, acc._2 merge x._2, acc._3 ++ x._3, acc._4 merge x._4)
       }
-      Success(new DefaultConformanceContext(r._1, r._2, r._3))
+      Success(new DefaultConformanceContext(r._1, r._2, r._3, r._4))
     } catch { case e: Throwable => Failure(e) }
 
-  private def vMaps(confContext: InputStream): Try[(VMap[Constraint], VMap[Predicate], List[Context])] =
-    XOMDocumentBuilder.build(confContext, xsd, resourceResolver) map { doc =>
-      (constraints(doc), predicates(doc), orderIndifferent(doc))
+  private def vMaps(confContext: InputStream): Try[(VMap[Constraint], VMap[Predicate], List[Context], VMap[CoConstraint])] =
+    XOMDocumentBuilder.build(confContext, getClass.getResourceAsStream("/rules/ConformanceContext.xsd"), resourceResolver) map { doc =>
+      (constraints(doc), predicates(doc), orderIndifferent(doc), coConstraints(doc))
     }
 
-    private def orderIndifferent(doc: nu.xom.Document): List[Context] = {
+  private def orderIndifferent(doc: nu.xom.Document): List[Context] = {
     val e = doc.getRootElement.getFirstChildElement("OrderIndifferent")
-    if(e != null) {
+    if (e != null) {
       val child = e.getChildElements
-      if( child != null) (e.getChildElements map context).toList
+      if (child != null) (e.getChildElements map context).toList
       else Nil
-    }
-    else Nil
+    } else Nil
   }
-  
+
   private def pattern(e: nu.xom.Element): Pattern = {
     val t = trigger(e.getFirstChildElement("Trigger"))
     val cstr = e.getFirstChildElement("Constraints")
-    val constraints = if(cstr != null) (cstr.getChildElements map constraint).toList else Nil
+    val constraints = if (cstr != null) (cstr.getChildElements map constraint).toList else Nil
     val ctx = e.getFirstChildElement("Contexts")
-    val contexts    = if (ctx != null) (ctx.getChildElements map context).toList else Nil
-    val nb =        if (e.attribute("Cardinality") != "") e.attribute("Cardinality").toInt else 1
-    Pattern(t,constraints,contexts,nb)
+    val contexts = if (ctx != null) (ctx.getChildElements map context).toList else Nil
+    val nb = if (e.attribute("Cardinality") != "") e.attribute("Cardinality").toInt else 1
+    Pattern(t, constraints, contexts, nb)
   }
-  
+
   private def context(e: nu.xom.Element): Context = {
     val path = e.attribute("List")
     val patterns = (e.getChildElements map pattern).toList
-    Context(path,patterns)
+    Context(path, patterns)
   }
-  
+
   private def trigger(e: nu.xom.Element): Trigger = {
     val message = e.getFirstChildElement("ErrorMessage").getValue
-    val assert  = assertion(e)
-    Trigger(message,assert)
+    val assert = assertion(e)
+    Trigger(message, assert)
   }
-  
+
+  private def coConstraints(doc: nu.xom.Document): VMap[CoConstraint] = {
+    val e = doc.getRootElement.getFirstChildElement("CoConstraints") //FIXME Can throw is missing
+    val (gByID, gByName) = init(extractNodes(e, "Group"), coconstraint)
+    val (sByID, sByName) = init(extractNodes(e, "Segment"), coconstraint)
+    val (dtByID, dtByName) = init(extractNodes(e, "Datatype"), coconstraint)
+    val (msByID, msByName) = init(extractNodes(e, "Message"), coconstraint)
+    new VMap(gByID, gByName, sByID, sByName, dtByID, dtByName, msByID, msByName)
+  }
+
   private def constraints(doc: nu.xom.Document): VMap[Constraint] = {
     val e = doc.getRootElement.getFirstChildElement("Constraints") //FIXME Can throw is missing
     val (gByID, gByName) = init(extractNodes(e, "Group"), constraint)
@@ -229,7 +250,15 @@ object DefaultConformanceContext {
     val ref = reference(e.getFirstChildElement("Reference"))
     val desc = description(e.getFirstChildElement("Description"))
     val clas = classification(e.attribute("Classification"))
-      Constraint(id, ref, clas, desc, assertion(e))
+    Constraint(id, ref, clas, desc, assertion(e))
+  }
+  /**
+   * Creates a constraint from a nu.xom.Element
+   */
+  private def coconstraint(e: nu.xom.Element): CoConstraint = {
+    val desc = description(e.getFirstChildElement("Description"))
+    val comments = e.attribute("Comments")
+    CoConstraint(desc, comments, plainCoConstraints(e.getFirstChildElement("Assertion")))
   }
 
   /**
@@ -251,7 +280,7 @@ object DefaultConformanceContext {
     e match {
       case "W" => Some(Classification.W())
       case "A" => Some(Classification.A())
-      case _  => None
+      case _ => None
     }
 
   private def reference(e: nu.xom.Element): Option[Reference] =
@@ -275,6 +304,20 @@ object DefaultConformanceContext {
     val assertionNode = e.getFirstChildElement("Assertion")
     val expressionNode = assertionNode.getChildElements.get(0)
     expression.XMLDeserializer.expression(expressionNode)
+  }
+
+  private def plainCoConstraints(e: nu.xom.Element): List[PlainCoConstraint] = {
+    e.getChildElements("PlainCoConstraint").foldLeft(List[PlainCoConstraint]()){
+      (acc, x) => plainCoConstraint(x) :: acc 
+    }
+  }
+
+  private def plainCoConstraint(e: nu.xom.Element): PlainCoConstraint = {
+    val key = expression.XMLDeserializer.expression(e)
+    val constraints = e.getChildElements.foldLeft(List[Expression]()) { (acc, x) =>
+      expression.XMLDeserializer.expression(x) :: acc
+    }
+    PlainCoConstraint(key, constraints)
   }
 
   /**

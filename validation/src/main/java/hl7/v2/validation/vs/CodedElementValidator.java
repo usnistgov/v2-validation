@@ -145,7 +145,7 @@ public class CodedElementValidator {
 		return detections; 
 	}
 	
-	private static boolean pass(Entry e){
+	protected static boolean pass(Entry e){
 		if(e == null)
 			return true;
 		else {
@@ -195,9 +195,11 @@ public class CodedElementValidator {
 
 	public static Simple query(Complex c, int position) throws Exception {
 		String details;
-		try {
+		try {		
 			scala.collection.immutable.List<Simple> l = Query.queryAsSimple(c,
 					position + "[1]").get();
+			
+			
 			int count = l.size();
 			if (count == 1)
 				return l.head();
@@ -205,6 +207,7 @@ public class CodedElementValidator {
 					+ " for the position '" + position + "' returned " + count
 					+ " element(s)";
 		} catch (Exception e) {
+			System.out.println("EXCEPTIONNNN");
 			details = e.getMessage();
 		}
 		throw new Exception(
