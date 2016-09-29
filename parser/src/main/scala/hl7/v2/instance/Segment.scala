@@ -123,7 +123,8 @@ object Segment extends EscapeSeqHandler {
   private def resolveDyn(
       models: List[FM],
       vs: Array[(Int, String)],
-      mappings: List[DynMapping]): Try[List[FM]] = Try {
+      mappings: List[DynMapping])
+  (implicit s: Separators) : Try[List[FM]] = Try {
     mappings match {
       case Nil => models
       case xs  =>
@@ -131,10 +132,70 @@ object Segment extends EscapeSeqHandler {
           mappings find ( _.position == x.req.position ) match {
             case None          => x
             case Some(mapping) =>
-              val dt = mapping.map(vs(mapping.reference - 1)._2)
-              x.copy(datatype = dt)
+              if(mapping.secondReference.isEmpty){
+                val v1 = getValue(vs,mapping.reference)
+                val dt = mapping.map(v1,None)
+                x.copy(datatype = dt)
+              }
+              else {
+                val v1 = getValue(vs,mapping.reference)
+                val v2 = getValue(vs,mapping.secondReference.get)
+                if(mapping.map.contains(v1,v2)){
+                  val dt = mapping.map(v1,v2)
+                  x.copy(datatype = dt)
+                }
+                else {
+                  val dt = mapping.map(v1,None)
+                  x.copy(datatype = dt)
+                }
+                
+              }
           }
         }
     }
   }
+  
+  private def getValue(vs: Array[(Int, String)], path : String)
+  (implicit s: Separators) : Option[String] = {
+    
+    def loop(v : String, p : List[String], depth : Int) : Option[String] = {
+      p match {
+        case Nil     => Some(v)
+        case x::Nil  => get(v, x.toInt, depth)
+        case x::xs   => val comp = get(v, x.toInt, depth); if(comp.isEmpty) loop(comp.get, xs, depth + 1) else comp
+      }
+    }
+    
+    def get(v : String, i : Int, depth : Int) = {
+      if(depth > 2)
+        None 
+      else {
+        //Level index
+        val index = i - 1;
+        val l = split(if(depth == 1) s.cs else s.ss,v,0);
+        if(index >= l.length || index < 0) None else Some(l(index)._2)
+      }
+    }
+
+    if(path.isEmpty()) None
+    else {
+      if(path.contains(".")){
+        val values = path split '.'
+        val str = vs(values.head.toInt - 1)._2
+        if(values.tail.isEmpty) Some(str)
+        else{
+          loop(str, values.tail.toList, 1)
+        }
+      }
+      else {
+        if(vs.length > path.toInt - 1 && path.toInt - 1 >= 0){
+          if(vs(path.toInt - 1)._2 == "") None else Some(vs(path.toInt - 1)._2)
+        }
+        else {
+          None
+        }
+      }
+    }
+  }
+  
 }

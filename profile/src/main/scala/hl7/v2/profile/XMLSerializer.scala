@@ -73,7 +73,7 @@ object XMLSerializer {
           Position={dm.position.toString}
           Reference={dm.reference.toString}
       >
-        { dm.map map ( t => <Case Value={t._1} Datatype={t._2.name}/> ) }
+<!--        { dm.map map ( t => <Case Value={t._1._1} SecondValue={t._1._2} Datatype={t._2.name}/> ) } -->
       </Mapping>
     </DynamicMapping>
 

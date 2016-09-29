@@ -122,8 +122,8 @@ object XMLDeserializer extends EscapeSeqHandler {
 
   private def valueSet(e: Element) = {
     val id   = e.attribute("ValueSetID")
-    val bs   = BindingStrength( e.attribute("BindingStrength") ).get
-    val bl   = BindingLocation( e.attribute("BindingLocation") ).get
+    val bs   = BindingStrength( e.attribute("BindingStrength") ).getOrElse(BindingStrength.R)
+    val bl   = BindingLocation( e.attribute("BindingLocation") ).getOrElse(BindingLocation("1").get)
     val spec = ValueSetSpec( id, Some(bs), Some(bl) )
     ValueSet(e.attribute("Path"), spec)
   }
@@ -133,7 +133,7 @@ object XMLDeserializer extends EscapeSeqHandler {
   // Helpers
   private def toBoolean( s: String ) = 
     if( "true" == s || "1" == s ) true
-    else if( "false" == s || "0" == s ) false
+    else if( "false" == s || "0" == s || "" == s ) false
     else throw new Error(s"[Error] Invalid XSD:Boolean value $s")
 
   private def operator( v: String ) = v match {

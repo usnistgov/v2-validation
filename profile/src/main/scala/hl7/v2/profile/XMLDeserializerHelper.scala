@@ -100,12 +100,13 @@ object XMLDeserializerHelper {
 
   def dynMapping(e: Element)(implicit map: Map[String, Datatype]): DynMapping = {
     val pos = e.attribute("Position").toInt
-    val ref = e.attribute("Reference").toInt
+    val ref1 = e.attribute("Reference")
+    val ref2 = asOption(e.attribute("SecondReference"))
     val mapping =
-      e.getChildElements("Case").foldLeft(Map[String, Datatype]()) { (acc, x) =>
-        acc + (x.attribute("Value") -> map(x.attribute("Datatype")))
+      e.getChildElements("Case").foldLeft(Map[(Option[String],Option[String]), Datatype]()) { (acc, x) =>
+        acc + ((asOption(x.attribute("Value")), asOption(x.attribute("SecondValue")))-> map(x.attribute("Datatype")))
       }
-    DynMapping(pos, ref, mapping)
+    DynMapping(pos, ref1, ref2, mapping)
   }
 
   /**

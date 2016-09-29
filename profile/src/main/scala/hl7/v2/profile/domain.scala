@@ -43,7 +43,7 @@ case class Field( name: String, datatype: Datatype, req: Req )
   * @param reference - The position which defines the data type name to be used
   * @param map       - The mapping ( data type name -> data type id )
   */
-case class DynMapping( position: Int, reference: Int, map: Map[String, Datatype] )
+case class DynMapping( position: Int, reference: String, secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] )
 
 /**
   * A segment

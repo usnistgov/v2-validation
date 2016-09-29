@@ -46,7 +46,7 @@ object Query {
    */
   private def asSimple ( l: List[Element] ): Try[List[Simple]] = Try {
     l map { case s: Simple => s; case _ => throw new MatchError() }
-  } orElse Failure( new Error("Path resolution returned at least one complex element\n debug : "+l) )
+  } orElse Failure( new Error("Path resolution returned at least one complex element") )
 
   /**
    * Returns the children at the specified position and instance
