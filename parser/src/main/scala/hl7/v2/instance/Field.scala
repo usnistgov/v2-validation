@@ -1,6 +1,6 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{Datatype, Req, Composite, Primitive}
+import hl7.v2.profile.{Datatype, Req, Composite, Primitive, Varies}
 
 /**
   * Trait representing a field
@@ -22,6 +22,17 @@ case class SimpleField(
     instance: Int,
     value: Value
 ) extends Field with Simple
+
+/**
+  * Class representing Unresolved field
+  */
+case class UnresolvedField(
+    datatype: Varies,
+    req: Req,
+    location: Location,
+    instance: Int
+) extends Field 
+
 
 /**
   * Class representing a complex field

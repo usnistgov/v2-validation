@@ -208,27 +208,29 @@ public class Detections {
 		return csEntry("content-failure", errLoc, context, c, stack);
 	}
 
-	public static String constraintClassification(Constraint c,String orElse){
-		if (c.classification().isDefined()){
-			Classification cl = c.classification().get();
-			if(cl instanceof Classification.W){
+	public static String constraintClassification(Classification c,String orElse){
+			if(c instanceof Classification.W){
 				return conf.getString("report.classification.warning");
 			}
-			else if(cl instanceof Classification.A){
+			else if(c instanceof Classification.A){
 				return conf.getString("report.classification.alert");
 			}
 			else
-				return "";
-		}
-		else 
-			return orElse;
+				return orElse;
 	}
 	
 	public static Entry cntFailureCustom(Location errLoc, Element context,
 			Constraint c, List<Trace> stack, String config, String val,
 			String expected) {
 		String category = conf.getString("report.content-failure.category");
-		String classification = constraintClassification(c,conf.getString("report.content-failure.classification"));
+		String classification = "";
+		String orElse = conf.getString("report.content-failure.classification");
+		if(c.classification().isDefined()){
+			classification = constraintClassification(c.classification().get(),orElse);
+		}
+		else {
+			classification = orElse;
+		}
 		String template = conf.getString("report.content-failure.template");
 		Map<String, Object> metaData = new HashMap<String, Object>();
 		if (c.reference().isDefined())
@@ -286,12 +288,39 @@ public class Detections {
 		else
 			return csSpecError(context, c, stack);
 	}
+	
+	public static Entry unresolvedField(String v1, String v2, Element e){
+		String category = conf.getString("report.unresolved-field.category");
+		String classification = conf.getString("report.unresolved-field.classification");
+		String template = conf.getString("report.unresolved-field.template");
+		Location l = e.location();
+		String desc = String.format(template, v1, v2,l.prettyString());
+		return entry(e.location(), desc, category, classification, null, null);
+	}
 
 	public static Entry coConstraintSuccess(Element e, String descr, Expression cond, Expression exp) {
-		String category = conf.getString("report.coconstraint-success.category");
+		String category = conf.getString("report.coconstraint-success.category"); 
 		String classification = conf.getString("report.coconstraint-success.classification");
 		String template = conf.getString("report.coconstraint-success.template");
-		String desc = String.format(template, descr, AsString.expression(cond, e), AsString.expression(exp, e));
+		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e));
+		return entry(e.location(), desc, category, classification);
+	}
+	
+	public static Entry coConstraintFailure(Element e, String descr, Expression cond, Expression exp, Classification c) {
+		String category = conf.getString("report.coconstraint-failure.category");
+		String orElse = conf.getString("report.coconstraint-failure.classification");
+		String classification = constraintClassification(c, orElse);
+		String template = conf.getString("report.coconstraint-failure.template");
+		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
+		return entry(e.location(), desc, category, classification);
+	}
+	
+	public static Entry coConstraintFailure(Element e, String descr, Expression cond, Expression exp, Classification c, String reason) {
+		String category = conf.getString("report.coconstraint-failure.category");
+		String orElse = conf.getString("report.coconstraint-failure.classification");
+		String classification = constraintClassification(c, orElse);
+		String template = conf.getString("report.coconstraint-failure.template");
+		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e),"\n. Failure reason : "+reason);
 		return entry(e.location(), desc, category, classification);
 	}
 	
@@ -299,7 +328,7 @@ public class Detections {
 		String category = conf.getString("report.coconstraint-failure.category");
 		String classification = conf.getString("report.coconstraint-failure.classification");
 		String template = conf.getString("report.coconstraint-failure.template");
-		String desc = String.format(template, descr, AsString.expression(cond, e), AsString.expression(exp, e));
+		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
 		return entry(e.location(), desc, category, classification);
 	}
 	
@@ -519,7 +548,14 @@ public class Detections {
 	private static Entry csEntry(String configKey, Location errLoc,
 			Element context, Constraint c, List<Trace> stack) {
 		String category = conf.getString("report." + configKey + ".category");
-		String classification = constraintClassification(c,conf.getString("report." + configKey + ".classification"));
+		String classification = "";
+		String orElse = conf.getString("report." + configKey + ".classification");
+		if(c.classification().isDefined()){
+			classification = constraintClassification(c.classification().get(),orElse);
+		}
+		else {
+			classification = orElse;
+		}
 		String template = conf.getString("report." + configKey + ".template");
 		String desc = String.format(template, c.id(), c.description());
 		Map<String, Object> metaData = new HashMap<String, Object>();

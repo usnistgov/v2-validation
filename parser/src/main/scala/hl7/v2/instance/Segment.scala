@@ -1,6 +1,6 @@
 package hl7.v2.instance
 
-import hl7.v2.profile.{SegmentRef => SM, Field => FM, DynMapping}
+import hl7.v2.profile.{SegmentRef => SM, Field => FM, DynMapping, Varies}
 
 import scala.util.Try
 
@@ -132,28 +132,37 @@ object Segment extends EscapeSeqHandler {
           mappings find ( _.position == x.req.position ) match {
             case None          => x
             case Some(mapping) =>
-              if(mapping.secondReference.isEmpty){
-                val v1 = getValue(vs,mapping.reference)
-                val dt = mapping.map(v1,None)
-                x.copy(datatype = dt)
-              }
-              else {
-                val v1 = getValue(vs,mapping.reference)
-                val v2 = getValue(vs,mapping.secondReference.get)
-                if(mapping.map.contains(v1,v2)){
-                  val dt = mapping.map(v1,v2)
-                  x.copy(datatype = dt)
+              val r1 = mapping.reference
+              val r2 = mapping.secondReference
+              r1 match {
+                case None => x.copy(datatype = varies(None,None))
+                case xv => val v1 = getValue(vs,xv.get); r2 match {
+                  case None => {
+                    if(mapping.map.contains(v1,None)) {
+                      val dt = mapping.map(v1,None)
+                      x.copy(datatype = dt)
+                    }
+                    else
+                      x.copy(datatype = varies(v1,None))
+                  }
+                  
+                  case yv => {
+                    val v2 = getValue(vs,yv.get);
+                    if(mapping.map.contains(v1,v2)) {
+                      val dt = mapping.map(v1,v2)
+                      x.copy(datatype = dt)
+                    }
+                    else
+                      x.copy(datatype = varies(v1,v2))
+                  }
                 }
-                else {
-                  val dt = mapping.map(v1,None)
-                  x.copy(datatype = dt)
-                }
-                
               }
           }
         }
     }
   }
+  
+  private def varies(v1 : Option[String], v2 : Option[String]) = Varies("varies","Variable","DNM",v1,v2)
   
   private def getValue(vs: Array[(Int, String)], path : String)
   (implicit s: Separators) : Option[String] = {

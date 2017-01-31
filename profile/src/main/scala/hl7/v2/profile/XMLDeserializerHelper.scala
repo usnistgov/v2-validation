@@ -100,7 +100,7 @@ object XMLDeserializerHelper {
 
   def dynMapping(e: Element)(implicit map: Map[String, Datatype]): DynMapping = {
     val pos = e.attribute("Position").toInt
-    val ref1 = e.attribute("Reference")
+    val ref1 = asOption(e.attribute("Reference"))
     val ref2 = asOption(e.attribute("SecondReference"))
     val mapping =
       e.getChildElements("Case").foldLeft(Map[(Option[String],Option[String]), Datatype]()) { (acc, x) =>
@@ -119,6 +119,7 @@ object XMLDeserializerHelper {
    * Creates a data type object from xom.Element
    */
   def datatype(e: Element)(implicit map: Map[String, Datatype]): Datatype = {
+    
     val id = e.attribute("ID")
     val name = e.attribute("Name")
     val desc = e.attribute("Description")
@@ -182,7 +183,6 @@ object XMLDeserializerHelper {
    *   - Level 2: The rest
    */
   private def categorize(elements: Elements) = {
-
     def isPrimitive(e: Element) = e.getChildElements("Component").size() == 0
 
     val (primitives, others) = elements.partition(isPrimitive)

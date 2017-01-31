@@ -79,7 +79,8 @@ public class Validator {
         			result.add(x);      
             }
             
-        } else {
+        } 
+    	else if(e instanceof Complex) {
             List<Entry> l = ComplexElementValidator.check((Complex) e, getSpec(e.req()), library);
             if(l != null)
             	for(Entry x : l){

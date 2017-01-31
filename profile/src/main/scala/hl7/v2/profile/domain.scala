@@ -12,6 +12,11 @@ sealed trait Datatype {
 /**
   * A primitive data type
   */
+case class Varies(id: String, name: String, desc: String, referenceValue1 : Option[String],  referenceValue2 : Option[String]) extends Datatype
+
+/**
+  * A primitive data type
+  */
 case class Primitive( id: String, name: String, desc: String ) extends Datatype
 
 /**
@@ -43,7 +48,7 @@ case class Field( name: String, datatype: Datatype, req: Req )
   * @param reference - The position which defines the data type name to be used
   * @param map       - The mapping ( data type name -> data type id )
   */
-case class DynMapping( position: Int, reference: String, secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] )
+case class DynMapping( position: Int, reference: Option[String], secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] )
 
 /**
   * A segment

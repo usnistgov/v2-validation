@@ -33,11 +33,15 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     */
   private def check(e: Element)(implicit sep: Separators): List[Entry] =
     e match {
-      case s: Simple  => check(s)
+      case s: Simple  => s match {
+        case f : SimpleField => check(s)
+        case _ => check(s)
+      }
       case c: Complex => c match {
         case nX: NULLComplexField =>  Nil
         case _ => check(c);
       }
+      case u: UnresolvedField => if(u.isInstanceOf[UnresolvedField]) Detections.unresolvedField(u.datatype.referenceValue1.getOrElse(""), u.datatype.referenceValue2.getOrElse(""), u) :: Nil else Nil
     }
 
   /**
