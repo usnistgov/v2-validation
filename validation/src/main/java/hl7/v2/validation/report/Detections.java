@@ -302,7 +302,8 @@ public class Detections {
 		String category = conf.getString("report.coconstraint-success.category"); 
 		String classification = conf.getString("report.coconstraint-success.classification");
 		String template = conf.getString("report.coconstraint-success.template");
-		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e));
+		System.out.println();
+		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
 		return entry(e.location(), desc, category, classification);
 	}
 	
