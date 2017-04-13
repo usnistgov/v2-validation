@@ -8,6 +8,7 @@ import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.report.Detections;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static hl7.v2.validation.vs.SimpleElementValidator.checkValueSet;
 
@@ -44,9 +45,15 @@ public class CodedElementValidator {
 	}
 
 	public static List<Entry> listify(Entry e){
-		List<Entry> detections = new ArrayList<Entry>();
-		detections.add(e);
-		return detections;
+		
+		if(e instanceof TripletEntry)
+			return ((TripletEntry) e).asList();
+		else {
+			List<Entry> detections = new ArrayList<Entry>();
+			detections.add(e);
+			return detections;
+		}
+		
 	}
 	
 	public static List<Entry> check(Complex c, ValueSetSpec spec,
@@ -100,20 +107,18 @@ public class CodedElementValidator {
 		List<Entry> detections = new ArrayList<Entry>();
 		Entry e1 = checkPosition(c, p1, vs, spec);
 		Entry e2 = checkPosition(c, p2, vs, spec);
-		
-
 		if(!pass(e1) && !pass(e2)){
-			detections.add(e1);
-			detections.add(e2);
+			addEntry(detections,e1);
+			addEntry(detections,e2);
 		}
 		else if(pass(e1) && pass(e2)){
 			
-			if(e1 != null){
-				detections.add(e1);
+			if(hasEntry(e1)){
+				addEntry(detections,e1);
 			}
 			
-			if(e2 != null){
-				detections.add(e2);
+			if(hasEntry(e2)){
+				addEntry(detections,e2);
 			}
 			
 			String msg = "One of the triplet (but not both) should be valued from the"
@@ -121,23 +126,44 @@ public class CodedElementValidator {
 			detections.add(Detections.codedElem(c.location(), msg, vs, spec, null));
 		}
 		else if(!pass(e1) && pass(e2)){
+			System.out.println("Pass 1");
 			
-			if(e2 != null){
-				detections.add(e2);
+			if(hasEntry(e2)){
+				addEntry(detections,e2);
 			}
 			
-			detections.add(Detections.toAlert(e1));
+			addEntry(detections,Detections.toAlert(e1));
 		}
 		else if(pass(e1) && !pass(e2)){
-			
-			if(e1 != null){
-				detections.add(e1);
+			System.out.println("Pass 2");
+			if(hasEntry(e1)){
+				addEntry(detections,e1);
 			}
 			
-			detections.add(Detections.toAlert(e2));
+			addEntry(detections,Detections.toAlert(e2));
 		}
 		
 		return detections; 
+	}
+	
+	protected static void addEntry(List<Entry> l, Entry e){
+		if(e != null){
+			if(e instanceof TripletEntry){
+				l.addAll(((TripletEntry) e).asList());
+			}
+			else {
+				l.add(e);
+			}
+		}
+	}
+	
+	protected static boolean hasEntry(Entry e){
+		if(e instanceof TripletEntry){
+			return ((TripletEntry) e).asList().size() > 0;
+		}
+		else {
+			return e != null;
+		}
 	}
 	
 	protected static boolean pass(Entry e){
@@ -148,6 +174,9 @@ public class CodedElementValidator {
 			if(e instanceof EnhancedEntry){
 				return ((EnhancedEntry) e).isOk();
 			}
+			else if(e instanceof TripletEntry){
+				return ((TripletEntry) e).isValid();
+			}
 			else
 				return false;
 		}
@@ -156,11 +185,14 @@ public class CodedElementValidator {
 	private static Entry checkPosition(Complex c, int p, ValueSet vs,
 			ValueSetSpec spec) {
 		try {
+			
 			Simple s1 = query(c, p);
 			Simple s2 = query(c, p + 2); // FIXME Can make the error msg more
 											// explicit
 			return checkTriplet(s1, s2, vs, spec);
 		} catch (Exception e) {
+			System.out.println("ERR "+e.getMessage());
+			e.printStackTrace();
 			return Detections.bindingLocation(c.location(), e.getMessage(), vs, spec);
 		}
 	}
@@ -168,11 +200,20 @@ public class CodedElementValidator {
 	/**
 	 * Checks the triplet and return a detection if any
 	 */
-	private static Entry checkTriplet(Simple s1, Simple s2, ValueSet vs,
+	private static TripletEntry checkTriplet(Simple s1, Simple s2, ValueSet vs,
 			ValueSetSpec spec) {
-		Entry e = checkValueSet(s1.location(), s1.value().raw(), vs, spec);
-		return e != null ? e : checkCodeSys(s2, vs.getCodes(s1.value().raw())
-				.get(0), vs, spec);
+		TripletEntry te = new TripletEntry();
+		
+		Entry v = checkValueSet(s1.location(), s1.value().raw(), vs, spec);
+		Entry c = null;
+		if(pass(v)){
+			c = checkCodeSys(s2, vs.getCodes(s1.value().raw()).get(0), vs, spec);
+		}
+		
+		te.setValue(v);
+		te.setCodeSys(c);
+		
+		return te;
 	}
 
 	/**
