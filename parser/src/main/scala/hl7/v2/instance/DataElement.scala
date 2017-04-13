@@ -19,7 +19,7 @@ object DataElement {
       case true  => None
       case false => Some {
         d match {
-          case v: Varies => UnresolvedField(v, r, l, i)
+          case vr: Varies => UnresolvedField(vr, r, l, i,Text(v))
           case p: Primitive => SimpleField(p, r, l, i, Value(p, v))
           case c: Composite => if(isNull(v)){
             NULLComplexField(c,r,l,i)

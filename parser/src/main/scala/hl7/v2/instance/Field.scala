@@ -30,7 +30,8 @@ case class UnresolvedField(
     datatype: Varies,
     req: Req,
     location: Location,
-    instance: Int
+    instance: Int,
+    value: Value
 ) extends Field 
 
 

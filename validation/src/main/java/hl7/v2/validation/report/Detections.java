@@ -15,6 +15,7 @@ import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Constraint;
 import hl7.v2.validation.content.Predicate;
 import hl7.v2.validation.content.Classification;
+import hl7.v2.validation.vs.TripletEntry;
 import hl7.v2.validation.vs.ValueSet;
 
 import java.util.HashMap;
@@ -302,7 +303,8 @@ public class Detections {
 		String category = conf.getString("report.coconstraint-success.category"); 
 		String classification = conf.getString("report.coconstraint-success.classification");
 		String template = conf.getString("report.coconstraint-success.template");
-		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e));
+		System.out.println();
+		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
 		return entry(e.location(), desc, category, classification);
 	}
 	
@@ -496,6 +498,9 @@ public class Detections {
 	 */
 	
 	public static Entry toAlert(Entry e){
+		if(e instanceof TripletEntry){
+			return ((TripletEntry) e).toAlert();
+		}
     	String classification = conf.getString("report.classification.alert");
     	return new EntryImpl(e.getLine(), e.getColumn(), e.getPath(), e.getDescription(), e.getCategory(),
 				classification, e.getStackTrace(), e.getMetaData());

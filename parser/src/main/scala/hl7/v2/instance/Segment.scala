@@ -152,6 +152,10 @@ object Segment extends EscapeSeqHandler {
                       val dt = mapping.map(v1,v2)
                       x.copy(datatype = dt)
                     }
+                    else if(mapping.map.contains(v1,None)) {
+                      val dt = mapping.map(v1,None)
+                      x.copy(datatype = dt)
+                    }
                     else
                       x.copy(datatype = varies(v1,v2))
                   }

@@ -29,6 +29,7 @@ object XML {
             case s: SimpleField => s.value
             case c: ComplexField => c.children. map( implicitly[XML[Component]].xml )
             case n: NULLComplexField => Value.NULL
+            case u: UnresolvedField => Value.NULL
         }}
       </Field>
   }
