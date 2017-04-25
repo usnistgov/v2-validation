@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified">
-
+	
 	<xs:include schemaLocation="Commons.xsd" />
-
+	
 	<!-- ============================================================================================================= 
 		========================= Simple Types Definition ======================================= 
 		============================================================================================================= -->
-
+	
 	<xs:simpleType name="PathType">
 		<xs:annotation>
 			<xs:documentation>
@@ -22,20 +22,20 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:pattern
-				value="[1-9][0-9]*\[(([1-9][0-9]*)|\*)\](\.[1-9][0-9]*\[(([1-9][0-9]*)|\*)\])*" />
+				value="[1-9][0-9]*\[(([1-9][0-9]*)|\*)\](\.[1-9][0-9]*\[(([1-9][0-9]*)|\*)\])*|\." />
 		</xs:restriction>
 	</xs:simpleType>
-
+	
 	<xs:simpleType name="CommaSeparatedStringType">
 		<xs:annotation>
 			<xs:documentation> A comma separated values where each value is an
 				alphanumeric</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*" />
+			<xs:pattern value="[0-9a-zA-Z\-]+(( *),( *)[0-9a-zA-Z\-]+)*" />
 		</xs:restriction>
 	</xs:simpleType>
-
+	
 	<xs:simpleType name="CommaSeparatedNumberType">
 		<xs:annotation>
 			<xs:documentation>A comma separated values where each value is a
@@ -45,7 +45,7 @@
 			<xs:pattern value="\s*(\+|\-)?\d+(\.\d+)?(\s*,\s*(\+|\-)?\d+(\.\d+)?\s*)*" />
 		</xs:restriction>
 	</xs:simpleType>
-
+	
 	<xs:simpleType name="ValueType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Number" />
@@ -54,14 +54,14 @@
 				value="DateTime"/> -->
 		</xs:restriction>
 	</xs:simpleType>
-
+	
 	<xs:simpleType name="ClassificationType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="W" />
 			<xs:enumeration value="A" />
 		</xs:restriction>
 	</xs:simpleType>
-
+	
 	<xs:simpleType name="OperatorType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="EQ">
@@ -96,64 +96,64 @@
 			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
-
+	
 	<!-- ============================================================================================================= 
 		========================= Generic Expressions ======================================= 
 		============================================================================================================= -->
-
+	
 	<xs:complexType name="PresenceType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="PathValueType">
 		<xs:attribute name="Path1" type="PathType" use="required" />
 		<xs:attribute name="Operator" type="OperatorType" use="required" />
 		<xs:attribute name="Path2" type="PathType" use="required" />
 	</xs:complexType>
-
+	
 	<!-- <xs:complexType name="PluginType"> <xs:sequence> <xs:element name="Params"> 
 		<xs:complexType> <xs:sequence> <xs:any processContents="lax" minOccurs="0"/> 
 		</xs:sequence> </xs:complexType> </xs:element> </xs:sequence> <xs:attribute 
 		name="UUID" type="NonEmptyString" use="required"/> </xs:complexType> -->
-
+	
 	<!-- ============================================================================================================= 
 		========================= Value Expressions ======================================= 
 		============================================================================================================= -->
-
+	
 	<xs:complexType name="PlainTextType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Text" type="NonEmptyString" use="required" />
-		<xs:attribute name="IgnoreCase" type="xs:boolean" use="required" />
+		<xs:attribute name="IgnoreCase" type="xs:boolean" use="optional" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="FormatType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Regex" type="NonEmptyString" use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="NumberListType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="CSV" type="CommaSeparatedNumberType"
 			use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="StringListType">
 		<xs:attribute name="Path" type="PathType" use="required" />
-		<xs:attribute name="CSV" type="CommaSeparatedStringType"
-			use="required" />
+		<xs:attribute name="CSV" type="CommaSeparatedStringType" use="required" />
+		<xs:attribute name="IgnoreCase" type="xs:boolean" use="optional" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="SimpleValueType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Operator" type="OperatorType" use="required" />
 		<xs:attribute name="Value" type="NonEmptyString" use="required" />
 		<xs:attribute name="Type" type="ValueType" default="String" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="ValueSetType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="ValueSetID" type="xs:string" use="required" />
@@ -162,57 +162,57 @@
 		<xs:attribute name="BindingLocation" type="BindingLocationType"
 			use="required" />
 	</xs:complexType>
-
+	
 	<!-- ============================================================================================================= 
 		========================= Combination Expressions ======================================= 
 		============================================================================================================= -->
-
+	
 	<xs:complexType name="NOTType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="1" maxOccurs="1" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="ANDType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="ORType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="XORType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="ImplyType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="2" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="ForallType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="unbounded" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="ExistType">
 		<xs:group ref="AnyExpressionGroup" minOccurs="2" maxOccurs="unbounded" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="PluginType">
 		<xs:attribute name="QualifiedClassName" type="NonEmptyString"
 			use="required" />
 	</xs:complexType>
-
+	
 	<!-- ============================================================================================================= 
 		========================= HL7 v2x Specific ======================================= 
 		============================================================================================================= -->
-
+	
 	<xs:complexType name="SetIdType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 	</xs:complexType>
-
+	
 	<xs:complexType name="IZSetIdType">
 		<xs:attribute name="Parent" type="PathType" use="required" />
 		<xs:attribute name="Element" type="PathType" use="required" />
 	</xs:complexType>
-
+	
 	<xs:group name="ExpressionGroup">
 		<xs:choice>
 			<xs:element name="Presence" type="PresenceType" minOccurs="1"
@@ -239,7 +239,7 @@
 				maxOccurs="1" />
 		</xs:choice>
 	</xs:group>
-
+	
 	<xs:group name="AnyExpressionGroup">
 		<xs:choice>
 			<xs:group ref="ExpressionGroup" />
@@ -259,5 +259,5 @@
 				maxOccurs="1" />
 		</xs:choice>
 	</xs:group>
-
+	
 </xs:schema>

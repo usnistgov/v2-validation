@@ -48,6 +48,8 @@
 										use="optional"/>
 									<xs:attribute name="ContentDefinition"
 										type="ContentDefinitionType" use="optional"/>
+									<xs:attribute name="NoCodeDisplayText"
+										type="xs:string" use="optional"/>
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>

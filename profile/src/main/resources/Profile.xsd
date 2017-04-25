@@ -195,8 +195,8 @@
 	<!--  =============================================================================================================
 		    =========================         Complex Types Definitions           =======================================
 		    ============================================================================================================= -->
-
-	<xs:complexType name="DymanicMappingType">
+	
+	<xs:complexType name="DynamicMappingType">
 		<xs:sequence>
 			<xs:element name="Mapping" minOccurs="1" maxOccurs="unbounded">
 				<xs:complexType>
@@ -204,6 +204,7 @@
 						<xs:element name="Case" minOccurs="1" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:attribute name="Value" type="NonEmptyString" use="required"/>
+								<xs:attribute name="SecondValue" type="NonEmptyString" use="optional"/>
 								<xs:attribute name="Datatype" type="DatatypeNameType" use="required"/>
 								<!--FIXME Allow Usage, Cardinality, Length and Value Set -->
 							</xs:complexType>
@@ -215,6 +216,11 @@
 						</xs:annotation>
 					</xs:attribute>
 					<xs:attribute name="Reference" type="PositiveInteger" use="required">
+						<xs:annotation>
+							<xs:documentation>The primitive data element that defines the data type to use depending on its value</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="SecondReference" type="xs:string" use="optional">
 						<xs:annotation>
 							<xs:documentation>The primitive data element that defines the data type to use depending on its value</xs:documentation>
 						</xs:annotation>
@@ -242,7 +248,7 @@
 			<xs:documentation>Documents the characteristics of a single HL7 segment within the context of a particular message or segment group.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="DynamicMapping" type="DymanicMappingType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DynamicMapping" type="DynamicMappingType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Field" type="FieldType" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
@@ -432,7 +438,10 @@
 					<xs:enumeration value="2.5.1"/>
 					<xs:enumeration value="2.6"/>
 					<xs:enumeration value="2.7"/>
+					<xs:enumeration value="2.7.1"/>
 					<xs:enumeration value="2.8"/>
+					<xs:enumeration value="2.8.1"/>
+					<xs:enumeration value="2.8.2"/>
 				</xs:restriction>
 			</xs:simpleType>
 		</xs:attribute>
