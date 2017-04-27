@@ -48,14 +48,20 @@ public class Validator {
      */
     public static Entry checkValueSet(Element e, ValueSetSpec spec,
                                       ValueSetLibrary library) {
+    	Entry etr = null;
         if( e instanceof Simple)
-            return SimpleElementValidator.check((Simple) e, spec, library);
+            etr = SimpleElementValidator.check((Simple) e, spec, library);
         else{
         	List<Entry> l = ComplexElementValidator.check((Complex) e, spec, library);
         	if( l != null && l.size() > 0)
-        		return l.get(0);
-        	else
-        		return null;
+        		etr = l.get(0);
+        }
+
+        if(etr == null || (etr instanceof EnhancedEntry && ((EnhancedEntry) etr).isOk()) ){
+        	return null;
+        }
+        else {
+        	return etr;
         }
             
     }
