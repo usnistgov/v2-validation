@@ -155,16 +155,40 @@ object XMLDeserializerHelper {
     val len = length(e)
     val vss = vsSpec(e)
     val confLen = asOption(e.attribute("ConfLength"))
-    Req(p, desc, usage, card, len, confLen, vss,hide)
+    val cnfR = confRange(prepareConf(e.attribute("ConfLength")))
+    Req(p, desc, usage, card, len, confLen, vss, cnfR, hide)
   }
 
+//  def lengthReq(e: Element) : (Option[Range], Option[String]) = {
+//    val range = length(e);
+//    val confRange = confRange
+//  }
   /**
    * Extracts the length from a xom.Element
    */
+  
+  def confRange(e: Option[String]): Option[Range] = 
+    e map { conf =>
+      Range(1, conf)
+    }
+  
+  def prepareConf(conf : String): Option[String] = {
+    val working = if (conf.endsWith("=") || conf.endsWith("#"))  conf.substring(0, conf.size - 1) else conf
+    if((working forall Character.isDigit) && working != ""){
+       Some(working)
+    }
+    else {
+      None
+    }
+  }
+  
   def length(e: Element): Option[Range] =
+    if((e.attribute("MinLength") forall Character.isDigit) && ((e.attribute("MaxLength") forall Character.isDigit) || e.attribute("MaxLength").equals("*")))
     asOption(e.attribute("MinLength")) map { min =>
       Range(min.toInt, e.attribute("MaxLength"))
     }
+    else
+      None
 
   /**
    * Extracts the cardinality
@@ -175,6 +199,7 @@ object XMLDeserializerHelper {
     }
 
   private def asOption(s: String) = if (s == "") None else Some(s)
+
 
   /**
    * Sorts the data type elements into 3 categories:

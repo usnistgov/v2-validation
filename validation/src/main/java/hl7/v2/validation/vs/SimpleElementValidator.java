@@ -79,7 +79,6 @@ public class SimpleElementValidator {
         java.util.List<Code> codes = vs.getCodes(value);
         int nbOfCodes = codes.size();
 
-//        System.out.println(vs.id()+" = "+codes.size());
         if( nbOfCodes == 0 )
             return Detections.codeNotFound(location, value, vs, spec);
 

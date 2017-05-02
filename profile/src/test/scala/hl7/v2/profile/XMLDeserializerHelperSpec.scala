@@ -22,13 +22,13 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       Max="*"
       MinLength="1"
       MaxLength="*"
-      ConfLength="=2"
+      ConfLength="2="
       Binding="tt"
       />
   ) === {
     val vs = ValueSetSpec("tt", None, None) :: Nil
     val r = Req(1, "X", Usage.R,
-                Some(Range(1,"*")), Some(Range(1,"*")), Some("=2"), vs)
+                Some(Range(1,"*")), Some(Range(1,"*")), Some("2="), vs, Some(Range(1,"2")))
     Field("X", "Y", r)
   }
 
@@ -42,13 +42,13 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
         Usage="R"
         MinLength="1"
         MaxLength="*"
-        ConfLength="=2"
+        ConfLength="2="
         Binding="tt"
         />
       }</Datatype>
       -> {
       val vs = ValueSetSpec("tt", None, None) :: Nil
-      val r  = Req(1, "X", Usage.R, None, Some(Range(1,"*")), Some("=2"), vs)
+      val r  = Req(1, "X", Usage.R, None, Some(Range(1,"*")), Some("2="), vs, Some(Range(1,"2")))
       Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
     }
   ) map ( t => XMLDeserializerHelper.datatype( t._1 ) === t._2 )
@@ -63,21 +63,35 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
         <E Usage="R" Min="1" Max="2"/>
         -> Req(1, "", Usage.R, Some(Range(1, "2")), None, None, Nil),
         <E Usage="R" Min="1" Max="2" MinLength="1" MaxLength="*"/>
-        -> Req(1, "", Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, Nil),
+        -> Req(1, "", Usage.R, Some(Range(1, "2")), Some(Range(1, "*")), None, Nil, None),
         <E Usage="R" MinLength="1" MaxLength="*" Binding="tt"/>
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), None, vs),
-        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2"/>
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,false),
-        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="true" />
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,true),
-        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="TRUE" />
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,true),
-        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="false" />
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,false),
-        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="=2" Hide="FALSE" />
-        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("=2"), vs,false)
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), None, vs, None),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="2="/>
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("2="), vs, Some(Range(1,"2")), false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="2=" Hide="true" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("2="), vs, Some(Range(1,"2")), true),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="2=" Hide="TRUE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("2="), vs, Some(Range(1,"2")), true),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="2=" Hide="false" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("2="), vs, Some(Range(1,"2")), false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="2=" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("2="), vs, Some(Range(1,"2")), false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="2#" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("2#"), vs, Some(Range(1,"2")), false),
+        <E Usage="R" Binding="tt" ConfLength="2#" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, None, Some("2#"), vs, Some(Range(1,"2")), false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), None, vs, None, false),
+        <E Usage="R" MinLength="1" MaxLength="*" Binding="tt" ConfLength="NA" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, Some(Range(1, "*")), Some("NA"), vs, None, false),
+        <E Usage="R" MinLength="NA" MaxLength="NA" Binding="tt" ConfLength="5" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, None, Some("5"), vs, Some(Range(1,"5")), false),
+        <E Usage="R" MinLength="1" MaxLength="NA" Binding="tt" ConfLength="5" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, None, Some("5"), vs, Some(Range(1,"5")), false),
+        <E Usage="R" MinLength="NA" MaxLength="*" Binding="tt" ConfLength="5" Hide="FALSE" />
+        -> Req(1, "", Usage.R, None, None, Some("5"), vs, Some(Range(1,"5")), false)
+        
     )
-
     l map ( t => XMLDeserializerHelper.requirement(1, "", t._1) === t._2 )
   }
 

@@ -126,8 +126,7 @@ public class CodedElementValidator {
 			detections.add(Detections.codedElem(c.location(), msg, vs, spec, null));
 		}
 		else if(!pass(e1) && pass(e2)){
-			System.out.println("Pass 1");
-			
+
 			if(hasEntry(e2)){
 				addEntry(detections,e2);
 			}
@@ -135,7 +134,7 @@ public class CodedElementValidator {
 			addEntry(detections,Detections.toAlert(e1));
 		}
 		else if(pass(e1) && !pass(e2)){
-			System.out.println("Pass 2");
+
 			if(hasEntry(e1)){
 				addEntry(detections,e1);
 			}
@@ -191,7 +190,6 @@ public class CodedElementValidator {
 											// explicit
 			return checkTriplet(s1, s2, vs, spec);
 		} catch (Exception e) {
-			System.out.println("ERR "+e.getMessage());
 			e.printStackTrace();
 			return Detections.bindingLocation(c.location(), e.getMessage(), vs, spec);
 		}

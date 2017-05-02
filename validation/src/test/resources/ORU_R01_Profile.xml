@@ -54,7 +54,8 @@
     </Datatype>
     <Datatype ID="HD" Name="HD" Description="Hierarchic Designator">
       <Component Name="Namespace ID" Datatype="ST" Usage="W" MinLength="1" MaxLength="*" ConfLength="20" />
-      <Component Name="Universal ID" Datatype="ST" Usage="R" MinLength="3" MaxLength="*" ConfLength="199" />
+      <Component Name="Universal ID" Datatype="ST" Usage="R" MinLength="3" MaxLength="*"  />
+      <!-- ConfLength="199" -->
       <Component Name="Universal ID Type" Datatype="ST" Usage="X" MinLength="1" MaxLength="6"/>
     </Datatype>
   </Datatypes>

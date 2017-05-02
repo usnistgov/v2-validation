@@ -122,7 +122,23 @@ public class Detections {
 				r.max(), value);
 		return entry(l, desc, category, classification);
 	}
-
+	
+	public static Entry lengthSpecErrorNF(Location l) {
+		String category = conf.getString("report.length-spec-error-no-valid.category");
+		String classification = conf.getString("report.length-spec-error-no-valid.classification");
+		String template = conf.getString("report.length-spec-error-no-valid.template");
+		String desc = String.format(template, l.prettyString());
+		return entry(l, desc, category, classification);
+	}
+	
+	public static Entry lengthSpecErrorXOR(Location l) {
+		String category = conf.getString("report.length-spec-error-xor.category");
+		String classification = conf.getString("report.length-spec-error-xor.classification");
+		String template = conf.getString("report.length-spec-error-xor.template");
+		String desc = String.format(template, l.prettyString());
+		return entry(l, desc, category, classification);
+	}
+	
 	/**
 	 * @return A report entry for the format detection
 	 */
@@ -303,7 +319,6 @@ public class Detections {
 		String category = conf.getString("report.coconstraint-success.category"); 
 		String classification = conf.getString("report.coconstraint-success.classification");
 		String template = conf.getString("report.coconstraint-success.template");
-		System.out.println();
 		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
 		return entry(e.location(), desc, category, classification);
 	}

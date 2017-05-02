@@ -3,7 +3,7 @@ package hl7.v2.validation.structure
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.{ EType, Location }
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.{ Range, XMLDeserializer }
+import hl7.v2.profile.{ Req, Usage, Range, XMLDeserializer }
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.ValueSet
 import org.specs2.Specification
@@ -148,7 +148,6 @@ trait NullValidationSpec
     val subcomp = query(context2,"4[1].1[1].3[2].4[1].2[1]")
     assert(comp.isSuccess)
     assert(subcomp.isSuccess)
-    
     val expected =
       List(
         Detections.length(comp.get.head.location, comp.get.head.req.length.get, Value.NULL),
@@ -204,7 +203,7 @@ trait NullValidationSpec
     val loc = Location(EType.Field, "The description", "The path", 1, 1)
     val lcs = Some( Range(2, "3") )
     val lcn = None
-    checkValue( Number("\"\""), lcs, loc) === Nil
+    checkValue( Number("\"\""), lcs, None, loc) === Nil
   }
   private def validate(m: String): Seq[Entry] = parse(m, mm) match {
     case Success(msg) =>

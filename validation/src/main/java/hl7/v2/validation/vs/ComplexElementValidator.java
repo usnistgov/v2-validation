@@ -43,8 +43,9 @@ public class ComplexElementValidator {
 		if (spec == null)
 			return null;
 
-		if (CodedElementValidator.isCodedElement(e))
+		if (CodedElementValidator.isCodedElement(e)){;
 			return CodedElementValidator.check(e, spec, library);
+		}
 		else {
 
 			if (spec.valueSetId().contains(":")) {

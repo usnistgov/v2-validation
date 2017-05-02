@@ -3,7 +3,7 @@ package hl7.v2.validation.structure
 import gov.nist.validation.report.Entry
 import hl7.v2.instance._
 import hl7.v2.instance.util.ValueFormatCheckers._
-import hl7.v2.profile.Range
+import hl7.v2.profile._
 import hl7.v2.validation.report.Detections
 import hl7.v2.profile.Usage
 
@@ -13,7 +13,7 @@ object ValueValidation extends EscapeSeqHandler  {
   def check(s: Simple)(implicit x: Separators): List[Entry] =
     s.req.usage match {
     case Usage.O => Detections.ousage(s.location, s.value.raw) :: Nil
-    case _       => checkValue(s.value, s.req.length, s.location)
+    case _       => checkValue(s.value, s.req.length, s.req.confRange, s.location)
   }
 
   /**
@@ -24,13 +24,13 @@ object ValueValidation extends EscapeSeqHandler  {
     * @param s  - The separators
     * @return The list of problem found
     */
-  def checkValue(v: Value, lc: Option[Range], l: Location)
+  def checkValue(v: Value, ln : Option[Range], conf : Option[Range], l: Location)
                 (implicit s: Separators): List[Entry] =
     v.isNull match {
       case true  => if(l.eType == EType.Field) //No check if the value is Null and the location is a Field
                       Nil 
-                    else checkFormat(l, v).toList ::: checkLength(l, v, lc).toList 
-      case false =>checkFormat(l, v).toList ::: checkLength(l, v, lc).toList
+                    else checkFormat(l, v).toList ::: checkLength(l, v, ln, conf).toList 
+      case false => checkFormat(l, v).toList ::: checkLength(l, v, ln, conf).toList
     }
 
   /**
@@ -41,14 +41,26 @@ object ValueValidation extends EscapeSeqHandler  {
     * @param s  - The separators
     * @return The error if any or None
     */
-  def checkLength(l: Location, v: Value, lc: Option[Range])
+  def checkLength(l: Location, v: Value, ln : Option[Range], conf : Option[Range])
                  (implicit s: Separators): Option[Entry] =
-    lc flatMap { range =>
-      val raw = unescape( v.raw )
-      if (range includes raw.length) None
-      else Some( Detections.length(l, range, raw))
+    ln match {
+      case Some(lr) => conf match {
+        case Some(c) => Some(Detections.lengthSpecErrorXOR(l))
+        case None => checkRange(l,v,ln)
+      }
+      case None => conf match {
+        case Some(c) => checkRange(l,v,conf)
+        case None => Some(Detections.lengthSpecErrorNF(l))
+      }
     }
-
+    
+    def checkRange(l: Location, v: Value, r : Option[Range])(implicit s: Separators): Option[Entry] =
+      r flatMap { range =>
+        val raw = unescape( v.raw )
+        if (range includes raw.length) None
+        else Some( Detections.length(l, range, raw))
+      }
+    
   /**
     * Checks the format including the presence of separators in the value
     * @param l - The location
