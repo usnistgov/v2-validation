@@ -138,6 +138,12 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="XMLElementNamingConvention">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-wyzA-WYZ_]+[a-zA-Z0-9_.-]*|[xX][a-ln-zA-LN-Z0-9_.-]+[a-zA-Z0-9_.-]*|[xX][mM][a-km-zA-KM-Z0-9_.-]+[a-zA-Z0-9_.-]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="UsageType">
 		<xs:annotation>
 			<xs:documentation>
@@ -299,7 +305,7 @@
 			<xs:documentation>Documents the characteristics of a grouping of HL7 segments within the context of a particular message or segment group.</xs:documentation>
 		</xs:annotation>
 		<xs:group ref="GroupStructure" minOccurs="1" maxOccurs="1"/>
-		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="ID" type="XMLElementNamingConvention" use="required"/>
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Usage" type="UsageType" use="required"/>
 		<xs:attributeGroup ref="RepeatableProperties"/>
