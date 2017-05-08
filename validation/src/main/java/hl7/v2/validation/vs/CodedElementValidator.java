@@ -8,7 +8,6 @@ import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.report.Detections;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import static hl7.v2.validation.vs.SimpleElementValidator.checkValueSet;
 
