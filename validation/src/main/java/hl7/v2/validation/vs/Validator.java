@@ -51,7 +51,7 @@ public class Validator {
     	Entry etr = null;
         if( e instanceof Simple)
             etr = SimpleElementValidator.check((Simple) e, spec, library);
-        else{
+        else if(e instanceof Complex){
         	List<Entry> l = ComplexElementValidator.check((Complex) e, spec, library);
         	if( l != null && l.size() > 0)
         		etr = l.get(0);
