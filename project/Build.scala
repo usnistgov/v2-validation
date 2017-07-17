@@ -25,11 +25,15 @@ object Build extends Build {
   // Modules
   //----------------------------------------------------------------------------
 
+    
+    
   lazy val profile = Project("hl7-v2-profile", file("profile"))
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
     .settings(libraryDependencies ++=
       compile(`xml-util`) ++
+      compile(scala_xml) ++
+      compile(sext) ++
       test(spec2))
 
   lazy val parser = Project("hl7-v2-parser", file("parser"))
@@ -50,6 +54,6 @@ object Build extends Build {
       Seq(file)
     }): _*)
     .settings(moduleSettings: _*)
-    .settings(libraryDependencies ++= compile(config) ++ compile(vreport))
+    .settings(libraryDependencies ++= compile(config) ++ compile(vreport) ++ compile(sext))
 
 }

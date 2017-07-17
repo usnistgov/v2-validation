@@ -57,19 +57,26 @@ trait DefaultParser extends Parser {
           (lg ::: acc._1, s)
       }
     }}
-
-  private def processGroup(gm: GM, stack: Stack)
-                          (implicit separators: Separators, ctr : Counter): (List[Group], Stack) = {
-
-    def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) =
-      s match {
-        case x::xs if isExpected(x, gm)  =>
-          val(children, ss) = processChildren( gm.structure, s)
+  
+  private def lookForward(gm: GM, l : Line) (implicit separators: Separators, ctr : Counter) = (gm.structure zipWithIndex) find { x => isExpected(l,x._1) } match {
+    case Some((m,i)) => Some(i)
+    case None => None
+  }
+  
+  private def processGroup(gm: GM, stack: Stack) (implicit separators: Separators, ctr : Counter): (List[Group], Stack) = {
+    
+    def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = {
+      if(s isEmpty) (acc, s) else
+      lookForward(gm,s.head) match {
+        case Some(index) => {
+          val(children, ss) = processChildren( gm.structure.takeRight(gm.structure.size - index), s)
           val g = Group( gm, i, children.reverse )
           loop( g::acc, ss , i +1)
-        case _ => (acc, s)
+        }
+        case None => (acc, s)
       }
-
+    }
+    
     loop(Nil, stack, 1)
   }
 
@@ -90,13 +97,18 @@ trait DefaultParser extends Parser {
     * @param s - The separators
     * @return A segment instance
     */
-  private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr : Counter) =
-    Segment(m, l._2, i, l._1)
+  private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr : Counter) = Segment(m, l._2, i, l._1)
 
-  private def isExpected( l: Line, m: GM ) = l._2 startsWith headName(m)
-
+//  private def isExpected( l: Line, m: GM ) = l._2 startsWith headName(m)
+  
+  private def isExpected(l: Line, m: GM): Boolean = !(m.structure find(isExpected(l,_))).isEmpty
   private def isExpected( l: Line, m: SM ) = l._2 startsWith m.ref.name
+  private def isExpected( l: Line, m: SGM): Boolean = m match {
+    case s : SM => isExpected(l, s)
+    case g : GM => isExpected(l, g)
+  }
 
+  
   /**
     * Returns the group head name
     * @param m - The group model
