@@ -30,6 +30,7 @@ object Build extends Build {
     .settings(moduleSettings: _*)
     .settings(libraryDependencies ++=
       compile(`xml-util`) ++
+      compile(sext) ++
       test(spec2))
 
   lazy val parser = Project("hl7-v2-parser", file("parser"))

@@ -12,7 +12,7 @@ object BuildSettings {
                             "HL7 v2xx messages and conformance profile",
     startYear            := Some(2013),
     //licenses             := Seq("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-    scalaVersion         := "2.10.4",
+    scalaVersion         := "2.11.5",
     resolvers            ++= Dependencies.resolutionRepos,
     scalacOptions        := Seq(
       "-encoding", "utf8",
@@ -33,11 +33,11 @@ object BuildSettings {
         publishMavenStyle := true,
         credentials       += Credentials(Path.userHome / ".nexusCredentials"),
         publishTo         := {
-          val nexus = "http://vm-070.nist.gov:8081/"
+          val nexus = "https://hit-dev.nist.gov:9001/"
           if (version.value.trim.endsWith("SNAPSHOT"))
-            Some("snapshots" at nexus + "nexus/content/repositories/snapshots")
+            Some("snapshots" at nexus + "repository/snapshots")
           else
-            Some("releases"  at nexus + "nexus/content/repositories/releases")
+            Some("releases"  at nexus + "repository/releases")
         }
       )
 
