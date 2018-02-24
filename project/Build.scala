@@ -30,6 +30,7 @@ object Build extends Build {
     .settings(moduleSettings: _*)
     .settings(libraryDependencies ++=
       compile(`xml-util`) ++
+      compile(scala_xml) ++
       compile(sext) ++
       test(spec2))
 

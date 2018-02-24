@@ -1,4 +1,6 @@
 package hl7.v2.profile
+import java.util.{ Arrays => JArrays, List => JList }
+import scala.collection.JavaConversions.seqAsJavaList
 
 /**
   * Trait representing a data type
@@ -48,7 +50,13 @@ case class Field( name: String, datatype: Datatype, req: Req )
   * @param reference - The position which defines the data type name to be used
   * @param map       - The mapping ( data type name -> data type id )
   */
-case class DynMapping( position: Int, reference: Option[String], secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] )
+
+case class DynMapping( position: Int, reference: Option[String], secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] ) {
+  def getDatatypes() : JList[Datatype] = {
+    seqAsJavaList( map.values.toSeq )    
+  }
+}
+
 
 /**
   * A segment
@@ -116,4 +124,9 @@ case class Profile(
     messages : Map[String, Message],
     segments : Map[String, Segment],
     datatypes: Map[String, Datatype]
-)
+) 
+{
+    def getMessage( id : String) = messages(id)
+}
+
+
