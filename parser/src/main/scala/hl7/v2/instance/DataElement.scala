@@ -88,6 +88,6 @@ object DataElement {
   /**
     * Regular expression to match an empty field
     */
-  private def emptyField(cs: Char, ss: Char) = s"(?:\\s*\\Q$cs\\E*\\s*$ss*\\s*)*"
+  private def emptyField(cs: Char, ss: Char) = s"(:?\\s|\\Q$cs\\E|\\Q$ss\\E)*"
 
 }
