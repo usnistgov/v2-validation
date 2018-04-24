@@ -17,7 +17,7 @@ object Dependencies {
   val `xml-util`     = "gov.nist"            %  "xml-util"    % "1.0.1-SNAPSHOT"
 
   val junit         = "junit"                 %   "junit"             %  "4.11"
-  val spec2         = "org.specs2"            %%  "specs2"            %  "2.3.11"
+  val spec2         = "org.specs2"            %%  "specs2"            %  "3.7"
   val scalaCheck    = "org.scalacheck"        %%  "scalacheck"        %  "1.11.3"
   val vreport       = "com.github.hl7-tools"  %   "validation-report" %  "1.0.0"
   

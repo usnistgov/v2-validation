@@ -11,16 +11,26 @@ import hl7.v2.instance.Query;
 import hl7.v2.instance.Simple;
 import hl7.v2.profile.BindingLocation;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.report.Detections;
+import hl7.v2.validation.report.ConfigurableDetections;
 
 /**
  * Module for validating complex element against a value set specification
  *
  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
  */
-public class ComplexElementValidator {
+public class ComplexElementValidator extends ConfigurableValidation {
 
-	public static List<Entry> listify(Entry e){
+	private SimpleElementValidator simpleElementValidator;
+	private CodedElementValidator codedElementValidator;
+	
+	public ComplexElementValidator(ConfigurableDetections detections, SimpleElementValidator simpleElementValidator) {
+		super(detections);
+		this.simpleElementValidator = simpleElementValidator;
+		this.codedElementValidator = new CodedElementValidator(detections, simpleElementValidator, true);
+		// TODO Auto-generated constructor stub
+	}
+
+	public  List<Entry> listify(Entry e){
 		List<Entry> detections = new ArrayList<Entry>();
 		detections.add(e);
 		return detections;
@@ -38,13 +48,13 @@ public class ComplexElementValidator {
 	 *            - The value set library to be used
 	 * @return A detection if a problem is found, null otherwise
 	 */
-	public static List<Entry> check(Complex e, ValueSetSpec spec,
+	public  List<Entry> check(Complex e, ValueSetSpec spec,
 			ValueSetLibrary library) {
 		if (spec == null)
 			return null;
 
 		if (CodedElementValidator.isCodedElement(e)){;
-			return CodedElementValidator.check(e, spec, library);
+			return codedElementValidator.check(e, spec, library);
 		}
 		else {
 
@@ -90,7 +100,7 @@ public class ComplexElementValidator {
 		}
 	}
 
-	private static List<Entry> checkXOR(Complex c, int p1, int p2, ValueSet vs,
+	private  List<Entry> checkXOR(Complex c, int p1, int p2, ValueSet vs,
 			ValueSetSpec spec) {
 		List<Entry> detections = new ArrayList<Entry>();
 		Entry e1 = checkPosition(c, p1, vs, spec);
@@ -113,11 +123,11 @@ public class ComplexElementValidator {
 		return detections; // No detection
 	}
 
-	private static Entry checkPosition(Complex c, int p, ValueSet vs,
+	private  Entry checkPosition(Complex c, int p, ValueSet vs,
 			ValueSetSpec spec) {
 		try {
 			Simple s1 = CodedElementValidator.query(c, p);
-			return SimpleElementValidator.checkValueSet(s1.location(), s1
+			return simpleElementValidator.checkValueSet(s1.location(), s1
 					.value().raw(), vs, spec);
 		} catch (Exception e) {
 			return Detections.bindingLocation(c.location(), e.getMessage(), vs, spec);

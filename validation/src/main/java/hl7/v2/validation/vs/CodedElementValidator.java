@@ -5,19 +5,27 @@ import hl7.v2.instance.*;
 import hl7.v2.profile.BindingLocation;
 import hl7.v2.profile.Datatype;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.report.Detections;
+import hl7.v2.validation.report.ConfigurableDetections;
 
 import java.util.ArrayList;
 import java.util.List;
-import static hl7.v2.validation.vs.SimpleElementValidator.checkValueSet;
 
 /**
  * Module providing coded element value set validation logic.
  *
  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
  */
-public class CodedElementValidator {
-
+public class CodedElementValidator extends ConfigurableValidation {
+	
+	SimpleElementValidator simpleElementValidator;
+	CodedElementValidatorM codedElementValidatorM;
+	
+	public CodedElementValidator(ConfigurableDetections detections, SimpleElementValidator simpleElementValidator, boolean M) {
+		super(detections);
+		this.simpleElementValidator = simpleElementValidator;
+		this.codedElementValidatorM = M ? new CodedElementValidatorM(detections, simpleElementValidator) : null;
+	}
+	
 	/**
 	 * @return True if the data type represent a coded element
 	 */
@@ -43,7 +51,7 @@ public class CodedElementValidator {
 				&& isCodedElement(((ComplexComponent) e).datatype());
 	}
 
-	public static List<Entry> listify(Entry e){
+	public  List<Entry> listify(Entry e){
 		
 		if(e instanceof TripletEntry)
 			return ((TripletEntry) e).asList();
@@ -55,14 +63,14 @@ public class CodedElementValidator {
 		
 	}
 	
-	public static List<Entry> check(Complex c, ValueSetSpec spec,
+	public  List<Entry> check(Complex c, ValueSetSpec spec,
 			ValueSetLibrary library) {
 		
 		if (!isCodedElement(c))
 			return null;
 
 		if (spec.valueSetId().contains(":")) {
-			return CodedElementValidatorM.checkMultiple(c, spec, library);
+			return codedElementValidatorM.checkMultiple(c, spec, library);
 		}
 
 		// Return a detection if the value set is excluded from the validation
@@ -101,7 +109,7 @@ public class CodedElementValidator {
 		}
 	}
 
-	private static List<Entry> checkXOR(Complex c, int p1, int p2, ValueSet vs,
+	private  List<Entry> checkXOR(Complex c, int p1, int p2, ValueSet vs,
 			ValueSetSpec spec) {
 		List<Entry> detections = new ArrayList<Entry>();
 		Entry e1 = checkPosition(c, p1, vs, spec);
@@ -144,7 +152,7 @@ public class CodedElementValidator {
 		return detections; 
 	}
 	
-	protected static void addEntry(List<Entry> l, Entry e){
+	protected  void addEntry(List<Entry> l, Entry e){
 		if(e != null){
 			if(e instanceof TripletEntry){
 				l.addAll(((TripletEntry) e).asList());
@@ -155,7 +163,7 @@ public class CodedElementValidator {
 		}
 	}
 	
-	protected static boolean hasEntry(Entry e){
+	protected  boolean hasEntry(Entry e){
 		if(e instanceof TripletEntry){
 			return ((TripletEntry) e).asList().size() > 0;
 		}
@@ -180,7 +188,7 @@ public class CodedElementValidator {
 		}
 	}
 
-	private static Entry checkPosition(Complex c, int p, ValueSet vs,
+	private  Entry checkPosition(Complex c, int p, ValueSet vs,
 			ValueSetSpec spec) {
 		try {
 			
@@ -197,11 +205,11 @@ public class CodedElementValidator {
 	/**
 	 * Checks the triplet and return a detection if any
 	 */
-	private static TripletEntry checkTriplet(Simple s1, Simple s2, ValueSet vs,
+	private  TripletEntry checkTriplet(Simple s1, Simple s2, ValueSet vs,
 			ValueSetSpec spec) {
 		TripletEntry te = new TripletEntry();
 		
-		Entry v = checkValueSet(s1.location(), s1.value().raw(), vs, spec);
+		Entry v = simpleElementValidator.checkValueSet(s1.location(), s1.value().raw(), vs, spec);
 		Entry c = null;
 		if(pass(v)){
 			c = checkCodeSys(s2, vs.getCodes(s1.value().raw()).get(0), vs, spec);
@@ -216,7 +224,7 @@ public class CodedElementValidator {
 	/**
 	 * Checks the code system and return a detection if any
 	 */
-	private static Entry checkCodeSys(Simple s, Code code, ValueSet vs,
+	private  Entry checkCodeSys(Simple s, Code code, ValueSet vs,
 			ValueSetSpec spec) {
 		if (s.value().raw().equals(code.codeSys()))
 			return null;
@@ -226,7 +234,7 @@ public class CodedElementValidator {
 		return Detections.codedElem(s.location(), msg, vs, spec, null);
 	}
 
-	public static Simple query(Complex c, int position) throws Exception {
+	public  static Simple query(Complex c, int position) throws Exception {
 		String details;
 		try {		
 			scala.collection.immutable.List<Simple> l = Query.queryAsSimple(c,

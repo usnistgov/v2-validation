@@ -5,7 +5,6 @@ import gov.nist.validation.report.{ Entry, Trace => GTrace }
 import hl7.v2.instance._
 import hl7.v2.instance.Query._
 import hl7.v2.validation.content.PredicateUsage.{ R, X }
-import hl7.v2.validation.report.Detections
 import hl7.v2.profile.{ Message => MM }
 import scala.collection.JavaConversions.seqAsJavaList
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,13 +13,15 @@ import expression._
 import hl7.v2.validation.vs.ValueSetLibrary
 import scala.util.{ Failure, Success, Try }
 import scala.util.control.Breaks._
+import hl7.v2.validation.report.ConfigurableDetections
+
 
 trait PatternFinder extends expression.Evaluator {
   
   implicit def valueSetLibrary: ValueSetLibrary
   
   def checkContexts(e: Element, c: List[Context], validator: (Element, Constraint) => Entry)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM): List[Entry] = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
     c.foldLeft(List[Entry]())({ (acc, context) =>
         checkContext(e,context,validator) ::: acc
     })
@@ -28,7 +29,7 @@ trait PatternFinder extends expression.Evaluator {
   
   
   def checkContext(e: Element, c: Context, validator: (Element, Constraint) => Entry)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM): List[Entry] = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
      query(e, c.contextPath) match {
       case Success(Nil) => missingContext(c,e)
       case Success(x)   => checkPatterns(x, c.Patterns,e, validator)
@@ -36,14 +37,14 @@ trait PatternFinder extends expression.Evaluator {
     }
   }
   
-  def missingContext(c : Context,e: Element): List[Entry] = {
+  def missingContext(c : Context,e: Element)(implicit Detections : ConfigurableDetections): List[Entry] = {
       c.Patterns.foldLeft(List[Entry]())({ (acc, p) =>
         acc ::: List[Entry](Detections.HLcontentErr(p.trigger.errorMessage,e))
       })
   }
   
   def checkPatterns( el: List[Element], pl: List[Pattern], root: Element, validator: (Element, Constraint) => Entry) (implicit s: Separators,
-    dtz: Option[TimeZone], model: MM): List[Entry] = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
     
     def loop( el: List[Element], pl: List[Pattern]): List[Entry] = {
       pl match {
@@ -56,7 +57,7 @@ trait PatternFinder extends expression.Evaluator {
   }
   
   def search(p : Pattern, el: List[Element], root: Element, validator: (Element, Constraint) => Entry)
-  (implicit s: Separators, dtz: Option[TimeZone], model: MM) : (List[Entry], List[Element]) = {
+  (implicit s: Separators, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator) : (List[Entry], List[Element]) = {
     
     def find(els: List[Element], exp: Expression): List[Element] = {
       els match {

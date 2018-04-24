@@ -6,6 +6,8 @@ import hl7.v2.profile.{BindingStrength, Req, Usage, ValueSetSpec}
 import hl7.v2.validation.report.Detections
 import CodeUsage.{E, P, R}
 import org.specs2.Specification
+import hl7.v2.validation.report.ConfigurableDetections
+import com.typesafe.config.ConfigFactory
 
 class SimpleElementValidatorSpec
   extends Specification  { def is = s2"""
@@ -85,7 +87,9 @@ class SimpleElementValidatorSpec
   def check(s: String, spec: String): Entry = {
     val x = simple(s, spec)
     val y = x.req.vsSpec match { case Nil => null case z::zs => z }
-    SimpleElementValidator.check(x, y, library)
+    implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
+    implicit val vsValidation = new SimpleElementValidator(Detections)
+    vsValidation.check(x, y, library)
   }
 
   private def simple(v: String, vsid: String): Simple =
