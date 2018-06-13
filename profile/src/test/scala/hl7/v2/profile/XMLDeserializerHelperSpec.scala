@@ -34,7 +34,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
 
   def dt = Seq (
       <Datatype ID="i1" Name="N1" Description="xx"/>
-      -> Primitive("i1", "N1", "xx"),
+      -> Primitive("i1", "N1", "xx", ""),
     <Datatype ID="i2" Name="N2" Description="xx">{
         <Component
         Name="X"
@@ -49,7 +49,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       -> {
       val vs = ValueSetSpec("tt", None, None) :: Nil
       val r  = Req(1, "X", Usage.R, None, Some(Range(1,"*")), Some("2="), vs, Some(Range(1,"2")))
-      Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
+      Composite("i2", "N2", "xx", "", Component("X", "Y", r) :: Nil )
     }
   ) map ( t => XMLDeserializerHelper.datatype( t._1 ) === t._2 )
 
@@ -117,6 +117,6 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     r
   }
 
-  implicit val dtMap = Map( "Y" -> Primitive("Y", "Y", "Y desc") )
+  implicit val dtMap = Map( "Y" -> Primitive("Y", "Y", "Y desc", "") )
 
 }

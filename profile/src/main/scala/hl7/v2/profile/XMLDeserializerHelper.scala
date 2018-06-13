@@ -123,10 +123,11 @@ object XMLDeserializerHelper {
     val id = e.attribute("ID")
     val name = e.attribute("Name")
     val desc = e.attribute("Description")
+    val vers = e.attribute("Version")
     val cs = e.getChildElements("Component")
     val comps = for (i <- 0 until cs.size) yield component(i + 1, cs.get(i))
-    if (comps.size == 0) Primitive(id, name, desc)
-    else Composite(id, name, desc, comps.toList)
+    if (comps.size == 0) Primitive(id, name, desc, vers)
+    else Composite(id, name, desc, vers, comps.toList)
   }
 
   /**
