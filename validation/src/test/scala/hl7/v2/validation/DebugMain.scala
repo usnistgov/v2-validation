@@ -17,7 +17,7 @@ import scala.collection.JavaConversions._
 import collection.mutable._
 
 object DebugMain extends App with DefaultParser {
-  import sext._
+//  import sext._
  
 //  val xml = getClass.getResourceAsStream("/debug/Profile.xml")
 //  val ctx = getClass.getResourceAsStream("/debug/Constraints.xml")
