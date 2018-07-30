@@ -9,17 +9,18 @@ sealed trait Datatype {
   def id: String
   def name: String
   def desc: String
+  def version: String
 }
 
 /**
   * A primitive data type
   */
-case class Varies(id: String, name: String, desc: String, referenceValue1 : Option[String],  referenceValue2 : Option[String]) extends Datatype
+case class Varies(id: String, name: String, desc: String, version : String, referenceValue1 : Option[String],  referenceValue2 : Option[String]) extends Datatype
 
 /**
   * A primitive data type
   */
-case class Primitive( id: String, name: String, desc: String ) extends Datatype
+case class Primitive( id: String, name: String, desc: String, version : String) extends Datatype
 
 /**
   * A composite data type
@@ -28,6 +29,7 @@ case class Composite(
     id: String,
     name: String,
     desc: String,
+    version : String,
     components: List[Component]
 ) extends Datatype {
 
