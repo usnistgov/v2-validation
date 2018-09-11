@@ -84,7 +84,7 @@ trait DefaultParser extends Parser {
       }
 
   private def lookFor(gm: GM, l: Line, ambiguous: Boolean)(implicit separators: Separators, ctr: Counter): Option[Int] = {
-    if (ambiguous)
+    if (!ambiguous)
       if (isHead(l, gm)) Some(0)
       else None
     else forwardLooking(gm, l)

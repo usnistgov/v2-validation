@@ -30,6 +30,12 @@ object Failures extends EscapeSeqHandler {
     val reasons = Reason( c.location, s"$path is missing"):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
+  
+  def formatCheck(c: Element, e: StringFormat): Fail = {
+    val path    = s"${c.location.path}.${e.path}"
+    val reasons = Reason( c.location, s"$path is not conform to ${e.format.toString()} string format"):: Nil
+    Fail( Trace( e, reasons ) :: Nil )
+  }
 
   /**
     * Creates and returns a plain text failure stack traces

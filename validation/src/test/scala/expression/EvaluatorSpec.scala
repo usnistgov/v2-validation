@@ -148,9 +148,12 @@ trait EvaluatorSpec
       NOT should fail if the underlining expression pass                            $notFail
 
     PluginSpec
-      Plugin execution should be inconclusive if an exception is raised when evaluation the assertion $pluginInconclusive
-      Plugin execution should pass if the assertion evaluation is true       $pluginPass
-      Plugin execution should fail if the assertion evaluation is false      $pluginFail
-
+      Plugin execution should be inconclusive if an exception is raised when evaluation the assertion   $pluginInconclusive
+      Plugin execution should pass if the assertion evaluation is true                                  $pluginPass
+      Plugin execution should fail if the assertion evaluation is false                                 $pluginFail
+      Plugin execution should pass if the assertion evaluation returns a NULL list                      $pluginCustomPassNull
+      Plugin execution should pass if the assertion evaluation returns an empty list                    $pluginCustomPassEmpty
+      Plugin execution should fail if the assertion evaluation returns non-empty list                   $pluginCustomPassEmpty
+      Plugin execution should be inconclusive if the implementation contains multiple matching methods  $pluginMulti
   """
 }

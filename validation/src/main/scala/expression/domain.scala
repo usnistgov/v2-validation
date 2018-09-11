@@ -45,3 +45,5 @@ case class SetId(path: String) extends Expression
 case class IZSetId(parent: String, element : String) extends Expression
 
 case class ValueSet(path: String, spec: ValueSetSpec) extends Expression
+
+case class StringFormat(path: String, format: StringType, atLeastOnce : Boolean = false) extends Expression

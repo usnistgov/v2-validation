@@ -40,6 +40,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "ValueSet"    => valueSet( e )
     case "isNULL"      => isNull( e )
     case "PlainCoConstraint" => plainCo( e )
+    case "StringFormat" => stringFormat( e )
     case _ => throw new Error(s"[Error] Unknown expression node $e")
   } 
 
@@ -126,6 +127,11 @@ object XMLDeserializer extends EscapeSeqHandler {
     val bl   = BindingLocation( e.attribute("BindingLocation") ).getOrElse(BindingLocation("1").get)
     val spec = ValueSetSpec( id, Some(bs), Some(bl) )
     ValueSet(e.attribute("Path"), spec)
+  }
+  
+  private def stringFormat(e: Element) = {
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    StringFormat(e.attribute("Path"), StringType.fromString(e.attribute("Format")), atLeastOnce)
   }
 
   private def isNull(e : Element) = isNULL( e.attribute("Path") )

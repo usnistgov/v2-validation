@@ -5,10 +5,11 @@ import hl7.v2.instance.Query._
 import hl7.v2.instance._
 import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
 import gov.nist.validation.report.Entry
-
+import collection.JavaConverters._
 import scala.util.{ Failure, Success, Try }
+import java.lang.reflect.Method
 
-trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
+trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormatValidatorUtil {
 
   /**
    * Evaluates the expression within the specified context
@@ -21,25 +22,26 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    */
   def eval(e: Expression, c: Element)(implicit l: ValueSetLibrary, s: Separators,
                                       t: Option[TimeZone], VSValidator : Validator): EvalResult = e match {
-    case x: Presence    => presence(x, c)
-    case x: PlainText   => plainText(x, c)
-    case x: Format      => format(x, c)
-    case x: NumberList  => numberList(x, c)
-    case x: StringList  => stringList(x, c)
-    case x: SimpleValue => simpleValue(x, c)
-    case x: PathValue   => pathValue(x, c)
-    case x: AND         => and(x, c)
-    case x: OR          => or(x, c)
-    case x: NOT         => not(x, c)
-    case x: XOR         => xor(x, c)
-    case x: IMPLY       => imply(x, c)
-    case x: EXIST       => exist(x, c)
-    case x: FORALL      => forall(x, c)
-    case x: Plugin      => plugin(x, c)
-    case x: SetId       => setId(x, c)
-    case x: IZSetId     => IZsetId(x, c)
-    case x: ValueSet    => valueSet(x, c)
-    case x: isNULL      => isNull(x, c)
+    case x: Presence     => presence(x, c)
+    case x: PlainText    => plainText(x, c)
+    case x: Format       => format(x, c)
+    case x: NumberList   => numberList(x, c)
+    case x: StringList   => stringList(x, c)
+    case x: SimpleValue  => simpleValue(x, c)
+    case x: PathValue    => pathValue(x, c)
+    case x: AND          => and(x, c)
+    case x: OR           => or(x, c)
+    case x: NOT          => not(x, c)
+    case x: XOR          => xor(x, c)
+    case x: IMPLY        => imply(x, c)
+    case x: EXIST        => exist(x, c)
+    case x: FORALL       => forall(x, c)
+    case x: Plugin       => plugin(x, c)
+    case x: SetId        => setId(x, c)
+    case x: IZSetId      => IZsetId(x, c)
+    case x: ValueSet     => valueSet(x, c)
+    case x: isNULL       => isNull(x, c)
+    case x: StringFormat => stringFormat(x, c)
   }
 
   /**
@@ -216,8 +218,10 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     eval(and.exp1, context) match {
       case i: Inconclusive => i
       case f: Fail         => Failures.and(and, context, f)
+      case f: FailPlugin         => Failures.and(and, context, Fail(f.stack))
       case Pass =>
         eval(and.exp2, context) match {
+          case f: FailPlugin         => Failures.and(and, context, Fail(f.stack))
           case f: Fail => Failures.and(and, context, f)
           case x       => x
         }
@@ -253,7 +257,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         case Presence(p)   => Failures.not(not, query(context,p).get.head)
         case _             => Failures.not(not, context)
       }
-      case f: Fail         => Pass
+      case Fail(_) | FailPlugin(_,_)        => Pass
       case i: Inconclusive => i
     }
   //x ⊕ y   =   (x ∨ y) ∧ ¬(x ∧ y)
@@ -279,6 +283,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           }
           case x => x
         }
+        case Nil => Inconclusive(Trace(e, Reason(null, "No assertion to test") :: Nil))
       }
     }
     loop(e.list toList) match {
@@ -299,6 +304,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Fail(tr) => Fail(tr)
           case x        => x
         }
+        case Nil => Inconclusive(Trace(e, Reason(null, "No assertion to test") :: Nil))
       }
     }
     loop(e.list toList) match {
@@ -355,6 +361,28 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       }
     }
 
+ 
+  def stringFormat(e : StringFormat, context: Element) = {
+    def checkList( list : List[(Element, Boolean)], atLeastOnce : Boolean) : (Boolean, List[Element]) = {
+        val (failed, success) = list.partition(_._2 == false)
+        val locations = list filter(x => x._2 == false) map (x => x._1)
+        
+        val pass : Boolean = failed.size == 0 || (success.size > 0 && atLeastOnce)
+        (pass, locations)
+    }
+    
+    queryAsSimple(context, e.path) match {
+      case Success(xs) => 
+        val stringCheck = for(elm <- xs) yield (elm, validateStringFormat(elm.value.raw, e.format))
+        checkList(stringCheck, e.atLeastOnce) match {
+          case (false, loc) => Failures.formatCheck(loc.head, e)
+          case (true, loc) => Pass
+        }
+      case Failure(f) => inconclusive(e, context.location, f)
+    }
+  }
+      
+  
   def toInt(s: String): Option[Int] = {
     try {
       Some(s.toInt)
@@ -398,10 +426,28 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def plugin(e: Plugin, context: Element)(implicit s: Separators): EvalResult =
     try {
       val clazz = Class.forName(e.clazz)
-      val method = clazz.getDeclaredMethod("assertion", classOf[Element])
-      method.invoke(clazz.newInstance(), context).asInstanceOf[Boolean] match {
-        case true  => Pass
-        case false => Fail(Nil)
+      
+      var methods = scala.collection.mutable.Map[String, Method]();
+      for(x <- clazz.getDeclaredMethods) {
+        if( x.getName.equals("assertion") ||  x.getName.equals("assertionWithCustomMessages")) 
+          methods += x.getName -> x
+      }
+      
+      if(methods.size == 0) throw new Exception("No method defined for plugin");
+      else if(methods.size > 1) throw new Exception("More than one method defined for plugin");
+      else {
+        if(methods.head._1.equals("assertion")){
+          methods.head._2.invoke(clazz.newInstance(), context).asInstanceOf[Boolean] match {
+            case true  => Pass
+            case false => Fail(Nil)
+          }
+        }
+        else {
+          methods.head._2.invoke(clazz.newInstance(), context).asInstanceOf[java.util.List[String]] match {
+            case null => Pass
+            case str : java.util.List[String] => if(str != null && !str.isEmpty()) FailPlugin(Nil, str.asScala.toList) else Pass
+          }
+        }
       }
     } catch { case f: Throwable => inconclusive(e, context.location, f) }
 

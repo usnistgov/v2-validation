@@ -209,21 +209,21 @@ public class ConfigurableDetections {
 	 */
 
 	public  Entry csFailure(Location errLoc, Element context,
-			Constraint c, List<Trace> stack, boolean cnt) {
+			Constraint c, String message, List<Trace> stack, boolean cnt) {
 		if (cnt)
-			return cntFailure(errLoc, context, c, stack);
+			return cntFailure(errLoc, context, c, message, stack);
 		else
-			return csFailure(errLoc, context, c, stack);
+			return csFailure(errLoc, context, c, message, stack);
 	}
 
 	public  Entry csFailure(Location errLoc, Element context,
-			Constraint c, List<Trace> stack) {
-		return csEntry("constraint-failure", errLoc, context, c, stack);
+			Constraint c, String message, List<Trace> stack) {
+		return csEntry("constraint-failure", errLoc, context, c, message, stack);
 	}
 
 	public  Entry cntFailure(Location errLoc, Element context,
-			Constraint c, List<Trace> stack) {
-		return csEntry("content-failure", errLoc, context, c, stack);
+			Constraint c, String message, List<Trace> stack) {
+		return csEntry("content-failure", errLoc, context, c, message, stack);
 	}
 
 	public  String constraintClassification(Classification c,String orElse){
@@ -289,22 +289,22 @@ public class ConfigurableDetections {
 	/**
 	 * @return A report entry for a constraint failure detection
 	 */
-	public  Entry csSpecError(Element context, Constraint c,
+	public  Entry csSpecError(Element context, Constraint c, String message,
 			List<Trace> stack) {
-		return csEntry("constraint-spec-error", context, c, stack);
+		return csEntry("constraint-spec-error", context, c, message, stack);
 	}
 
-	public  Entry cntSpecError(Element context, Constraint c,
+	public  Entry cntSpecError(Element context, Constraint c, String message,
 			List<Trace> stack) {
-		return csEntry("content-spec-error", context, c, stack);
+		return csEntry("content-spec-error", context, c, message, stack);
 	}
 
-	public  Entry csSpecError(Element context, Constraint c,
+	public  Entry csSpecError(Element context, Constraint c, String message,
 			List<Trace> stack, boolean cnt) {
 		if (cnt)
-			return cntSpecError(context, c, stack);
+			return cntSpecError(context, c, message, stack);
 		else
-			return csSpecError(context, c, stack);
+			return csSpecError(context, c, message, stack);
 	}
 	
 	public  Entry unresolvedField(String v1, String v2, Element e){
@@ -566,8 +566,27 @@ public class ConfigurableDetections {
 		return entry(errLoc, desc, category, classification, stack, metaData);
 	}
 	
+//	private  Entry csEntry(String configKey, Location errLoc,
+//			Element context, Constraint c, List<Trace> stack) {
+//		String category = conf.getString("report." + configKey + ".category");
+//		String classification = "";
+//		String orElse = conf.getString("report." + configKey + ".classification");
+//		if(c.classification().isDefined()){
+//			classification = constraintClassification(c.classification().get(),orElse);
+//		}
+//		else {
+//			classification = orElse;
+//		}
+//		String template = conf.getString("report." + configKey + ".template");
+//		String desc = String.format(template, c.id(), c.description());
+//		Map<String, Object> metaData = new HashMap<String, Object>();
+//		if (c.reference().isDefined())
+//			metaData.put("reference", c.reference().get());
+//		return entry(errLoc, desc, category, classification, stack, metaData);
+//	}
+	
 	private  Entry csEntry(String configKey, Location errLoc,
-			Element context, Constraint c, List<Trace> stack) {
+			Element context, Constraint c, String message, List<Trace> stack) {
 		String category = conf.getString("report." + configKey + ".category");
 		String classification = "";
 		String orElse = conf.getString("report." + configKey + ".classification");
@@ -578,7 +597,7 @@ public class ConfigurableDetections {
 			classification = orElse;
 		}
 		String template = conf.getString("report." + configKey + ".template");
-		String desc = String.format(template, c.id(), c.description());
+		String desc = String.format(template, c.id(), message);
 		Map<String, Object> metaData = new HashMap<String, Object>();
 		if (c.reference().isDefined())
 			metaData.put("reference", c.reference().get());
@@ -586,8 +605,8 @@ public class ConfigurableDetections {
 	}
 
 	private  Entry csEntry(String configKey, Element context,
-			Constraint c, List<Trace> stack) {
-		return csEntry(configKey, context.location(), context, c, stack);
+			Constraint c, String message, List<Trace> stack) {
+		return csEntry(configKey, context.location(), context, c, message, stack);
 	}
 
 	private  Entry vsEntry(String configKey, String desc, Location l,

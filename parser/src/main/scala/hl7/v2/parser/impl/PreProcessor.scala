@@ -5,6 +5,7 @@ import hl7.v2.profile.{Group => GM, Message => MM, SegRefOrGroup => SGM, Segment
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import hl7.v2.profile.Usage
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
@@ -37,7 +38,7 @@ object PreProcessor {
           val (unexpected, valid) = correct partition {
             seg => segNames.filter (seg._2 startsWith _) isEmpty
           }
-          PPR(valid, beforeMSH:::invalid, unexpected, separators, segNames.distinct.size != segNames.size)
+          PPR(valid, beforeMSH:::invalid, unexpected, separators, ambiguous(model.structure))
         }
     }
  
@@ -52,6 +53,21 @@ object PreProcessor {
       }
     }
     loop(models, Nil)
+  }
+  
+  
+  def ambiguous(models: List[SGM]) : Boolean = {
+    def ambiguous = false;
+    def loop(l : List[SGM], b : Boolean) : Boolean = {
+      l match {
+        case head::list => head match { 
+          case s : SM => loop(list, b)
+          case g : GM => loop(list, b || (g.structure.head.req.usage != Usage.R) || loop(g.structure, b))
+        }
+        case Nil => b
+      }
+    }
+    loop(models, ambiguous)
   }
   
 
