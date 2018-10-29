@@ -17,7 +17,7 @@ import java.io.Reader
  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
  */
 
-trait Validator { this: Parser with structure.Validator with content.Validator =>
+trait Validator { this: Parser with structure.Validator with content.Validator with vs.VsValidator =>
   val profile: Profile
 
   val valueSetLibrary: vs.ValueSetLibrary
@@ -43,7 +43,7 @@ trait Validator { this: Parser with structure.Validator with content.Validator =
             implicit val vsValidator: vs.Validator = new vs.Validator(detections)
             val structErrors = checkStructure(m)
             val contentErrors = checkContent(m)
-            val valueSetErrors = Future { vsValidator.checkValueSet(m, valueSetLibrary) }
+            val valueSetErrors = checkValueSets(m)
             for {
               r1 <- structErrors
               r2 <- contentErrors
@@ -62,10 +62,12 @@ trait Validator { this: Parser with structure.Validator with content.Validator =
 class HL7Validator(
   val profile: Profile,
   val valueSetLibrary: vs.ValueSetLibrary,
-  val conformanceContext: content.ConformanceContext) extends Validator
+  val conformanceContext: content.ConformanceContext,
+  val vsSpecification : vs.ValueSetSpecification) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
+    with vs.DefaultValueSetValidator
     with expression.DefaultEvaluator
 
 /**
@@ -76,10 +78,12 @@ class HL7Validator(
 class SyncHL7Validator(
   val profile: Profile,
   val valueSetLibrary: vs.ValueSetLibrary,
-  val conformanceContext: content.ConformanceContext) extends Validator
+  val conformanceContext: content.ConformanceContext,
+  val vsSpecification : vs.ValueSetSpecification) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
+    with vs.DefaultValueSetValidator
     with expression.DefaultEvaluator {
 
   import scala.concurrent.Await

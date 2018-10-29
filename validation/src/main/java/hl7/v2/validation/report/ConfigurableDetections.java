@@ -14,11 +14,14 @@ import gov.nist.validation.report.Trace;
 import gov.nist.validation.report.impl.EntryImpl;
 import hl7.v2.instance.Element;
 import hl7.v2.instance.Location;
+import hl7.v2.profile.BindingStrength;
 import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Classification;
 import hl7.v2.validation.content.Constraint;
 import hl7.v2.validation.content.Predicate;
+import hl7.v2.validation.vs.Extensibility;
+import hl7.v2.validation.vs.Stability;
 import hl7.v2.validation.vs.TripletEntry;
 import hl7.v2.validation.vs.ValueSet;
 
@@ -26,7 +29,59 @@ public class ConfigurableDetections {
 	
 	
 	Config conf = ConfigFactory.load();
+	/*
+	 * ========================================================================
+	 * Value Set Validation related entries
+	 * =======================================================================
+	 */
+	
+	public  Entry rvs(Location l, String value, String vs) {
+		String desc = vsTemplate3("pvs", value, l.prettyString(), vs);
+		return vsEntry("pvs", desc, l, null, null);
+	}
+	
+	public  Entry pvs(Location l, String value, String vs) {
+		String desc = vsTemplate3("pvs", value, l.prettyString(), vs);
+		return vsEntry("pvs", desc, l, null, null);
+	}
+	
+	public  Entry evs(Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+		String extKey = extensibility(ext);
+		String strKey = bindingStrength(strength);
+		String staKey = stability(stab);
+		
+		String desc = vsTemplate3("evs", value, l.prettyString(), vs);
+		String classification = vsClassification("evs", staKey, extKey, strKey);
+		String category = conf.getString("report.evs.category");
+		
+		return entry(l, desc, category, classification, null, null);
+	}
+	
+	public  Entry codeNotFound(Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+		String extKey = extensibility(ext);
+		String strKey = bindingStrength(strength);
+		String stbKey = stability(stab);
+		
+		String classification = vsClassification("code-not-found", extKey, stbKey, strKey);
+		String category = conf.getString("report.code-not-found.category");
 
+		String desc = vsTemplate3("code-not-found", value, l.prettyString(), vs);
+		
+		return entry(l, desc, category, classification, null, null);
+	}
+	
+	public  Entry codeNotFoundInvalidCodeSystem(Location l, String value, String vs, String expected, String found, Stability stab, Extensibility ext, BindingStrength strength) {
+		String extKey = extensibility(ext);
+		String strKey = bindingStrength(strength);
+		String stbKey = stability(stab);
+		
+		String classification = vsClassification("code-not-found-cs", extKey, stbKey, strKey);
+		String category = conf.getString("report.code-not-found-cs.category");
+
+		String desc = vsTemplate5("code-not-found-cs", value, found, l.prettyString(), vs, expected);
+		
+		return entry(l, desc, category, classification, null, null);
+	}
 	/*
 	 * ========================================================================
 	 * Structure related entries
@@ -417,6 +472,34 @@ public class ConfigurableDetections {
 		return vsEntry("evs", desc, l, vs, spec);
 	}
 
+	
+	public String bindingStrength(BindingStrength strength){
+		if(strength == null) return "default";
+		if(strength instanceof BindingStrength.R$) return "required";
+		if(strength instanceof BindingStrength.S$) return "suggested";
+		return "default";
+	}
+	
+	public String stability(Stability stability){
+		if(stability == null) return "default";
+		if(stability instanceof Stability.Static$) return "static";
+		if(stability instanceof Stability.Dynamic$) return "dynamic";
+		return "default";
+	}
+	
+	public String extensibility(Extensibility ext){
+		return ext == null ? "default" : ext instanceof Extensibility.Closed$ ? "closed" : "open";
+	}
+	
+	public String vsClassification(String configKey, String stab, String ext, String str){
+		String root = "report."+configKey+".classification";
+		String _default = conf.getString(root);
+		String _refined = conf.getString(root+"."+stab+"."+ext+"."+str);
+		
+		if(_refined == null || _refined.isEmpty()) return _default;
+		else return _refined;
+	}
+
 	/**
 	 * @return A report entry for a permitted VS code detection
 	 */
@@ -425,6 +508,9 @@ public class ConfigurableDetections {
 		String desc = vsTemplate3("pvs", value, l.prettyString(), vs.id());
 		return vsEntry("pvs", desc, l, vs, spec);
 	}
+	
+
+
 
 	/**
 	 * @return A report entry for a VS code not found detection
@@ -435,6 +521,7 @@ public class ConfigurableDetections {
 				vs.id());
 		return vsEntry("code-not-found", desc, l, vs, spec);
 	}
+	
 	
 	public  Entry codeNotFound(Location l, String value, String vs,
 			ValueSetSpec spec) {
@@ -633,6 +720,12 @@ public class ConfigurableDetections {
 		String template = conf.getString("report." + configKey + ".template");
 		return String.format(template, s1, s2, s3);
 	}
+	
+	private  String vsTemplate5(String configKey, String s1, String s2,
+			String s3, String s4, String s5) {
+		String template = conf.getString("report." + configKey + ".template");
+		return String.format(template, s1, s2, s3, s4, s5);
+	}
 
 	 class ValueSetDetails {
 
@@ -649,12 +742,10 @@ public class ConfigurableDetections {
 				this.extensibility = optionAsString(vs.extensibility());
 			}
 			if (spec != null) {
-				this.id = spec.valueSetId(); // Should be the same value as
-												// above
+				this.id = spec.valueSetId(); // Should be the same value as above
 				this.bindingStrength = optionAsString(spec.bindingStrength());
 				this.bindingLocation = optionAsString(spec.bindingLocation());
 			}
-
 		}
 
 		public String getId() {

@@ -6,7 +6,7 @@ import hl7.v2.validation.report.ConfigurableDetections
 import gov.nist.validation.report.Entry
 
 
-trait ValueSetValidator {
+trait VsValidator {
 
   implicit def valueSetLibrary: ValueSetLibrary
   def vsSpecification : ValueSetSpecification;
