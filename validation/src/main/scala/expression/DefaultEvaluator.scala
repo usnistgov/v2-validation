@@ -4,10 +4,10 @@ import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
 import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
-import Validator.checkValueSet
 import gov.nist.validation.report.Entry
-
+import collection.JavaConverters._
 import scala.util.{ Failure, Success, Try }
+import java.lang.reflect.Method
 
 trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
@@ -21,26 +21,27 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def eval(e: Expression, c: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      t: Option[TimeZone]): EvalResult = e match {
-    case x: Presence    => presence(x, c)
-    case x: PlainText   => plainText(x, c)
-    case x: Format      => format(x, c)
-    case x: NumberList  => numberList(x, c)
-    case x: StringList  => stringList(x, c)
-    case x: SimpleValue => simpleValue(x, c)
-    case x: PathValue   => pathValue(x, c)
-    case x: AND         => and(x, c)
-    case x: OR          => or(x, c)
-    case x: NOT         => not(x, c)
-    case x: XOR         => xor(x, c)
-    case x: IMPLY       => imply(x, c)
-    case x: EXIST       => exist(x, c)
-    case x: FORALL      => forall(x, c)
-    case x: Plugin      => plugin(x, c)
-    case x: SetId       => setId(x, c)
-    case x: IZSetId     => IZsetId(x, c)
-    case x: ValueSet    => valueSet(x, c)
-    case x: isNULL      => isNull(x, c)
+                                      t: Option[TimeZone], VSValidator : Validator): EvalResult = e match {
+    case x: Presence     => presence(x, c)
+    case x: PlainText    => plainText(x, c)
+    case x: Format       => format(x, c)
+    case x: NumberList   => numberList(x, c)
+    case x: StringList   => stringList(x, c)
+    case x: SimpleValue  => simpleValue(x, c)
+    case x: PathValue    => pathValue(x, c)
+    case x: AND          => and(x, c)
+    case x: OR           => or(x, c)
+    case x: NOT          => not(x, c)
+    case x: XOR          => xor(x, c)
+    case x: IMPLY        => imply(x, c)
+    case x: EXIST        => exist(x, c)
+    case x: FORALL       => forall(x, c)
+    case x: Plugin       => plugin(x, c)
+    case x: SetId        => setId(x, c)
+    case x: IZSetId      => IZsetId(x, c)
+    case x: ValueSet     => valueSet(x, c)
+    case x: isNULL       => isNull(x, c)
+    case x: StringFormat => stringFormat(x, c)
   }
 
   /**
@@ -65,9 +66,16 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def plainText(p: PlainText, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, p.path) match {
       case Success(ls) =>
-        ls filter (x => notEqual(x, p.text, p.ignoreCase)) match {
-          case Nil => Pass
-          case xs  => if (p.atLeastOnce && (xs.size != ls.size)) Pass else Failures.plainText(p, xs)
+        ls match {
+          case Nil => p.notPresentBehavior.toUpperCase() match {
+            case "FAIL" => Failures.plainTextNoElm(p, context)
+            case "INCONCLUSIVE" => Failures.plainTextNoElmInc(p, context)
+            case _ => Pass
+          }
+          case list => list filter (x => notEqual(x, p.text, p.ignoreCase)) match {
+            case Nil => Pass
+            case xs  => if (p.atLeastOnce && (xs.size != list.size)) Pass else Failures.plainText(p, xs)
+          }
         }
       case Failure(e) => inconclusive(p, context.location, e)
     }
@@ -174,12 +182,12 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param context - The context
    * @return The result of the evaluation
    */
-  def valueSet(vs: ValueSet, context: Element)(implicit l: ValueSetLibrary): EvalResult =
+  def valueSet(vs: ValueSet, context: Element)(implicit l: ValueSetLibrary, VSValidator : Validator): EvalResult =
     query(context, vs.path) match {
       case Failure(e)   => inconclusive(vs, context.location, e)
       case Success(Nil) => Pass
       case Success(x :: Nil) =>
-        val r = checkValueSet(x, vs.spec, l)   
+        val r = VSValidator.checkValueSet(x, vs.spec, l)   
         if (isVSViolated(r)) Failures.valueSet(vs, r) else Pass
       case Success(xs) =>
         val msg = "Path resolution returned more than one element"
@@ -213,12 +221,14 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def and(and: AND, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone]): EvalResult =
+                                      dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
       case f: Fail         => Failures.and(and, context, f)
+      case f: FailPlugin         => Failures.and(and, context, Fail(f.stack))
       case Pass =>
         eval(and.exp2, context) match {
+          case f: FailPlugin         => Failures.and(and, context, Fail(f.stack))
           case f: Fail => Failures.and(and, context, f)
           case x       => x
         }
@@ -231,7 +241,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def or(or: OR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                   dtz: Option[TimeZone]): EvalResult =
+                                   dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
     eval(or.exp1, context) match {
       case f1: Fail =>
         eval(or.exp2, context) match {
@@ -248,26 +258,26 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def not(not: NOT, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone]): EvalResult =
+                                      dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
     eval(not.exp, context) match {
       case Pass            => not.exp match {
         case Presence(p)   => Failures.not(not, query(context,p).get.head)
         case _             => Failures.not(not, context)
       }
-      case f: Fail         => Pass
+      case Fail(_) | FailPlugin(_,_)        => Pass
       case i: Inconclusive => i
     }
   //x ⊕ y   =   (x ∨ y) ∧ ¬(x ∧ y)
   def xor(xor: XOR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone]): EvalResult =
+                                      dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
     eval(AND(OR(xor.exp1, xor.exp2), NOT(AND(xor.exp1, xor.exp2))), context)
 
   def imply(e: IMPLY, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                        dtz: Option[TimeZone]): EvalResult =
+                                        dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
     eval(OR(NOT(e.exp1), e.exp2), context)
 
   def exist(e: EXIST, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                        dtz: Option[TimeZone]): EvalResult = {
+                                        dtz: Option[TimeZone], VSValidator : Validator): EvalResult = {
     def loop(expressions: List[Expression]): EvalResult = {
       expressions match {
         case x :: Nil => eval(x, context)
@@ -280,6 +290,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           }
           case x => x
         }
+        case Nil => Inconclusive(Trace(e, Reason(null, "No assertion to test") :: Nil))
       }
     }
     loop(e.list toList) match {
@@ -290,7 +301,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   }
 
   def forall(e: FORALL, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                          dtz: Option[TimeZone]): EvalResult = {
+                                          dtz: Option[TimeZone], VSValidator : Validator): EvalResult = {
 
     def loop(expressions: List[Expression]): EvalResult = {
       expressions match {
@@ -300,6 +311,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Fail(tr) => Fail(tr)
           case x        => x
         }
+        case Nil => Inconclusive(Trace(e, Reason(null, "No assertion to test") :: Nil))
       }
     }
     loop(e.list toList) match {
@@ -356,6 +368,24 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       }
     }
 
+ 
+  def stringFormat(e : StringFormat, context: Element)(implicit s: Separators) = {
+    try {
+      val validator = StringType.fromString(e.format)
+      queryAsSimple(context, e.path) match {
+        case Success(xs) => xs.filter { elm =>  !validator.validate(elm.value.raw)} match {
+          case Nil => Pass
+          case ys  => Failures.stringFromat(e, ys)
+        }
+        case Failure(f) => inconclusive(e, context.location, f)
+      }
+    }
+    catch {
+      case u : UnknownStringFormatException => inconclusive(e, context.location, u.getMessage)
+    }    
+  }
+      
+  
   def toInt(s: String): Option[Int] = {
     try {
       Some(s.toInt)
@@ -399,10 +429,28 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def plugin(e: Plugin, context: Element)(implicit s: Separators): EvalResult =
     try {
       val clazz = Class.forName(e.clazz)
-      val method = clazz.getDeclaredMethod("assertion", classOf[Element])
-      method.invoke(clazz.newInstance(), context).asInstanceOf[Boolean] match {
-        case true  => Pass
-        case false => Fail(Nil)
+      
+      var methods = scala.collection.mutable.Map[String, Method]();
+      for(x <- clazz.getDeclaredMethods) {
+        if( x.getName.equals("assertion") ||  x.getName.equals("assertionWithCustomMessages")) 
+          methods += x.getName -> x
+      }
+      
+      if(methods.size == 0) throw new Exception("No method defined for plugin");
+      else if(methods.size > 1) throw new Exception("More than one method defined for plugin");
+      else {
+        if(methods.head._1.equals("assertion")){
+          methods.head._2.invoke(clazz.newInstance(), context).asInstanceOf[Boolean] match {
+            case true  => Pass
+            case false => Fail(Nil)
+          }
+        }
+        else {
+          methods.head._2.invoke(clazz.newInstance(), context).asInstanceOf[java.util.List[String]] match {
+            case null => Pass
+            case str : java.util.List[String] => if(str != null && !str.isEmpty()) FailPlugin(Nil, str.asScala.toList) else Pass
+          }
+        }
       }
     } catch { case f: Throwable => inconclusive(e, context.location, f) }
 
@@ -443,6 +491,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    */
   private def inconclusive(e: Expression, l: Location, m: String): Inconclusive =
     Inconclusive(Trace(e, Reason(l, m) :: Nil))
+    
 
   /**
    * Creates an inconclusive result from a throwable

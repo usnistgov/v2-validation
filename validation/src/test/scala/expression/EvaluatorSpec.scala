@@ -17,6 +17,7 @@ trait EvaluatorSpec
   with IMPLYSpec
   with FORALLSpec
   with EXISTSpec
+  with StringFormatSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -31,18 +32,21 @@ trait EvaluatorSpec
       Presence should pass if the path is populated                                 $presencePathPopulated
       Presence should fail if the path is not populated                             $presencePathNotPopulated
 
-    PlainText  expression evaluation specifications
+    PlainTextSpec
       PlainText evaluation should succeed if the path is not populated              $plainTextPathNotPopulated
       PlainText evaluation should be inconclusive if the path is complex            $plainTextPathComplex
       PlainText evaluation should be inconclusive if the path is invalid            $plainTextPathInvalid
       PlainText evaluation should be inconclusive if the path is unreachable        $plainTextPathUnreachable
-      PlainText should pass if the values are the same                              $plainTextSameValue
-      PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
-      PlainText should fail if the values are different                             $plainTextDifferentValue
-      PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
+      PlainText evaluation should pass if the values are the same                              $plainTextSameValue
+      PlainText evaluation should pass if the values are the same by ignoring the case         $plainTextSameValueIC
+      PlainText evaluation should fail if the values are different                             $plainTextDifferentValue
+      PlainText evaluation should fail for same values in different case when case not ignored $plainTextSameValueCNI
       If the path is valued to multiple elements
-        PlainText should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
-        PlainText should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+        PlainText evaluation should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
+        PlainText evaluation should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+      PlainText evaluation should fail If not present behavior is FAIL and no element is found  $plainTextNoElmFAIL
+      PlainText evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $plainTextNoElmINC
+      PlainText evaluation should pass If not present behavior is PASS and no element is found $plainTextNoElmPASS
         
     FormatSpec
       Format evaluation should succeed if the path is not populated                 $formatPathNotPopulated
@@ -148,9 +152,19 @@ trait EvaluatorSpec
       NOT should fail if the underlining expression pass                            $notFail
 
     PluginSpec
-      Plugin execution should be inconclusive if an exception is raised when evaluation the assertion $pluginInconclusive
-      Plugin execution should pass if the assertion evaluation is true       $pluginPass
-      Plugin execution should fail if the assertion evaluation is false      $pluginFail
-
+      Plugin execution should be inconclusive if an exception is raised when evaluation the assertion   $pluginInconclusive
+      Plugin execution should pass if the assertion evaluation is true                                  $pluginPass
+      Plugin execution should fail if the assertion evaluation is false                                 $pluginFail
+      Plugin execution should pass if the assertion evaluation returns a NULL list                      $pluginCustomPassNull
+      Plugin execution should pass if the assertion evaluation returns an empty list                    $pluginCustomPassEmpty
+      Plugin execution should fail if the assertion evaluation returns non-empty list                   $pluginCustomPassEmpty
+      Plugin execution should be inconclusive if the implementation contains multiple matching methods  $pluginMulti
+    
+    StringFormatSpec
+      Expression should fail if a LOINC string is invalid $stringFormatLOINCInvalid
+      Expression should pass if a LOINC string is valid $stringFormatLOINCvalid
+      Expression should fail if a SNOMED string is invalid $stringFormatSNOMEDInvalid
+      Expression should pass if a SNOMED string is valid $stringFormatSNOMEDvalid
+      Expression should be inconclusive if a string format is unrecognized $stringFormatUnknown
   """
 }

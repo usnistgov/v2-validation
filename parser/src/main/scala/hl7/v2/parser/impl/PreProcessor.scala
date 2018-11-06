@@ -1,16 +1,17 @@
 package hl7.v2.parser.impl
 
 import hl7.v2.instance.Separators
-
+import hl7.v2.profile.{Group => GM, Message => MM, SegRefOrGroup => SGM, SegmentRef => SM}
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import hl7.v2.profile.Usage
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-case class PPR( valid: List[Line], invalid: List[Line], separators: Separators )
+case class PPR( valid: List[Line], invalid: List[Line], unexpected : List[Line], separators: Separators, ambiguous : Boolean )
 
 object PreProcessor {
 
@@ -25,17 +26,50 @@ object PreProcessor {
     *    2) MSH segment contains less than 9 characters
     *    3) A character is use twice as a separator
     */
-  def process(message: String): Try[PPR] =
+  def process(message: String, model : MM): Try[PPR] =
     splitOnMSH(message) match {
       case (beforeMSH, Nil) =>
         Failure( new Exception("No MSH Segment found in the message.") )
       case (beforeMSH, xs ) =>
         getSeparators( xs.head._2 ) map { separators =>
           implicit val fs = separators.fs
-          val (valid, invalid) = partition( xs )
-          PPR(valid, beforeMSH:::invalid, separators)
+          val segNames = messageSegNames(model.structure)
+          val (correct, invalid) = partition( xs )
+          val (unexpected, valid) = correct partition {
+            seg => segNames.filter (seg._2 startsWith _) isEmpty
+          }
+          PPR(valid, beforeMSH:::invalid, unexpected, separators, ambiguous(model.structure))
         }
     }
+ 
+  def messageSegNames(models: List[SGM]) : List[String] = {
+    def loop(l : List[SGM], names : List[String]) : List[String] = {
+      l match {
+        case head::list => head match { 
+          case s : SM => loop(list, s.ref.name::names)
+          case g : GM => loop(list, loop(g.structure, names))
+        }
+        case Nil => names
+      }
+    }
+    loop(models, Nil)
+  }
+  
+  
+  def ambiguous(models: List[SGM]) : Boolean = {
+    def ambiguous = false;
+    def loop(l : List[SGM], b : Boolean) : Boolean = {
+      l match {
+        case head::list => head match { 
+          case s : SM => loop(list, b)
+          case g : GM => loop(list, b || (g.structure.head.req.usage != Usage.R) || loop(g.structure, b))
+        }
+        case Nil => b
+      }
+    }
+    loop(models, ambiguous)
+  }
+  
 
   /**
     * Splits the message into lines and returns a pair of list of lines.

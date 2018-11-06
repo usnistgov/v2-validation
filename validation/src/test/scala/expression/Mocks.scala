@@ -3,11 +3,15 @@ package expression
 import hl7.v2.instance._
 import hl7.v2.profile.{Usage, Req}
 import hl7.v2.validation.vs.EmptyValueSetLibrary
+import hl7.v2.validation.vs.Validator
+import hl7.v2.validation.report.ConfigurableDetections
+import com.typesafe.config.ConfigFactory
 
 trait Mocks {
 
+  implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
+  implicit val vsValidator = new Validator(Detections);
   implicit val defaultValueSetLibrary = EmptyValueSetLibrary.getInstance()
-
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
 
   implicit val dtz = Some( TimeZone("+0000") )
@@ -30,6 +34,8 @@ trait Mocks {
   val s1  = S( 5, 1, Number("51") )
   val s2  = S( 5, 2, Text("52")   )
   val s3  = S( 5, 3, Number("S53"))
+  val s_LOINC  = S( 1, 1, Text("90423-5"))
+  val s_SNOMED  = S( 1, 1, Text("119202000"))
 
   def c1Children = List(
     S(1, 1, Text("S11")) , S(1, 2, Text("S12")) , S(1, 3, Text("S13")),

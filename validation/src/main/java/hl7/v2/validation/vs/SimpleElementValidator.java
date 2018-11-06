@@ -4,16 +4,21 @@ import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Location;
 import hl7.v2.instance.Simple;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.report.Detections;
+import hl7.v2.validation.report.ConfigurableDetections;
 
 /**
  * Module for validating simple element against a value set specification
  *
  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
  */
-public class SimpleElementValidator {
+public class SimpleElementValidator extends ConfigurableValidation {
 
-    /**
+    public SimpleElementValidator(ConfigurableDetections detections) {
+		super(detections);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
      * Checks the simple element against the value set specification
      * and returns a detection if a problem is found, null otherwise
      * @param e       - The simple element to be validated
@@ -21,7 +26,7 @@ public class SimpleElementValidator {
      * @param library - The value set library to be used
      * @return A detection if a problem is found, null otherwise
      */
-    public static Entry check(Simple e, ValueSetSpec spec,
+    public  Entry check(Simple e, ValueSetSpec spec,
                               ValueSetLibrary library) {
         if( e.value().isNull() )
             return null;
@@ -37,7 +42,7 @@ public class SimpleElementValidator {
      * @param library  - The value set library
      * @return A detection if a problem is found, null otherwise
      */
-    public static Entry check(Location location, String value, ValueSetSpec spec,
+    public  Entry check(Location location, String value, ValueSetSpec spec,
                               ValueSetLibrary library) {
     	
         if( spec == null )
@@ -60,7 +65,7 @@ public class SimpleElementValidator {
         }
     }
 
-    public static Entry checkValueSet(Location location, String value, ValueSet vs,
+    public  Entry checkValueSet(Location location, String value, ValueSet vs,
                               ValueSetSpec spec) {
         if( vs.isEmpty() )
             return Detections.emptyVS(location, vs, spec);
@@ -74,7 +79,7 @@ public class SimpleElementValidator {
     /**
      * Checks the code and return a detection if any otherwise return null
      */
-    private static Entry checkCode(Location location, String value, ValueSet vs,
+    private  Entry checkCode(Location location, String value, ValueSet vs,
                                    ValueSetSpec spec) {
         java.util.List<Code> codes = vs.getCodes(value);
         int nbOfCodes = codes.size();
@@ -92,10 +97,10 @@ public class SimpleElementValidator {
     /**
      * Checks the code usage and return a detection if any otherwise return null
      */
-    private static Entry checkCodeUsage(Location location, String value, Code code,
+    private  Entry checkCodeUsage(Location location, String value, Code code,
                                         ValueSet vs, ValueSetSpec spec) {
     	 if( code.usage() instanceof CodeUsage.E$ )
-             return new EnhancedEntry(Detections.evs(location, value, vs, spec),true);
+             return new EnhancedEntry(Detections.evs(location, value, vs, spec),false);
          if( code.usage() instanceof CodeUsage.P$ )
              return new EnhancedEntry(Detections.pvs(location, value, vs, spec),true);
          return null;
@@ -104,7 +109,7 @@ public class SimpleElementValidator {
     /**
      * Returns true if the code check should be skipped
      */
-    private static boolean skipCodeCheck(String vsID, String value) {
+    private  boolean skipCodeCheck(String vsID, String value) {
         return vsID.matches("(HL7)?0396(_[a-zA-Z0-9]+)?") &&
                 (value.matches("HL7[0-9]{4}") || value.matches("99[a-zA-Z0-9]{3}"));
     }

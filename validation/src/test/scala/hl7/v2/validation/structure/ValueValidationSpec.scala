@@ -2,9 +2,10 @@ package hl7.v2.validation.structure
 
 import hl7.v2.instance._
 import hl7.v2.profile.Range
-import hl7.v2.validation.report.Detections
 import hl7.v2.validation.structure.ValueValidation._
 import org.specs2.Specification
+import hl7.v2.validation.report.ConfigurableDetections
+import com.typesafe.config.ConfigFactory
 
 class ValueValidationSpec extends Specification { def is = s2"""
 
@@ -25,6 +26,7 @@ class ValueValidationSpec extends Specification { def is = s2"""
 """
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
+  implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
   val loc = Location(EType.Field, "The description", "The path", 1, 1)
   val lcs = Some( Range(2, "3") )
   val rng = Some( Range(2, "3") )

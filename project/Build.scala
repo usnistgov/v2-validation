@@ -25,8 +25,6 @@ object Build extends Build {
   // Modules
   //----------------------------------------------------------------------------
 
-    
-    
   lazy val profile = Project("hl7-v2-profile", file("profile"))
     .settings(basicSettings: _*)
     .settings(moduleSettings: _*)
@@ -54,6 +52,6 @@ object Build extends Build {
       Seq(file)
     }): _*)
     .settings(moduleSettings: _*)
-    .settings(libraryDependencies ++= compile(config) ++ compile(vreport) ++ compile(sext))
+    .settings(libraryDependencies ++= compile(config) ++ compile(vreport) ++compile(stringUtils))
 
 }

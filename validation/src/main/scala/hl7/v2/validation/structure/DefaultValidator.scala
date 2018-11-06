@@ -5,10 +5,11 @@ import gov.nist.validation.report.Entry
 import hl7.v2.instance._
 import hl7.v2.profile
 import hl7.v2.profile.{Range, Usage}
-import hl7.v2.validation.report.Detections
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import hl7.v2.validation.report.ConfigurableDetections
+
 /**
   * Default implementation of the structure validation
   */
@@ -20,7 +21,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param m - The message to be checked
     * @return  - The list of problems
     */
-  def checkStructure(m: Message): Future[List[Entry]] = Future {
+  def checkStructure(m: Message)(implicit Detections : ConfigurableDetections): Future[List[Entry]] = Future {
     implicit val s = m.separators
     invalid( m.invalid ) ::: unexpected(m.unexpected) ::: check(m.asGroup)
   }
@@ -31,7 +32,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param e - The element to be checked
     * @return A list of problems found
     */
-  private def check(e: Element)(implicit sep: Separators): List[Entry] =
+  private def check(e: Element)(implicit sep: Separators, Detections : ConfigurableDetections): List[Entry] =
     e match {
       case s: Simple  => s match {
         case f : SimpleField => check(s)
@@ -49,7 +50,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param s   - The simple element to be checked
     * @return A list of problems found
     */
-  private def check(ss: Simple)(implicit s: Separators): List[Entry] =
+  private def check(ss: Simple)(implicit s: Separators, Detections : ConfigurableDetections): List[Entry] =
     ValueValidation.check(ss)
 
   /**
@@ -57,7 +58,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param c - The complex element to be checked
     * @return A list of problems found
     */
-  private def check(c: Complex)(implicit s: Separators): List[Entry] = {
+  private def check(c: Complex)(implicit s: Separators, Detections : ConfigurableDetections): List[Entry] = {
     // Sort the children by position
     val map = c.children.groupBy( x => x.position )
 
@@ -122,7 +123,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param dl - The default location
     * @return A list of report entries
     */
-  private def checkUsage(u: Usage, l: List[Element])(dl: Location): List[Entry] =
+  private def checkUsage(u: Usage, l: List[Element])(dl: Location)(implicit Detections : ConfigurableDetections): List[Entry] =
     (u, l) match {
       case (Usage.R,  Nil) => Detections.rusage(dl)  :: Nil
       case (Usage.RE, Nil) => Detections.reusage(dl) :: Nil
@@ -140,7 +141,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param range - The cardinality range
     * @return A list of report entries
     */
-  private def checkCardinality(l: List[Element], range: Range): List[Entry] =
+  private def checkCardinality(l: List[Element], range: Range)(implicit Detections : ConfigurableDetections): List[Entry] =
     if( l.isEmpty ) Nil 
     else {
       // The only reason this is needed is because of field repetition
@@ -155,17 +156,17 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     }
 
   private
-  def checkCardinality(l: List[Element], or: Option[Range]): List[Entry] =
+  def checkCardinality(l: List[Element], or: Option[Range])(implicit Detections : ConfigurableDetections) : List[Entry] =
     or match {
       case Some(r) => checkCardinality(l, r)
       case None    => Nil
     }
 
-  private def invalid(xs: List[Line]): List[Entry] = xs map { line =>
+  private def invalid(xs: List[Line])(implicit Detections : ConfigurableDetections): List[Entry] = xs map { line =>
     Detections.invalid(line.number, line.content)
   }
 
-  private def unexpected(xs: List[Line]): List[Entry] =
+  private def unexpected(xs: List[Line])(implicit Detections : ConfigurableDetections): List[Entry] =
     xs map { line =>
       Detections.unexpected(line.number, line.content)
     }

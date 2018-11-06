@@ -11,6 +11,7 @@ import hl7.v2.instance.Query._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
+import com.typesafe.config.ConfigFactory
 
 /**
   * Integration test for the structure validation
@@ -19,6 +20,7 @@ import scala.util.{Failure, Success}
 trait StructValidationSpec 
        extends Specification
        with Validator
+       with Helpers
        with DefaultParser 
      { def is = s2"""
 
@@ -222,7 +224,7 @@ trait StructValidationSpec
     validate(m) must containTheSameElementsAs( expected )
   }
 
-  private def validate(m: String): Seq[Entry] = parse(m, mm) match {
+  private def validate(m: String)(implicit Detections : ConfigurableDetections): Seq[Entry] = parse(m, mm) match {
     case Success(msg) =>
       Await.result( checkStructure(msg) , Duration(2, "seconds"))
     case Failure(e) => throw e
