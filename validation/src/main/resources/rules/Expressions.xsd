@@ -97,6 +97,26 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
+	<xs:simpleType name="BehaviorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FAIL">
+				<xs:annotation>
+					<xs:documentation>Failure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PASS">
+				<xs:annotation>
+					<xs:documentation>Success</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INCONCLUSIVE">
+				<xs:annotation>
+					<xs:documentation>Inconclusive</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	
 	<!-- ============================================================================================================= 
 		========================= Generic Expressions ======================================= 
 		============================================================================================================= -->
@@ -124,6 +144,13 @@
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Text" type="NonEmptyString" use="required" />
 		<xs:attribute name="IgnoreCase" type="xs:boolean" use="optional" />
+		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
+	</xs:complexType>
+	
+	<xs:complexType name="StringFormatType">
+		<xs:attribute name="Path" type="PathType" use="required" />
+		<xs:attribute name="Format" type="NonEmptyString" use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 	</xs:complexType>
 	
@@ -218,6 +245,8 @@
 			<xs:element name="Presence" type="PresenceType" minOccurs="1"
 				maxOccurs="1" />
 			<xs:element name="PathValue" type="PathValueType"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="StringFormat" type="StringFormatType"
 				minOccurs="1" maxOccurs="1" />
 			<xs:element name="PlainText" type="PlainTextType"
 				minOccurs="1" maxOccurs="1" />
