@@ -39,7 +39,7 @@ trait Validator { this: Parser with structure.Validator with content.Validator =
         parse(message, model) match {
           case Success(m) =>
             val defaultConfig = ConfigFactory.load();
-            implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).resolve().withFallback(defaultConfig));
+            implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).withFallback(defaultConfig).resolve());
             implicit val vsValidator: vs.Validator = new vs.Validator(detections)
             val structErrors = checkStructure(m)
             val contentErrors = checkContent(m)

@@ -100,7 +100,7 @@ public class SimpleElementValidator extends ConfigurableValidation {
     private  Entry checkCodeUsage(Location location, String value, Code code,
                                         ValueSet vs, ValueSetSpec spec) {
     	 if( code.usage() instanceof CodeUsage.E$ )
-             return new EnhancedEntry(Detections.evs(location, value, vs, spec),true);
+             return new EnhancedEntry(Detections.evs(location, value, vs, spec),false);
          if( code.usage() instanceof CodeUsage.P$ )
              return new EnhancedEntry(Detections.pvs(location, value, vs, spec),true);
          return null;

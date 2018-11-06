@@ -9,7 +9,7 @@ import collection.JavaConverters._
 import scala.util.{ Failure, Success, Try }
 import java.lang.reflect.Method
 
-trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormatValidatorUtil {
+trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
   /**
    * Evaluates the expression within the specified context
@@ -66,9 +66,16 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
   def plainText(p: PlainText, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, p.path) match {
       case Success(ls) =>
-        ls filter (x => notEqual(x, p.text, p.ignoreCase)) match {
-          case Nil => Pass
-          case xs  => if (p.atLeastOnce && (xs.size != ls.size)) Pass else Failures.plainText(p, xs)
+        ls match {
+          case Nil => p.notPresentBehavior.toUpperCase() match {
+            case "FAIL" => Failures.plainTextNoElm(p, context)
+            case "INCONCLUSIVE" => Failures.plainTextNoElmInc(p, context)
+            case _ => Pass
+          }
+          case list => list filter (x => notEqual(x, p.text, p.ignoreCase)) match {
+            case Nil => Pass
+            case xs  => if (p.atLeastOnce && (xs.size != list.size)) Pass else Failures.plainText(p, xs)
+          }
         }
       case Failure(e) => inconclusive(p, context.location, e)
     }
@@ -362,24 +369,20 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
     }
 
  
-  def stringFormat(e : StringFormat, context: Element) = {
-    def checkList( list : List[(Element, Boolean)], atLeastOnce : Boolean) : (Boolean, List[Element]) = {
-        val (failed, success) = list.partition(_._2 == false)
-        val locations = list filter(x => x._2 == false) map (x => x._1)
-        
-        val pass : Boolean = failed.size == 0 || (success.size > 0 && atLeastOnce)
-        (pass, locations)
-    }
-    
-    queryAsSimple(context, e.path) match {
-      case Success(xs) => 
-        val stringCheck = for(elm <- xs) yield (elm, validateStringFormat(elm.value.raw, e.format))
-        checkList(stringCheck, e.atLeastOnce) match {
-          case (false, loc) => Failures.formatCheck(loc.head, e)
-          case (true, loc) => Pass
+  def stringFormat(e : StringFormat, context: Element)(implicit s: Separators) = {
+    try {
+      val validator = StringType.fromString(e.format)
+      queryAsSimple(context, e.path) match {
+        case Success(xs) => xs.filter { elm =>  !validator.validate(elm.value.raw)} match {
+          case Nil => Pass
+          case ys  => Failures.stringFromat(e, ys)
         }
-      case Failure(f) => inconclusive(e, context.location, f)
+        case Failure(f) => inconclusive(e, context.location, f)
+      }
     }
+    catch {
+      case u : UnknownStringFormatException => inconclusive(e, context.location, u.getMessage)
+    }    
   }
       
   
@@ -488,6 +491,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   private def inconclusive(e: Expression, l: Location, m: String): Inconclusive =
     Inconclusive(Trace(e, Reason(l, m) :: Nil))
+    
 
   /**
    * Creates an inconclusive result from a throwable

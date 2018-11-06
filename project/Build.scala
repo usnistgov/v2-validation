@@ -52,6 +52,6 @@ object Build extends Build {
       Seq(file)
     }): _*)
     .settings(moduleSettings: _*)
-    .settings(libraryDependencies ++= compile(config) ++ compile(vreport))
+    .settings(libraryDependencies ++= compile(config) ++ compile(vreport) ++compile(stringUtils))
 
 }

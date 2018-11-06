@@ -60,7 +60,11 @@ object XMLDeserializer extends EscapeSeqHandler {
     val text = e.attribute("Text")
     val ignoreCase = toBoolean( e.attribute("IgnoreCase") )
     val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    PlainText( path , text, ignoreCase, atLeastOnce)
+    e.attribute("NotPresentBehavior").toUpperCase() match {
+      case "FAIL" => PlainText( path , text, ignoreCase, atLeastOnce, "FAIL")
+      case "INCONCLUSIVE" => PlainText( path , text, ignoreCase, atLeastOnce, "INCONCLUSIVE")
+      case _ => PlainText( path , text, ignoreCase, atLeastOnce)
+    }    
   }
   
     // Value Expressions
@@ -131,7 +135,7 @@ object XMLDeserializer extends EscapeSeqHandler {
   
   private def stringFormat(e: Element) = {
     val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    StringFormat(e.attribute("Path"), StringType.fromString(e.attribute("Format")), atLeastOnce)
+    StringFormat(e.attribute("Path"), e.attribute("Format"), atLeastOnce)
   }
 
   private def isNull(e : Element) = isNULL( e.attribute("Path") )

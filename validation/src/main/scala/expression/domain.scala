@@ -7,7 +7,7 @@ sealed trait Expression
 
 case class Presence( path: String ) extends Expression
 
-case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false) extends Expression
+case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
 
 case class Format( path: String, pattern: String, atLeastOnce : Boolean = false) extends Expression
 
@@ -46,4 +46,4 @@ case class IZSetId(parent: String, element : String) extends Expression
 
 case class ValueSet(path: String, spec: ValueSetSpec) extends Expression
 
-case class StringFormat(path: String, format: StringType, atLeastOnce : Boolean = false) extends Expression
+case class StringFormat(path: String, format: String, atLeastOnce : Boolean = false) extends Expression
