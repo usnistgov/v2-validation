@@ -4,7 +4,6 @@ import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
 import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
-import Validator.checkValueSet
 import gov.nist.validation.report.Entry
 
 import scala.util.{ Failure, Success, Try }

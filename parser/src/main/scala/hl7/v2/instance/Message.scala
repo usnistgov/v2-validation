@@ -17,7 +17,7 @@ case class Message(
     separators: Separators
 ) {
 
-  lazy val asGroup = Group( model.asGroup, 1, children)
+  lazy val asGroup : Group = Group( model.asGroup, 1, children)
 
   lazy val location = asGroup.location
 

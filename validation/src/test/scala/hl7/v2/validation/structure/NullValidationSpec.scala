@@ -24,6 +24,7 @@ trait NullValidationSpec
     extends Specification
     with Validator
     with DefaultParser
+    with Helpers
     with DefaultEvaluator {
   def is = s2"""
 

@@ -1,13 +1,12 @@
 package hl7.v2.validation.vs;
 
-import static hl7.v2.validation.vs.SimpleElementValidator.checkValueSet;
 import gov.nist.validation.report.Entry;
 import gov.nist.validation.report.Trace;
 import hl7.v2.instance.Complex;
 import hl7.v2.instance.Simple;
 import hl7.v2.profile.BindingLocation;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.report.Detections;
+import hl7.v2.validation.report.ConfigurableDetections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +16,12 @@ import java.util.Map;
 
 public class CodedElementValidatorM extends CodedElementValidator {
 
-	public static Map<String, ArrayList<String>> getVSID(ValueSetSpec spec,
+	public CodedElementValidatorM(ConfigurableDetections detections, SimpleElementValidator simpleElementValidator) {
+		super(detections, simpleElementValidator, false);
+		// TODO Auto-generated constructor stub
+	}
+
+	public  Map<String, ArrayList<String>> getVSID(ValueSetSpec spec,
 			ValueSetLibrary lib, String cs) throws ValueSetSpecException {
 
 		String[] bindings = spec.valueSetId().split(":");
@@ -55,7 +59,7 @@ public class CodedElementValidatorM extends CodedElementValidator {
 
 	}
 
-	public static String checkCodeSys(String vs, ValueSetLibrary library)
+	public  String checkCodeSys(String vs, ValueSetLibrary library)
 			throws ValueSetNotFoundException {
 
 		ValueSet v = library.get(vs);
@@ -70,7 +74,7 @@ public class CodedElementValidatorM extends CodedElementValidator {
 
 	}
 	
-	private static Entry checkPositionM(Complex c, int p, ValueSetSpec spec,
+	private  Entry checkPositionM(Complex c, int p, ValueSetSpec spec,
 			ValueSetLibrary library, Map<String, ArrayList<String>> bindings) {
 		try {
 			Simple s1 = query(c, p);
@@ -85,7 +89,7 @@ public class CodedElementValidatorM extends CodedElementValidator {
 					id += delim + binding;
 					delim = " or ";
 					ValueSet vs = library.get(binding);
-					Entry e = checkValueSet(s1.location(), s1.value().raw(), vs, spec);
+					Entry e = simpleElementValidator.checkValueSet(s1.location(), s1.value().raw(), vs, spec);
 					if(pass(e)){
 						return e;
 					}
@@ -103,7 +107,7 @@ public class CodedElementValidatorM extends CodedElementValidator {
 	}
 	
 	
-	private static List<Entry> checkXORM(Complex c, int p1, int p2, ValueSetLibrary library,
+	private  List<Entry> checkXORM(Complex c, int p1, int p2, ValueSetLibrary library,
 			ValueSetSpec spec, Map<String, ArrayList<String>> bindings) {
 		
 		List<Entry> detections = new ArrayList<Entry>();
@@ -153,7 +157,7 @@ public class CodedElementValidatorM extends CodedElementValidator {
 		return detections; 
 	}
 	
-	public static List<Entry> checkMultiple(Complex c, ValueSetSpec spec,
+	public List<Entry> checkMultiple(Complex c, ValueSetSpec spec,
 			ValueSetLibrary library) {
 		try {
 

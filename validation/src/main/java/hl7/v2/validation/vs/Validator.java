@@ -8,7 +8,7 @@ import hl7.v2.instance.Simple;
 import hl7.v2.profile.Req;
 import hl7.v2.profile.Usage;
 import hl7.v2.profile.ValueSetSpec;
-import hl7.v2.validation.report.Detections;
+import hl7.v2.validation.report.ConfigurableDetections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,18 @@ import java.util.List;
  *
  * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
  */
-public class Validator {
+public class Validator extends ConfigurableValidation {
 
-	public static List<Entry> listify(Entry e){
+	ComplexElementValidator complexElementValidator;
+	SimpleElementValidator simpleElementValidator;
+	
+	public Validator(ConfigurableDetections detections) {
+		super(detections);
+		this.simpleElementValidator = new SimpleElementValidator(detections);
+		this.complexElementValidator = new ComplexElementValidator(detections, this.simpleElementValidator);
+	}
+
+	public  List<Entry> listify(Entry e){
 		List<Entry> detections = new ArrayList<Entry>();
 		detections.add(e);
 		return detections;
@@ -32,7 +41,7 @@ public class Validator {
      * @param library - The value set library
      * @return The list of problem detected
      */
-    public static List<Entry> checkValueSet(Message message, ValueSetLibrary library) {
+    public  List<Entry> checkValueSet(Message message, ValueSetLibrary library) {
         List<Entry> result = new java.util.ArrayList<Entry>();
         checkValueSet(result, message.asGroup(), library);
         return result;
@@ -46,13 +55,12 @@ public class Validator {
      * @param library - The value set library
      * @return A report entry if a problem is found null otherwise
      */
-    public static Entry checkValueSet(Element e, ValueSetSpec spec,
-                                      ValueSetLibrary library) {
+    public  Entry checkValueSet(Element e, ValueSetSpec spec, ValueSetLibrary library) {
     	Entry etr = null;
         if( e instanceof Simple)
-            etr = SimpleElementValidator.check((Simple) e, spec, library);
+            etr = simpleElementValidator.check((Simple) e, spec, library);
         else if(e instanceof Complex){
-        	List<Entry> l = ComplexElementValidator.check((Complex) e, spec, library);
+        	List<Entry> l = complexElementValidator.check((Complex) e, spec, library);
         	if( l != null && l.size() > 0)
         		etr = l.get(0);
         }
@@ -67,7 +75,7 @@ public class Validator {
     }
     
 
-    private static void checkValueSet(List<Entry> result, Element e, ValueSetLibrary library) {
+    private  void checkValueSet(List<Entry> result, Element e, ValueSetLibrary library) {
     	ValueSetSpec spec = getSpec(e.req());
     	
     	if(spec != null && e.req().usage() instanceof Usage.O$ ){
@@ -76,25 +84,25 @@ public class Validator {
     	
     	
     	if( e instanceof Simple ) {
-            Entry x = SimpleElementValidator.check((Simple) e, getSpec(e.req()), library);
+            Entry x = simpleElementValidator.check((Simple) e, getSpec(e.req()), library);
             
             if( x != null ){
             	if(e.req().usage() instanceof Usage.O$)
         			result.add(Detections.toAlert(x));
         		else
-        			result.add(x);      
+        			result.add(checkExtensibility(spec, library, x));      
             }
             
         } 
     	else if(e instanceof Complex) {
-            List<Entry> l = ComplexElementValidator.check((Complex) e, getSpec(e.req()), library);
+            List<Entry> l = complexElementValidator.check((Complex) e, getSpec(e.req()), library);
             if(l != null)
             	for(Entry x : l){
 	            	if( x != null )
 	            		if(e.req().usage() instanceof Usage.O$)
 	            			result.add(Detections.toAlert(x));
 	            		else
-	            			result.add(x);      	
+	            			result.add(checkExtensibility(spec, library, x));      	
 	            }
             // Check the children
             scala.collection.Iterator<Element> it = ((Complex) e).children().iterator();
@@ -102,8 +110,24 @@ public class Validator {
                 checkValueSet(result, it.next(), library);
         }
     }
+    
+    public  Entry checkExtensibility(ValueSetSpec spec, ValueSetLibrary library, Entry e){
+    	try {
+            ValueSet vs = library.get( spec.valueSetId());
+            Extensibility ex = vs.extensibility().get();
+        	
+        	if(ex instanceof Extensibility.Open$){
+        		return Detections.toAlert(e);
+        	}
+        	else {
+        		return e;
+        	}
+        } catch (Exception exp) {
+            return e;
+        }
+    }
 
-    private static ValueSetSpec getSpec(Req req) {
+    private  ValueSetSpec getSpec(Req req) {
         return req.vsSpec().isEmpty() ? null : req.vsSpec().head();
     }
 }
