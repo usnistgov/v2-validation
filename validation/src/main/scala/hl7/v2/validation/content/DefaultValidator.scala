@@ -9,7 +9,7 @@ import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{ R, X }
 import hl7.v2.validation.report.Detections
 import hl7.v2.profile.{ Message => MM }
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConverters.seqAsJavaList
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
@@ -215,7 +215,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
       val reasons = t.reasons map { r =>
         s"[${r.location.line}, ${r.location.column}] ${r.message}"
       }
-      new GTrace(assertion, reasons)
+      new GTrace(assertion, seqAsJavaList(reasons))
     })
 
   private def approximativeErrorLocation(context: Element, stack: List[Trace]) =

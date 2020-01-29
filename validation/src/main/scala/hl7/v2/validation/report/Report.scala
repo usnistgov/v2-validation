@@ -4,7 +4,6 @@ import java.util.{HashMap => JHMap, List => JList, Map => JMap}
 
 import gov.nist.validation.report.Entry
 
-import scala.collection.JavaConversions.seqAsJavaList
 import scala.collection.JavaConverters._
 
 case class Report(

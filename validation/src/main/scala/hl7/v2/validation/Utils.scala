@@ -22,12 +22,14 @@ object Utils {
         val (et, pp)  = m.model.structure.filter( _.req == r ) match {
           case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
+          case _ => (null, null)
         }
-        e.location.copy(et, desc=r.description, path=pp, uidPath=s"$pp[1]")
+        e.location.copy(eType = et, desc=r.description, path=pp, uidPath=s"$pp[1]")
       case g: Group   =>
         val (et, pp)  = g.model.structure.filter( _.req == r ) match {
           case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
+          case _ => (null, null)
         }
         e.location.copy(et, desc=r.description, path=pp, uidPath=s"$pp[1]")
       case s: Segment =>

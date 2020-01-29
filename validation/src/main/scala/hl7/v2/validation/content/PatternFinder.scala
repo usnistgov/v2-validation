@@ -7,7 +7,7 @@ import hl7.v2.instance.Query._
 import hl7.v2.validation.content.PredicateUsage.{ R, X }
 import hl7.v2.validation.report.Detections
 import hl7.v2.profile.{ Message => MM }
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConverters.seqAsJavaList
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
@@ -32,7 +32,7 @@ trait PatternFinder extends expression.Evaluator {
      query(e, c.contextPath) match {
       case Success(Nil) => missingContext(c,e)
       case Success(x)   => checkPatterns(x, c.Patterns,e, validator)
-      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,err.getMessage,Presence(c.contextPath)), Nil))
+      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,err.getMessage,Presence(c.contextPath)), seqAsJavaList(Nil)))
     }
   }
   

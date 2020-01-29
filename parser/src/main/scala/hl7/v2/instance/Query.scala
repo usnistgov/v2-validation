@@ -45,7 +45,7 @@ object Query {
    * Convert a sequence of `Element' to a sequence of `Simple' element
    */
   private def asSimple ( l: List[Element] ): Try[List[Simple]] = Try {
-    l map { case s: Simple => s; case _ => throw new MatchError() }
+    l map { case s: Simple => s; case _ => throw new MatchError(()) }
   } orElse Failure( new Error("Path resolution returned at least one complex element") )
 
   /**

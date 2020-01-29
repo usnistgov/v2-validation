@@ -280,6 +280,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           }
           case x => x
         }
+        case Nil => Pass
       }
     }
     loop(e.list toList) match {
@@ -300,6 +301,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Fail(tr) => Fail(tr)
           case x        => x
         }
+        case Nil => Pass
       }
     }
     loop(e.list toList) match {
