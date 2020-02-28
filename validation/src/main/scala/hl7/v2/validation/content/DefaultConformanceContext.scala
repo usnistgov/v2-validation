@@ -8,8 +8,7 @@ import hl7.v2.instance._
 import hl7.v2.profile.{ Group => GM, Segment => SM, Datatype }
 import nist.xml.util.{ XOMDocumentBuilder, ClassPathResourceResolver }
 
-import scala.collection.{ JavaConverters, JavaConversions }
-import scala.collection.convert.Wrappers.JListWrapper
+import scala.collection.JavaConverters
 import scala.util.{ Success, Failure, Try }
 
 class VMap[T](

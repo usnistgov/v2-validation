@@ -7,6 +7,8 @@ import hl7.v2.instance.Text
 import org.specs2.Specification
 
 import scala.util.Success
+import expression.EvalResult.Inconclusive
+import expression.EvalResult.Fail
 
 trait PlainTextSpec extends Specification with Evaluator with Mocks {
 
@@ -16,19 +18,37 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
       PlainText evaluation should be inconclusive if the path is complex            $plainTextPathComplex
       PlainText evaluation should be inconclusive if the path is invalid            $plainTextPathInvalid
       PlainText evaluation should be inconclusive if the path is unreachable        $plainTextPathUnreachable
-      PlainText should pass if the values are the same                              $plainTextSameValue
-      PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
-      PlainText should fail if the values are different                             $plainTextDifferentValue
-      PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
+      PlainText evaluation should pass if the values are the same                              $plainTextSameValue
+      PlainText evaluation should pass if the values are the same by ignoring the case         $plainTextSameValueIC
+      PlainText evaluation should fail if the values are different                             $plainTextDifferentValue
+      PlainText evaluation should fail for same values in different case when case not ignored $plainTextSameValueCNI
       If the path is valued to multiple elements
-        PlainText should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
-        PlainText should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+        PlainText evaluation should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
+        PlainText evaluation should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+      PlainText evaluation should fail If not present behavior is FAIL and no element is found  $plainTextNoElmFAIL
+      PlainText evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $plainTextNoElmINC
+      PlainText evaluation should pass If not present behavior is PASS and no element is found $plainTextNoElmPASS
   */
   
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
+  
   def plainTextPathNotPopulated = Seq(true, false) map { b =>
     eval( PlainText("4[1]", "", b), c1 ) === Pass
+  }
+  
+  def plainTextNoElmFAIL = Seq(true, false) map { b =>
+    val p = PlainText("4[1]", "", b, b, "FAIL")
+    eval(p , c1 ) === Failures.plainTextNoElm(p, c1)
+  }
+ 
+  def plainTextNoElmINC = Seq(true, false) map { b =>
+    val p = PlainText("4[1]", "", b, b, "INCONCLUSIVE")
+    eval(p , c1 ) === Failures.plainTextNoElmInc(p, c1)
+  }
+  
+  def plainTextNoElmPASS = Seq(true, false) map { b =>
+    eval( PlainText("4[1]", "", b, b, "PASS"), c1 ) === Pass
   }
 
   // c1.2[3] is complex

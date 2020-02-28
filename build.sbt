@@ -25,7 +25,8 @@ lazy val profile = Project("hl7-v2-profile", file("profile"))
     `xml-util`,
     scala_xml,
     sext,
-    spec2))
+    spec2)
+  )
 
 // ============================ PARSER MODULE ============================
 
@@ -42,6 +43,9 @@ lazy val validation = Project("hl7-v2-validation", file("validation"))
     buildInfoPackage := "buildinfo",
     buildInfoObject := "Info",
     libraryDependencies ++= Seq(
-    typesafe_config,
-    vreport,
-    ))
+      typesafe_config,
+      stringUtils,
+      vreport,
+      json
+    )
+  )

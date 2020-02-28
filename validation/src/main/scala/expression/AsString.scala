@@ -24,6 +24,7 @@ object AsString {
     case e: IZSetId => IZsetId(e, context)
     case e: ValueSet => valueSet(e, context)
     case e: isNULL => isNull(e, context)
+    case e: StringFormat => stringFormat(e, context)
   }
 
   def condition(e: Expression, context: Element): String = e match {
@@ -46,6 +47,7 @@ object AsString {
     case e: IZSetId => IZsetId(e, context)
     case e: ValueSet => valueSetC(e, context)
     case e: isNULL => isNullC(e, context)
+    case e: StringFormat => stringFormatC(e, context)
   }
 
   private def path(c: Element, p: String) = s"${c.location.path}.$p"
@@ -115,7 +117,17 @@ object AsString {
 
   private def pathValueC(e: PathValue, c: Element) =
     s"${path(c, e.path1)} is ${e.operator} ${path(c, e.path2)}"
-
+    
+  private def stringFormat(e: StringFormat, c: Element) = {
+    val at = if (e.atLeastOnce) "At least one element from "
+    s"$at${path(c, e.path)} SHALL match ${e.format} format"
+  }
+  
+  private def stringFormatC(e: StringFormat, c: Element) = {
+     val at = if (e.atLeastOnce) "At least one element from "
+    s"$at${path(c, e.path)} matches ${e.format}"
+  }
+  
   private def and(e: AND, c: Element) =
     s"${expression(e.exp1, c)} AND ${expression(e.exp2, c)}"
 

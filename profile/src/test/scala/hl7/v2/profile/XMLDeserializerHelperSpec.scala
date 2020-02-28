@@ -13,7 +13,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     Deserialization of length should work as expected           $len
 """
 
-  implicit val dtMap = Map( "Y" -> Primitive("Y", "Y", "Y desc"))
+  implicit val dtMap = Map( "Y" -> Primitive("Y", "Y", "Y desc", "1.0"))
 
   def field = XMLDeserializerHelper.field( 1,
       <Field
@@ -35,9 +35,9 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
   }
 
   def dt = Seq (
-      <Datatype ID="i1" Name="N1" Description="xx"/>
-      -> Primitive("i1", "N1", "xx"),
-    <Datatype ID="i2" Name="N2" Description="xx">{
+      <Datatype ID="i1" Name="N1" Description="xx" Version="1.0"/>
+      -> Primitive("i1", "N1", "xx", "1.0"),
+    <Datatype ID="i2" Name="N2" Description="xx" Version="1.0">{
         <Component
         Name="X"
         Datatype="Y"
@@ -51,7 +51,7 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
       -> {
       val vs = ValueSetSpec("tt", None, None) :: Nil
       val r  = Req(1, "X", Usage.R, None, Some(Range(1,"*")), Some("2="), vs, Some(Range(1,"2")))
-      Composite("i2", "N2", "xx", Component("X", "Y", r) :: Nil )
+      Composite("i2", "N2", "xx", "1.0", Component("X", "Y", r) :: Nil )
     }
   ) map ( t => XMLDeserializerHelper.datatype( t._1 ) === t._2 )
 

@@ -96,9 +96,9 @@ object XMLSerializer {
     <Datatype ID={d.id}  Name={d.name} Description={d.desc}>
       {
         d match {
-          case Primitive(_, _, _)     =>
-          case Composite(_, _, _, xs) => xs map component
-          case Varies(_,_,_,_,_) =>
+          case Primitive(_, _, _, _)     =>
+          case Composite(_, _, _, _, xs) => xs map component
+          case Varies(_,_,_,_,_,_) =>
         }
       }
     </Datatype>

@@ -2,6 +2,7 @@ package hl7.v2.validation.vs;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import gov.nist.validation.report.Entry;
 import gov.nist.validation.report.Trace;
@@ -81,6 +82,20 @@ public class EnhancedEntry implements Entry {
 	public String toText() {
 		// TODO Auto-generated method stub
 		return e.toText();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EnhancedEntry that = (EnhancedEntry) o;
+		return ok == that.ok &&
+				e.equals(that.e);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(e, ok);
 	}
 
 	public boolean isOk() {

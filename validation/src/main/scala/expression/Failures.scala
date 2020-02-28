@@ -5,6 +5,7 @@ import hl7.v2.instance._
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.Query._
 import scala.util.{Failure, Success, Try}
+import expression.EvalResult.Inconclusive
 
 object Failures extends EscapeSeqHandler {
 
@@ -30,6 +31,12 @@ object Failures extends EscapeSeqHandler {
     val reasons = Reason( c.location, s"$path is missing"):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
+  
+  def formatCheck(c: Element, e: StringFormat): Fail = {
+    val path    = s"${c.location.path}.${e.path}"
+    val reasons = Reason( c.location, s"$path is not conform to ${e.format.toString()} string format"):: Nil
+    Fail( Trace( e, reasons ) :: Nil )
+  }
 
   /**
     * Creates and returns a plain text failure stack traces
@@ -41,7 +48,27 @@ object Failures extends EscapeSeqHandler {
     }
     Fail( Trace(e, reasons) :: Nil )
   }
+  
+  def plainTextNoElm(p: PlainText, context: Element) : Fail = {
+    val msg = s"Path ${p.path} resolution from ${context.location.prettyString} returned no element"
+    Fail( Trace(p, Reason(context.location, msg) :: Nil) :: Nil )
+  }
+  
+  def plainTextNoElmInc(p: PlainText, context: Element) : Inconclusive = {
+     val msg = s"Path ${p.path} resolution from ${context.location.prettyString} returned no element"
+     Inconclusive( Trace(p, Reason(context.location, msg) :: Nil) )
+  }
 
+    /**
+    * Creates and returns a plain text failure stack traces
+    */
+  def stringFromat(e: StringFormat, xs: List[Simple])(implicit s: Separators): Fail = {
+    val reasons = xs map { x =>
+      Reason(x.location, s"'${unescape(x.value.raw)}' does not match '${e.toString}'")
+    }
+    Fail( Trace(e, reasons) :: Nil )
+  }
+  
   /**
     * Creates and returns a format failure stack traces
     */

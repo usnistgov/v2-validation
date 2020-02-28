@@ -13,6 +13,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
 import hl7.v2.validation.report.ConfigurableDetections
+import expression.EvalResult.FailPlugin
+import expression.EvalResult.Failure
+import expression.EvalResult.Failure
 
 trait DefaultValidator extends Validator with expression.Evaluator with PatternFinder {
 
@@ -41,7 +44,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
     val pl : List[Predicate] = conformanceContext.predicatesFor(e)
     val ccl: List[CoConstraint] = conformanceContext.coConstraintsFor(e)
 
-    val r = pl.foldLeft(cl map { routeConstraint(e, _) }) { (acc, p) =>
+    val r = pl.foldLeft((cl map { routeConstraint(e, _) }).flatten) { (acc, p) =>
       check(e, p) ::: acc
     }
     
@@ -85,10 +88,10 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
   private def format(s: String) = s.replace(" ", "-").toLowerCase()
 
   private def routeConstraint(e: Element, c: Constraint)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : vs.Validator): Entry = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : vs.Validator): List[Entry] = {
     if (isCB(c)) {
       if (mustRoute(c.assertion))
-        checkCB(e, c, c.reference.get)
+        List(checkCB(e, c, c.reference.get))
       else
         check(e, c, true)
     } else
@@ -96,13 +99,17 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
   }
 
   private def check(e: Element, c: Constraint, content: Boolean)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : vs.Validator): Entry =
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : vs.Validator): List[Entry] =
     eval(c.assertion, e) match {
-      case Pass => Detections.csSuccess(e, c,content)
+      case Pass => List(Detections.csSuccess(e, c,content))
       case Fail(stack) => 
         val errLoc = approximativeErrorLocation(e, stack)
-          Detections.csFailure(errLoc, e, c, stackTrace(e, stack),content)
-      case Inconclusive(trace) => Detections.csSpecError(e, c, stackTrace(e, trace :: Nil),content)
+          List(Detections.csFailure(errLoc, e, c, c.description, stackTrace(e, stack),content))
+      case FailPlugin(stack, messages) => 
+        val errLoc = approximativeErrorLocation(e, stack)
+        for(message <- messages)
+        yield Detections.csFailure(errLoc, e, c, message, stackTrace(e, stack),content);  
+      case Inconclusive(trace) => List(Detections.csSpecError(e, c, c.description, stackTrace(e, trace :: Nil),content))
     }
   
    private def checkCC(e: Element, c: CoConstraint)(implicit s: Separators,
@@ -115,7 +122,8 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
     dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : vs.Validator): List[Entry] =
      eval(k, e) match {
       case Pass => checkCCList(e, str, a, k)
-      case Fail(stack) => Nil
+      case Fail(_) => Nil
+      case FailPlugin(_,_) => Nil
       case Inconclusive(trace) => Nil
     }
     
@@ -124,7 +132,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
     a.foldLeft(List[Entry]()){
        (acc, x) => eval(x, e) match {
          case Pass => Detections.coConstraintSuccess(e, str, k, x) :: acc
-         case Fail(stack) => Detections.coConstraintFailure(e, str, k, x) :: acc
+         case Fail(_) | FailPlugin(_,_) => Detections.coConstraintFailure(e, str, k, x) :: acc
          case Inconclusive(trace) => Detections.coConstraintFailure(e, str, k, x) :: acc
        }
      }
@@ -142,7 +150,10 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
         case Fail(stack) =>
           val errLoc = approximativeErrorLocation(e, stack)
           Detections.cntFailureCustom(errLoc, e, c, stackTrace(e, stack), format(ref.testDataCategorization), found, expected)
-        case Inconclusive(trace) => Detections.csSpecError(e, c, stackTrace(e, trace :: Nil))
+        case FailPlugin(stack,_) =>
+          val errLoc = approximativeErrorLocation(e, stack)
+          Detections.cntFailureCustom(errLoc, e, c, stackTrace(e, stack), format(ref.testDataCategorization), found, expected)
+        case Inconclusive(trace) => Detections.csSpecError(e, c, c.description, stackTrace(e, trace :: Nil))
       }
     }
 
@@ -151,7 +162,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
   private def check(e: Element, p: Predicate)(implicit s: Separators, dtz: Option[TimeZone], Detections : ConfigurableDetections, VSValidator : vs.Validator): List[Entry] =
     eval(p.condition, e) match {
       case Pass => checkUsage(e, p, p.trueUsage)
-      case Fail(stack) => checkUsage(e, p, p.falseUsage)
+      case Fail(_) | FailPlugin(_,_) => checkUsage(e, p, p.falseUsage)
       case Inconclusive(t) => Detections.predicateSpecErr(e, p, stackTrace(e, t :: Nil)) :: Nil
     }
 

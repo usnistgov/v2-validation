@@ -18,8 +18,12 @@ object EvalResult {
   /**
     * A failed expression evaluation result
     */
-  case class Fail( stack: List[Trace]) extends EvalResult
-
+  sealed trait Failure extends EvalResult {
+    def stack: List[Trace]
+  } 
+  
+  case class Fail( stack: List[Trace]) extends Failure
+  case class FailPlugin( stack: List[Trace], message : List[String]) extends Failure
   case class EvalData( result : EvalResult, found : String, expected : String)
   /**
     * An inconclusive expression evaluation result

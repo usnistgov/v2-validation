@@ -118,13 +118,13 @@
 			<xs:pattern value="\d+|\*"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="IntegerOrNA">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="\d+|NA"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="IntegerNAOrStar">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="\d+|\*|NA"/>
@@ -140,7 +140,9 @@
 
 	<xs:simpleType name="XMLElementNamingConvention">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[a-wyzA-WYZ_][a-zA-Z0-9_.-]*|[xX]|[xX][mM]|[xX][a-ln-zA-LN-Z0-9_.-][a-zA-Z0-9_.-]*|[xX][mM][a-km-zA-KM-Z0-9_.-][a-zA-Z0-9_.-]*"/>
+			<xs:pattern
+				value="[a-wyzA-WYZ_][a-zA-Z0-9_.-]*|[xX]|[xX][mM]|[xX][a-ln-zA-LN-Z0-9_.-][a-zA-Z0-9_.-]*|[xX][mM][a-km-zA-KM-Z0-9_.-][a-zA-Z0-9_.-]*"
+			/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -213,7 +215,7 @@
 	<!--  =============================================================================================================
 		    =========================         Complex Types Definitions           =======================================
 		    ============================================================================================================= -->
-	
+
 	<xs:complexType name="DynamicMappingType">
 		<xs:sequence>
 			<xs:element name="Mapping" minOccurs="1" maxOccurs="unbounded">
@@ -222,7 +224,8 @@
 						<xs:element name="Case" minOccurs="1" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:attribute name="Value" type="NonEmptyString" use="required"/>
-								<xs:attribute name="SecondValue" type="NonEmptyString" use="optional"/>
+								<xs:attribute name="SecondValue" type="NonEmptyString"
+									use="optional"/>
 								<xs:attribute name="Datatype" type="DatatypeNameType" use="required"/>
 								<!--FIXME Allow Usage, Cardinality, Length and Value Set -->
 							</xs:complexType>
@@ -273,6 +276,7 @@
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Label" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Description" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Version" type="NonEmptyString"/>
 	</xs:complexType>
 
 	<xs:complexType name="DatatypeType">
@@ -292,6 +296,7 @@
 		<xs:attribute name="Name" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Label" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="Description" type="NonEmptyString" use="required"/>
+		<xs:attribute name="Version" type="NonEmptyString"/>
 	</xs:complexType>
 
 	<xs:complexType name="SegmentRefType">

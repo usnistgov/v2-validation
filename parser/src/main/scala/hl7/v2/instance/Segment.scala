@@ -166,7 +166,7 @@ object Segment extends EscapeSeqHandler {
     }
   }
   
-  private def varies(v1 : Option[String], v2 : Option[String]) = Varies("varies","Variable","DNM",v1,v2)
+  private def varies(v1 : Option[String], v2 : Option[String]) = Varies("varies","Variable","DNM", "", v1,v2)
   
   private def getValue(vs: Array[(Int, String)], path : String)
   (implicit s: Separators) : Option[String] = {

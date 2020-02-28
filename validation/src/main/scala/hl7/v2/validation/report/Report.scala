@@ -16,7 +16,7 @@ case class Report(
     val map = new JHMap[String, JList[Entry]]()
     map.put("structure", seqAsJavaList(structure))
     map.put("content", seqAsJavaList(content))
-    map.put("value-set", vs)
+    map.put("value-set", seqAsJavaList(vs))
     map
   }
 

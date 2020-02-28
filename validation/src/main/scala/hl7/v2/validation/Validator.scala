@@ -6,10 +6,14 @@ import hl7.v2.profile.Profile
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 import hl7.v2.validation.report.ConfigurableDetections
 import com.typesafe.config.ConfigFactory
+
+import scala.collection.JavaConverters._
 import java.io.Reader
+
+import hl7.v2.validation.vs.EmptyValueSetSpecification
 
 /**
  * Trait defining the message validation
@@ -50,16 +54,18 @@ trait Validator { this: Parser with structure.Validator with content.Validator w
         parse(message, model) match {
           case Success(m) =>
             val defaultConfig = ConfigFactory.load();
-            implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).resolve().withFallback(defaultConfig));
+            implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).withFallback(defaultConfig).resolve());
             implicit val vsValidator: vs.Validator = new vs.Validator(detections)
             val structErrors = checkStructure(m)
             val contentErrors = checkContent(m)
             val valueSetErrors = checkValueSets(m)
+            val legacyValueSetIssues = Future { vsValidator.checkValueSet(m, valueSetLibrary) }
             for {
               r1 <- structErrors
               r2 <- contentErrors
               r3 <- valueSetErrors
-            } yield report.Report(r1, r2, r3)
+              r4 <- legacyValueSetIssues
+            } yield report.Report(r1, r2, asScalaBuffer(r4).toSeq ++ r3)
           case Failure(e) => Future failed e
         }
     }
@@ -90,7 +96,7 @@ class SyncHL7Validator(
   val profile: Profile,
   val valueSetLibrary: vs.ValueSetLibrary,
   val conformanceContext: content.ConformanceContext,
-  val vsSpecification : vs.ValueSetSpecification) extends Validator
+  val vsSpecification : vs.ValueSetSpecification = EmptyValueSetSpecification) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator

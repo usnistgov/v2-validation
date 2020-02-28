@@ -8,7 +8,7 @@ import CodeUsage.{E, P, R}
 import org.specs2.Specification
 import hl7.v2.validation.report.ConfigurableDetections
 import com.typesafe.config.ConfigFactory
-
+import hl7.v2.validation.vs.{InternalValueSet => ValueSet}
 class SimpleElementValidatorSpec
   extends Specification  { def is = s2"""
 
@@ -24,9 +24,13 @@ class SimpleElementValidatorSpec
       Return no detection if the value is in the value set and the usage is R$e8
       Return no detection if the value match HL7nnn or 99ZZZ and vs is 0396  $e9
       Return no error if the value set is excluded from the validation       $e10
+      Return EVS if the code is in the value set but the usage is E          $e5
+      Return PVS if the code is in the value set but the usage is P          $e6
   """
-//      Return EVS if the code is in the value set but the usage is E          $e5
-//      Return PVS if the code is in the value set but the usage is P          $e6
+
+  implicit val Detections: ConfigurableDetections = new ConfigurableDetections(ConfigFactory.load());
+  implicit val vsValidation: SimpleElementValidator = new SimpleElementValidator(Detections)
+
   val l = Location(null, "", "", -1, -1)
 
   val bs: Option[BindingStrength] = None
@@ -69,14 +73,14 @@ class SimpleElementValidatorSpec
 
   def e0 = check( "\"\"", "04" ) === null
   def e1 = check( "", "" )    === null
-  def e2 = check( "x", "04" ) === Detections.vsNotFound(l, "x", "04")
-  def e3 = check( "x", "01" ) === Detections.emptyVS(l, vs1, "01")
-  def e4 = check( "C", "02" ) === Detections.codeNotFound(l, "C", vs2, "02")
-//  def e5 = check( "A", "02" ) === new EnhancedEntry(Detections.evs(l, "A", vs2, "02"),true)
-//  def e6 = check( "B", "02" ) === new EnhancedEntry(Detections.pvs(l, "B", vs2, "02"),true)
-  def e7 = check( "A", "03" ) === Detections.vsError(l, "Multiple occurrences of the code 'A' found.", vs3, "03")
+  def e2 = check( "x", "04" ) === Detections.vsNotFound(l, "x", vsSpec("04"))
+  def e3 = check( "x", "01" ) === Detections.emptyVS(l, vs1, vsSpec("01"))
+  def e4 = check( "C", "02" ) === Detections.codeNotFound(l, "C", "02", null, null, null)
+  def e5 = check( "A", "02" ) === new EnhancedEntry(Detections.vsCodeFound("evs", l, "A", "02", null, null, null),false)
+  def e6 = check( "B", "02" ) === new EnhancedEntry(Detections.vsCodeFound("pvs", l, "B", "02", null, null, null),true)
+  def e7 = check( "A", "03" ) === Detections.vsError(l, "Multiple occurrences of the code 'A' found.", vs3, vsSpec("03"))
 
-  def e8 = check( "X", "02" ) === null
+  def e8 = check( "X", "02" ) === new EnhancedEntry(Detections.vsCodeFound("rvs", l, "X", "02", null, null, null),true)
 
   def e9 = Seq("0396", "HL70396") map { vs =>
     check("HL70001", vs) === null and check("99ZZZ", vs) === null
@@ -87,8 +91,6 @@ class SimpleElementValidatorSpec
   def check(s: String, spec: String): Entry = {
     val x = simple(s, spec)
     val y = x.req.vsSpec match { case Nil => null case z::zs => z }
-    implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
-    implicit val vsValidation = new SimpleElementValidator(Detections)
     vsValidation.check(x, y, library)
   }
 

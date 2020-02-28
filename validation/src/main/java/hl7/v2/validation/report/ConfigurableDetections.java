@@ -36,27 +36,44 @@ public class ConfigurableDetections {
 	 */
 	
 	public  Entry rvs(Location l, String value, String vs) {
-		String desc = vsTemplate3("pvs", value, l.prettyString(), vs);
-		return vsEntry("pvs", desc, l, null, null);
+		String desc = vsTemplate3("rvs", value, l.prettyString(), vs);
+		return vsEntry("rvs", desc, l, null, null);
 	}
 	
 	public  Entry pvs(Location l, String value, String vs) {
 		String desc = vsTemplate3("pvs", value, l.prettyString(), vs);
 		return vsEntry("pvs", desc, l, null, null);
 	}
-	
-	public  Entry evs(Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+
+	public Entry vsCodeFound(String key, Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
 		String staKey = stability(stab);
-		
-		String desc = vsTemplate3("evs", value, l.prettyString(), vs);
-		String classification = vsClassification("evs", staKey, extKey, strKey);
-		String category = conf.getString("report.evs.category");
-		
+
+		String desc = vsTemplate3(key, value, l.prettyString(), vs);
+		String classification = vsClassification(key, staKey, extKey, strKey);
+		String category = conf.getString("report." + key + ".category");
+
 		return entry(l, desc, category, classification, null, null);
 	}
-	
+
+	public Entry duplicateCode(Location l, String value, String vs) {
+		String desc = vsTemplate3("duplicate-code", value, l.prettyString(), vs);
+		String classification = conf.getString("report." + "duplicate-code" + ".classification");
+		String category = conf.getString("report." + "duplicate-code" + ".category");
+
+		return entry(l, desc, category, classification, null, null);
+	}
+
+	public Entry duplicateCodeAndCodeSystem(Location l, String value, String codeSystem, String vs) {
+		String desc = vsTemplate4("duplicate-code-codesystem", value, codeSystem, l.prettyString(), vs);
+		String classification = conf.getString("report." + "duplicate-code-codesystem" + ".classification");
+		String category = conf.getString("report." + "duplicate-code-codesystem" + ".category");
+
+		return entry(l, desc, category, classification, null, null);
+	}
+
+
 	public  Entry codeNotFound(Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
@@ -80,6 +97,18 @@ public class ConfigurableDetections {
 
 		String desc = vsTemplate5("code-not-found-cs", value, found, l.prettyString(), vs, expected);
 		
+		return entry(l, desc, category, classification, null, null);
+	}
+
+	public Entry codedElementXOR(Location l, String locations, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+		String extKey = extensibility(ext);
+		String strKey = bindingStrength(strength);
+		String staKey = stability(stab);
+
+		String desc = vsTemplate2("coded-element-xor", locations, vs);
+		String classification = vsClassification("coded-element-xor", staKey, extKey, strKey);
+		String category = conf.getString("report.coded-element-xor.category");
+
 		return entry(l, desc, category, classification, null, null);
 	}
 	/*
@@ -264,21 +293,21 @@ public class ConfigurableDetections {
 	 */
 
 	public  Entry csFailure(Location errLoc, Element context,
-			Constraint c, List<Trace> stack, boolean cnt) {
+			Constraint c, String message, List<Trace> stack, boolean cnt) {
 		if (cnt)
-			return cntFailure(errLoc, context, c, stack);
+			return cntFailure(errLoc, context, c, message, stack);
 		else
-			return csFailure(errLoc, context, c, stack);
+			return csFailure(errLoc, context, c, message, stack);
 	}
 
 	public  Entry csFailure(Location errLoc, Element context,
-			Constraint c, List<Trace> stack) {
-		return csEntry("constraint-failure", errLoc, context, c, stack);
+			Constraint c, String message, List<Trace> stack) {
+		return csEntry("constraint-failure", errLoc, context, c, message, stack);
 	}
 
 	public  Entry cntFailure(Location errLoc, Element context,
-			Constraint c, List<Trace> stack) {
-		return csEntry("content-failure", errLoc, context, c, stack);
+			Constraint c, String message, List<Trace> stack) {
+		return csEntry("content-failure", errLoc, context, c, message, stack);
 	}
 
 	public  String constraintClassification(Classification c,String orElse){
@@ -344,22 +373,22 @@ public class ConfigurableDetections {
 	/**
 	 * @return A report entry for a constraint failure detection
 	 */
-	public  Entry csSpecError(Element context, Constraint c,
+	public  Entry csSpecError(Element context, Constraint c, String message,
 			List<Trace> stack) {
-		return csEntry("constraint-spec-error", context, c, stack);
+		return csEntry("constraint-spec-error", context, c, message, stack);
 	}
 
-	public  Entry cntSpecError(Element context, Constraint c,
+	public  Entry cntSpecError(Element context, Constraint c, String message,
 			List<Trace> stack) {
-		return csEntry("content-spec-error", context, c, stack);
+		return csEntry("content-spec-error", context, c, message, stack);
 	}
 
-	public  Entry csSpecError(Element context, Constraint c,
+	public  Entry csSpecError(Element context, Constraint c, String message,
 			List<Trace> stack, boolean cnt) {
 		if (cnt)
-			return cntSpecError(context, c, stack);
+			return cntSpecError(context, c, message, stack);
 		else
-			return csSpecError(context, c, stack);
+			return csSpecError(context, c, message, stack);
 	}
 	
 	public  Entry unresolvedField(String v1, String v2, Element e){
@@ -474,30 +503,43 @@ public class ConfigurableDetections {
 
 	
 	public String bindingStrength(BindingStrength strength){
-		if(strength == null) return "default";
+		if(strength == null) return "";
 		if(strength instanceof BindingStrength.R$) return "required";
 		if(strength instanceof BindingStrength.S$) return "suggested";
-		return "default";
+		return "";
 	}
 	
 	public String stability(Stability stability){
-		if(stability == null) return "default";
+		if(stability == null) return "";
 		if(stability instanceof Stability.Static$) return "static";
 		if(stability instanceof Stability.Dynamic$) return "dynamic";
-		return "default";
+		return "";
 	}
 	
 	public String extensibility(Extensibility ext){
-		return ext == null ? "default" : ext instanceof Extensibility.Closed$ ? "closed" : "open";
+		return ext == null ? "" : ext instanceof Extensibility.Closed$ ? "closed" : "open";
 	}
 	
 	public String vsClassification(String configKey, String stab, String ext, String str){
 		String root = "report."+configKey+".classification";
-		String _default = conf.getString(root);
-		String _refined = conf.getString(root+"."+stab+"."+ext+"."+str);
-		
-		if(_refined == null || _refined.isEmpty()) return _default;
-		else return _refined;
+		try {
+			if(this.stringIsDefined(ext)) {
+				if(this.stringIsDefined(stab)) {
+					if(this.stringIsDefined(str)) {
+						System.out.println(root+"."+ext+"."+stab+"."+str+".default");
+						return conf.getString(root+"."+ext+"."+stab+"."+str+".default");
+					}
+					return conf.getString(root+"."+ext+"."+stab+".default");
+				}
+				return conf.getString(root+"."+ext+".default");
+			}
+		} finally {
+			return conf.getString(root+".default");
+		}
+	}
+
+	public boolean stringIsDefined(String key) {
+		return key != null && !key.isEmpty();
 	}
 
 	/**
@@ -530,9 +572,35 @@ public class ConfigurableDetections {
 		return vsEntry("code-not-found", desc, l, null, spec);
 	}
 
+	public  Entry ubs(Location l, String valueSets) {
+		String desc = vsTemplate2("ubs", valueSets, l.prettyString());
+		return vsEntry("ubs", desc, l, null, null);
+	}
+
+	public  Entry multiVsSimple(Location l, String valueSets) {
+		String desc = vsTemplate2("multi-vs-simple", valueSets, l.prettyString());
+		return vsEntry("multi-vs-simple", desc, l, null, null);
+	}
+
+	public  Entry incompatibleUsageAndExtensibility(Location l, String value, String valueSet) {
+		String desc = vsTemplate3("usage-and-extensibility", value, l.prettyString(), valueSet);
+		return vsEntry("usage-and-extensibility", desc, l, null, null);
+	}
+
+	public Entry dynamicVs(Location l, String valueSet) {
+		String desc = vsTemplate2("dynamic-vs", valueSet, l.prettyString());
+		return vsEntry("dynamic-vs", desc, l, null, null);
+	}
+
 	/**
 	 * @return A report entry for a VS not found detection
 	 */
+
+	public  Entry vsNotFound(Location l, String vId) {
+		String desc = vsTemplate2("vs-not-found-binding", vId, l.prettyString());
+		return vsEntry("vs-not-found-binding", desc, l, null, null);
+	}
+
 	public  Entry vsNotFound(Location l, String value, ValueSetSpec spec) {
 		String desc = vsTemplate3("vs-not-found", value, l.prettyString(),
 				spec.valueSetId());
@@ -583,6 +651,11 @@ public class ConfigurableDetections {
 	/**
 	 * @return A report entry for a coded Elem detection
 	 */
+	public  Entry codedElemXOR(Location l, String msg, ValueSet vs, ValueSetSpec spec, List<Trace> stack) {
+
+		return vsEntry("coded-element", msg, l, vs, spec, stack);
+	}
+
 	public  Entry codedElem(Location l, String msg, ValueSet vs,
 			ValueSetSpec spec, List<Trace> stack) {
 
@@ -653,8 +726,27 @@ public class ConfigurableDetections {
 		return entry(errLoc, desc, category, classification, stack, metaData);
 	}
 	
+//	private  Entry csEntry(String configKey, Location errLoc,
+//			Element context, Constraint c, List<Trace> stack) {
+//		String category = conf.getString("report." + configKey + ".category");
+//		String classification = "";
+//		String orElse = conf.getString("report." + configKey + ".classification");
+//		if(c.classification().isDefined()){
+//			classification = constraintClassification(c.classification().get(),orElse);
+//		}
+//		else {
+//			classification = orElse;
+//		}
+//		String template = conf.getString("report." + configKey + ".template");
+//		String desc = String.format(template, c.id(), c.description());
+//		Map<String, Object> metaData = new HashMap<String, Object>();
+//		if (c.reference().isDefined())
+//			metaData.put("reference", c.reference().get());
+//		return entry(errLoc, desc, category, classification, stack, metaData);
+//	}
+	
 	private  Entry csEntry(String configKey, Location errLoc,
-			Element context, Constraint c, List<Trace> stack) {
+			Element context, Constraint c, String message, List<Trace> stack) {
 		String category = conf.getString("report." + configKey + ".category");
 		String classification = "";
 		String orElse = conf.getString("report." + configKey + ".classification");
@@ -665,7 +757,7 @@ public class ConfigurableDetections {
 			classification = orElse;
 		}
 		String template = conf.getString("report." + configKey + ".template");
-		String desc = String.format(template, c.id(), c.description());
+		String desc = String.format(template, c.id(), message);
 		Map<String, Object> metaData = new HashMap<String, Object>();
 		if (c.reference().isDefined())
 			metaData.put("reference", c.reference().get());
@@ -673,8 +765,8 @@ public class ConfigurableDetections {
 	}
 
 	private  Entry csEntry(String configKey, Element context,
-			Constraint c, List<Trace> stack) {
-		return csEntry(configKey, context.location(), context, c, stack);
+			Constraint c, String message, List<Trace> stack) {
+		return csEntry(configKey, context.location(), context, c, message, stack);
 	}
 
 	private  Entry vsEntry(String configKey, String desc, Location l,
@@ -715,10 +807,20 @@ public class ConfigurableDetections {
 		return String.format(template, s1);
 	}
 
+	private  String vsTemplate2(String configKey, String s1, String s2) {
+		String template = conf.getString("report." + configKey + ".template");
+		return String.format(template, s1, s2);
+	}
+
 	private  String vsTemplate3(String configKey, String s1, String s2,
 			String s3) {
 		String template = conf.getString("report." + configKey + ".template");
 		return String.format(template, s1, s2, s3);
+	}
+
+	private  String vsTemplate4(String configKey, String s1, String s2, String s3, String s4) {
+		String template = conf.getString("report." + configKey + ".template");
+		return String.format(template, s1, s2, s3, s4);
 	}
 	
 	private  String vsTemplate5(String configKey, String s1, String s2,

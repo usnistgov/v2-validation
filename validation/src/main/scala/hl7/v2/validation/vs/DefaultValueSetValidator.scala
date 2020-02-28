@@ -1,262 +1,415 @@
 package hl7.v2.validation.vs
-import hl7.v2.instance._
+
 import hl7.v2.validation.report.ConfigurableDetections
+
 import scala.concurrent.Future
 import gov.nist.validation.report.Entry
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import hl7.v2.instance._
-import scala.util.{Failure, Try, Success}
-import hl7.v2.profile.BindingStrength
-import scala.collection.immutable.Map
-import hl7.v2.validation.vs.VSValidationCode.CodeNotFound
-import gov.nist.validation.report.impl.EntryImpl
-import hl7.v2.validation.vs.VSValidationCode.RVS
+import hl7.v2.profile
 
-trait VSValidationCode {
-  
+import collection.JavaConverters._
+import scala.util.{Failure, Success}
+import hl7.v2.profile.BindingStrength
+
+sealed trait VSValidationCode {
+  val isSpecError: Boolean = false
+  val codeIsFound: Boolean = false
 }
+
+sealed trait VSValidationCodeSpecError extends VSValidationCode {
+  override val isSpecError = true
+}
+
+sealed trait VSValidationCodeFound extends VSValidationCode {
+  override val codeIsFound = true
+  def getValueSets: List[ValueSet]
+}
+
+sealed trait VSValidationCodeFoundInMultiVS extends VSValidationCodeFound {
+  override val codeIsFound = true
+  val vsList: List[ValueSet]
+  def getValueSets: List[ValueSet] = vsList
+}
+
+sealed trait VSValidationCodeFoundInSingleVS extends VSValidationCodeFound {
+  override val codeIsFound = true
+  val vs: ValueSet
+  def getValueSets: List[ValueSet] = List(vs)
+}
+
+
+trait Resolve[T] {
+  def isValue: Boolean
+  def get: T
+  def detection: VSValidationCode
+}
+
+case class Payload[T](A: T) extends Resolve[T] {
+  def isValue = true
+  def get: T = A
+  def detection: VSValidationCode = null
+}
+
+case class PayloadAndDetection[T](A: T, code: VSValidationCode) extends Resolve[T] {
+  def isValue = true
+  def get: T = A
+  def detection: VSValidationCode = code
+}
+
+case class Detection[T](code: VSValidationCode) extends Resolve[T] {
+  def isValue = false
+  def get = throw new NoSuchElementException("Detection.get")
+  def detection: VSValidationCode = code
+}
+
+case class Empty[T]() extends Resolve[T] {
+  def isValue = false
+  def get = throw new NoSuchElementException("Empty.get")
+  def detection = throw new NoSuchElementException("Empty.get")
+}
+
 object VSValidationCode {
-  case class RVS(code : Code, vs : String) extends VSValidationCode {}
-  case class PVS(code : Code, vs : String) extends VSValidationCode {}
-  case class EVS(code : Code, vs : String) extends VSValidationCode {}
-  case class MultipleCodesFound(value : String, vs : String) extends VSValidationCode {}
-  case class CodeNotFound(code : String, bindings : List[String]) extends VSValidationCode {}
-  case class InvalidCodeSystem(code : String, expected : String, found : String, vs : String) extends VSValidationCode {}
-  def codeToInt(code : VSValidationCode) : Int = {
-    code match {
-      case RVS(_,_) => 1
-      case PVS(_,_) => 2
-      case MultipleCodesFound(_,_) => 3
-      case EVS(_,_) => 4
-      case _ => 5
-    }
-  }
+
+  //Check
+  case class VSNotFound(vs: String) extends VSValidationCode
+  //Check
+  case class EmptyVS(vs: ValueSet) extends VSValidationCode
+  //Check
+  case class ExcludedVS(vs: String) extends VSValidationCode
+  //Check
+  case class UBS(binding: ValueSetBinding) extends VSValidationCode
+  //Check
+  case class MultipleVSForPrimitive(binding: ValueSetBinding) extends VSValidationCodeSpecError
+  //Check
+  case class InvalidCodeBindingLocation(location: String, multiple: Boolean) extends VSValidationCodeSpecError
+  //Check
+  case class InvalidCodeSystemBindingLocation(location: String, multiple: Boolean) extends VSValidationCodeSpecError
+  //Check
+  case class MultipleCodesFoundInValueSet(value: String, vs: ValueSet, codes: List[Code]) extends VSValidationCodeSpecError with VSValidationCodeFoundInSingleVS
+  //Check
+  case class MultipleCodeAndCodeSystemFound(value: String, cs: String, vs: ValueSet, codes: List[Code]) extends VSValidationCodeSpecError with VSValidationCodeFoundInSingleVS
+  //Check
+  case class FoundInMultipleValueSets(code: String, codeSystem: Option[String], vsList: List[ValueSet]) extends VSValidationCodeSpecError with VSValidationCodeFoundInMultiVS
+  //Check
+  case class RVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  //Check
+  case class PVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  //Check
+  case class EVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  //Check
+  case class NoUsage(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  //Check
+  case class CodedElementXOR(element: List[CodeHolder], vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  //Internal
+  case class SimpleCodeNotFound(code: String, valueSet: String) extends VSValidationCode
+  //Internal
+  case class CodeAndCodeSystemNotFound(code: String, codeSystem: String, valueSet: String) extends VSValidationCode
+  //Check
+  case class SimpleCodeFoundInvalidCodeSystem(code: String, expected: String, found: String, vs: ValueSet) extends VSValidationCode
+  //Check
+  case class CodeNotFound(code: String, codeSystem: Option[String], bindings: List[ValueSet]) extends VSValidationCode
+  //Check
+  case class UsageAndExtensibilityNotCompatible(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS with VSValidationCodeSpecError
+  //TODO
+  case class DynamicValueSet(vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+
 }
 
 trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
-  
-    type CodeValidation = (VSValidationCode, Option[VSValidationCode])
-    
-    def checkValueSets(m: Message)(implicit Detections : ConfigurableDetections): Future[Seq[Entry]] = Future {
-      implicit val separators = m.separators
-      implicit val dtz = m.defaultTimeZone
-      implicit val model = m.model
-      check(m.asGroup);
-    }
-    
-    // Checks if specification is available on element and checks it, then dives into complex elements
-    def check(e : Element)(implicit Detections : ConfigurableDetections) : List[Entry] = {
 
-      val entries = vsSpecification.vsSpecificationFor(e) match {
-        case Some(ls) =>   ls.foldRight(List[Entry]()){
-          (x, acc) => check(e, x)
-        }
-        case None => Nil
-      }
-      
-      
-      e match {
-        case c : Complex => c.children.foldLeft(entries) { (acc, cc) => acc ::: check(cc) }
-        case _ => entries
-      }
-    }
-   
-    // Resolve complex binding target as complex elements, fails on simple elements, and check complex binding 
-    def check(e : Element, spec : ValueSetBinding)(implicit Detections : ConfigurableDetections) : List[Entry] = {
-      Query.query(e, spec.target) match {
-        case Success(x) => {
-          val (entries, payloads) = resolveValidationPayload(x, spec)
-          val y = payloads.map( p => validate(p))
-          entries ::: y.flatten 
-        }
-        case _ => Nil
-      }
-    }
-    
-    def resolveValidationPayload(targets : List[Element], spec : ValueSetBinding)(implicit Detections : ConfigurableDetections) : (List[Entry], List[ValueSetValidationPayload]) = {
-      val (valuesets, entries) = resolveBindings(targets, spec.bindings).values.toList.unzip;
-      
-      val payloads = for(target <- targets) yield {
-        // Resolver Code Holders
-        val resolveCodesResult = for(location <- spec.bindingLocations) yield {
-          codeHolder(target, location)
-        }
-        (resolveCodesResult.unzip._2.flatten, ValueSetValidationPayload(target, resolveCodesResult.unzip._1.flatten, valuesets.flatten, spec.uniqCodeSys, spec.strength))
-      }
-      
-      val (entryList, payload) = payloads.unzip
-      (entries.flatten.flatten ::: entryList.flatten, payload)
-    }
-    
-    def codeHolder(context : Element, location : BindingLocation)(implicit Detections : ConfigurableDetections) : (Option[CodeHolder], Option[Entry]) = {
-       Query.queryAsSimple(context, location.codeLocation) match {
-            case Success(x) => if (x.size > 1)  (None, Some(bindingLocationReturnedMoreThanOneElement(context, location.codeLocation))) else 
-                               if (x.size == 0) (None, None) else
-                               location.codeSystemLocation match {
-                                 case Some(codeSysLoc) => Query.queryAsSimple(context, codeSysLoc) match {
-                                   case Success(y) => if (y.size > 1)  (Some(CodeHolder(x.head, None, location)), Some(bindingLocationReturnedMoreThanOneElement(context, codeSysLoc))) else 
-                                                      if (x.size == 0) (Some(CodeHolder(x.head, None, location)), None) else
-                                                      (Some(CodeHolder(x.head, Some(y.head), location)), None)
-                                   case Failure(f) => (Some(CodeHolder(x.head, None, location)),  Some(specErrorUnresolvableBindingLocation(context, codeSysLoc)))
-                                 }
-                                 case None => (Some(CodeHolder(x.head, None, location)), None)
-                               }
-            case Failure(f) => (None,  Some(specErrorUnresolvableBindingLocation(context, location.codeLocation)))
-          }
-    }
-    
-    def resolveBindings(targets : List[Element], bindings : List[String])(implicit Detections : ConfigurableDetections) : Map[String, (Option[ValueSet], Option[List[Entry]])] = {
-      (for(id <- bindings) yield {
-        try {
-          if(valueSetLibrary.isExcludedFromTheValidation(id)){
-            val entries = targets.map { x => exludedFromValidation(x, id) }
-            (id -> (None, Some(entries)))
-          }
-          else {
-            val vs = valueSetLibrary.get(id)
-            (id -> (Some(vs), None))
-          }
-        }
-        catch{
-          case vs : ValueSetNotFoundException =>{
-            val entries = targets.map { x => vsNotFound(x, id) }
-            (id -> (None, Some(entries)))
-          }
-        }
-      }) toMap
-    }
-    
-    def bindingMetadata(strength : BindingStrength, vsList : List[ValueSet])(implicit Detections : ConfigurableDetections) : BindingMetadata = {
-      val bs = Some(strength)
-      val stability = if (vsList.map(_.stability).contains(Some(Stability.Dynamic))) Some(Stability.Dynamic) else Some(Stability.Static)
-      val extensibility = if (vsList.map(_.extensibility).contains(Some(Extensibility.Open))) Some(Extensibility.Open) else Some(Extensibility.Closed)
-      BindingMetadata(bs, stability, extensibility)
-    }
-    
-    def validate(validationPayload : ValueSetValidationPayload)(implicit Detections : ConfigurableDetections) : List[Entry] = {
-      
-      // Check All Collected Codes Against All Bindings
-      val validationResult = for(code <- validationPayload.values) yield {
-        val validation = for(vs <- validationPayload.valueSets) yield {
-          (vs -> checkCode(code, vs))
-        }
-        (code -> validation.toMap)
-      }
-      
-      
-      
-      // Refine result by keeping best match ValueSet result
-      val refinedValidationResult = for(tuple <- validationResult) yield {
-         val reqMatch = findMatch(tuple)
-         reqMatch match {
-           case Some(m) => (tuple._1, Some(m._1), BindingMetadata(Some(validationPayload.strength), m._1.stability, m._1.extensibility) , m._2._1, m._2._2) 
-           case None => (tuple._1, None, bindingMetadata(validationPayload.strength, tuple._2.map(_._1).toList), VSValidationCode.CodeNotFound(tuple._1.code.value.raw, tuple._2.keys.toList.map(_.id)), None) 
-         }
-      }
-      
-      // Create Detections
-      val entries = refinedValidationResult map { tuple =>
-        
-        val ext = if(tuple._2.isDefined) tuple._2.get.extensibility else None
-        val stab = if(tuple._2.isDefined) tuple._2.get.stability else None
-        
-        tuple match {
-          case (CodeHolder(code, codeSys, loc), vs, bindingMd, vsc1, vsc2) => Some(createEntry(code, vsc1, bindingMd)) :: {
-            (codeSys, vsc2) match {
-              case (Some(codeSysElm), Some(vscSys)) => Some(createEntry(codeSysElm, vscSys, bindingMd)) :: Nil
-              case _ => None :: Nil
-            }
-          }
-        }
-      }
-      
-      
-      // Check additional constraint
-      val additionalEntry = if(validationPayload.xor) {
-        val found = for(tuple <- validationResult) yield {
-          getFound(tuple)
-        }
-        
-        val xorEntries = for(x <- found.flatten.groupBy(_._1).mapValues(_.map(_._2)); if x._2.size > 1 ) yield {
-          duplicateTriplet(x._2.map(_.code), x._1)
-        }
-        
-        xorEntries.toList.flatten
-      }
-      else {
-        Nil
-      }
-       
-      additionalEntry ::: entries.flatten.flatten
-    }
-    
-    def getFound(unit : (CodeHolder, Map[ValueSet, CodeValidation])) : Map[String, CodeHolder] =  {
-      for(tuple <- unit._2; if VSValidationCode.codeToInt(tuple._2._1) <= 4) yield {
-        (tuple._1.id -> unit._1)
-      }
-    } 
 
-    def findMatch( unit : (CodeHolder, Map[ValueSet, CodeValidation]))(implicit Detections : ConfigurableDetections) : Option[(ValueSet, CodeValidation)] = {
-      
-      // Main Validation Code => Payload
-      val reMap = for(candidate <- unit._2) yield {
-        (candidate._2._1, candidate)
-      }
-      
-      // Sort By Validation Code
-      val matchSet = reMap.toList.sortWith((a, b) => VSValidationCode.codeToInt(a._1) < VSValidationCode.codeToInt(b._1))
-      
-      matchSet.head._1 match {
-        case CodeNotFound(_,_) => None
-        case _ => Some(matchSet.head._2)
-      }
-      
-    }
-        
-    def checkCode(code : CodeHolder, vs : ValueSet)(implicit Detections : ConfigurableDetections) : CodeValidation = {
-      code match {
-        case CodeHolder(code, None, loc) => (checkValue(code.value.raw, vs)._2, None)
-        case CodeHolder(code, Some(codeSys), loc) => checkTriplet(code.value.raw, codeSys.value.raw, vs)
-      }
-    }
-    
-    def checkValue(code : String, vs : ValueSet)(implicit Detections : ConfigurableDetections) : (Option[Code], VSValidationCode) = {
-      val codes = vs.getCodes(code)
-      if (codes.size() == 0) (None, VSValidationCode.CodeNotFound(code, vs.id::Nil))
-      else if (codes.size() > 1) (None, VSValidationCode.MultipleCodesFound(code, vs.id))
-      else codes.get(0).usage match {
-        case CodeUsage.P => (Some(codes.get(0)), VSValidationCode.PVS(codes.get(0), vs.id))
-        case CodeUsage.E => (Some(codes.get(0)), VSValidationCode.EVS(codes.get(0), vs.id))
-        case CodeUsage.R => (Some(codes.get(0)), VSValidationCode.RVS(codes.get(0), vs.id)) 
-      }
-    }
-    
-    def checkTriplet(vcode : String, codeSys : String, vs : ValueSet)(implicit Detections : ConfigurableDetections) : CodeValidation = {
-      checkValue(vcode, vs) match {
-        case (Some(code), vsc) => if(code.codeSys == codeSys) (vsc, None) else (vsc, Some(VSValidationCode.InvalidCodeSystem(vcode, code.codeSys, codeSys, vs.id)))
-        case (None, vsc) => (vsc, None)
-      }
-    }
-    
-    def exludedFromValidation(target : Element, vsId : String)(implicit Detections : ConfigurableDetections) : Entry = Detections.vsNoVal(target.location, vsId)
-    
-    def vsNotFound(target : Element, vsId : String)(implicit Detections : ConfigurableDetections) : Entry = Detections.vsNotFound(target.location, vsId, null)
+  def checkValueSets(m: Message)(implicit Detections: ConfigurableDetections): Future[Seq[Entry]] = Future {
+    implicit val separators: Separators = m.separators
+    implicit val dtz: Option[TimeZone] = m.defaultTimeZone
+    implicit val model: profile.Message = m.model
+    check(m.asGroup);
+  }
 
-    // MOVE TO TEMPLATE
-    def specErrorUnresolvableBindingLocation(target : Element, path : String)(implicit Detections : ConfigurableDetections) : Entry = Detections.bindingLocation(target.location, s"Unresolvable path ${path} from target element ${target.location.prettyString}")
-    
-    def bindingLocationReturnedMoreThanOneElement(target : Element, path : String)(implicit Detections : ConfigurableDetections) : Entry = Detections.bindingLocation(target.location, s"Resolving path ${path} from target element ${target.location.prettyString} returned more than one element")
-    
-    def createEntry(element : Element, issue : VSValidationCode, metadata : BindingMetadata)(implicit Detections : ConfigurableDetections) : Entry = {
-      issue match {
-        case VSValidationCode.RVS(code, vs) => Detections.rvs(element.location, code.value, vs)
-        case VSValidationCode.PVS(code, vs) => Detections.pvs(element.location, code.value, vs)
-        case VSValidationCode.EVS(code, vs) => Detections.evs(element.location, code.value, vs, metadata.stability.getOrElse(null), metadata.extensibility.getOrElse(null), metadata.strength.getOrElse(null))
-        case VSValidationCode.MultipleCodesFound(code, vs) => null
-        case VSValidationCode.CodeNotFound(code, vs) => Detections.codeNotFound(element.location, code, vs.toString(), metadata.stability.getOrElse(null), metadata.extensibility.getOrElse(null), metadata.strength.getOrElse(null))
-        case VSValidationCode.InvalidCodeSystem(code, expected, found, vs) => Detections.codeNotFoundInvalidCodeSystem(element.location, code, vs.toString(), metadata.stability.getOrElse(null), metadata.extensibility.getOrElse(null), metadata.strength.getOrElse(null))
+  // Checks if specification is available on element and checks it, then dives into complex elements
+  def check(e: Element)(implicit Detections: ConfigurableDetections): List[Entry] = {
+
+    val entries = vsSpecification.vsSpecificationFor(e) match {
+      case Some(ls) => ls.foldRight(List[Entry]()) {
+        (x, acc) => check(e, x)
+      }
+      case None => Nil
+    }
+
+    e match {
+      case c: Complex => c.children.foldLeft(entries) { (acc, cc) => acc ::: check(cc) }
+      case _ => entries
+    }
+  }
+
+  // Resolve complex binding target as complex elements, fails on simple elements, and check complex binding
+  def check(e: Element, spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[Entry] = {
+    Query.query(e, spec.target) match {
+      case Success(x) => {
+
+        val UBS = spec.strength.contains(BindingStrength.U)
+        val MultipleVSForPrimitive = spec.bindings.size > 1 && x.exists(_.isInstanceOf[Simple])
+
+        // If BindingStrength is not Undetermined and no primitive element has multiple value sets
+        if(!UBS && !MultipleVSForPrimitive) {
+          val valueSetValidationPayloads: List[ValueSetValidationPayload] = resolveValidationPayload(x, spec)
+          valueSetValidationPayloads.flatMap(p => {
+            (validate(p) ::: p.detections).map(issue => createEntry(p.target, issue, spec.strength))
+          })
+        } else {
+          val ubsEntries = if(UBS) x.map(elm => createEntry(elm, VSValidationCode.UBS(spec), spec.strength)) else Nil
+          val multiVsEntries = if(MultipleVSForPrimitive) x.map(elm => createEntry(elm, VSValidationCode.MultipleVSForPrimitive(spec), spec.strength)) else Nil
+
+          ubsEntries:::multiVsEntries
+        }
+      }
+      case _ => Nil
+    }
+  }
+
+  def collectValues[T](resolve: List[Resolve[T]]): List[T] = {
+    resolve.collect {
+      case Payload(value) => value
+      case PayloadAndDetection(value, _) => value
+    }
+  }
+
+  def collectIssues[T](resolve: List[Resolve[T]]): List[VSValidationCode] = {
+    resolve.collect {
+      case Detection(issue) => issue
+      case PayloadAndDetection(_, issue) => issue
+    }
+  }
+
+  def resolveValidationPayload(targets: List[Element], spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[ValueSetValidationPayload] = {
+    val rValueSets = resolveBindings(spec.bindings)
+    val vsIssues = collectIssues(rValueSets)
+    val valueSets = collectValues(rValueSets)
+
+    for (target <- targets) yield {
+
+      // Resolver Code Holders
+      val rCodeHolders = for (location <- spec.bindingLocations) yield {
+        codeHolder(target, location)
+      }
+      val codeHolders = collectValues(rCodeHolders)
+      val chIssues = collectIssues(rCodeHolders)
+
+      ValueSetValidationPayload(target, codeHolders, valueSets, spec.strength, vsIssues:::chIssues)
+    }
+  }
+
+  def codeHolder(context: Element, location: BindingLocation)(implicit Detections: ConfigurableDetections): Resolve[CodeHolder] = {
+    getBindingLocationValue(context, location.codeLocation, VSValidationCode.InvalidCodeBindingLocation) match {
+      case Empty() => Empty[CodeHolder]()
+      case Detection(issue: VSValidationCode) => Detection[CodeHolder](issue)
+      case Payload(code: Simple) => location.codeSystemLocation match {
+        case None => Payload[CodeHolder](CodeHolder(code, None, location))
+        case Some(codeSysLocation) => getBindingLocationValue(context, codeSysLocation, VSValidationCode.InvalidCodeSystemBindingLocation) match {
+          case Empty() => Empty[CodeHolder]()
+          case Detection(issue: VSValidationCode) => Detection[CodeHolder](issue)
+          case Payload(codeSystem: Simple) => Payload[CodeHolder](CodeHolder(code, Some(codeSystem), location))
+        }
       }
     }
-    
-    def duplicateTriplet(element : List[Element], vs : String) : List[Entry] = Nil
+  }
+
+  def getBindingLocationValue(context: Element, location: String, detectionFactory: (String, Boolean) => VSValidationCodeSpecError): Resolve[Simple] = {
+    Query.queryAsSimple(context, location) match {
+      case Success(x) =>
+        if (x.size > 1) Detection[Simple](detectionFactory(location, true))
+        else if (x.isEmpty) Empty[Simple]()
+        else Payload[Simple](x.head)
+      case Failure(f) => Detection[Simple](detectionFactory(location, false))
+    }
+  }
+
+  def resolveBindings(bindings: List[String])(implicit Detections: ConfigurableDetections): List[Resolve[ValueSet]] = {
+    for (id <- bindings) yield {
+      try {
+        if (valueSetLibrary.isExcludedFromTheValidation(id)) {
+          Detection[ValueSet](VSValidationCode.ExcludedVS(id))
+        }
+        else {
+          val vs = valueSetLibrary.get(id)
+          if(vs.isEmpty) Detection[ValueSet](VSValidationCode.EmptyVS(vs))
+          else Payload(vs)
+        }
+      }
+      catch {
+        case vs: ValueSetNotFoundException => {
+          Detection[ValueSet](VSValidationCode.VSNotFound(id))
+        }
+      }
+    }
+  }
+
+  def bindingMetadata(strength: BindingStrength, vsList: List[ValueSet])(implicit Detections: ConfigurableDetections): BindingMetadata = {
+    val bs = Some(strength)
+    val stability = if (vsList.map(_.stability).contains(Some(Stability.Dynamic))) Some(Stability.Dynamic) else Some(Stability.Static)
+    val extensibility = if (vsList.map(_.extensibility).contains(Some(Extensibility.Open))) Some(Extensibility.Open) else Some(Extensibility.Closed)
+    BindingMetadata(bs, stability, extensibility)
+  }
+
+  def validate(validationPayload: ValueSetValidationPayload)(implicit Detections: ConfigurableDetections): List[VSValidationCode] = {
+
+    // Check All Collected Codes Against All Bindings
+    val vCodeBucket: List[(CodeHolder, ValueSet, VSValidationCode)] = validationPayload.values.flatMap(code => {
+      for (vs <- validationPayload.valueSets) yield {
+        (code, vs, checkCode(code, vs))
+      }
+    })
+
+    val vsCodes: Iterable[(CodeHolder, List[VSValidationCode], List[ValueSet])] = for(code <- vCodeBucket.groupBy(_._1)) yield {
+      val splitValidationCodes = code._2.partition(tuple => { tuple._3.codeIsFound })
+      val duplicateCodeFound: Option[VSValidationCode] = multipleCodesFound(code._1, splitValidationCodes._1)
+      val codesFound: List[VSValidationCode] = splitValidationCodes._1.map(_._3)
+      val issues = splitValidationCodes._2.partition(_._3.isSpecError)
+      val specIssues: List[VSValidationCode] = issues._1.map(_._3)
+      val invalidCodeSystem: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else splitValidationCodes._2.collect({
+        case (_, _, value: VSValidationCode.SimpleCodeFoundInvalidCodeSystem) => value
+      })
+      val codeNotFound: Option[VSValidationCode] = if(codesFound.isEmpty) Some(VSValidationCode.CodeNotFound(code._1.code.value.raw, code._1.codeSystem.map(_.value.raw), code._2.map(_._2))) else None
+
+      val detections = codesFound:::specIssues:::invalidCodeSystem:::codeNotFound.map(_ :: Nil).getOrElse(Nil):::duplicateCodeFound.map(_ :: Nil).getOrElse(Nil)
+      val matches = codesFound.map(_.asInstanceOf[VSValidationCodeFound]).flatMap(_.getValueSets)
+      (code._1, detections.flatMap(expandVSValidationCode), matches)
+    }
+
+    detectAndClearCodeNotFoundIfMatch(vsCodes) ::: detectXOR(vsCodes.map(elm => (elm._1, elm._3)).toList)
+  }
+
+  def detectXOR(matches : List[(CodeHolder, List[ValueSet])]): List[VSValidationCode] = {
+    val vsMatchMap: Map[ValueSet, List[CodeHolder]] = matches.flatMap(x => x._2.map(y => (x._1, y))).distinct.groupBy(_._2).map(tuple => (tuple._1 -> tuple._2.map(_._1)))
+    val detections = for(vs: (ValueSet, List[CodeHolder]) <- vsMatchMap) yield {
+      if(vs._2.size > 1) Some(VSValidationCode.CodedElementXOR(vs._2, vs._1))
+      else None
+    }
+
+    detections.flatten.toList
+  }
+
+  def detectAndClearCodeNotFoundIfMatch(vsCodes : Iterable[(CodeHolder, List[VSValidationCode], List[ValueSet])]): List[VSValidationCode] = {
+    val matchFound = vsCodes.flatMap(_._3).nonEmpty
+    val detections = vsCodes.flatMap(_._2).toList
+    if(matchFound) detections.filter(d => d.codeIsFound || d.isSpecError)
+    else detections
+  }
+
+
+
+  def multipleCodesFound(code: CodeHolder, vsCodeFound: List[(CodeHolder, ValueSet, VSValidationCode)]): Option[VSValidationCode.FoundInMultipleValueSets] = {
+    if(vsCodeFound.size > 1) Some(VSValidationCode.FoundInMultipleValueSets(code.code.value.raw, code.codeSystem.map(_.value.raw), vsCodeFound.map(_._2).distinct))
+    else None
+  }
+
+  def checkCode(code: CodeHolder, vs: ValueSet)(implicit Detections: ConfigurableDetections): VSValidationCode = {
+    code match {
+      case CodeHolder(code, None, _) => checkValue(code.value.raw, vs).detection
+      case CodeHolder(code, Some(codeSys), _) => checkTriplet(code.value.raw, codeSys.value.raw, vs)
+    }
+  }
+
+  def checkValue(code: String, vs: ValueSet)(implicit Detections: ConfigurableDetections): Resolve[Code] = {
+    val codes = vs.getCodes(code)
+    if (codes.size() == 0) Detection[Code](VSValidationCode.SimpleCodeNotFound(code, vs.id))
+    else if (codes.size() > 1) Detection[Code](VSValidationCode.MultipleCodesFoundInValueSet(code, vs, codes.asScala.toList))
+    else PayloadAndDetection[Code](codes.get(0), codeToVsValidation(codes.get(0), vs))
+  }
+
+  def codeToVsValidation(code: Code, vs: ValueSet): VSValidationCode = {
+    code.usage match {
+      case CodeUsage.P => VSValidationCode.PVS(code, vs)
+      case CodeUsage.E => VSValidationCode.EVS(code, vs)
+      case CodeUsage.R => VSValidationCode.RVS(code, vs)
+      case _ => VSValidationCode.NoUsage(code, vs)
+    }
+  }
+
+  def expandVSValidationCode(vsCode: VSValidationCode): List[VSValidationCode] = {
+    vsCode match {
+      case detection : VSValidationCode.MultipleCodesFoundInValueSet => detection :: detection.codes.map(code => codeToVsValidation(code, detection.vs))
+      case detection : VSValidationCode.MultipleCodeAndCodeSystemFound => detection :: detection.codes.map(code => codeToVsValidation(code, detection.vs))
+      case detection : VSValidationCode.PVS =>
+        val extensibility = detection.vs.extensibility match {
+          case Some(Extensibility.Closed) => VSValidationCode.UsageAndExtensibilityNotCompatible(detection.code, detection.vs)::Nil
+          case _ => Nil
+        }
+
+        val stability = detection.vs.stability match {
+          case Some(Stability.Dynamic) => VSValidationCode.DynamicValueSet(detection.vs)::Nil
+          case _ => Nil
+        }
+        detection::extensibility:::stability
+      case detection : VSValidationCode.CodeNotFound => detection::detection.bindings.filter(_.stability.contains(Stability.Dynamic)).map(VSValidationCode.DynamicValueSet)
+      case x => List(x)
+    }
+  }
+
+  def checkTriplet(value: String, codeSys: String, vs: ValueSet)(implicit Detections: ConfigurableDetections): VSValidationCode = {
+    checkValue(value, vs) match {
+      case PayloadAndDetection(code, issue) => if (code.codeSys == codeSys) issue else VSValidationCode.SimpleCodeFoundInvalidCodeSystem(value, code.codeSys, codeSys, vs)
+      case Detection(detection : VSValidationCode.MultipleCodesFoundInValueSet) => {
+        val codeAndCodeSys = detection.codes.filter(code => code.codeSys.equals(codeSys))
+        if(codeAndCodeSys.size > 1) VSValidationCode.MultipleCodeAndCodeSystemFound(value, codeSys, vs, codeAndCodeSys)
+        else if(codeAndCodeSys.isEmpty) VSValidationCode.CodeAndCodeSystemNotFound(value, codeSys, vs.id)
+        else codeToVsValidation(codeAndCodeSys.head, vs)
+      }
+      case Detection(detection) => detection
+    }
+  }
+
+  def createEntry(element: Element, issue: VSValidationCode, bindingStrength: Option[BindingStrength])(implicit Detections: ConfigurableDetections): Entry = {
+    issue match {
+      case VSValidationCode.NoUsage(code, vs) => Detections.vsCodeFound("no-code-usage", element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.RVS(code, vs) => Detections.vsCodeFound("rvs", element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.PVS(code, vs) => Detections.vsCodeFound("pvs", element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.EVS(code, vs) => Detections.vsCodeFound("evs",element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.MultipleCodesFoundInValueSet(value, vs, _) => Detections.duplicateCode(element.location, value, vs.id)
+      case VSValidationCode.MultipleCodeAndCodeSystemFound(value, cs, vs, _) => Detections.duplicateCodeAndCodeSystem(element.location, value, cs, vs.id)
+      case VSValidationCode.FoundInMultipleValueSets(value, cs, vs) => cs match {
+        case Some(csString) =>  Detections.duplicateCodeAndCodeSystem(element.location, value, csString, vs.map(_.id).mkString("[", " ,", "]"))
+        case None => Detections.duplicateCode(element.location, value, vs.map(_.id).mkString("[", " ,", "]"))
+      }
+      case VSValidationCode.CodedElementXOR(codes, vs) => Detections.codedElementXOR(element.location, codes.map(_.code.location.prettyString).mkString(", "), vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.CodeNotFound(code, codeSys, vsList) => Detections.codeNotFound(element.location, code, vsList.map(_.id).mkString("[", " ,", "]"), getStability(vsList).orNull, getExtensibility(vsList).orNull, bindingStrength.orNull)
+      case VSValidationCode.SimpleCodeFoundInvalidCodeSystem(code: String, expected: String, found: String, vs: ValueSet) => Detections.codeNotFoundInvalidCodeSystem(element.location, code, vs.id, expected, found, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.EmptyVS(vs) => Detections.emptyVS(element.location, vs, null)
+      case VSValidationCode.ExcludedVS(vs) => Detections.vsNoVal(element.location, vs)
+      case VSValidationCode.VSNotFound(vs) => Detections.vsNotFound(element.location, vs)
+      case VSValidationCode.UBS(binding) => Detections.ubs(element.location, binding.bindings.mkString("[", " ,", "]"))
+      case VSValidationCode.MultipleVSForPrimitive(binding) => Detections.multiVsSimple(element.location,  binding.bindings.mkString("[", " ,", "]"))
+      case VSValidationCode.InvalidCodeBindingLocation(location, multiple) =>
+        if(multiple) Detections.bindingLocation(element.location, s"Resolving path ${location} from target element ${element.location.prettyString} returned more than one element")
+        else Detections.bindingLocation(element.location, s"Unresolvable path ${location} from target element ${element.location.prettyString}")
+      case VSValidationCode.InvalidCodeSystemBindingLocation(location, multiple) =>
+        if(multiple) Detections.bindingLocation(element.location, s"Resolving path ${location} from target element ${element.location.prettyString} returned more than one element")
+        else Detections.bindingLocation(element.location, s"Unresolvable path ${location} from target element ${element.location.prettyString}")
+      case VSValidationCode.UsageAndExtensibilityNotCompatible(code, vs) => Detections.incompatibleUsageAndExtensibility(element.location, code.value, vs.id)
+      case VSValidationCode.DynamicValueSet(vs) => Detections.dynamicVs(element.location, vs.id)
+      case x => Console.println(x); null
+    }
+  }
+
+  def getStability(vsList: List[ValueSet]): Option[Stability] = {
+    val containsDynamic = vsList.exists(_.stability.contains(Stability.Dynamic));
+    val containsStatic = vsList.exists(_.stability.contains(Stability.Static));
+
+    if(containsDynamic) Some(Stability.Dynamic)
+    else if(containsStatic) Some(Stability.Static)
+    else None
+  }
+
+  def getExtensibility(vsList: List[ValueSet]): Option[Extensibility] = {
+    val containsOpen = vsList.exists(_.extensibility.contains(Extensibility.Open));
+    val containsClosed = vsList.exists(_.extensibility.contains(Extensibility.Closed));
+
+    if(containsOpen) Some(Extensibility.Open)
+    else if(containsClosed) Some(Extensibility.Closed)
+    else None
+  }
+
+
+  def duplicateTriplet(element: List[Element], vs: String): List[Entry] = Nil
 }
