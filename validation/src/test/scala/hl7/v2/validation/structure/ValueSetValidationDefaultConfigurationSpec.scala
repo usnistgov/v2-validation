@@ -35,7 +35,36 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
   with hl7.v2.validation.vs.DefaultValueSetValidator
   with Helpers {
   def is =s2"""
+      
+      DynamicVS Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $dynamicVS_closed_dynamic_required
+      DynamicVS Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ALERT $dynamicVS_open_dynamic_required
+      DynamicVS Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $dynamicVS_closed_dynamic_suggested
+      DynamicVS Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $dynamicVS_open_dynamic_suggested     
+
+      XOR Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be HIGH_ALERT $xor_closed_dynamic_required
+      XOR Detection when a value set is Open/ Dynamic and Binding Strength is Required should be HIGH_ALERT $xor_open_dynamic_required
+      XOR Detection when a value set is Closed/ Static and Binding Strength is Required should be HIGH_ALERT $xor_closed_static_required
+      XOR Detection when a value set is Open/ Static and Binding Strength is Required should be HIGH_ALERT $xor_closed_static_required
+
+      XOR Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $xor_closed_dynamic_suggested
+      XOR Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $xor_open_dynamic_suggested
+      XOR Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $xor_closed_static_suggested
+      XOR Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $xor_closed_static_suggested
+      
+      CodeNotFound Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be HIGH ALERT $codeNotFound_closed_dynamic_required
+      CodeNotFound Detection when a value set is Closed/ Static and Binding Strength is Required should be ERROR $codeNotFound_closed_static_required
+      CodeNotFound Detection when a value set is Open/ Dynamic and Binding Strength is Required should be HIGH ALERT $codeNotFound_open_dynamic_required
+      CodeNotFound Detection when a value set is Open/ Static and Binding Strength is Required should be HIGH ALERT $codeNotFound_open_static_required
+
+      CodeNotFound Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_closed_dynamic_suggested
+      CodeNotFound Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $codeNotFound_closed_static_suggested
+      CodeNotFound Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_dynamic_suggested
+      CodeNotFound Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $codeNotFound_open_static_suggested
+      
+
+      
       PVS Detection when a value set is Closed/ Static and Binding Strength is Required should be ERROR $pvs_closed_static_required
+
     """
 
   //------- MOCKS
@@ -57,6 +86,43 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
   val NUCode: Code = Code("A", "B", null, "C")
 
   //------ TEST CASES
+  
+  //-- DynamicVS
+  val dynamicVS_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DynamicVS, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dynamicVS_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DynamicVS, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val dynamicVS_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DynamicVS, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
+  val dynamicVS_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DynamicVS, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.S), ALERT)
+  // DynamicVS should not be triggered for a static value set
+  // DynamicVS should not be triggered for a binding strength of U
+  
+  //-- XOR
+  //TODO : double check with Rob if XOR is HIGH ALERT or ERROR
+  val xor_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), HIGH_ALERT)
+  val xor_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), HIGH_ALERT)
+  val xor_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), HIGH_ALERT)
+  val xor_open_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), HIGH_ALERT)
+  
+  val xor_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
+  val xor_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.S), ALERT)
+  val xor_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
+  val xor_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.XOR, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.S), ALERT)
+  // XOR should not be triggered for a binding strength of U
+  
+  //-- CodeNotFound - single value set
+  val codeNotFound_closed_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_closed_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), ERROR)
+  val codeNotFound_open_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.R), HIGH_ALERT)
+  
+  val codeNotFound_closed_dynamic_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+  val codeNotFound_closed_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+  val codeNotFound_open_dynamic_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open))), Some(BindingStrength.S), ALERT)
+  val codeNotFound_open_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.S), ALERT)
+    
+  //-- CodeNotFound - multiple value sets
+  
+  
+  //-- PVS
   val pvs_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.PVS, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ERROR)
 
 
