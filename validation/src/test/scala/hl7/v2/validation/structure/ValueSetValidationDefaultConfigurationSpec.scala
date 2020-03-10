@@ -11,20 +11,20 @@ import org.specs2.matcher.MatchResult
 object DetectionCodes extends Enumeration {
   type DetectionCodes = Value
 
-  val DynamicVS: structure.DetectionCodes.Value = Value("DynamicVS")//
-  val XOR: structure.DetectionCodes.Value = Value("XOR")//
+  val DynamicVS: structure.DetectionCodes.Value = Value("DynamicVS")//done
+  val XOR: structure.DetectionCodes.Value = Value("XOR")//done
   val CodeNotFound: structure.DetectionCodes.Value = Value("CodeNotFound")
-  val PVS: structure.DetectionCodes.Value = Value("PVS")//
-  val RVS: structure.DetectionCodes.Value = Value("RVS")//
-  val EVS: structure.DetectionCodes.Value = Value("EVS")//
-  val NoUsageVS: structure.DetectionCodes.Value = Value("NoUsageVS")//
-  val InvalidCodeSys: structure.DetectionCodes.Value = Value("InvalidCodeSys")
+  val PVS: structure.DetectionCodes.Value = Value("PVS")//done
+  val RVS: structure.DetectionCodes.Value = Value("RVS")//done
+  val EVS: structure.DetectionCodes.Value = Value("EVS")//done
+  val NoUsageVS: structure.DetectionCodes.Value = Value("NoUsageVS")//done
+  val InvalidCodeSys: structure.DetectionCodes.Value = Value("InvalidCodeSys")//done
   val UBS: structure.DetectionCodes.Value = Value("UBS")
   val VSNotFound: structure.DetectionCodes.Value = Value("VSNotFound")
   val VSExcluded: structure.DetectionCodes.Value = Value("VSExcluded")
   val EmptyVS: structure.DetectionCodes.Value = Value("EmptyVS")
-  val DuplicateCode: structure.DetectionCodes.Value = Value("DuplicateCode")
-  val DuplicateCodeAndCodeSystem: structure.DetectionCodes.Value = Value("DuplicateCodeAndCodeSystem")
+  val DuplicateCode: structure.DetectionCodes.Value = Value("DuplicateCode")//done
+  val DuplicateCodeAndCodeSystem: structure.DetectionCodes.Value = Value("DuplicateCodeAndCodeSystem")//done
   val DuplicateCodeAndCodeSystemInValueSetList: structure.DetectionCodes.Value = Value("DuplicateCodeAndCodeSystemInValueSetList")
   val UsageAndExtensibilityNotCompatible: structure.DetectionCodes.Value = Value("UsageAndExtensibilityNotCompatible")
   val InvalidBindingLocation: structure.DetectionCodes.Value = Value("InvalidBindingLocation")
@@ -90,6 +90,36 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
       RVS Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $rvs_open_dynamic_suggested
       RVS Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $rvs_closed_static_suggested
       RVS Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $rvs_open_static_suggested
+      
+      DuplicateCodeAndCodeSystem Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $dup_C_CS_closed_dynamic_required
+      DuplicateCodeAndCodeSystem Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ALERT $dup_C_CS_open_dynamic_required
+      DuplicateCodeAndCodeSystem Detection when a value set is Closed/ Static and Binding Strength is Required should be ALERT $dup_C_CS_closed_static_required
+      DuplicateCodeAndCodeSystem Detection when a value set is Open/ Static and Binding Strength is Required should be ALERT $dup_C_CS_open_static_required
+      
+      DuplicateCodeAndCodeSystem Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $dup_C_CS_closed_dynamic_suggested
+      DuplicateCodeAndCodeSystem Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $dup_C_CS_open_dynamic_suggested
+      DuplicateCodeAndCodeSystem Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $dup_C_CS_closed_static_suggested
+      DuplicateCodeAndCodeSystem Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $dup_C_CS_open_static_suggested
+      
+      DuplicateCode Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $dup_C_closed_dynamic_required
+      DuplicateCode Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ALERT $dup_C_open_dynamic_required
+      DuplicateCode Detection when a value set is Closed/ Static and Binding Strength is Required should be ALERT $dup_C_closed_static_required
+      DuplicateCode Detection when a value set is Open/ Static and Binding Strength is Required should be ALERT $dup_C_open_static_required
+      
+      DuplicateCode Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $dup_C_closed_dynamic_suggested
+      DuplicateCode Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $dup_C_open_dynamic_suggested
+      DuplicateCode Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $dup_C_closed_static_suggested
+      DuplicateCode Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $dup_C_open_static_suggested
+      
+      InvalidCodeSys Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $invalid_CS_closed_dynamic_required
+      InvalidCodeSys Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ALERT $invalid_CS_open_dynamic_required
+      InvalidCodeSys Detection when a value set is Closed/ Static and Binding Strength is Required should be ALERT $invalid_CS_closed_static_required
+      InvalidCodeSys Detection when a value set is Open/ Static and Binding Strength is Required should be ALERT $invalid_CS_open_static_required
+      
+      InvalidCodeSys Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $invalid_CS_closed_dynamic_suggested
+      InvalidCodeSys Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $invalid_CS_open_dynamic_suggested
+      InvalidCodeSys Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $invalid_CS_closed_static_suggested
+      InvalidCodeSys Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $invalid_CS_open_static_suggested
 
       CodeNotFound Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be HIGH ALERT $codeNotFound_closed_dynamic_required
       CodeNotFound Detection when a value set is Closed/ Static and Binding Strength is Required should be ERROR $codeNotFound_closed_static_required
@@ -188,7 +218,40 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
   val rvs_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.RVS, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
   val rvs_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.RVS, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
   
-  //-- CodeNotFound - single value set
+  //--DuplicateCodeAndCodeSystem
+  val dup_C_CS_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_CS_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val dup_C_CS_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_CS_open_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  
+  val dup_C_CS_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_CS_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val dup_C_CS_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_CS_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCodeAndCodeSystem, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  
+  //--DuplicateCode
+  val dup_C_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val dup_C_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_open_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  
+  val dup_C_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val dup_C_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val dup_C_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.DuplicateCode, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)  
+
+  //--InvalidCodeSys
+  val invalid_CS_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), HIGH_ALERT)
+  val invalid_CS_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), HIGH_ALERT)
+  val invalid_CS_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ERROR)
+  val invalid_CS_open_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), HIGH_ALERT)
+  
+  val invalid_CS_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val invalid_CS_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val invalid_CS_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
+  val invalid_CS_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidCodeSys, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  
+  //--CodeNotFound - single value set
   val codeNotFound_closed_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
   val codeNotFound_closed_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), ERROR)
   val codeNotFound_open_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open))), Some(BindingStrength.R), HIGH_ALERT)
