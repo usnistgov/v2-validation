@@ -13,7 +13,7 @@ object DetectionCodes extends Enumeration {
 
   val DynamicVS: structure.DetectionCodes.Value = Value("DynamicVS")//done
   val XOR: structure.DetectionCodes.Value = Value("XOR")//done
-  val CodeNotFound: structure.DetectionCodes.Value = Value("CodeNotFound")
+  val CodeNotFound: structure.DetectionCodes.Value = Value("CodeNotFound")//done
   val PVS: structure.DetectionCodes.Value = Value("PVS")//done
   val RVS: structure.DetectionCodes.Value = Value("RVS")//done
   val EVS: structure.DetectionCodes.Value = Value("EVS")//done
@@ -131,6 +131,27 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
       CodeNotFound Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_dynamic_suggested
       CodeNotFound Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $codeNotFound_open_static_suggested
      
+      CodeNotFound Detection when a value set in the value set list is Closed/ Static and Binding Strength is Required should be ERROR $codeNotFound_closed_static_closed_static_required
+      CodeNotFound Detection when a value set in the value set list is Closed/ Static and Binding Strength is Suggested should be ALERT $codeNotFound_closed_static_closed_static_suggested
+      CodeNotFound Detection when a value set in the value set list is Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_closed_dynamic_closed_dynamic_required
+      CodeNotFound Detection when a value set in the value set list is Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_closed_dynamic_closed_dynamic_suggested
+      CodeNotFound Detection when a value set in the value set list is Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_closed_dynamic_closed_static_required
+      CodeNotFound Detection when a value set in the value set list is Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_closed_dynamic_closed_static_suggested
+      CodeNotFound Detection when a value set in the value set list is Open and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_static_open_static_required
+      CodeNotFound Detection when a value set in the value set list is Open and Binding Strength is Suggested should be ALERT $codeNotFound_open_static_open_static_suggested
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_dynamic_open_dynamic_required
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_dynamic_open_dynamic_suggested
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_dynamic_open_static_required
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_dynamic_open_static_suggested
+      CodeNotFound Detection when a value set in the value set list is Open and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_static_closed_static_required
+      CodeNotFound Detection when a value set in the value set list is Open and Binding Strength is Suggested should be ALERT $codeNotFound_open_static_closed_static_suggested
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_dynamic_closed_dynamic_required
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_dynamic_closed_dynamic_suggested
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_static_closed_dynamic_required
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_static_closed_dynamic_suggested
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Required should be HIGH_ALERT $codeNotFound_open_dynamic_closed_static_required
+      CodeNotFound Detection when a value set in the value set list is Open or Dynamic and Binding Strength is Suggested should be ALERT $codeNotFound_open_dynamic_closed_static_suggested
+
     """
 
   //------- MOCKS
@@ -263,8 +284,43 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
   val codeNotFound_open_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.S), ALERT)
     
   //-- CodeNotFound - multiple value sets
-  
- 
+  //-- use case one : all closed, all static
+  val codeNotFound_closed_static_closed_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), ERROR)
+  val codeNotFound_closed_static_closed_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+
+  //-- use case two : all closed, all dynamic
+  val codeNotFound_closed_dynamic_closed_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_closed_dynamic_closed_dynamic_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+
+  //-- use case three : all closed, static/dynamic mix
+  val codeNotFound_closed_dynamic_closed_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_closed_dynamic_closed_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+
+  //-- use case four : all open, all static
+  val codeNotFound_open_static_open_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_static_open_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.S), ALERT)
+
+  //-- use case five : all open, all dynamic
+  val codeNotFound_open_dynamic_open_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Open))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_dynamic_open_dynamic_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Open))), Some(BindingStrength.S), ALERT)
+
+  //-- use case six : all open, static/dynamic mix
+  val codeNotFound_open_dynamic_open_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_dynamic_open_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Open))), Some(BindingStrength.S), ALERT)
+
+  //-- use case seven : open/closed mix, all static
+  val codeNotFound_open_static_closed_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_static_closed_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+
+  //-- use case eight : open/closed mix, all dynamic
+  val codeNotFound_open_dynamic_closed_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_dynamic_closed_dynamic_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+
+  //-- use case nine : open/closed mix, static/dynamic mix
+  val codeNotFound_open_static_closed_dynamic_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_static_closed_dynamic_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Static), Some(Extensibility.Open)),valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
+  val codeNotFound_open_dynamic_closed_static_required = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), HIGH_ALERT)
+  val codeNotFound_open_dynamic_closed_static_suggested = expectationVsList(DetectionCodes.CodeNotFound, List(valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
 
 
 
