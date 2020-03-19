@@ -70,6 +70,8 @@ case class Empty[T]() extends Resolve[T] {
   def detection = throw new NoSuchElementException("Empty.get")
 }
 
+case class VsEntry(target: Element, code: VSValidationCode, strength: Option[BindingStrength])
+
 object VSValidationCode {
 
   //Check
@@ -147,24 +149,27 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
   def check(e: Element, spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[Entry] = {
     Query.query(e, spec.target) match {
       case Success(x) => {
-
-        val UBS = spec.strength.contains(BindingStrength.U)
-        val MultipleVSForPrimitive = spec.bindings.size > 1 && x.exists(_.isInstanceOf[Simple])
-
-        // If BindingStrength is not Undetermined and no primitive element has multiple value sets
-        if(!UBS && !MultipleVSForPrimitive) {
-          val valueSetValidationPayloads: List[ValueSetValidationPayload] = resolveValidationPayload(x, spec)
-          valueSetValidationPayloads.flatMap(p => {
-            (validate(p) ::: p.detections).map(issue => createEntry(p.target, issue, spec.strength))
-          })
-        } else {
-          val ubsEntries = if(UBS) x.map(elm => createEntry(elm, VSValidationCode.UBS(spec), spec.strength)) else Nil
-          val multiVsEntries = if(MultipleVSForPrimitive) x.map(elm => createEntry(elm, VSValidationCode.MultipleVSForPrimitive(spec), spec.strength)) else Nil
-
-          ubsEntries:::multiVsEntries
-        }
+        check(x, spec).map(entry => createEntry(entry.target, entry.code, entry.strength))
       }
       case _ => Nil
+    }
+  }
+
+  def check(elements: List[Element], spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[VsEntry] = {
+    val UBS = spec.strength.contains(BindingStrength.U)
+    val MultipleVSForPrimitive = spec.bindings.size > 1 && elements.exists(_.isInstanceOf[Simple])
+
+    // If BindingStrength is not Undetermined and no primitive element has multiple value sets
+    if(!UBS && !MultipleVSForPrimitive) {
+      val valueSetValidationPayloads: List[ValueSetValidationPayload] = resolveValidationPayload(elements, spec)
+      valueSetValidationPayloads.flatMap(p => {
+        (validate(p) ::: p.detections).map(issue => VsEntry(p.target, issue, spec.strength))
+      })
+    } else {
+      val ubsEntries = if(UBS) elements.map(elm => VsEntry(elm, VSValidationCode.UBS(spec), spec.strength)) else Nil
+      val multiVsEntries = if(MultipleVSForPrimitive) elements.map(elm => VsEntry(elm, VSValidationCode.MultipleVSForPrimitive(spec), spec.strength)) else Nil
+
+      ubsEntries:::multiVsEntries
     }
   }
 

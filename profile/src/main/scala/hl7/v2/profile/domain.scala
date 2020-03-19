@@ -1,7 +1,7 @@
 package hl7.v2.profile
 
 import java.util.{ Arrays => JArrays, List => JList }
-import scala.collection.JavaConverters.seqAsJavaList
+import scala.collection.JavaConverters._
 
 /**
   * Trait representing a data type

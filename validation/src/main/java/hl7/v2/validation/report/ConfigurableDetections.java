@@ -20,10 +20,12 @@ import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Classification;
 import hl7.v2.validation.content.Constraint;
 import hl7.v2.validation.content.Predicate;
+import hl7.v2.validation.content.Reference;
 import hl7.v2.validation.vs.Extensibility;
 import hl7.v2.validation.vs.Stability;
 import hl7.v2.validation.vs.TripletEntry;
 import hl7.v2.validation.vs.ValueSet;
+import scala.Option;
 
 public class ConfigurableDetections {
 	
@@ -764,6 +766,25 @@ public class ConfigurableDetections {
 		return entry(errLoc, desc, category, classification, stack, metaData);
 	}
 
+	public  Entry csEntry(String configKey, Location errLoc,
+						   Element context, String id, Option<Classification> classf, Option<Reference> ref, String message, List<Trace> stack) {
+		String category = conf.getString("report." + configKey + ".category");
+		String classification = "";
+		String orElse = conf.getString("report." + configKey + ".classification");
+		if(classf.isDefined()){
+			classification = constraintClassification(classf.get(),orElse);
+		}
+		else {
+			classification = orElse;
+		}
+		String template = conf.getString("report." + configKey + ".template");
+		String desc = String.format(template, id, message);
+		Map<String, Object> metaData = new HashMap<String, Object>();
+		if (ref.isDefined())
+			metaData.put("reference", ref.get());
+		return entry(errLoc, desc, category, classification, stack, metaData);
+	}
+
 	private  Entry csEntry(String configKey, Element context,
 			Constraint c, String message, List<Trace> stack) {
 		return csEntry(configKey, context.location(), context, c, message, stack);
@@ -829,7 +850,96 @@ public class ConfigurableDetections {
 		return String.format(template, s1, s2, s3, s4, s5);
 	}
 
-	 class ValueSetDetails {
+	public Entry ccRequiredGroup(Element e, String segment, String group) {
+		String category = conf.getString("report.required-group.category");
+		String classification = conf.getString("report.required-group.classification");
+		String template = conf.getString("report.required-group.template");
+		String description = String.format(template, segment, group);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccRequiredCoConstraint(Element e, String segment, String selectors) {
+		String category = conf.getString("report.required-co-constraint.category");
+		String classification = conf.getString("report.required-co-constraint.classification");
+		String template = conf.getString("report.required-co-constraint.template");
+		String description = String.format(template, segment, selectors);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccCardinalityGroup(Element e, String segment, String group, Range r, int nb) {
+		String category = conf.getString("report.cardinality-group.category");
+		String classification = conf.getString("report.cardinality-group.classification");
+		String template = conf.getString("report.cardinality-group.template");
+		String description = String.format(template, segment, group, r.min(), r.max(), nb);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccCardinalityCoConstraint(Element e, String segment, String selectors, Range r, int nb) {
+		String category = conf.getString("report.cardinality-co-constraint.category");
+		String classification = conf.getString("report.cardinality-co-constraint.classification");
+		String template = conf.getString("report.cardinality-co-constraint.template");
+		String description = String.format(template, segment, selectors, r.min(), r.max(), nb);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccElementIsNotSegment(Element e, String path, Element context) {
+		String category = conf.getString("report.cc-element-not-segment.category");
+		String classification = conf.getString("report.cc-element-not-segment.classification");
+		String template = conf.getString("report.cc-element-not-segment.template");
+		String description = String.format(template, path, context.location().prettyString(), e.location().prettyString());
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccPlainTextFailure(Element e, String segment, String selector, String expected, String found) {
+		String category = conf.getString("report.cc-plain-text-failure.category");
+		String classification = conf.getString("report.cc-plain-text-failure.classification");
+		String template = conf.getString("report.cc-plain-text-failure.template");
+		String description = String.format(template, segment, selector, e.location().prettyString(), expected, found);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccPlainTextSuccess(Element e, String segment, String selector, String expected) {
+		String category = conf.getString("report.cc-plain-text-success.category");
+		String classification = conf.getString("report.cc-plain-text-success.classification");
+		String template = conf.getString("report.cc-plain-text-success.template");
+		String description = String.format(template, segment, selector, e.location().prettyString(), expected);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccCodeFailure(Element e, String segment, String selector, String code, String codeSys, String locations, String reason) {
+		String category = conf.getString("report.cc-code-failure.category");
+		String classification = conf.getString("report.cc-code-failure.classification");
+		String template = conf.getString("report.cc-code-failure.template");
+		String description = String.format(template, segment, selector, e.location().prettyString(), code, codeSys, locations, reason);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccCodeSuccess(Element e, String segment, String selector, String code, String codeSys, String locations) {
+		String category = conf.getString("report.cc-code-success.category");
+		String classification = conf.getString("report.cc-code-success.classification");
+		String template = conf.getString("report.cc-code-success.template");
+		String description = String.format(template, segment, selector, e.location().prettyString(), code, codeSys, locations);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccVsFailure(Element e, String segment, String selector, String bindings) {
+		String category = conf.getString("report.cc-vs-failure.category");
+		String classification = conf.getString("report.cc-vs-failure.classification");
+		String template = conf.getString("report.cc-vs-failure.template");
+		String description = String.format(template, segment, selector, e.location().prettyString(), bindings);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccVsSuccess(Element e, String segment, String selector, String bindings) {
+		String category = conf.getString("report.cc-vs-success.category");
+		String classification = conf.getString("report.cc-vs-success.classification");
+		String template = conf.getString("report.cc-vs-success.template");
+		String description = String.format(template, segment, selector, e.location().prettyString(), bindings);
+		return entry(e.location(), description, category, classification);
+	}
+
+
+	class ValueSetDetails {
 
 		private String id;
 		private String stability;
