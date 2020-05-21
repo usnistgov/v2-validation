@@ -114,8 +114,8 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
       DuplicateCode Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $dup_C_open_static_suggested
 
       InvalidCodeSys Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be HIGH ALERT $invalid_CS_closed_dynamic_required
-      InvalidCodeSys Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ERROR $invalid_CS_open_dynamic_required
-      InvalidCodeSys Detection when a value set is Closed/ Static and Binding Strength is Required should be HIGH ALERT $invalid_CS_closed_static_required
+      InvalidCodeSys Detection when a value set is Open/ Dynamic and Binding Strength is Required should be HIGH ALERT $invalid_CS_open_dynamic_required
+      InvalidCodeSys Detection when a value set is Closed/ Static and Binding Strength is Required should be ERROR $invalid_CS_closed_static_required
       InvalidCodeSys Detection when a value set is Open/ Static and Binding Strength is Required should be HIGH ALERT $invalid_CS_open_static_required
 
       InvalidCodeSys Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $invalid_CS_closed_dynamic_suggested
@@ -373,7 +373,7 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
 
   //-- DuplicateCodeAndCodeSystemInValueSetList - multiple value sets
   //-- use case one : all closed, all static
-  val dup_C_CS_list_closed_static_closed_static_required = expectationVsList(DetectionCodes.DuplicateCodeAndCodeSystemInValueSetList, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), ERROR)
+  val dup_C_CS_list_closed_static_closed_static_required = expectationVsList(DetectionCodes.DuplicateCodeAndCodeSystemInValueSetList, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.R), ALERT)
   val dup_C_CS_list_closed_static_closed_static_suggested = expectationVsList(DetectionCodes.DuplicateCodeAndCodeSystemInValueSetList, List(valueSet(Some(Stability.Static), Some(Extensibility.Closed)),valueSet(Some(Stability.Static), Some(Extensibility.Closed))), Some(BindingStrength.S), ALERT)
 
   //-- use case two : all closed, all dynamic
