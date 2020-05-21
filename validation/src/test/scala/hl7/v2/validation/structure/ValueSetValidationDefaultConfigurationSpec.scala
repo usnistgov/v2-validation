@@ -113,7 +113,7 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
       DuplicateCode Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $dup_C_closed_static_suggested
       DuplicateCode Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $dup_C_open_static_suggested
 
-InvalidCodeSys Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be HIGH ALERT $invalid_CS_closed_dynamic_required
+      InvalidCodeSys Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be HIGH ALERT $invalid_CS_closed_dynamic_required
       InvalidCodeSys Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ERROR $invalid_CS_open_dynamic_required
       InvalidCodeSys Detection when a value set is Closed/ Static and Binding Strength is Required should be HIGH ALERT $invalid_CS_closed_static_required
       InvalidCodeSys Detection when a value set is Open/ Static and Binding Strength is Required should be HIGH ALERT $invalid_CS_open_static_required
