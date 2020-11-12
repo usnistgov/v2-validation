@@ -11,7 +11,7 @@ ThisBuild / scalacOptions := Seq(
   "-feature",
   "-unchecked",
   "-deprecation",
-  "-target:jvm-1.7",
+  "-target:jvm-1.8",
   "-language:_",
   "-Dconfig.trace=loads"
 )
@@ -22,6 +22,7 @@ lazy val root = project.in(file(".")).aggregate(profile, parser, validation)
 
 lazy val profile = Project("hl7-v2-profile", file("profile"))
   .settings(libraryDependencies ++= Seq(
+    xom,
     `xml-util`,
     scala_xml,
     sext,
@@ -45,7 +46,26 @@ lazy val validation = Project("hl7-v2-validation", file("validation"))
     libraryDependencies ++= Seq(
       typesafe_config,
       stringUtils,
+      jx_core,
       vreport,
-      json
+      spray_json
+    )
+  )
+
+lazy val playground = Project("hl7-v2-validation-playground", file("playground/scala"))
+  .enablePlugins(PlayScala)
+  .dependsOn(validation % "test->test; compile->compile")
+  .settings(
+    name := """hl7-v2-validation-playground""",
+    organization := "gov.nist",
+    version := "1.0-SNAPSHOT",
+    libraryDependencies ++= Seq(
+      guice,
+      "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+    ),
+    scalacOptions ++= Seq(
+      "-feature",
+      "-deprecation",
+      "-Xfatal-warnings"
     )
   )

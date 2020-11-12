@@ -32,11 +32,11 @@ object PreProcessor {
         Failure( new Exception("No MSH Segment found in the message.") )
       case (beforeMSH, xs ) =>
         getSeparators( xs.head._2 ) map { separators =>
-          implicit val fs = separators.fs
+          implicit val fs: Char = separators.fs
           val segNames = messageSegNames(model.structure)
           val (correct, invalid) = partition( xs )
           val (unexpected, valid) = correct partition {
-            seg => segNames.filter (seg._2 startsWith _) isEmpty
+            seg => !segNames.exists(seg._2 startsWith)
           }
           PPR(valid, beforeMSH:::invalid, unexpected, separators, ambiguous(model.structure))
         }
@@ -57,7 +57,7 @@ object PreProcessor {
   
   
   def ambiguous(models: List[SGM]) : Boolean = {
-    def ambiguous = false;
+    def ambiguous = false
     def loop(l : List[SGM], b : Boolean) : Boolean = {
       l match {
         case head::list => head match { 

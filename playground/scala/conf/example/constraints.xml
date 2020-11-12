@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConformanceContext UUID="2decb2ea-0b10-4c4c-9906-14e41392da67"
+	xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<MetaData Name="Z22 Message Constranits" OrgName="NIST" Version="1.9.11" Date="20200902"
+		SpecificationName="Implementation Guide for Immunization Messaging, Release 1.5 October 1 2014"/>
+	<Predicates>
+		<Datatype>
+			<ByID ID="XCN_IZ">
+				<Predicate ID="[XCN_IZ]1[1]" Target="1[1]" TrueUsage="R" FalseUsage="RE">
+					<Description>If XCN.2.1 (Surname) and XCN.3 (Given Name) are not valued.</Description>
+					<Condition>
+						<AND>
+							<NOT>
+								<Presence Path="2[1].1[1]"/>
+							</NOT>
+							<NOT>
+								<Presence Path="3[1]"/>
+							</NOT>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XCN_IZ]9[1]" Target="9[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If XCN.1 (Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="1[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XCN_IZ]12[1]" Target="12[1]" TrueUsage="O" FalseUsage="X">
+					<Description>If XCN.11 (Check Digit Identifer) is valued.</Description>
+					<Condition>
+						<Presence Path="11[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XCN_IZ]13[1]" Target="13[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If XCN.1 (ID number) is valued.</Description>
+					<Condition>
+						<Presence Path="1[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="CWE_IZ">
+				<Predicate ID="[CWE_IZ]3[1]" Target="3[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If CWE.1 (Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="1[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[CWE_IZ]5[1]" Target="5[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If CWE.4 (Alternate Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="4[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[CWE_IZ]6[1]" Target="6[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If CWE.4 (Alternate Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="4[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="EI_IZ">
+				<Predicate ID="[EI_IZ]2[1]" Target="2[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If EI.3 (Universal ID) is not valued.</Description>
+					<Condition>
+						<NOT>
+							<Presence Path="3[1]"/>
+						</NOT>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[EI_IZ]3[1]" Target="3[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If EI.2 (Namespace ID) is not valued.</Description>
+					<Condition>
+						<NOT>
+							<Presence Path="2[1]"/>
+						</NOT>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[EI_IZ]4[1]" Target="4[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If EI.3 (Universal ID) is valued.</Description>
+					<Condition>
+						<Presence Path="3[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="HD_IZ">
+				<Predicate ID="[HD_IZ]1[1]" Target="1[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If HD.2 (Universal ID) is not valued.</Description>
+					<Condition>
+						<NOT>
+							<Presence Path="2[1]"/>
+						</NOT>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[HD_IZ]2[1]" Target="2[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If HD.1 (Namespace ID) is not valued.</Description>
+					<Condition>
+						<NOT>
+							<Presence Path="1[1]"/>
+						</NOT>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[HD_IZ]3[1]" Target="3[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If HD.2 (Universal ID) is valued.</Description>
+					<Condition>
+						<Presence Path="2[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="XTN_IZ">
+				<Predicate ID="[XTN_IZ]4[1]" Target="4[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If the value of XTN.2 (Telecommunication Use Code) is 'NET'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="2[1]"/>
+							<PlainText Path="2[1]" Text="NET" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XTN_IZ]6[1]" Target="6[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If the value of XTN.2 (Telecommunication Use Code) is not 'NET'.</Description>
+					<Condition>
+						<NOT>
+							<AND>
+								<Presence Path="2[1]"/>
+								<PlainText Path="2[1]" Text="NET" IgnoreCase="false"/>
+							</AND>
+						</NOT>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XTN_IZ]7[1]" Target="7[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If the value of XTN.2 (Telecommunication Use Code) is not 'NET'.</Description>
+					<Condition>
+						<NOT>
+							<AND>
+								<Presence Path="2[1]"/>
+								<PlainText Path="2[1]" Text="NET" IgnoreCase="false"/>
+							</AND>
+						</NOT>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="CX_IZ">
+				<Predicate ID="[CX_IZ]3[1]" Target="3[1]" TrueUsage="O" FalseUsage="X">
+					<Description>If CX.2 (Check Digit) is valued.</Description>
+					<Condition>
+						<Presence Path="2[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="CE_IZ">
+				<Predicate ID="[CE_IZ]5[1]" Target="5[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If CE.4 (Alternate Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="4[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[CE_IZ]6[1]" Target="6[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If CE.4 (Alternate Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="4[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="XON_IZ">
+				<Predicate ID="[XON_IZ]6[1]" Target="6[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If XON.10 (Organization Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="10[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XON_IZ]7[1]" Target="7[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If XON.10 (Organization Identifier) is valued.</Description>
+					<Condition>
+						<Presence Path="10[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[XON_IZ]10[1]" Target="10[1]" TrueUsage="R" FalseUsage="RE">
+					<Description>If XON.1 (Organization Name) is not valued.</Description>
+					<Condition>
+						<NOT>
+							<Presence Path="1[1]"/>
+						</NOT>
+					</Condition>
+				</Predicate>
+			</ByID>
+		</Datatype>
+		<Segment>
+			<ByID ID="PID_IZ 1_5">
+				<Predicate ID="[PID_IZ 1_5]25[1]" Target="25[1]" TrueUsage="RE" FalseUsage="O">
+					<Description>If the value of PID-24 (Multiple Birth Indicator) is 'Y'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="24[1]"/>
+							<PlainText Path="24[1]" Text="Y" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[PID_IZ 1_5]29[1]" Target="29[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If the value of PID-30 (Patient Death Indicator) is 'Y'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="30[1]"/>
+							<PlainText Path="30[1]" Text="Y" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="PD1_IZ 1_5">
+				<Predicate ID="[PD1_IZ 1_5]13[1]" Target="13[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If PD1-12 (Protection Indicator) is valued.</Description>
+					<Condition>
+						<Presence Path="12[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[PD1_IZ 1_5]17[1]" Target="17[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If PD1-16 (Immunization Registry Status) is valued.</Description>
+					<Condition>
+						<Presence Path="16[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[PD1_IZ 1_5]18[1]" Target="18[1]" TrueUsage="RE" FalseUsage="X">
+					<Description>If PD1-11 (Publicity Code) is valued.</Description>
+					<Condition>
+						<Presence Path="11[1]"/>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="RXA_IZ 1_5_Z22">
+				<Predicate ID="[RXA_IZ 1_5]7[1]" Target="7[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If the value of RXA-6 (Administered Amount) is not '999'.</Description>
+					<Condition>
+						<NOT>
+							<AND>
+								<Presence Path="6[1]"/>
+								<PlainText Path="6[1]" Text="999" IgnoreCase="false"/>
+							</AND>
+						</NOT>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]9[1]" Target="9[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If the value of RXA-20 (Completion Status) is one of List Values: 'CP','PA'.</Description>
+					<Condition>
+						<AND>
+							<StringList Path="20[1]" CSV="CP,PA"/>
+							<Presence Path="20[1]"/>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]10[1]" Target="10[1]" TrueUsage="RE" FalseUsage="O">
+					<Description>If the value of RXA-9.1 (Identifier) is '00' AND if the value of RXA-20 (Completion Status) is one of List Values: 'CP','PA'.</Description>
+					<Condition>
+						<AND>
+							<AND>
+								<PlainText Path="9[1].1[1]" Text="00" IgnoreCase="false"/>
+								<Presence Path="9[1].1[1]"/>
+							</AND>
+							<AND>
+								<StringList Path="20[1]" CSV="CP,PA"/>
+								<Presence Path="20[1]"/>
+							</AND>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]11[1]" Target="11[1]" TrueUsage="RE" FalseUsage="O">
+					<Description>If the value of RXA-9.1 (Identifier) is '00' AND if the value of RXA-20 (Completion Status) is one of List Values: 'CP','PA'.</Description>
+					<Condition>
+						<AND>
+							<AND>
+								<PlainText Path="9[1].1[1]" Text="00" IgnoreCase="false"/>
+								<Presence Path="9[1].1[1]"/>
+							</AND>
+							<AND>
+								<StringList Path="20[1]" CSV="CP,PA"/>
+								<Presence Path="20[1]"/>
+							</AND>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]15[1]" Target="15[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If the value of RXA-9.1 (Identifier) is '00' AND if RXA-9.1 (Identifier) is valued AND if the value of RXA-20 (Completion Status) is one of List Values: 'CP','PA' AND if RXA-20 (Completion Status) is valued.</Description>
+					<Condition>
+						<AND>
+							<PlainText Path="9[1].1[1]" Text="00" IgnoreCase="false"/>
+							<AND>
+								<Presence Path="9[1].1[1]"/>
+								<AND>
+									<StringList Path="20[1]" CSV="CP,PA"/>
+									<Presence Path="20[1]"/>
+								</AND>
+							</AND>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]16[1]" Target="16[1]" TrueUsage="RE" FalseUsage="O">
+					<Description>If RXA-15 (Substance Lot Number) is valued.</Description>
+					<Condition>
+						<Presence Path="15[1]"/>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]17[1]" Target="17[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If RXA-9.1 (Identifier) is valued AND if the value of RXA-9.1 (Identifier) is '00'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="9[1].1[1]"/>
+							<PlainText Path="9[1].1[1]" Text="00" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]18[1]" Target="18[1]" TrueUsage="R" FalseUsage="X">
+					<Description>If RXA-20 (Completion Status) is valued AND if the value of RXA-20 (Completion Status) is 'RE'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="20[1]"/>
+							<PlainText Path="20[1]" Text="RE" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[RXA_IZ 1_5]21[1]" Target="21[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If the value of RXA-5.1 (Identifier) is not '998'.</Description>
+					<Condition>
+						<NOT>
+							<AND>
+								<Presence Path="5[1].1[1]"/>
+								<PlainText Path="5[1].1[1]" Text="998" IgnoreCase="false"/>
+							</AND>
+						</NOT>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="OBX_IZ 1_5">
+				<Predicate ID="[OBX_IZ 1_5]6[1]" Target="6[1]" TrueUsage="R" FalseUsage="O">
+					<Description>If the value of OBX-2 (Value Type) is 'NM'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="2[1]"/>
+							<PlainText Path="2[1]" Text="NM" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+				<Predicate ID="[OBX_IZ 1_5]17[1]" Target="17[1]" TrueUsage="RE" FalseUsage="O">
+					<Description>If the value of OBX-3.1 (Identifier) is '64994-7'.</Description>
+					<Condition>
+						<AND>
+							<Presence Path="3[1].1[1]"/>
+							<PlainText Path="3[1].1[1]" Text="64994-7" IgnoreCase="false"/>
+						</AND>
+					</Condition>
+				</Predicate>
+			</ByID>
+			<ByID ID="ORC_IZ 1_5">
+				<Predicate ID="[ORC_IZ 1_5]12[1]-Display" Target="12[1]" TrueUsage="RE"
+					FalseUsage="O">
+					<Description>If the value of RXA-9.1 (Identifier) is '00' AND if RXA-9.1 (Identifier) is valued AND if the value of RXA-20 (Completion Status) is one of List Values: 'CP','PA' AND if RXA-20 (Completion Status) is valued.</Description>
+					<Condition>
+						<OR>
+							<Presence Path="12[1]"/>
+							<NOT>
+								<Presence Path="12[1]"/>
+							</NOT>
+						</OR>
+					</Condition>
+				</Predicate>
+			</ByID>
+		</Segment>
+		<Group>
+			<ByName Name="VXU_V04.ORDER">
+				<Predicate ID="[ORC_IZ 1_5]12[1]-Actual" Target="1[1].12[1]" TrueUsage="RE"
+					FalseUsage="O">
+					<Description>If the value of RXA-9.1 (Identifier) is '00' AND if RXA-9.1 (Identifier) is valued AND if the value of RXA-20 (Completion Status) is one of List Values: 'CP','PA' AND if RXA-20 (Completion Status) is valued.</Description>
+					<Condition>
+						<AND>
+							<PlainText Path="3[1].9[1].1[1]" Text="00" IgnoreCase="false"/>
+							<AND>
+								<Presence Path="3[1].9[1].1[1]"/>
+								<AND>
+									<StringList Path="3[1].20[1]" CSV="CP,PA"/>
+									<Presence Path="3[1].20[1]"/>
+								</AND>
+							</AND>
+						</AND>
+					</Condition>
+				</Predicate>
+			</ByName>
+		</Group>
+	</Predicates>
+	<Constraints>
+		<Datatype>
+			<ByID ID="EI_IZ">
+				<Constraint ID="IZ-3" Target="3[1]">
+					<Description>The value of EI.3 (Universal ID) SHALL be formatted with
+						ISO-compliant OID.</Description>
+					<Assertion>
+						<Format Path="3[1]" Regex="[0-2](\.(0|[1-9][0-9]*))*"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-4" Target="4[1]">
+					<Description>The value of EI.4 (Universal ID Type) SHALL be 'ISO'.</Description>
+					<Assertion>
+						<PlainText Path="4[1]" Text="ISO" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="XPN_M">
+				<Constraint ID="IZ-66" Target="7[1]">
+					<Description>The value of XPN.7 (Name Type Code) SHALL be 'M'.</Description>
+					<Assertion>
+						<PlainText Path="7[1]" Text="M" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="HD_IZ">
+				<Constraint ID="IZ-5" Target="2[1]">
+					<Description>The value of HD.2 (Universal ID) SHALL be formatted with
+						ISO-compliant OID.</Description>
+					<Assertion>
+						<Format Path="2[1]" Regex="[0-2](\.(0|[1-9][0-9]*))*"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-6" Target="3[1]">
+					<Description>The value of HD.3 (Universal ID Type) SHALL be 'ISO'.</Description>
+					<Assertion>
+						<PlainText Path="3[1]" Text="ISO" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="MSG_IZ_VXU">
+				<Constraint ID="IZ-17" Target="1[1]">
+					<Description>The value of MSG.1 (Message Code) SHALL be 'VXU'.</Description>
+					<Assertion>
+						<PlainText Path="1[1]" Text="VXU" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-17" Target="2[1]">
+					<Description>The value of MSG.2 (Trigger Event) SHALL be 'V04'.</Description>
+					<Assertion>
+						<PlainText Path="2[1]" Text="V04" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-17" Target="3[1]">
+					<Description>The value of MSG.3 (Message Structure) SHALL be
+						'VXU_V04'.</Description>
+					<Assertion>
+						<PlainText Path="3[1]" Text="VXU_V04" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="CQ_IZ">
+				<Constraint ID="IZ-1" Target="1[1]">
+					<Description>The value of CQ.1 (Quantity) SHALL be a positive
+						integer.</Description>
+					<Assertion>
+						<SimpleValue Path="1[1]" Operator="GT" Value="0" Type="Number"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-2" Target="2[1]">
+					<Description>The value of CQ.2.1 (Identifier) SHALL be 'RD'.</Description>
+					<Assertion>
+						<PlainText Path="2[1].1[1]" Text="RD" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+		</Datatype>
+		<Segment>
+			<ByID ID="MSH_IZ 1_5_Z22">
+				<Constraint ID="IZ-12" Target="1[1]">
+					<Description>The value of MSH-1 (Field Separator) SHALL be '|'.</Description>
+					<Assertion>
+						<PlainText Path="1[1]" Text="|" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-13" Target="2[1]">
+					<Description>The value of MSH-2 (Encoding Characters) SHALL be
+						'^~\&amp;'.</Description>
+					<Assertion>
+						<PlainText Path="2[1]" Text="^~\&amp;" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-TS_Z" Target="7[1]">
+					<Description>The value of MSH-7.1 (Time) SHALL be formatted with
+						YYYYMMDDHHMMSS+-ZZZZ.</Description>
+					<Assertion>
+						<Format Path="7[1].1[1]"
+							Regex="([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]).*((\+|\-)[0-9]{4})"
+						/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-17" Target="9[1]">
+					<Description>The value of MSH-9 (Message Type) SHALL be
+						'VXU^V04^VXU_V04'.</Description>
+					<Assertion>
+						<AND>
+							<PlainText Path="9[1].1[1]" Text="VXU" IgnoreCase="false"/>
+							<AND>
+								<PlainText Path="9[1].2[1]" Text="V04" IgnoreCase="false"/>
+								<PlainText Path="9[1].3[1]" Text="VXU_V04" IgnoreCase="false"/>
+							</AND>
+						</AND>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-15" Target="12[1]">
+					<Description>The value of MSH-12.1 (Version ID) SHALL be '2.5.1'.</Description>
+					<Assertion>
+						<PlainText Path="12[1].1[1]" Text="2.5.1" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-42" Target="15[1]">
+					<Description>The value of MSH-15 (Accept Acknowledgment Type) SHALL be
+						'ER'.</Description>
+					<Assertion>
+						<PlainText Path="15[1]" Text="ER" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-41" Target="16[1]">
+					<Description>The value of MSH-16 (Application Acknowledgment Type) SHALL be
+						'AL'.</Description>
+					<Assertion>
+						<PlainText Path="16[1]" Text="AL" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-43" Target="21[1]">
+					<Description>The value of MSH-21[1] (Message Profile Identifier) SHALL be
+						'Z22^CDCPHINVS'.</Description>
+					<Assertion>
+						<AND>
+							<PlainText Path="21[1].1[1]" Text="Z22" IgnoreCase="false"/>
+							<PlainText Path="21[1].2[1]" Text="CDCPHINVS" IgnoreCase="false"/>
+						</AND>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="PID_IZ 1_5">
+				<Constraint ID="IZ-46" Target="1[1]">
+					<Description>The value of PID-1 (Set ID - PID) SHALL be '1'.</Description>
+					<Assertion>
+						<PlainText Path="1[1]" Text="1" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-TS_NZ" Target="7[1]">
+					<Description>The value of PID-7.1 (Time) SHALL be formatted with
+						YYYYMMDD.</Description>
+					<Assertion>
+						<Format Path="7[1].1[1]"
+							Regex="((([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])\.[0-9][0-9][0-9][0-9]))"
+						/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="PD1_IZ 1_5">
+				<Constraint ID="IZ-DT_D" Target="17[1]">
+					<Description>The value of PD1-17 (Immunization Registry Status Effective Date)
+						SHALL be formatted with YYYYMMDD.</Description>
+					<Assertion>
+						<Format Path="17[1]"
+							Regex="((([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])\.[0-9][0-9][0-9][0-9]))"
+						/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-DT_D" Target="18[1]">
+					<Description>The value of PD1-18 (Publicity Code Effective Date) SHALL be
+						formatted with YYYYMMDD.</Description>
+					<Assertion>
+						<Format Path="18[1]"
+							Regex="((([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])\.[0-9][0-9][0-9][0-9]))"
+						/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="IN1_IZ 1_5">
+				<Constraint ID="IZ-69" Target="1[1]">
+					<Description>The value of IN1-1 (Set ID - IN1) SHALL be '1'.</Description>
+					<Assertion>
+						<PlainText Path="1[1]" Text="1" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-TS_NZ" Target="29[1]">
+					<Description>The value of IN1-29.1 (Time) SHALL be formatted with
+						YYYYMMDD.</Description>
+					<Assertion>
+						<Format Path="29[1].1[1]"
+							Regex="((([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])\.[0-9][0-9][0-9][0-9]))"
+						/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="ORC_IZ 1_5">
+				<Constraint ID="IZ-25" Target="1[1]">
+					<Description>The value of ORC-1 (Order Control) SHALL be 'RE'.</Description>
+					<Assertion>
+						<PlainText Path="1[1]" Text="RE" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="RXA_IZ 1_5_Z22">
+				<Constraint ID="IZ-28" Target="1[1]">
+					<Description>The value of RXA-1 (Give Sub-ID Counter) SHALL be
+						'0'.</Description>
+					<Assertion>
+						<PlainText Path="1[1]" Text="0" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-29" Target="2[1]">
+					<Description>The value of RXA-2 (Administration Sub-ID Counter) SHALL be
+						'1'.</Description>
+					<Assertion>
+						<PlainText Path="2[1]" Text="1" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-TS_NZ" Target="3[1]">
+					<Description>The value of RXA-3.1 (Time) SHALL be formatted with
+						YYYYMMDD.</Description>
+					<Assertion>
+						<Format Path="3[1].1[1]"
+							Regex="((([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])\.[0-9][0-9][0-9][0-9]))"
+						/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-30" Target="4[1]">
+					<Description>If RXA-4.1 (Time) is valued, then RXA.4.1 (Time) SHALL be identical
+						to the RXA-3.1 (Time).</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<Presence Path="4[1].1[1]"/>
+							</NOT>
+							<PathValue Path1="4[1].1[1]" Operator="EQ" Path2="3[1].1[1]"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-49" Target="6[1]">
+					<Description>If the value of RXA-5.1 (Identifier) is '998', then the value of
+						RXA-6 (Administered Amount) SHALL be '999'.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<Presence Path="5[1].1[1]"/>
+									<PlainText Path="5[1].1[1]" Text="998" IgnoreCase="false"/>
+								</AND>
+							</NOT>
+							<PlainText Path="6[1]" Text="999" IgnoreCase="false"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-48" Target="6[1]">
+					<Description>If RXA-20 (Completion Status) is valued and the value of RXA.20
+						(Completion Status) is 'RE' then the value of RXA-6 (Administered Amount)
+						SHALL be '999'.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<Presence Path="20[1]"/>
+									<PlainText Path="20[1]" Text="RE" IgnoreCase="false"/>
+								</AND>
+							</NOT>
+							<PlainText Path="6[1]" Text="999" IgnoreCase="false"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-31" Target="9[1]">
+					<Description>If RXA-20 (Completion Status) is valued and the value of RXA-20
+						(Completion Status) is one of List Values: 'CP','PA' then the value of
+						RXA-9.1 (Identifier) SHALL be one of codes listed in the Value Set:
+						NIP001.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<Presence Path="20[1]"/>
+									<StringList Path="20[1]" CSV="CP,PA"/>
+								</AND>
+							</NOT>
+							<StringList Path="9[1].1[1]" CSV="00,01,02,03,04,05,06,07,08"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-47" Target="9[1]">
+					<Description>If RXA-20 (Completion Status) is not valued or the value of RXA-20
+						(Completion Status) is not one of List Values: 'CP','PA' then RXA-9.1
+						(Identifier) SHALL NOT be valued.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<OR>
+									<NOT>
+										<Presence Path="20[1]"/>
+									</NOT>
+									<NOT>
+										<AND>
+											<StringList Path="20[1]" CSV="CP,PA"/>
+											<Presence Path="20[1]"/>
+										</AND>
+									</NOT>
+								</OR>
+							</NOT>
+							<NOT>
+								<Presence Path="9[1].1[1]"/>
+							</NOT>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-32" Target="20[1]">
+					<Description>If RXA-18.1 (Identifier) is valued then the value of RXA-20
+						(Completion Status) SHALL be 'RE' and RXA-20 (Completion Status) SHALL be
+						valued.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<Presence Path="18[1].1[1]"/>
+							</NOT>
+							<AND>
+								<PlainText Path="20[1]" Text="RE" IgnoreCase="false"/>
+								<Presence Path="20[1]"/>
+							</AND>
+						</OR>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="OBX_IZ 1_5">
+				<Constraint ID="IZ-44" Target="4[1]">
+					<Description>The value of OBX-4 SHALL be a positive integer.</Description>
+					<Assertion>
+						<SimpleValue Path="4[1]" Operator="GT" Value="0" Type="Number"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-35" Target="5[1]">
+					<Description>If The value of OBX-3.1 (Identifier) is '64994-7' and the value of
+						OBX-2 (Value Type) is 'CE' then the value of OBX-5.1 (Observation Value)
+						SHALL be one of codes listed in the Value Set: HL70064_IZ.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<AND>
+										<Presence Path="3[1].1[1]"/>
+										<PlainText Path="3[1].1[1]" Text="64994-7"
+											IgnoreCase="false"/>
+									</AND>
+									<AND>
+										<Presence Path="2[1]"/>
+										<PlainText Path="2[1]" Text="CE" IgnoreCase="false"/>
+									</AND>
+								</AND>
+							</NOT>
+							<ValueSet Path="5[1]" ValueSetID="HL70064_IZ" BindingStrength="R"
+								BindingLocation="1"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-36" Target="5[1]">
+					<Description>If The value of OBX-3.1 (Identifier) is '69764-9' and the value of
+						OBX-2 (Value Type) is 'CE' then the value of OBX-5.1 (Observation Value)
+						SHALL be one of codes listed in the Value Set:
+						PHVS_VISBarcodes_IIS.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<AND>
+										<Presence Path="3[1].1[1]"/>
+										<PlainText Path="3[1].1[1]" Text="69764-9"
+											IgnoreCase="false"/>
+									</AND>
+									<AND>
+										<Presence Path="2[1]"/>
+										<PlainText Path="2[1]" Text="CE" IgnoreCase="false"/>
+									</AND>
+								</AND>
+							</NOT>
+							<ValueSet Path="5[1]" ValueSetID="PHVS_VISBarcodes_IIS"
+								BindingStrength="R" BindingLocation="1"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-37" Target="5[1]">
+					<Description>If The value of OBX-3.1 (Identifier) is '30956-7' and the value of
+						OBX-2 (Value Type) is 'CE' then the value of OBX-5.1 (Observation Value)
+						SHALL be one of codes listed in the Value Set: CVX.</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<AND>
+										<Presence Path="3[1].1[1]"/>
+										<PlainText Path="3[1].1[1]" Text="30956-7"
+											IgnoreCase="false"/>
+									</AND>
+									<AND>
+										<Presence Path="2[1]"/>
+										<PlainText Path="2[1]" Text="CE" IgnoreCase="false"/>
+									</AND>
+								</AND>
+							</NOT>
+							<ValueSet Path="5[1]" ValueSetID="CVX" BindingStrength="R"
+								BindingLocation="1"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-22" Target="11[1]">
+					<Description>The value of OBX-11 (Observation Result Status) SHALL be
+						'F'.</Description>
+					<Assertion>
+						<PlainText Path="11[1]" Text="F" IgnoreCase="false"/>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-TS_NZ" Target="14[1]">
+					<Description>The value of OBX-14.1 (Time) SHALL be formatted with
+						YYYYMMDD.</Description>
+					<Assertion>
+						<Format Path="14[1].1[1]"
+							Regex="((([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3])))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9]))|(([0-9]{4})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])\.[0-9][0-9][0-9][0-9]))"
+						/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+			<ByID ID="NK1_IZ 1_5">
+				<Constraint ID="IZ-70" Target="1[1]">
+					<Description>The Value of NK1-1 (Set ID-NK1) SHALL be valued sequentially
+						starting with the value "1".</Description>
+					<Assertion>
+						<SetID Path="1[1]"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+		</Segment>
+		<Group>
+			<ByID ID="VXU_V04.ORDER">
+				<Constraint ID="IZ-24" Target="5[1].1[1]">
+					<Description> If RXA-20 is valued 'CP' or 'PA' and the first occurrence of
+						RXA-9.1 is valued '00' and RXA-5.1 is valued with a CVX code from table
+						PHVS_VISVaccines_IIS (See Appendix A) then for each vaccine information
+						statement that was shared there SHALL be:[one OBX segment with OBX-3.1
+						valued '69764-9' (bar coded) and one OBX with OBX-3.1 valued '29769-7'
+						(presentation or delivery date) associated. Both OBX shall have the same
+						value in OBX-4] OR[one OBX segment with OBX-3.1 valued '30956-7' (vaccine
+						type) and one OBX segment with OBX-3.1 valued '29768-9' (version date) and
+						one OBX with OBX-3.1 valued '29769-7' (presentation or delivery date)
+						associated. All three OBX shall have the same value in OBX-4] </Description>
+					<Assertion>
+						<IMPLY>
+							<AND>
+								<AND>
+									<AND>
+										<Presence Path="3[1].20[1]"/>
+										<StringList Path="3[1].20[1]" CSV="CP,PA"/>
+									</AND>
+									<AND>
+										<Presence Path="3[1].9[1].1[1]"/>
+										<PlainText Path="3[1].9[1].1[1]" Text="00"
+											IgnoreCase="false"/>
+									</AND>
+								</AND>
+								<AND>
+									<Presence Path="3[1].5[1].1[1]"/>
+									<ValueSet ValueSetID="PHVS_VISVaccines_IIS"
+										Path="3[1].5[1].1[1]" BindingLocation="1"
+										BindingStrength="R"/>
+								</AND>
+							</AND>
+							<Plugin
+								QualifiedClassName="gov.nist.healthcare.hl7.v2.iz.plugins.IZ24Constraint"
+							/>
+						</IMPLY>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-45" Target="1[1].3[1]">
+					<Description> If RXA-20 is valued "NA" or "RE" then ORC-3.1 SHALL be valued
+						"9999".</Description>
+					<Assertion>
+						<OR>
+							<NOT>
+								<AND>
+									<Presence Path="3[1].20[1]"/>
+									<StringList Path="3[1].20[1]" CSV="NA,RE"/>
+								</AND>
+							</NOT>
+							<PlainText Path="1[1].3[1].1[1]" Text="9999" IgnoreCase="false"/>
+						</OR>
+					</Assertion>
+				</Constraint>
+				<Constraint ID="IZ-23" Target="5[1].1[1].3[1].1[1]">
+					<Description> If RXA-20 is valued 'CP' or 'PA' and the first occurrence of
+						RXA-9.1 (Administration Note.code) is '00' then the message SHALL include an
+						OBX segment associated with the RXA with OBX-3.1 shall equal
+						'64994-7'</Description>
+					<Assertion>
+						<IMPLY>
+							<AND>
+								<AND>
+									<Presence Path="3[1].9[1].1[1]"/>
+									<PlainText Path="3[1].9[1].1[1]" Text="00" IgnoreCase="false"/>
+								</AND>
+								<AND>
+									<Presence Path="3[1].20[1]"/>
+									<StringList Path="3[1].20[1]" CSV="CP,PA"/>
+								</AND>
+							</AND>
+							<AND>
+								<Presence Path="5[1]"/>
+								<PlainText Path="5[*].1[1].3[1].1[1]" Text="64994-7"
+									IgnoreCase="false" AtLeastOnce="true"/>
+							</AND>
+						</IMPLY>
+					</Assertion>
+				</Constraint>
+			</ByID>
+		</Group>
+		<Message>
+			<ByID ID="aa72383a-7b48-46e5-a74a-82e019591fe7">
+				<Constraint ID="NIST-01" Target="9[1].5[1].1[1]">
+					<Description>The Value of OBX-1 (Set ID-OBX) SHALL be valued sequentially
+						starting with the value "1" within a message or for each
+						group.</Description>
+					<Assertion>
+						<IZSetID Parent="9[*]" Element="5[*].1[*].1[*]"/>
+					</Assertion>
+				</Constraint>
+			</ByID>
+		</Message>
+	</Constraints>
+</ConformanceContext>

@@ -85,8 +85,9 @@ public class SimpleElementValidator extends ConfigurableValidation {
         java.util.List<Code> codes = vs.getCodes(value);
         int nbOfCodes = codes.size();
         if( nbOfCodes == 0 ) {
-            Extensibility ext = vs.extensibility() != null ? vs.extensibility().getOrElse(null) : null;
-            Stability sta = vs.stability() != null ? vs.stability().getOrElse(null) : null;
+            Extensibility ext = vs.extensibility() != null ? vs.extensibility().getOrElse(() -> null) : null;
+            Stability sta = vs.stability() != null ? vs.stability().getOrElse(() -> null) : null;
+
 //            BindingStrength bs = spec != null ? spec.bindingStrength() != null ? spec.bindingStrength().getOrElse(null) : null : null;
 
             return Detections.codeNotFound(location, value, vs.id(), sta, ext, null);
@@ -103,8 +104,8 @@ public class SimpleElementValidator extends ConfigurableValidation {
      */
     private  Entry checkCodeUsage(Location location, String value, Code code,
                                         ValueSet vs, ValueSetSpec spec) {
-        Extensibility ext = vs.extensibility() != null ? vs.extensibility().getOrElse(null) : null;
-        Stability sta = vs.stability() != null ? vs.stability().getOrElse(null) : null;
+        Extensibility ext = vs.extensibility() != null ? vs.extensibility().getOrElse(() -> null) : null;
+        Stability sta = vs.stability() != null ? vs.stability().getOrElse(() -> null) : null;
 //        BindingStrength bs = spec != null ? spec.bindingStrength() != null ? spec.bindingStrength().getOrElse(null) : null : null;
 
     	 if( code.usage() instanceof CodeUsage.E$ )

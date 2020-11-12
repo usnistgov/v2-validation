@@ -7,11 +7,12 @@ object Dependencies {
     "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
   )
 
-//  val jx_core       = "com.fasterxml.jackson.core"    %  "jackson-databind"       % "2.2.2"
+  val jx_core       = "com.fasterxml.jackson.core"    %  "jackson-databind"       % "2.2.2"
 //  val jx_md         = "com.fasterxml.jackson.module"  %% "jackson-module-scala"   % "2.8.4"
 //  val scalaCheck    = "org.scalacheck"                %%  "scalacheck"            %  "1.11.3"
 //  val junit         = "junit"                         %   "junit"                 %  "4.11"
-  val json = "io.spray" %%  "spray-json" % "1.3.4"
+  val xom = "xom" % "xom" % "1.2.5"
+  val spray_json = "io.spray" %%  "spray-json" % "1.3.4"
   val stringUtils = "org.apache.commons" % "commons-lang3" % "3.4"
   val typesafe_config = "com.typesafe"                  % "config"                  % "1.2.1"
   val `xml-util`    = "gov.nist"                      %  "xml-util"               % "1.0.1-SNAPSHOT"

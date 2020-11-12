@@ -1,0 +1,5 @@
+# Routes
+GET     /                                       controllers.ValidationController.index
+POST    /api/validate                           controllers.ValidationController.validation
+POST    /api/checkResource                      controllers.ValidationController.checkResource
+GET     /api/loadVxuExample                     controllers.ValidationController.loadVxuExample
