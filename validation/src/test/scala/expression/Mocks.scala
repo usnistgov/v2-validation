@@ -46,6 +46,9 @@ trait Mocks {
   val c0 = C(2,1, Nil)
   val c1 = C(2,3, c1Children )
   val c2 = C(1,1, s0::s1::s2::c0::c1::Nil)
+  val c3 = C(2,3, List(
+    S( 1, 1, Text("90423-5")), S( 1, 2, Text("119202000"))
+  ))
 
   def elementsDescription =
     """s0 -> Simple(4, 1, Text(41\F\) )                    c1 -> Complex( position= 2, instance= 3)

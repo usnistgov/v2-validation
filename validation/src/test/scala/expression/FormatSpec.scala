@@ -17,11 +17,27 @@ trait FormatSpec extends Specification with Evaluator with Mocks {
       If the path is valued to multiple elements
         Format should pass if one of the elements matches the pattern and AtLeastOnce = True           $formatAtLeastOnceT
         Format should fail if one of the elements doesn't match the pattern and AtLeastOnce = False           $formatAtLeastOnceF
+      Format evaluation should fail If not present behavior is FAIL and no element is found  $formatNoElmFAIL
+      Format evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $formatNoElmINC
+      Format evaluation should pass If not present behavior is PASS and no element is found $formatNoElmPASS
   */
 
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
   def formatPathNotPopulated = eval( Format("4[1]", "xx"), c1 ) === Pass
+
+  def formatNoElmFAIL = {
+    val f = Format("4[1]", "xx", false, "FAIL")
+    eval(f, c1) === Failures.notPresentBehaviorFail(f, f.path, c1)
+  }
+  def formatNoElmINC = {
+    val f = Format("4[1]", "xx", false, "INCONCLUSIVE")
+    eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, f.path, c1)
+  }
+  def formatNoElmPASS = {
+    val f = Format("4[1]", "xx", false, "PASS")
+    eval(f, c1) === Pass
+  }
 
   // The following value will be used in the next tests
   private val `c1.3[1]`  = queryAsSimple(c1, "3[1]").get.head
