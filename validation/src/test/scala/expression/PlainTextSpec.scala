@@ -39,12 +39,12 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   
   def plainTextNoElmFAIL = Seq(true, false) map { b =>
     val p = PlainText("4[1]", "", b, b, "FAIL")
-    eval(p , c1 ) === Failures.plainTextNoElm(p, c1)
+    eval(p , c1 ) === Failures.notPresentBehaviorFail(p, p.path, c1)
   }
  
   def plainTextNoElmINC = Seq(true, false) map { b =>
     val p = PlainText("4[1]", "", b, b, "INCONCLUSIVE")
-    eval(p , c1 ) === Failures.plainTextNoElmInc(p, c1)
+    eval(p , c1 ) === Failures.notPresentBehaviorInconclusive(p, p.path, c1)
   }
   
   def plainTextNoElmPASS = Seq(true, false) map { b =>
