@@ -81,7 +81,7 @@ public class ConfigurableDetections {
 		String strKey = bindingStrength(strength);
 		String stbKey = stability(stab);
 		
-		String classification = vsClassification("code-not-found", extKey, stbKey, strKey);
+		String classification = vsClassification("code-not-found", stbKey, extKey, strKey);
 		String category = conf.getString("report.code-not-found.category");
 
 		String desc = vsTemplate3("code-not-found", value, l.prettyString(), vs);
@@ -94,7 +94,7 @@ public class ConfigurableDetections {
 		String strKey = bindingStrength(strength);
 		String stbKey = stability(stab);
 		
-		String classification = vsClassification("code-not-found-cs", extKey, stbKey, strKey);
+		String classification = vsClassification("code-not-found-cs", stbKey, extKey, strKey);
 		String category = conf.getString("report.code-not-found-cs.category");
 
 		String desc = vsTemplate5("code-not-found-cs", value, found, l.prettyString(), vs, expected);
@@ -525,19 +525,24 @@ public class ConfigurableDetections {
 	public String vsClassification(String configKey, String stab, String ext, String str){
 		String root = "report."+configKey+".classification";
 		try {
-			if(this.stringIsDefined(ext)) {
-				if(this.stringIsDefined(stab)) {
+			if(this.stringIsDefined(stab)) {
+				String key = root +"."+stab;
+				if(this.stringIsDefined(ext)) {
+					key += "."+ext;
 					if(this.stringIsDefined(str)) {
-						System.out.println(root+"."+ext+"."+stab+"."+str+".default");
-						return conf.getString(root+"."+ext+"."+stab+"."+str+".default");
+						key += "."+str;
+						return conf.getString(key);
 					}
-					return conf.getString(root+"."+ext+"."+stab+".default");
+					key += ".default";
+					return conf.getString(key);
 				}
-				return conf.getString(root+"."+ext+".default");
+				key += ".default";
+				return conf.getString(key);
 			}
-		} finally {
-			return conf.getString(root+".default");
+		} catch(Exception e) {
+//			e.printStackTrace();
 		}
+		return conf.getString(root + ".default");
 	}
 
 	public boolean stringIsDefined(String key) {
