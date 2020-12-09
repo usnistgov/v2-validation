@@ -5,7 +5,7 @@ import org.specs2.Specification
 import XMLDeserializer.expression
 import hl7.v2.instance.Number
 import hl7.v2.instance.Text
-
+import hl7.v2.profile.Range
 /**
   * Expression XML Deserialization specification
   * 
@@ -29,41 +29,61 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     Deserialization of exist expression should work as expected           $pe13
     Deserialization of forall expression should work as expected          $pe14
     Deserialization of isNULL expression should work as expected          $pe15
+    Deserialization of subContext expression should work as expected      $pe16
+    Deserialization of string format expression should work as expected      $pe17
   """
 
-  def pe1 = expression( <Presence Path="1[1]"/> ) === Presence( "1[1]" ) 
+  def pe1 = expression( <Presence Path="1[1]"/> ) === Presence( "1[1]" )
 
-  def pe2 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
+  def pe2 = pe21 and pe22 and pe23
+  def pe21 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
+  def pe22 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", "FAIL")
+  def pe23 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", "INCONCLUSIVE")
 
-  def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38
-  def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true, false)
-  def pe32 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="1"/> )     === PlainText( "1[1]", "XX", true, false)
-  def pe33 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="false"/> ) === PlainText( "1[1]", "XX", false, false)
-  def pe34 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0"/> )     === PlainText( "1[1]", "XX", false, false)
+  def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38 and pe39 and pe310
+  def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true)
+  def pe32 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="1"/> )     === PlainText( "1[1]", "XX", true)
+  def pe33 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="false"/> ) === PlainText( "1[1]", "XX", false)
+  def pe34 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0"/> )     === PlainText( "1[1]", "XX", false)
   def pe35 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="true"/> )     === PlainText( "1[1]", "XX", false, true)
-  def pe36 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="false"/> )     === PlainText( "1[1]", "XX", false, false)
+  def pe36 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="false"/> )     === PlainText( "1[1]", "XX", false)
   def pe37 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="1"/> )     === PlainText( "1[1]", "XX", false, true)
-  def pe38 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="0"/> )     === PlainText( "1[1]", "XX", false, false)
-  
-  def pe4 = pe41 and pe42 and pe43
-  def pe41 = expression( <Format Path="1[1]" Regex="XX"/> ) === Format( "1[1]", "XX", false)
-  def pe42 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="false" /> ) === Format( "1[1]", "XX", false)
+  def pe38 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="0"/> )     === PlainText( "1[1]", "XX", false)
+  def pe39 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="FAIL" /> )  === PlainText( "1[1]", "XX", true, false, "FAIL")
+  def pe310 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="INCONCLUSIVE" /> )  === PlainText( "1[1]", "XX", true, false, "INCONCLUSIVE")
+
+  def pe4 = pe41 and pe42 and pe43 and pe44 and pe45
+  def pe41 = expression( <Format Path="1[1]" Regex="XX"/> ) === Format( "1[1]", "XX")
+  def pe42 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="false" /> ) === Format( "1[1]", "XX")
   def pe43 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" /> ) === Format( "1[1]", "XX", true)
-  
-  def pe5 = pe51 and pe52 and pe53
-  def pe51 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/> ) === NumberList( "1[1]", List(1, 2.0, 3), false)
-  def pe52 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="false" /> ) === NumberList( "1[1]", List(1, 2.0, 3), false)
+  def pe44 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" NotPresentBehavior="FAIL" /> ) === Format( "1[1]", "XX", true, "FAIL")
+  def pe45 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" /> ) === Format( "1[1]", "XX", true, "INCONCLUSIVE")
+
+  def pe5 = pe51 and pe52 and pe53 and pe54 and pe55
+  def pe51 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/> ) === NumberList( "1[1]", List(1, 2.0, 3))
+  def pe52 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="false" /> ) === NumberList( "1[1]", List(1, 2.0, 3))
   def pe53 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true)
-  
-  def pe6 = pe61 and pe62 and pe63
-  def pe61 = expression( <StringList Path="1[1]" CSV="1,2"/> ) === StringList( "1[1]", List("1", "2"), false)
-  def pe62 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="false" /> ) === StringList( "1[1]", List("1", "2"), false)
+  def pe54 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" NotPresentBehavior="FAIL" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true, "FAIL")
+  def pe55 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true, "INCONCLUSIVE")
+
+  def pe6 = pe61 and pe62 and pe63 and pe64 and pe65
+  def pe61 = expression( <StringList Path="1[1]" CSV="1,2"/> ) === StringList( "1[1]", List("1", "2"))
+  def pe62 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="false" /> ) === StringList( "1[1]", List("1", "2"))
   def pe63 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" /> ) === StringList( "1[1]", List("1", "2"), true)
-  
+  def pe64 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" NotPresentBehavior="FAIL" /> ) === StringList( "1[1]", List("1", "2"), true, "FAIL")
+  def pe65 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" /> ) === StringList( "1[1]", List("1", "2"), true, "INCONCLUSIVE")
+
   def pe7 = {
     val e1 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX"/> )
     val e2 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number"/> )
-    e1 === SimpleValue( "1[1]", Operator.NE, Text("XX") ) and e2 === SimpleValue( "1[1]", Operator.NE, Number("XX") )
+    val e21 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" AtLeastOnce="true" Type="Number"/> )
+    val e22 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" AtLeastOnce="false" Type="Number"/> )
+    val e3 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" NotPresentBehavior="FAIL" /> )
+    val e4 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" NotPresentBehavior="INCONCLUSIVE" /> )
+
+    e1 === SimpleValue( "1[1]", Operator.NE, Text("XX") ) and e2 === SimpleValue( "1[1]", Operator.NE, Number("XX") ) and
+    e3 === SimpleValue( "1[1]", Operator.NE, Number("XX"), false, "FAIL") and e4 === SimpleValue( "1[1]", Operator.NE, Number("XX"), false, "INCONCLUSIVE") and
+    e21 === SimpleValue( "1[1]", Operator.NE, Number("XX"), true ) and e22 === SimpleValue( "1[1]", Operator.NE, Number("XX"), false )
   }
 
   def pe8  = expression( <AND><Presence Path="1[1]"/><Presence Path="2[2]"/></AND> ) === AND( Presence("1[1]"), Presence("2[2]") )
@@ -81,7 +101,20 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   def pe14 = expression( <FORALL><Presence Path="1[1]"/><Presence Path="2[2]"/></FORALL> ) === FORALL( Presence("1[1]"), Presence("2[2]") )
 
   def pe15 = expression( <isNULL  Path="1[1]"/> ) === isNULL("1[1]")
-  
+
+  def pe16 = pe161 and pe162 and pe163 and pe164
+  def pe161 = expression( <SubContext Path="1[*]" MinOccurrence="1" MaxOccurrence="*"><PlainText Path="1[1]" Text="XX" IgnoreCase="true"/></SubContext> ) ===  SubContext(PlainText( "1[1]", "XX", true), "1[*]", Some(Range(1, "*")), None)
+  def pe162 = expression( <SubContext Path="1[*]" AtLeastOnce="true"><PlainText Path="1[1]" Text="XX" IgnoreCase="true"/></SubContext> ) ===  SubContext(PlainText( "1[1]", "XX", true), "1[*]", None, Some(true))
+  def pe163 = expression( <SubContext Path="1[*]" AtLeastOnce="true" NotPresentBehavior="FAIL"><PlainText Path="1[1]" Text="XX" IgnoreCase="true"/></SubContext> ) ===  SubContext(PlainText( "1[1]", "XX", true), "1[*]", None, Some(true), "FAIL")
+  def pe164 = expression( <SubContext Path="1[*]" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE"><PlainText Path="1[1]" Text="XX" IgnoreCase="true"/></SubContext> ) ===  SubContext(PlainText( "1[1]", "XX", true), "1[*]", None, Some(true), "INCONCLUSIVE")
+
+  def pe17 = pe171 and pe172 and pe173 and pe174 and pe175
+  def pe171 = expression(<StringFormat Path="1[*]" Format="LOINC" />) === StringFormat("1[*]", "LOINC")
+  def pe172 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="false" />) === StringFormat("1[*]", "LOINC")
+  def pe173 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" />) === StringFormat("1[*]", "LOINC", true)
+  def pe174 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" NotPresentBehavior="FAIL" />) === StringFormat("1[*]", "LOINC", true, "FAIL")
+  def pe175 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" />) === StringFormat("1[*]", "LOINC", true, "INCONCLUSIVE")
+
   private implicit def toXOM( e: scala.xml.Node ): nu.xom.Element = {
     val r = new nu.xom.Element( e.label )
     // process the attributes

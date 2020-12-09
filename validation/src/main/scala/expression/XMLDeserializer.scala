@@ -1,7 +1,6 @@
 package expression
 
-import expression.XMLDeserializer.notPresentBehavior
-import hl7.v2.profile.{BindingLocation, BindingStrength, ValueSetSpec}
+import hl7.v2.profile.{BindingLocation, BindingStrength, Range, ValueSetSpec}
 import nu.xom.Element
 import nist.xml.util.XOMExtensions._
 import hl7.v2.instance.{EscapeSeqHandler, Number, Separators, Text}
@@ -32,6 +31,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "NumberList"  => numberList( e )
     case "StringList"  => stringList( e )
     case "SimpleValue" => simpleValue( e )
+    case "SubContext"  => subContext( e )
     case "NOT"         => not( e )
     case "AND"         => and( e )
     case "OR"          => or( e )
@@ -110,6 +110,18 @@ object XMLDeserializer extends EscapeSeqHandler {
     val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
     SimpleValue( path, op, _value, atLeastOnce, npb)
+  }
+
+  private def subContext( e: Element ): SubContext = {
+    val path = e.attribute("Path")
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") Some(toBoolean(e.attribute("AtLeastOnce"))) else None
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    if(e.getChildElements.size() != 1) {
+      throw new Exception(s"SubContext element should have one and only one assertion, found = ${e.getChildElements.size()}")
+    }
+    val assertion = expression(e.getChildElements().get(0))
+    val card = cardinality(e)
+    SubContext(assertion, path, card, atLeastOnce, npb)
   }
 
   // Combination Expressions
@@ -196,6 +208,14 @@ object XMLDeserializer extends EscapeSeqHandler {
     val exp2 = expression( childElements.get(1) )
     ( exp1, exp2)
   }
+
+  def cardinality(e: Element): Option[Range] =
+    asOption(e.attribute("MinOccurrence")) map { min =>
+    Range(min.toInt, e.attribute("MaxOccurrence"))
+  }
+
+  private def asOption(s: String) = if (s == "") None else Some(s)
+
 
   /*private def combinationn( e: Element ) = {
     val childElements = e.getChildElements

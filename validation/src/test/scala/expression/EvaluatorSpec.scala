@@ -18,6 +18,7 @@ trait EvaluatorSpec
   with FORALLSpec
   with EXISTSpec
   with StringFormatSpec
+  with SubContextSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -191,5 +192,24 @@ trait EvaluatorSpec
       StringFormat evaluation should fail If not present behavior is FAIL and no element is found  $stringFormatNoElmFAIL
       StringFormat evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringFormatNoElmINC
       StringFormat evaluation should pass If not present behavior is PASS and no element is found $stringFormatNoElmPASS
+
+    SubContextSpec
+      SubContext evaluation should succeed if the path is not populated                                           $subContextPathNotPopulated
+      SubContext evaluation should be inconclusive if the path is invalid                                         $subContextPathInvalid
+      SubContext evaluation should be inconclusive if the path is unreachable                                     $subContextPathUnreachable
+      SubContext evaluation should be inconclusive if both Min/Max cardinality and AtLeastOnce are specified      $subContextMinMaxALO
+      SubContext evaluation should be inconclusive if assertion is inconclusive for one or more children (regardless of failures and success) $subContextInconclusive
+      If there is no range specified (Cardinality, AtLeastOnce is going to be false by default)
+        SubContext evaluation should succeed if assertion succeeds for all children                               $subContextNoRangeSuccess
+        SubContext evaluation should fail if assertion fails for one or more children                             $subContextNoRangeFailure
+      If there is a Min/Max cardinality
+        SubContext evaluation should succeed if assertion succeeds for number of children between [Min, Max] cardinality $subContextMinMaxSuccess
+        SubContext evaluation should fail if assertion succeeds for number of children outside [Min, Max] cardinality    $subContextMinMaxFailure
+      If there AtLeastOnce is true
+        SubContext evaluation should succeed if assertion succeeds for one or more children                       $subContextALOSuccess
+        SubContext evaluation should fail if assertion fails for all children                                     $subContextALOFailure
+      SubContext evaluation should fail If not present behavior is FAIL and no element is found  $subContextNoElmFAIL
+      SubContext evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $subContextNoElmINC
+      SubContext evaluation should pass If not present behavior is PASS and no element is found $subContextNoElmPASS
   """
 }
