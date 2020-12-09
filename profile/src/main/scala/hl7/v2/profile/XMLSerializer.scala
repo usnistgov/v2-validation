@@ -93,11 +93,12 @@ object XMLSerializer {
       />
 
   def datatype(d: Datatype) =
-    <Datatype ID={d.id}  Name={d.name} Description={d.desc} Version={d.version}>
+    <Datatype ID={d.id}  Name={d.name} Description={d.desc}>
       {
         d match {
           case Primitive(_, _, _, _)     =>
           case Composite(_, _, _, _, xs) => xs map component
+          case Varies(_,_,_,_,_,_) =>
         }
       }
     </Datatype>

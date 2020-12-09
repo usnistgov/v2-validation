@@ -157,7 +157,8 @@ object XMLDeserializerHelper {
     val vss = vsSpec(e)
     val confLen = asOption(e.attribute("ConfLength"))
     val cnfR = confRange(prepareConf(e.attribute("ConfLength")))
-    Req(p, desc, usage, card, len, confLen, vss, cnfR, hide)
+    val cstV = asOption(e.attribute("ConstantValue"))
+    Req(p, desc, usage, card, len, confLen, vss, cnfR, hide, cstV)
   }
 
 //  def lengthReq(e: Element) : (Option[Range], Option[String]) = {

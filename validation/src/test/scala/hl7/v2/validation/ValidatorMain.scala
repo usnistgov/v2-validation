@@ -2,7 +2,7 @@ package hl7.v2.validation
 
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.vs.ValueSetLibraryImpl
+import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -54,7 +54,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
   val vsLibStream = getClass.getResourceAsStream("/ValueSets.xml")
   val valueSetLibrary = ValueSetLibraryImpl(vsLibStream).get
 
-  val validator = new HL7Validator(profile, valueSetLibrary, conformanceContext)
+  val validator = new HL7Validator(profile, valueSetLibrary, conformanceContext, EmptyValueSetSpecification)
 
   1 to 1 foreach { i =>
     time {

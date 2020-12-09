@@ -3,7 +3,6 @@ package hl7.v2.validation.vs
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.{Location, Simple, Text}
 import hl7.v2.profile.{BindingStrength, Req, Usage, ValueSetSpec}
-import hl7.v2.validation.report.Detections
 import CodeUsage.{E, P, R}
 import org.specs2.Specification
 import hl7.v2.validation.report.ConfigurableDetections
@@ -24,40 +23,44 @@ class SimpleElementValidatorSpec
       Return no detection if the value is in the value set and the usage is R$e8
       Return no detection if the value match HL7nnn or 99ZZZ and vs is 0396  $e9
       Return no error if the value set is excluded from the validation       $e10
+      Return EVS if the code is in the value set but the usage is E          $e5
+      Return PVS if the code is in the value set but the usage is P          $e6
   """
-//      Return EVS if the code is in the value set but the usage is E          $e5
-//      Return PVS if the code is in the value set but the usage is P          $e6
+
+  implicit val Detections: ConfigurableDetections = new ConfigurableDetections(ConfigFactory.load());
+  implicit val vsValidation: SimpleElementValidator = new SimpleElementValidator(Detections)
+
   val l = Location(null, "", "", -1, -1)
 
   val bs: Option[BindingStrength] = None
   val stability     = Some(Stability.Static)
   val extensibility = Some(Extensibility.Closed)
 
-  val vs1 = ValueSet("01", extensibility, stability, Nil)
-  val vs2 = ValueSet("02", extensibility, stability, codes = List(
+  val vs1 =  InternalValueSet("01", extensibility, stability, Nil)
+  val vs2 =  InternalValueSet("02", extensibility, stability, codes = List(
     Code("A", "", E,"" ),
     Code("B", "", P,"" ),
     Code("X", "", R,"" )
   ))
-  val vs3 = ValueSet("03", extensibility, stability, codes = List(
+  val vs3 =  InternalValueSet("03", extensibility, stability, codes = List(
     Code("A", "", E,"" ),
     Code("A", "", P,"" )
   ))
-  val vs4 = ValueSet("0396", extensibility, stability, codes = List(
+  val vs4 =  InternalValueSet("0396", extensibility, stability, codes = List(
     Code("x", "", E,"" ),
     Code("x", "", P,"" )
   ))
-  val vs5 = ValueSet("HL70396", extensibility, stability, codes = List(
+  val vs5 =  InternalValueSet("HL70396", extensibility, stability, codes = List(
     Code("x", "", E,"" ),
     Code("x", "", P,"" )
   ))
-  val vs6 = ValueSet("06", extensibility, stability, Nil)
+  val vs6 =  InternalValueSet("06", extensibility, stability, Nil)
 
   val noValidation = Seq("06")
 
   implicit val library = ValueSetLibraryImpl(
     noValidation,
-    Map[String, ValueSet](
+    Map[String,  InternalValueSet](
       "01" -> vs1,
       "02" -> vs2,
       "03" -> vs3,
@@ -69,14 +72,14 @@ class SimpleElementValidatorSpec
 
   def e0 = check( "\"\"", "04" ) === null
   def e1 = check( "", "" )    === null
-  def e2 = check( "x", "04" ) === Detections.vsNotFound(l, "x", "04")
-  def e3 = check( "x", "01" ) === Detections.emptyVS(l, vs1, "01")
-  def e4 = check( "C", "02" ) === Detections.codeNotFound(l, "C", vs2, "02")
-//  def e5 = check( "A", "02" ) === new EnhancedEntry(Detections.evs(l, "A", vs2, "02"),true)
-//  def e6 = check( "B", "02" ) === new EnhancedEntry(Detections.pvs(l, "B", vs2, "02"),true)
-  def e7 = check( "A", "03" ) === Detections.vsError(l, "Multiple occurrences of the code 'A' found.", vs3, "03")
+  def e2 = check( "x", "04" ) === Detections.vsNotFound(l, "x", vsSpec("04"))
+  def e3 = check( "x", "01" ) === Detections.emptyVS(l, vs1, vsSpec("01"))
+  def e4 = check( "C", "02" ) === Detections.codeNotFound(l, "C", "02", null, null, null)
+  def e5 = check( "A", "02" ) === new EnhancedEntry(Detections.vsCodeFound("evs", l, "A", "02", null, null, null),false)
+  def e6 = check( "B", "02" ) === new EnhancedEntry(Detections.vsCodeFound("pvs", l, "B", "02", null, null, null),true)
+  def e7 = check( "A", "03" ) === Detections.vsError(l, "Multiple occurrences of the code 'A' found.", vs3, vsSpec("03"))
 
-  def e8 = check( "X", "02" ) === null
+  def e8 = check( "X", "02" ) === new EnhancedEntry(Detections.vsCodeFound("rvs", l, "X", "02", null, null, null),true)
 
   def e9 = Seq("0396", "HL70396") map { vs =>
     check("HL70001", vs) === null and check("99ZZZ", vs) === null
@@ -87,8 +90,6 @@ class SimpleElementValidatorSpec
   def check(s: String, spec: String): Entry = {
     val x = simple(s, spec)
     val y = x.req.vsSpec match { case Nil => null case z::zs => z }
-    implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
-    implicit val vsValidation = new SimpleElementValidator(Detections)
     vsValidation.check(x, y, library)
   }
 
@@ -99,8 +100,8 @@ class SimpleElementValidatorSpec
       override val position = -1
       override val instance = -1
       override val req = vsid match {
-        case "" => Req(-1, "", Usage.O, None, None, None, Nil)
-        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(vsid, None, None)::Nil)
+        case "" => Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
+        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(vsid, None, None)::Nil, None, false, None)
       }
     }
 

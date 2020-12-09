@@ -9,33 +9,46 @@ import hl7.v2.validation.report.ConfigurableDetections
 
 object ValueValidation extends EscapeSeqHandler {
 
-  def check(s: Simple)(implicit x: Separators, Detections: ConfigurableDetections): List[Entry] =
+  def check(s: Simple)(implicit x: Separators, Detections: ConfigurableDetections): List[Entry] = {
     s.req.usage match {
       case Usage.O => Detections.ousage(s.location, s.value.raw) :: Nil
-      case _ => checkValue(s.value, s.req.length, s.req.confRange, s.location)
+      case _ => checkValue(s.value, s.req.length, s.req.confRange, s.req.constantValue, s.location)
     }
+  }
 
   /**
    * Checks the value format, length and presence of escape characters
+   *
    * @param v  - The value to be checked
-   * @param lc - The length constraint
+   * @param ln - The length constraint
+   * @param constant  - Constant Value Constraint
    * @param l  - The location
    * @param s  - The separators
    * @return The list of problem found
    */
-  def checkValue(v: Value, ln: Option[Range], conf: Option[Range], l: Location)(implicit s: Separators, Detections: ConfigurableDetections): List[Entry] =
-    v.isNull match {
-      case true => if (l.eType == EType.Field) //No check if the value is Null and the location is a Field
+  def checkValue(v: Value, ln: Option[Range], conf: Option[Range], constant: Option[String], l: Location)(implicit s: Separators, Detections: ConfigurableDetections): List[Entry] =
+    //No check if the value is Null and the location is a Field
+    if (v.isNull && l.eType == EType.Field) {
         Nil
-      else checkFormat(l, v).toList ::: checkLength(l, v, ln, conf).toList
-      case false => checkFormat(l, v).toList ::: checkLength(l, v, ln, conf).toList
+    } else {
+      checkFormat(l, v).toList ::: checkLength(l, v, ln, conf).toList ::: checkConstantValue(l, v, constant).toList
     }
+
+  def checkConstantValue(l: Location, v: Value, constant: Option[String])(implicit s: Separators, Detections: ConfigurableDetections): Option[Entry] = {
+    constant match {
+      case None => None
+      case Some(constantValue) =>
+        val raw = unescape(v.raw)
+        if (raw.equals(constantValue)) None
+        else Some(Detections.constantValue(l, constantValue, raw))
+    }
+  }
 
   /**
    * Checks the length and returns the error if any
    * @param l  - The location
    * @param v  - The value
-   * @param lc - The length constraint
+   * @param ln - The length constraint
    * @param s  - The separators
    * @return The error if any or None
    */

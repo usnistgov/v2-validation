@@ -20,7 +20,6 @@ trait Validator {
     * The conformance context used by this validator.
     */
   def conformanceContext: ConformanceContext
-
   implicit def valueSetLibrary: ValueSetLibrary
 
   /**

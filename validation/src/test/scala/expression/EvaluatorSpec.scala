@@ -17,6 +17,8 @@ trait EvaluatorSpec
   with IMPLYSpec
   with FORALLSpec
   with EXISTSpec
+  with StringFormatSpec
+  with SubContextSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -31,18 +33,21 @@ trait EvaluatorSpec
       Presence should pass if the path is populated                                 $presencePathPopulated
       Presence should fail if the path is not populated                             $presencePathNotPopulated
 
-    PlainText  expression evaluation specifications
+    PlainTextSpec
       PlainText evaluation should succeed if the path is not populated              $plainTextPathNotPopulated
       PlainText evaluation should be inconclusive if the path is complex            $plainTextPathComplex
       PlainText evaluation should be inconclusive if the path is invalid            $plainTextPathInvalid
       PlainText evaluation should be inconclusive if the path is unreachable        $plainTextPathUnreachable
-      PlainText should pass if the values are the same                              $plainTextSameValue
-      PlainText should pass if the values are the same by ignoring the case         $plainTextSameValueIC
-      PlainText should fail if the values are different                             $plainTextDifferentValue
-      PlainText should fail for same values in different case when case not ignored $plainTextSameValueCNI
+      PlainText evaluation should pass if the values are the same                              $plainTextSameValue
+      PlainText evaluation should pass if the values are the same by ignoring the case         $plainTextSameValueIC
+      PlainText evaluation should fail if the values are different                             $plainTextDifferentValue
+      PlainText evaluation should fail for same values in different case when case not ignored $plainTextSameValueCNI
       If the path is valued to multiple elements
-        PlainText should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
-        PlainText should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+        PlainText evaluation should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
+        PlainText evaluation should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+      PlainText evaluation should fail If not present behavior is FAIL and no element is found  $plainTextNoElmFAIL
+      PlainText evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $plainTextNoElmINC
+      PlainText evaluation should pass If not present behavior is PASS and no element is found $plainTextNoElmPASS
         
     FormatSpec
       Format evaluation should succeed if the path is not populated                 $formatPathNotPopulated
@@ -51,6 +56,9 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         Format should pass if one of the elements matches the pattern and AtLeastOnce = True           $formatAtLeastOnceT
         Format should fail if one of the elements doesn't match the pattern and AtLeastOnce = False           $formatAtLeastOnceF
+      Format evaluation should fail If not present behavior is FAIL and no element is found  $formatNoElmFAIL
+      Format evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $formatNoElmINC
+      Format evaluation should pass If not present behavior is PASS and no element is found $formatNoElmPASS
 
     StringListSpec
       StringList evaluation should succeed if the path is not populated            $stringListPathNotPopulated
@@ -62,7 +70,10 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         StringList should pass if one of the elements is in the list and AtLeastOnce = True           $stringListAtLeastOnceT
         StringList should fail if one of the elements is not in the list and AtLeastOnce = False           $stringListAtLeastOnceF
-        
+      StringList evaluation should fail If not present behavior is FAIL and no element is found  $stringListNoElmFAIL
+      StringList evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringListNoElmINC
+      StringList evaluation should pass If not present behavior is PASS and no element is found $stringListNoElmPASS
+
     NumberListSpec
       NumberList evaluation should succeed if the path is not populated            $numberListPathNotPopulated
       NumberList evaluation should be inconclusive if the path is complex          $numberListPathComplex
@@ -74,7 +85,10 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         NumberList should pass if one of the elements is in the list and AtLeastOnce = True           $numberListAtLeastOnceT
         NumberList should fail if one of the elements is not in the list and AtLeastOnce = False           $numberListAtLeastOnceF
-        
+      NumberList evaluation should fail If not present behavior is FAIL and no element is found  $numberListNoElmFAIL
+      NumberList evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $numberListNoElmINC
+      NumberList evaluation should pass If not present behavior is PASS and no element is found $numberListNoElmPASS
+
     SimpleValueSpec
       SimpleValue evaluation should succeed if the path is not populated            $simpleValuePathNotPopulated
       SimpleValue evaluation should be inconclusive if the path is complex          $simpleValuePathComplex
@@ -84,6 +98,12 @@ trait EvaluatorSpec
       SimpleValue should be inconclusive if at least one value is invalid           $simpleValueInvalidValue
       SimpleValue should pass if operator = < and path.value < value                $simpleValuePass
       SimpleValue should fail if operator = < and path.value > value                $simpleValueFail
+      If the path is valued to multiple elements
+        SimpleValue should pass if one of the elements is in the list and AtLeastOnce = True           $simpleValueAtLeastOnceT
+        SimpleValue should fail if one of the elements is not in the list and AtLeastOnce = False           $simpleValueAtLeastOnceF
+      SimpleValue evaluation should fail If not present behavior is FAIL and no element is found  $simpleValueNoElmFAIL
+      SimpleValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $simpleValueNoElmINC
+      SimpleValue evaluation should pass If not present behavior is PASS and no element is found $simpleValueNoElmPASS
 
     PathValueSpec
       PathValue should pass if both pass are not populated                         $pathValueBothPathNotPopulated
@@ -94,6 +114,9 @@ trait EvaluatorSpec
       PathValue should be inconclusive if path1 and path2 resolve to many elements $pathValueManyElems
       PathValue should pass if operator = < and path1.value < path2.value          $pathValuePass
       PathValue should fail if operator = < and path1.value > path2.value          $pathValueFail
+      PathValue evaluation should fail If not present behavior is FAIL and both paths not found  $pathValueNoElmFAIL
+      PathValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and both paths not found $pathValueNoElmINC
+      PathValue evaluation should pass If not present behavior is PASS and both paths not found $pathValueNoElmPASS
 
     FORALL expression evaluation specifications
            FORALL should be inconclusive if one of the expressions is inconclusive $forallInconclusive
@@ -155,5 +178,38 @@ trait EvaluatorSpec
       Plugin execution should pass if the assertion evaluation returns an empty list                    $pluginCustomPassEmpty
       Plugin execution should fail if the assertion evaluation returns non-empty list                   $pluginCustomPassEmpty
       Plugin execution should be inconclusive if the implementation contains multiple matching methods  $pluginMulti
+    
+    StringFormatSpec
+      StringFormat should succeed if the path is not populated $stringFormatPathNotPopulated
+      StringFormat should fail if a LOINC string is invalid $stringFormatLOINCInvalid
+      StringFormat should pass if a LOINC string is valid $stringFormatLOINCvalid
+      StringFormat should fail if a SNOMED string is invalid $stringFormatSNOMEDInvalid
+      StringFormat should pass if a SNOMED string is valid $stringFormatSNOMEDvalid
+      StringFormat should be inconclusive if a string format is unrecognized $stringFormatUnknown
+      If the path is valued to multiple elements
+        StringFormat should pass if one of the elements is in the list and AtLeastOnce = True           $stringFormatAtLeastOnceT
+        StringFormat should fail if one of the elements is not in the list and AtLeastOnce = False           $stringFormatAtLeastOnceF
+      StringFormat evaluation should fail If not present behavior is FAIL and no element is found  $stringFormatNoElmFAIL
+      StringFormat evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringFormatNoElmINC
+      StringFormat evaluation should pass If not present behavior is PASS and no element is found $stringFormatNoElmPASS
+
+    SubContextSpec
+      SubContext evaluation should succeed if the path is not populated                                           $subContextPathNotPopulated
+      SubContext evaluation should be inconclusive if the path is invalid                                         $subContextPathInvalid
+      SubContext evaluation should be inconclusive if the path is unreachable                                     $subContextPathUnreachable
+      SubContext evaluation should be inconclusive if both Min/Max cardinality and AtLeastOnce are specified      $subContextMinMaxALO
+      SubContext evaluation should be inconclusive if assertion is inconclusive for one or more children (regardless of failures and success) $subContextInconclusive
+      If there is no range specified (Cardinality, AtLeastOnce is going to be false by default)
+        SubContext evaluation should succeed if assertion succeeds for all children                               $subContextNoRangeSuccess
+        SubContext evaluation should fail if assertion fails for one or more children                             $subContextNoRangeFailure
+      If there is a Min/Max cardinality
+        SubContext evaluation should succeed if assertion succeeds for number of children between [Min, Max] cardinality $subContextMinMaxSuccess
+        SubContext evaluation should fail if assertion succeeds for number of children outside [Min, Max] cardinality    $subContextMinMaxFailure
+      If there AtLeastOnce is true
+        SubContext evaluation should succeed if assertion succeeds for one or more children                       $subContextALOSuccess
+        SubContext evaluation should fail if assertion fails for all children                                     $subContextALOFailure
+      SubContext evaluation should fail If not present behavior is FAIL and no element is found  $subContextNoElmFAIL
+      SubContext evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $subContextNoElmINC
+      SubContext evaluation should pass If not present behavior is PASS and no element is found $subContextNoElmPASS
   """
 }

@@ -1,0 +1,149 @@
+block-ui {
+  display: contents;
+  height: 100%;
+}
+
+:host {
+  height: 100%;
+}
+
+.layout {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1;
+  grid-template-columns: [sidebar] 1fr [container] 6fr;
+  background-color: #5f5f5f;
+  gap: 2px;
+}
+
+.sidebar {
+  grid-row: 1;
+  grid-column: sidebar;
+  background-color: #484848;
+}
+
+.content {
+  grid-row: 1;
+  grid-column: container;
+  background-color: #5f5f5f;
+  display: grid;
+  overflow: hidden;
+  grid-template-rows: [toolbar] 50px [editor] auto;
+  grid-template-columns: 1;
+  gap: 2px;
+}
+
+.toolbar {
+  grid-row: toolbar;
+  grid-column: 1;
+  background-color: #484848;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editor {
+  grid-row: editor;
+  grid-column: 1;
+  overflow: scroll;
+  background-color: #484848;
+}
+
+.message-editor {
+  height: 100%;
+  background-color: #5f5f5f;
+  display: grid;
+  overflow: hidden;
+  grid-template-rows: [message] 1fr [detections] 1fr;
+  grid-template-columns: 1;
+  gap: 2px;
+}
+
+.message {
+  grid-row: message;
+  grid-column: 1;
+  overflow: scroll;
+  background-color: #484848;
+}
+
+.detections {
+  grid-row: detections;
+  grid-column: 1;
+  overflow: scroll;
+  background-color: #484848;
+}
+
+.resource-editor {
+  height: 100%;
+  background-color: #5f5f5f;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.resource-editor-detections-show {
+  grid-template-rows: [resource-e] 1fr [detections-container] 1fr;
+}
+
+.resource-editor-detections-hide {
+  grid-template-rows: [resource-e] 1fr [detections-container] 0px;
+}
+
+.detections-container {
+  flex: 1;
+  overflow: scroll;
+  background-color: #adadad;
+}
+
+.detections-banner {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: #353535;
+  padding: 5px;
+  color: white;
+}
+
+.detections-label {
+  width: 100%;
+  text-align: center;
+}
+
+.resource {
+  flex: 1;
+  overflow: scroll;
+  background-color: #484848;
+}
+
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  display: inline-block;
+  margin: 0px !important;
+}
+
+.status {
+  border-radius: 12px;
+  height: 12px;
+  width: 12px;
+}
+
+.status-valued {
+  background-color: lightskyblue;
+}
+
+.status-empty {
+  background-color: black;
+}
+
+.status-valid {
+  background-color: lightgreen;
+}
+
+.status-invalid {
+  background-color: red;
+}

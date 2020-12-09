@@ -2,7 +2,7 @@ package hl7.v2.validation.vs
 
 import java.util.{List => JList}
 
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConverters.seqAsJavaList
 
 /**
   * Trait representing a code usage
@@ -40,22 +40,40 @@ object Stability {
 /**
   * Class representing a value set
   */
-case class ValueSet(
+trait ValueSet{
+  val id: String
+  val extensibility: Option[Extensibility]
+  val stability: Option[Stability]
+
+  def isEmpty: Boolean
+  def getCodes(value: String): JList[Code]
+  def contains(value: String): Boolean
+  def codesList(): JList[Code]
+}
+
+case class InternalValueSet(
     id: String,
     extensibility: Option[Extensibility],
     stability: Option[Stability],
-    codes: List[Code]
-) {
+    private val codes: List[Code]
+) extends ValueSet {
 
   def isEmpty: Boolean = codes.isEmpty
+  def getCodes(value: String): JList[Code] = seqAsJavaList( codes filter(c => c.value == value) )
+  def contains(value: String): Boolean = codes.exists(c => c.value == value )
+  def codesList(): JList[Code] = seqAsJavaList(codes)
+}
 
-  def getCodes(value: String): JList[Code] =
-    seqAsJavaList( codes filter(c => c.value == value) )
+case class ExternalValueSet(
+  id: String,
+  url: String,
+  source: String,
+  extensibility: Option[Extensibility],
+  stability: Option[Stability],
+  private val codes: List[Code]) extends ValueSet {
 
-  def contains(value: String) = codes.exists( c => c.value == value )
-  
-  def codesList() = {
-    seqAsJavaList(codes)
-  }
-
+  def isEmpty: Boolean = codes.isEmpty
+  def getCodes(value: String): JList[Code] = seqAsJavaList( codes filter(c => c.value == value) )
+  def contains(value: String): Boolean = codes.exists(c => c.value == value )
+  def codesList(): JList[Code] = seqAsJavaList(codes)
 }

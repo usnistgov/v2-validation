@@ -44,15 +44,15 @@ object DataElement {
                        (implicit s: Separators): Option[Component] =
     v matches emptyComponent( s.ss ) match {
       case true  => None
-      case false => Some {
+      case false =>
         d match {
-          case p: Primitive => SimpleComponent(p, r, l, Value(p, v))
+          case p: Primitive => Some(SimpleComponent(p, r, l, Value(p, v)))
           case c: Composite =>
             val (hasExtra, x) = children(l, c.components, v, s.ss)
             val components = x.asInstanceOf[List[SimpleComponent]]
-            ComplexComponent(c, r, l, components, hasExtra)
+            Some(ComplexComponent(c, r, l, components, hasExtra))
+          case _ => None
         }
-      }
     }
 
   /**

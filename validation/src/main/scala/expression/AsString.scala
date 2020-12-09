@@ -1,6 +1,12 @@
 package expression
 
-import hl7.v2.instance.Element
+import hl7.v2.instance.{EType, Element, Location}
+import hl7.v2.profile.Req
+
+case class SubContextElement(location: Location) extends Element {
+  override def req: Req = null
+  override def instance: Int = -1
+}
 
 object AsString {
 
@@ -12,6 +18,7 @@ object AsString {
     case e: StringList => stringList(e, context)
     case e: SimpleValue => simpleValue(e, context)
     case e: PathValue => pathValue(e, context)
+    case e: SubContext => subContext(e, context)
     case e: AND => and(e, context)
     case e: OR => or(e, context)
     case e: NOT => not(e, context)
@@ -24,6 +31,7 @@ object AsString {
     case e: IZSetId => IZsetId(e, context)
     case e: ValueSet => valueSet(e, context)
     case e: isNULL => isNull(e, context)
+    case e: StringFormat => stringFormat(e, context)
   }
 
   def condition(e: Expression, context: Element): String = e match {
@@ -34,6 +42,7 @@ object AsString {
     case e: StringList => stringListC(e, context)
     case e: SimpleValue => simpleValueC(e, context)
     case e: PathValue => pathValueC(e, context)
+    case e: SubContext => subContextC(e, context)
     case e: AND => andC(e, context)
     case e: OR => orC(e, context)
     case e: NOT => notC(e, context)
@@ -46,6 +55,7 @@ object AsString {
     case e: IZSetId => IZsetId(e, context)
     case e: ValueSet => valueSetC(e, context)
     case e: isNULL => isNullC(e, context)
+    case e: StringFormat => stringFormatC(e, context)
   }
 
   private def path(c: Element, p: String) = s"${c.location.path}.$p"
@@ -115,6 +125,30 @@ object AsString {
 
   private def pathValueC(e: PathValue, c: Element) =
     s"${path(c, e.path1)} is ${e.operator} ${path(c, e.path2)}"
+    
+  private def stringFormat(e: StringFormat, c: Element) = {
+    val at = if (e.atLeastOnce) "At least one element from "
+    s"$at${path(c, e.path)} SHALL match ${e.format} format"
+  }
+  
+  private def stringFormatC(e: StringFormat, c: Element) = {
+     val at = if (e.atLeastOnce) "At least one element from "
+    s"$at${path(c, e.path)} matches ${e.format}"
+  }
+
+  private def subContext(e: SubContext, c: Element, text: String): String = {
+    val card = e.cardinality.map(r => s"${r.min} to ${r.max} instances").getOrElse(e.atLeastOnce.map(atLo => if (atLo) "at least one instance" else "all instances"))
+    val subContextElement = SubContextElement(c.location.copy(path = s"${c.location.path}.${e.path}", desc = "", line = -1, column = -1, uidPath = null ))
+    s"${card} in sub-context ${path(c, e.path)} ${text} ${expression(e.assertion, subContextElement)}"
+  }
+
+  private def subContext(e: SubContext, c: Element): String = subContext(e, c, "SHALL satisfy the assertion")
+
+  private def subContextNegative(e: SubContext, c: Element) = subContext(e, c, "SHALL NOT satisfy the assertion")
+
+  private def subContextNegativeC(e: SubContext, c: Element) = subContext(e, c, "DO NOT satisfy the assertion")
+
+  private def subContextC(e: SubContext, c: Element) = subContext(e, c, "satisfy the assertion")
 
   private def and(e: AND, c: Element) =
     s"${expression(e.exp1, c)} AND ${expression(e.exp2, c)}"
@@ -168,6 +202,7 @@ object AsString {
   // not (A or B) === (not A) and (not B)
   private def negate(e: Expression, c: Element): String = e match {
     case x: AND => s"${expression(NOT(x.exp1), c)} OR ${expression(NOT(x.exp2), c)}"
+    case x: SubContext => s"${subContextNegative(x, c)}"
     case x: OR => s"${expression(NOT(x.exp1), c)} AND ${expression(NOT(x.exp2), c)}"
     case x: NOT => expression(e, c)
     case x: XOR => throw new Exception("Invalid use of NOT expression")
@@ -181,6 +216,7 @@ object AsString {
 
   private def negateC(e: Expression, c: Element): String = e match {
     case x: AND => s"${condition(NOT(x.exp1), c)} OR ${condition(NOT(x.exp2), c)}"
+    case x: SubContext => s"${subContextNegativeC(x, c)}"
     case x: OR => s"${condition(NOT(x.exp1), c)} AND ${condition(NOT(x.exp2), c)}"
     case x: NOT => condition(e, c)
     case x: XOR => throw new Exception("Invalid use of NOT expression")

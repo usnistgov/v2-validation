@@ -65,18 +65,21 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Static"/>
 			<xs:enumeration value="Dynamic"/>
+			<xs:enumeration value="Undefined"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ExtensibilityType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Open"/>
 			<xs:enumeration value="Closed"/>
+			<xs:enumeration value="Undefined"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ContentDefinitionType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="Extensional"/>
 			<xs:enumeration value="Intensional"/>
+			<xs:enumeration value="Undefined"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="UsageType">

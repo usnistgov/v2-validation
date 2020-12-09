@@ -21,7 +21,7 @@ trait Mocks {
     val location = Location(null, "desc ...", "Path", -1, -1)
     /*val qProps   = QProps(QType.DT, "id", "name")*/
     val hasExtra = false
-    val req = Req(-1, "", Usage.O, None, None, None, Nil)
+    val req = Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
   }
 
   case class S(override val position: Int, instance: Int, value: Value)
@@ -34,6 +34,8 @@ trait Mocks {
   val s1  = S( 5, 1, Number("51") )
   val s2  = S( 5, 2, Text("52")   )
   val s3  = S( 5, 3, Number("S53"))
+  val s_LOINC  = S( 1, 1, Text("90423-5"))
+  val s_SNOMED  = S( 1, 1, Text("119202000"))
 
   def c1Children = List(
     S(1, 1, Text("S11")) , S(1, 2, Text("S12")) , S(1, 3, Text("S13")),
@@ -44,6 +46,9 @@ trait Mocks {
   val c0 = C(2,1, Nil)
   val c1 = C(2,3, c1Children )
   val c2 = C(1,1, s0::s1::s2::c0::c1::Nil)
+  val c3 = C(2,3, List(
+    S( 1, 1, Text("90423-5")), S( 1, 2, Text("119202000"))
+  ))
 
   def elementsDescription =
     """s0 -> Simple(4, 1, Text(41\F\) )                    c1 -> Complex( position= 2, instance= 3)

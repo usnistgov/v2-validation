@@ -3,6 +3,7 @@ package hl7.v2.validation.vs;
 import gov.nist.validation.report.Entry;
 import hl7.v2.instance.Location;
 import hl7.v2.instance.Simple;
+import hl7.v2.profile.BindingStrength;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.report.ConfigurableDetections;
 
@@ -83,10 +84,14 @@ public class SimpleElementValidator extends ConfigurableValidation {
                                    ValueSetSpec spec) {
         java.util.List<Code> codes = vs.getCodes(value);
         int nbOfCodes = codes.size();
+        if( nbOfCodes == 0 ) {
+            Extensibility ext = vs.extensibility() != null ? vs.extensibility().getOrElse(() -> null) : null;
+            Stability sta = vs.stability() != null ? vs.stability().getOrElse(() -> null) : null;
 
-        if( nbOfCodes == 0 )
-            return Detections.codeNotFound(location, value, vs, spec);
+//            BindingStrength bs = spec != null ? spec.bindingStrength() != null ? spec.bindingStrength().getOrElse(null) : null : null;
 
+            return Detections.codeNotFound(location, value, vs.id(), sta, ext, null);
+        }
         if( nbOfCodes == 1)
             return checkCodeUsage(location, value, codes.get(0), vs, spec);
 
@@ -99,11 +104,17 @@ public class SimpleElementValidator extends ConfigurableValidation {
      */
     private  Entry checkCodeUsage(Location location, String value, Code code,
                                         ValueSet vs, ValueSetSpec spec) {
+        Extensibility ext = vs.extensibility() != null ? vs.extensibility().getOrElse(() -> null) : null;
+        Stability sta = vs.stability() != null ? vs.stability().getOrElse(() -> null) : null;
+//        BindingStrength bs = spec != null ? spec.bindingStrength() != null ? spec.bindingStrength().getOrElse(null) : null : null;
+
     	 if( code.usage() instanceof CodeUsage.E$ )
-             return new EnhancedEntry(Detections.evs(location, value, vs, spec),true);
+             return new EnhancedEntry(Detections.vsCodeFound("evs", location, value, vs.id(), sta, ext, null),false);
          if( code.usage() instanceof CodeUsage.P$ )
-             return new EnhancedEntry(Detections.pvs(location, value, vs, spec),true);
-         return null;
+             return new EnhancedEntry(Detections.vsCodeFound("pvs", location, value, vs.id(), sta, ext, null),true);
+        if( code.usage() instanceof CodeUsage.R$ )
+             return new EnhancedEntry(Detections.vsCodeFound("rvs", location, value, vs.id(), sta, ext, null),true);
+        return null;
     }
 
     /**

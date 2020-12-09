@@ -2,26 +2,30 @@ package expression
 
 import hl7.v2.instance.Value
 import hl7.v2.profile.ValueSetSpec
+import hl7.v2.profile.Range
 
 sealed trait Expression
 
 case class Presence( path: String ) extends Expression
 
-case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false) extends Expression
+case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
 
-case class Format( path: String, pattern: String, atLeastOnce : Boolean = false) extends Expression
+case class Format( path: String, pattern: String, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
 
-case class NumberList( path: String, csv: List[Double], atLeastOnce : Boolean = false) extends Expression
+case class NumberList( path: String, csv: List[Double], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
 
-case class StringList( path: String, csv: List[String], atLeastOnce : Boolean = false) extends Expression
+case class StringList( path: String, csv: List[String], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
 
-case class SimpleValue( path: String, operator: Operator, value: Value ) extends Expression
+case class SimpleValue( path: String, operator: Operator, value: Value, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS" ) extends Expression
 
-case class PathValue( path1: String, operator: Operator, path2: String ) extends Expression
+case class PathValue( path1: String, operator: Operator, path2: String, notPresentBehavior : String = "PASS" ) extends Expression
+
 
 case class isNULL(path: String) extends Expression
 
 // Combination expressions
+case class SubContext(assertion: Expression, path: String, cardinality: Option[Range], atLeastOnce : Option[Boolean], notPresentBehavior: String = "PASS") extends Expression
+
 case class AND( exp1: Expression, exp2: Expression ) extends Expression
 
 case class OR( exp1: Expression, exp2: Expression ) extends Expression
@@ -44,6 +48,6 @@ case class SetId(path: String) extends Expression
 
 case class IZSetId(parent: String, element : String) extends Expression
 
-case class ValueSet(path: String, spec: ValueSetSpec) extends Expression
+case class ValueSet(path: String, spec: ValueSetSpec, notPresentBehavior : String = "PASS") extends Expression
 
-case class StringFormat(path: String, format: StringType, atLeastOnce : Boolean = false) extends Expression
+case class StringFormat(path: String, format: String, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression

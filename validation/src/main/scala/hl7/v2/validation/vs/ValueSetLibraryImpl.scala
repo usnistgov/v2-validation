@@ -70,7 +70,7 @@ object ValueSetLibraryImpl {
     val _stability = stability( e.attribute("Stability") )
     val _extensibility = extensibility( e.attribute("Extensibility") )
     val codes = (e.getChildElements("ValueElement") map code).toList
-    ValueSet(id, _extensibility, _stability, codes )
+    InternalValueSet(id, _extensibility, _stability, codes )
   }
 
   private def stability(s: String): Option[Stability] =

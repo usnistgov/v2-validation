@@ -172,6 +172,7 @@
 			<xs:element name="Contexts" type="ContextsType"  minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="Cardinality" type="xs:int" use="optional"/>
+		<xs:attribute name="Ref" type="xs:string" use="optional"/>
 	</xs:complexType>
 	
 	<xs:complexType name="ContextsType">

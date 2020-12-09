@@ -3,13 +3,14 @@ package expression
 import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
+import hl7.v2.profile.Range
 import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
 import gov.nist.validation.report.Entry
 import collection.JavaConverters._
 import scala.util.{ Failure, Success, Try }
 import java.lang.reflect.Method
 
-trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormatValidatorUtil {
+trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
   /**
    * Evaluates the expression within the specified context
@@ -29,6 +30,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
     case x: StringList   => stringList(x, c)
     case x: SimpleValue  => simpleValue(x, c)
     case x: PathValue    => pathValue(x, c)
+    case x: SubContext   => subContext(x, c)
     case x: AND          => and(x, c)
     case x: OR           => or(x, c)
     case x: NOT          => not(x, c)
@@ -43,6 +45,14 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
     case x: isNULL       => isNull(x, c)
     case x: StringFormat => stringFormat(x, c)
   }
+
+  def notFound(expression: Expression, path: String, context: Element, notPresentBehavior: String): EvalResult =
+    notPresentBehavior.toUpperCase() match {
+      case "FAIL" => Failures.notPresentBehaviorFail(expression, path, context)
+      case "INCONCLUSIVE" => Failures.notPresentBehaviorInconclusive(expression, path,  context)
+      case _ => Pass
+    }
+
 
   /**
    * Evaluates the presence expression and returns the result
@@ -66,9 +76,12 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
   def plainText(p: PlainText, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, p.path) match {
       case Success(ls) =>
-        ls filter (x => notEqual(x, p.text, p.ignoreCase)) match {
-          case Nil => Pass
-          case xs  => if (p.atLeastOnce && (xs.size != ls.size)) Pass else Failures.plainText(p, xs)
+        ls match {
+          case Nil => notFound(p, p.path, context, p.notPresentBehavior)
+          case list => list filter (x => notEqual(x, p.text, p.ignoreCase)) match {
+            case Nil => Pass
+            case xs  => if (p.atLeastOnce && (xs.size != list.size)) Pass else Failures.plainText(p, xs)
+          }
         }
       case Failure(e) => inconclusive(p, context.location, e)
     }
@@ -81,10 +94,13 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   def format(f: Format, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, f.path) match {
-      case Success(ls) =>
-        ls filter (x => notMatch(x, f.pattern)) match {
-          case Nil => Pass
-          case xs  => if (f.atLeastOnce && (xs.size != ls.size)) Pass else Failures.format(f, xs)
+      case Success(list) =>
+        list match {
+          case Nil => notFound(f, f.path, context, f.notPresentBehavior)
+          case ls => ls filter (x => notMatch(x, f.pattern)) match {
+            case Nil => Pass
+            case xs  => if (f.atLeastOnce && (xs.size != ls.size)) Pass else Failures.format(f, xs)
+          }
         }
       case Failure(e) => inconclusive(f, context.location, e)
     }
@@ -97,10 +113,13 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   def stringList(sl: StringList, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, sl.path) match {
-      case Success(ls) =>
-        ls filter (x => notInList(x.value.raw, sl.csv)) match {
-          case Nil => Pass
-          case xs  => if (sl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.stringList(sl, xs)
+      case Success(list) =>
+        list match {
+          case Nil => notFound(sl, sl.path, context, sl.notPresentBehavior)
+          case ls => ls filter (x => notInList(x.value.raw, sl.csv)) match {
+            case Nil => Pass
+            case xs  => if (sl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.stringList(sl, xs)
+          }
         }
       case Failure(e) => inconclusive(sl, context.location, e)
     }
@@ -113,15 +132,19 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   def numberList(nl: NumberList, context: Element)(implicit s: Separators): EvalResult =
     queryAsSimple(context, nl.path) match {
-      case Success(ls) =>
-        val (l1, l2) = ls partition (x => convertibleToDouble(x.value.raw))
-        l2 match {
-          case Nil =>
-            l1 filter (x => notInList(x.value.raw.toDouble, nl.csv)) match {
-              case Nil => Pass
-              case xs  => if (nl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.numberList(nl, xs)
+      case Success(list) =>
+        list match {
+          case Nil => notFound(nl, nl.path, context, nl.notPresentBehavior)
+          case ls =>
+            val (l1, l2) = ls partition (x => convertibleToDouble(x.value.raw))
+            l2 match {
+              case Nil =>
+                l1 filter (x => notInList(x.value.raw.toDouble, nl.csv)) match {
+                  case Nil => Pass
+                  case xs  => if (nl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.numberList(nl, xs)
+                }
+              case xs => Failures.numberListNaN(nl, xs)
             }
-          case xs => Failures.numberListNaN(nl, xs)
         }
       case Failure(e) => inconclusive(nl, context.location, e)
     }
@@ -134,15 +157,23 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   def simpleValue(sv: SimpleValue, context: Element)(implicit dtz: Option[TimeZone]): EvalResult =
     queryAsSimple(context, sv.path) match {
-      case Success(ls) =>
-        val evs = ls map { s => s -> sv.operator.eval(s.value, sv.value) }
-        evs partition { _._2.isFailure } match {
-          case (Nil, xs) =>
-            xs filter { _._2 == Success(false) } match {
-              case Nil => Pass
-              case ys  => Failures.simpleValue(sv, ys map { x => x._1 })
+      case Success(list) =>
+        list match {
+          case Nil => notFound(sv, sv.path, context, sv.notPresentBehavior)
+          case ls =>
+            val evs = ls map { s => s -> sv.operator.eval(s.value, sv.value) }
+            evs partition {
+              _._2.isFailure
+            } match {
+              case (Nil, xs) =>
+                xs filter {
+                  _._2 == Success(false)
+                } match {
+                  case Nil => Pass
+                  case ys => if (sv.atLeastOnce && (xs.size != ys.size)) Pass else Failures.simpleValue(sv, ys map { x => x._1 })
+                }
+              case (xs, _) => inconclusive(sv, xs)
             }
-          case (xs, _) => inconclusive(sv, xs)
         }
       case Failure(e) => inconclusive(sv, context.location, e)
     }
@@ -155,7 +186,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   def pathValue(pv: PathValue, context: Element)(implicit dtz: Option[TimeZone]): EvalResult =
     (queryAsSimple(context, pv.path1), queryAsSimple(context, pv.path2)) match {
-      case (Success(Nil), Success(Nil))      => Pass
+      case (Success(Nil), Success(Nil))      => notFound(pv, s"[ ${pv.path1}, ${pv.path2} ]", context, pv.notPresentBehavior)
       case (Success(x :: Nil), Success(Nil)) => Failures.pathValue(pv, x, pv.path2)
       case (Success(Nil), Success(x :: Nil)) => Failures.pathValue(pv, x, pv.path1)
       case (Success(x1 :: Nil), Success(x2 :: Nil)) =>
@@ -178,7 +209,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
   def valueSet(vs: ValueSet, context: Element)(implicit l: ValueSetLibrary, VSValidator : Validator): EvalResult =
     query(context, vs.path) match {
       case Failure(e)   => inconclusive(vs, context.location, e)
-      case Success(Nil) => Pass
+      case Success(Nil) => notFound(vs, vs.path, context, vs.notPresentBehavior)
       case Success(x :: Nil) =>
         val r = VSValidator.checkValueSet(x, vs.spec, l)   
         if (isVSViolated(r)) Failures.valueSet(vs, r) else Pass
@@ -206,6 +237,46 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
       case Success(xs)  => loop(xs)
     }
   }
+
+
+
+  def contextRange(range: Option[Range], atLeastOnce: Option[Boolean]): Try[Option[Range]] = {
+    (range, atLeastOnce) match {
+      case (Some(r), Some(b)) => Failure(new Throwable("Min/Max Cardinality and AtLeastOnce were both specified, only one should be used in SubContext expression"))
+      case (None, Some(b)) => if(b) Success(Some(Range(1, "*"))) else Success(None)
+      case (Some(r), None) => Success(Some(r))
+      case (None, None) => Success(None)
+    }
+  }
+
+  /**
+    * Evaluates the Context expression which provides a sub-context to the assertion to run
+    * @param subContext - The Context expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def subContext(subContext: SubContext, context: Element)(implicit l: ValueSetLibrary, s: Separators, dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+    contextRange(subContext.cardinality, subContext.atLeastOnce) match {
+      case Success(range) => query(context, subContext.path) match {
+        case Failure(e)   => inconclusive(subContext, context.location, e)
+        case Success(Nil) => {
+          notFound(subContext, subContext.path, context, subContext.notPresentBehavior)
+        }
+        case Success(xs)  =>
+          val evalResult = xs.map(eval(subContext.assertion, _))
+          val (success, failure, inconclusive) = (
+            evalResult.collect{ case Pass => Pass },
+            evalResult.collect{ case f: Fail => f },
+            evalResult.collect{ case inconclusive: Inconclusive => inconclusive }
+          )
+
+          if(inconclusive.nonEmpty) Failures.subContextInconclusive(subContext, context, inconclusive)
+          else if (range.map(r => r.includes(success.length)).getOrElse(failure.isEmpty))
+            Pass
+          else Failures.subContext(subContext, context, range, xs.length, failure)
+      }
+      case Failure(e) => inconclusive(subContext, context.location, e)
+    }
 
   /**
    * Evaluates the AND expression and returns the result
@@ -362,26 +433,25 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
     }
 
  
-  def stringFormat(e : StringFormat, context: Element) = {
-    def checkList( list : List[(Element, Boolean)], atLeastOnce : Boolean) : (Boolean, List[Element]) = {
-        val (failed, success) = list.partition(_._2 == false)
-        val locations = list filter(x => x._2 == false) map (x => x._1)
-        
-        val pass : Boolean = failed.size == 0 || (success.size > 0 && atLeastOnce)
-        (pass, locations)
+  def stringFormat(e : StringFormat, context: Element)(implicit s: Separators) = {
+    try {
+      val validator = StringType.fromString(e.format)
+      queryAsSimple(context, e.path) match {
+        case Success(ls) =>
+          ls match {
+            case Nil => notFound(e, e.path, context, e.notPresentBehavior)
+            case xs => xs.filter { elm => !validator.validate(elm.value.raw) } match {
+              case Nil => Pass
+              case ys => if (e.atLeastOnce && (xs.size != ys.size)) Pass else Failures.stringFromat(e, ys)
+            }
+          }
+        case Failure(f) => inconclusive(e, context.location, f)
+      }
     }
-    
-    queryAsSimple(context, e.path) match {
-      case Success(xs) => 
-        val stringCheck = for(elm <- xs) yield (elm, validateStringFormat(elm.value.raw, e.format))
-        checkList(stringCheck, e.atLeastOnce) match {
-          case (false, loc) => Failures.formatCheck(loc.head, e)
-          case (true, loc) => Pass
-        }
-      case Failure(f) => inconclusive(e, context.location, f)
-    }
+    catch {
+      case u : UnknownStringFormatException => inconclusive(e, context.location, u.getMessage)
+    }    
   }
-      
   
   def toInt(s: String): Option[Int] = {
     try {
@@ -488,6 +558,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler with StringFormat
    */
   private def inconclusive(e: Expression, l: Location, m: String): Inconclusive =
     Inconclusive(Trace(e, Reason(l, m) :: Nil))
+    
 
   /**
    * Creates an inconclusive result from a throwable

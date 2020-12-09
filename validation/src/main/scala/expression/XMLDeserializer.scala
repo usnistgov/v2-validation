@@ -1,15 +1,19 @@
 package expression
 
-import hl7.v2.profile.{BindingLocation, BindingStrength, ValueSetSpec}
+import hl7.v2.profile.{BindingLocation, BindingStrength, Range, ValueSetSpec}
 import nu.xom.Element
 import nist.xml.util.XOMExtensions._
-import hl7.v2.instance.{EscapeSeqHandler, Separators, Text, Number}
+import hl7.v2.instance.{EscapeSeqHandler, Number, Separators, Text}
 
 /**
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
 object XMLDeserializer extends EscapeSeqHandler {
+
+  val FAIL = "FAIL"
+  val INCONCLUSIVE = "INCONCLUSIVE"
+  val PASS = "PASS"
 
   /**
     * Creates an expression from a nu.xom.Element representing an assertion
@@ -27,6 +31,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "NumberList"  => numberList( e )
     case "StringList"  => stringList( e )
     case "SimpleValue" => simpleValue( e )
+    case "SubContext"  => subContext( e )
     case "NOT"         => not( e )
     case "AND"         => and( e )
     case "OR"          => or( e )
@@ -45,13 +50,14 @@ object XMLDeserializer extends EscapeSeqHandler {
   } 
 
   // Generic Expressions
-  private def presence( e: Element ) = Presence( e.attribute("Path") )
+  private def presence( e: Element ): Presence = Presence( e.attribute("Path") )
 
-  private def pathValue( e: Element ) = {
+  private def pathValue( e: Element ): PathValue = {
     val path1 = e.attribute("Path1")
     val path2 = e.attribute("Path2")
     val op    = operator( e.attribute("Operator") )
-    PathValue( path1, op, path2 )
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    PathValue( path1, op, path2, npb )
   }
 
   // Value Expressions
@@ -59,8 +65,9 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("Path")
     val text = e.attribute("Text")
     val ignoreCase = toBoolean( e.attribute("IgnoreCase") )
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    PlainText( path , text, ignoreCase, atLeastOnce)
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    PlainText( path , text, ignoreCase, atLeastOnce, npb)
   }
   
     // Value Expressions
@@ -68,36 +75,53 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("KeyPath")
     val text = e.attribute("KeyValue")
     val ignoreCase = if (e.attribute("IgnoreCase") != "") toBoolean( e.attribute("IgnoreCase") ) else true
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
     PlainText( path , text, ignoreCase, atLeastOnce)
   }
 
   private def format( e: Element ): Format = {
     val path = e.attribute("Path")
     val regex = e.attribute("Regex")
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    Format( path, regex, atLeastOnce)
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    Format( path, regex, atLeastOnce, npb)
   }
 
   private def numberList( e: Element ): NumberList = {
     val path = e.attribute("Path")
     val csv  = e.attribute("CSV").split(',').toList map ( _.toDouble )
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    NumberList( path, csv, atLeastOnce)
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    NumberList( path, csv, atLeastOnce, npb)
   }
 
   private def stringList( e: Element ): StringList = {
     val path = e.attribute("Path")
     val csv  = e.attribute("CSV").split(',').toList //No need to trim since no spaces in the schema
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    StringList( path, csv, atLeastOnce)
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    StringList( path, csv, atLeastOnce, npb)
   }
 
   private def simpleValue( e: Element ): SimpleValue = {
     val path = e.attribute("Path")
     val op   = operator( e.attribute("Operator") )
     val _value = value( e.attribute("Value"), e.attribute("Type") )
-    SimpleValue( path, op, _value )
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    SimpleValue( path, op, _value, atLeastOnce, npb)
+  }
+
+  private def subContext( e: Element ): SubContext = {
+    val path = e.attribute("Path")
+    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") Some(toBoolean(e.attribute("AtLeastOnce"))) else None
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    if(e.getChildElements.size() != 1) {
+      throw new Exception(s"SubContext element should have one and only one assertion, found = ${e.getChildElements.size()}")
+    }
+    val assertion = expression(e.getChildElements().get(0))
+    val card = cardinality(e)
+    SubContext(assertion, path, card, atLeastOnce, npb)
   }
 
   // Combination Expressions
@@ -126,17 +150,34 @@ object XMLDeserializer extends EscapeSeqHandler {
     val bs   = BindingStrength( e.attribute("BindingStrength") ).getOrElse(BindingStrength.R)
     val bl   = BindingLocation( e.attribute("BindingLocation") ).getOrElse(BindingLocation("1").get)
     val spec = ValueSetSpec( id, Some(bs), Some(bl) )
-    ValueSet(e.attribute("Path"), spec)
+    val path = e.attribute("Path")
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    ValueSet(path, spec, npb)
   }
   
   private def stringFormat(e: Element) = {
+    val path = e.attribute("Path")
+    val format = e.attribute("Format")
     val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
-    StringFormat(e.attribute("Path"), StringType.fromString(e.attribute("Format")), atLeastOnce)
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    StringFormat(path, format, atLeastOnce, npb)
   }
 
   private def isNull(e : Element) = isNULL( e.attribute("Path") )
   
   // Helpers
+  private def notPresentBehavior(value: String): Option[String] = {
+    value match {
+      case null => None
+      case "" => None
+      case _ =>
+        val CODE = value.toUpperCase()
+        CODE match {
+          case FAIL | INCONCLUSIVE | PASS => Some(CODE)
+          case _ => throw new Error(s"[Error] Invalid NotPresentBehavior value $value, expected : $FAIL, $INCONCLUSIVE, $PASS")
+        }
+    }
+  }
   private def toBoolean( s: String ) = 
     if( "true" == s || "1" == s ) true
     else if( "false" == s || "0" == s || "" == s ) false
@@ -167,6 +208,14 @@ object XMLDeserializer extends EscapeSeqHandler {
     val exp2 = expression( childElements.get(1) )
     ( exp1, exp2)
   }
+
+  def cardinality(e: Element): Option[Range] =
+    asOption(e.attribute("MinOccurrence")) map { min =>
+    Range(min.toInt, e.attribute("MaxOccurrence"))
+  }
+
+  private def asOption(s: String) = if (s == "") None else Some(s)
+
 
   /*private def combinationn( e: Element ) = {
     val childElements = e.getChildElements

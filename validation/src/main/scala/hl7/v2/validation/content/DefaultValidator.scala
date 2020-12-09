@@ -1,21 +1,21 @@
 package hl7.v2.validation
 package content
 
-import java.util.{ Arrays => JArrays, List => JList }
+import java.util.{Arrays => JArrays, List => JList}
 
-import expression.EvalResult.{ Fail, Inconclusive, Pass, Trace, EvalData }
-import gov.nist.validation.report.{ Entry, Trace => GTrace }
+import expression.EvalResult.{EvalData, Fail, Inconclusive, Pass, Trace}
+import gov.nist.validation.report.{Entry, Trace => GTrace}
 import hl7.v2.instance._
-import hl7.v2.validation.content.PredicateUsage.{ R, X }
-import hl7.v2.profile.{ Message => MM }
-import scala.collection.JavaConversions.seqAsJavaList
+import hl7.v2.validation.content.PredicateUsage.{R, X}
+import hl7.v2.profile.{Message => MM}
+
+import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
 import hl7.v2.validation.report.ConfigurableDetections
 import expression.EvalResult.FailPlugin
-import expression.EvalResult.Failure
-import expression.EvalResult.Failure
+
 
 trait DefaultValidator extends Validator with expression.Evaluator with PatternFinder {
 
@@ -44,7 +44,9 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
     val pl : List[Predicate] = conformanceContext.predicatesFor(e)
     val ccl: List[CoConstraint] = conformanceContext.coConstraintsFor(e)
 
-    val r = pl.foldLeft((cl map { routeConstraint(e, _) }).flatten) { (acc, p) =>
+    val r = pl.foldLeft(cl flatMap {
+      routeConstraint(e, _)
+    }) { (acc, p) =>
       check(e, p) ::: acc
     }
     
@@ -67,7 +69,6 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
   /**
    * Checks the element against the constraint and returns a CEntry.
    * @param e - The element to be checked
-   * @param c - The constraint
    * @return A CEntry
    */
   private def mustRoute(e: Expression) = {
@@ -226,7 +227,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
       val reasons = t.reasons map { r =>
         s"[${r.location.line}, ${r.location.column}] ${r.message}"
       }
-      new GTrace(assertion, reasons)
+      new GTrace(assertion, seqAsJavaList(reasons))
     })
 
   private def approximativeErrorLocation(context: Element, stack: List[Trace]) =
