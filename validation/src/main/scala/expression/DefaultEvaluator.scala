@@ -3,6 +3,7 @@ package expression
 import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
+import hl7.v2.profile.Range
 import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
 import gov.nist.validation.report.Entry
 import collection.JavaConverters._
@@ -29,6 +30,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     case x: StringList   => stringList(x, c)
     case x: SimpleValue  => simpleValue(x, c)
     case x: PathValue    => pathValue(x, c)
+    case x: SubContext   => subContext(x, c)
     case x: AND          => and(x, c)
     case x: OR           => or(x, c)
     case x: NOT          => not(x, c)
@@ -235,6 +237,46 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case Success(xs)  => loop(xs)
     }
   }
+
+
+
+  def contextRange(range: Option[Range], atLeastOnce: Option[Boolean]): Try[Option[Range]] = {
+    (range, atLeastOnce) match {
+      case (Some(r), Some(b)) => Failure(new Throwable("Min/Max Cardinality and AtLeastOnce were both specified, only one should be used in SubContext expression"))
+      case (None, Some(b)) => if(b) Success(Some(Range(1, "*"))) else Success(None)
+      case (Some(r), None) => Success(Some(r))
+      case (None, None) => Success(None)
+    }
+  }
+
+  /**
+    * Evaluates the Context expression which provides a sub-context to the assertion to run
+    * @param subContext - The Context expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def subContext(subContext: SubContext, context: Element)(implicit l: ValueSetLibrary, s: Separators, dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+    contextRange(subContext.cardinality, subContext.atLeastOnce) match {
+      case Success(range) => query(context, subContext.path) match {
+        case Failure(e)   => inconclusive(subContext, context.location, e)
+        case Success(Nil) => {
+          notFound(subContext, subContext.path, context, subContext.notPresentBehavior)
+        }
+        case Success(xs)  =>
+          val evalResult = xs.map(eval(subContext.assertion, _))
+          val (success, failure, inconclusive) = (
+            evalResult.collect{ case Pass => Pass },
+            evalResult.collect{ case f: Fail => f },
+            evalResult.collect{ case inconclusive: Inconclusive => inconclusive }
+          )
+
+          if(inconclusive.nonEmpty) Failures.subContextInconclusive(subContext, context, inconclusive)
+          else if (range.map(r => r.includes(success.length)).getOrElse(failure.isEmpty))
+            Pass
+          else Failures.subContext(subContext, context, range, xs.length, failure)
+      }
+      case Failure(e) => inconclusive(subContext, context.location, e)
+    }
 
   /**
    * Evaluates the AND expression and returns the result

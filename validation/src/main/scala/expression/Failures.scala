@@ -2,11 +2,11 @@ package expression
 
 import expression.EvalResult.{Fail, Reason, Trace}
 import hl7.v2.instance._
+import hl7.v2.profile.Range
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.Query._
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 import expression.EvalResult.Inconclusive
-
 object Failures extends EscapeSeqHandler {
 
   /**
@@ -21,7 +21,7 @@ object Failures extends EscapeSeqHandler {
   
   def isNull(c: Element, e: isNULL, isField : Boolean): Fail = {
     val path    = s"${c.location.path}.${e.path}"
-    val r = if(isField) " is not NULL" else " is not a Field";
+    val r = if(isField) " is not NULL" else " is not a Field"
     val reasons = Reason( c.location, s"$path "+r):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
@@ -34,7 +34,7 @@ object Failures extends EscapeSeqHandler {
   
   def formatCheck(c: Element, e: StringFormat): Fail = {
     val path    = s"${c.location.path}.${e.path}"
-    val reasons = Reason( c.location, s"$path is not conform to ${e.format.toString()} string format"):: Nil
+    val reasons = Reason( c.location, s"$path is not conform to ${e.format} string format"):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
 
@@ -128,6 +128,24 @@ object Failures extends EscapeSeqHandler {
     val m = s"${s1.value} is not ${e.operator} ${s2.value}"
     val reasons = Reason(s1.location, m) :: Nil
     Fail( Trace(e, reasons) :: Nil )
+  }
+
+  /**
+    * Creates and returns a subContext failure stack traces
+    */
+  def subContext(e: SubContext, c: Element, range: Option[Range], elms: Int, failures: List[Fail]): Fail = {
+    val m = s"SubContext assertion evaluation expected [${range.map(r => s"${r.min}, ${r.max}").getOrElse("*, *")}] success, but ${failures.length} out of ${elms} failed"
+    val reasons = Reason(c.location, m) :: Nil
+    Fail( Trace(e, reasons) :: failures.flatMap(_.stack) )
+  }
+
+  /**
+    * Creates and returns a subContext failure stack traces
+    */
+  def subContextInconclusive(e: SubContext, c: Element, inconclusive: List[Inconclusive]): Inconclusive = {
+    val m = s"One or more expressions evaluation on a subContext path ${e.path} was inconclusive"
+    val reasons = Reason(c.location, m) :: Nil
+    Inconclusive(Trace(e, reasons ::: inconclusive.flatMap(_.trace.reasons)))
   }
 
   /**

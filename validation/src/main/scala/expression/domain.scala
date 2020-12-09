@@ -2,6 +2,7 @@ package expression
 
 import hl7.v2.instance.Value
 import hl7.v2.profile.ValueSetSpec
+import hl7.v2.profile.Range
 
 sealed trait Expression
 
@@ -23,6 +24,8 @@ case class PathValue( path1: String, operator: Operator, path2: String, notPrese
 case class isNULL(path: String) extends Expression
 
 // Combination expressions
+case class SubContext(assertion: Expression, path: String, cardinality: Option[Range], atLeastOnce : Option[Boolean], notPresentBehavior: String = "PASS") extends Expression
+
 case class AND( exp1: Expression, exp2: Expression ) extends Expression
 
 case class OR( exp1: Expression, exp2: Expression ) extends Expression
