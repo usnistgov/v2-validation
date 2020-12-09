@@ -2,7 +2,7 @@
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/v2-validation-legacy/profile/src/main/resources/Profile.xsd"
+  xsi:noNamespaceSchemaLocation="Profile.xsd"
   >
   
   <Encodings>
@@ -14,6 +14,7 @@
     <Message ID="ORU_R01" Type="ORU" Event="R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
       <Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
       <Segment Ref="SFT" Usage="W" Min="0" Max="*" />
+      <Segment Ref="OPT" Usage="O" Min="0" Max="1" />
       <Segment Ref="UAC" Usage="X" Min="0" Max="1"/>
       <Group ID="1" Name="PATIENT" Usage="R" Min="1" Max="2">
         <Segment Ref="PID" Usage="R" Min="1" Max="1"/>
@@ -32,6 +33,9 @@
     </Segment>
     <Segment ID="SFT" Name="SFT" Description="Software Segment">
       <Field Name="Software Vendor Organization" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01834"/>
+    </Segment>
+    <Segment ID="OPT" Name="OPT" Description="Optional Segment Test">
+      <Field Name="Complex Field Constant Value Test" Datatype="TES" Usage="O" Min="1" Max="1" MinLength="1" MaxLength="*" ConstantValue="this is a spec error" ItemNo="01834"/>
     </Segment>
     <Segment ID="UAC" Name="UAC" Description="User Authentication Credential Segment">
       <Field Name="User Authentication Credential Type Code" Datatype="HD" Usage="X" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02267"/>
@@ -57,6 +61,9 @@
       <Component Name="Universal ID" Datatype="ST" Usage="R" MinLength="3" MaxLength="*"  />
       <!-- ConfLength="199" -->
       <Component Name="Universal ID Type" Datatype="ST" Usage="X" MinLength="1" MaxLength="6"/>
+    </Datatype>
+    <Datatype ID="TES" Name="TES" Description="Test Datatype">
+      <Component Name="Complex Component Test" Datatype="HD" Usage="O" MinLength="0" MaxLength="*" ConfLength="20" ConstantValue="this is a spec error" />
     </Datatype>
   </Datatypes>
   

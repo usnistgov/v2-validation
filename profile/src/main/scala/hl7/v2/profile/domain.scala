@@ -1,7 +1,7 @@
 package hl7.v2.profile
 
 import java.util.{ Arrays => JArrays, List => JList }
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
   * Trait representing a data type
@@ -55,7 +55,7 @@ case class Field( name: String, datatype: Datatype, req: Req )
   */
 case class DynMapping( position: Int, reference: Option[String], secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] ) {
   def getDatatypes() : JList[Datatype] = {
-    seqAsJavaList( map.values.toSeq )    
+    seqAsJavaList( map.values.toSeq )
   }
 }
 
@@ -114,7 +114,7 @@ case class Message (
 ) {
 
   lazy val asGroup = Group(id, structId, structure,
-        Req(1, structId, Usage.R, None, None, None, Nil))
+    Req(1, structId, Usage.R, None, None, None, Nil, None, false, None))
 }
 
 /**

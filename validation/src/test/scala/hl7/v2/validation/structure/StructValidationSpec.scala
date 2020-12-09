@@ -34,6 +34,8 @@ trait StructValidationSpec
     The structure validation should correctly report unexpected segments   $e6
     The structure validation should correctly report extra elements        $e7
     The structure validation should correctly report separators in a value $e8
+    The structure validation should correctly report constant value spec errors $e9
+
   """
 
   //TODO: Implements invalid lines and unexpected segments
@@ -223,6 +225,27 @@ trait StructValidationSpec
 
     validate(m) must containTheSameElementsAs( expected )
   }
+
+ /**
+   * Extra children test
+   */
+ def e9 = {
+   /*
+    * [2, 10] PID[1].3[2]
+    * [2, 13] PID[1].3[2].4[1]
+    */
+   val m = """/MSH|^~\&#
+             /OPT|&3.4.2
+             /PID|11||~^^^&3.4.2
+             /UAC
+             /UAC""".stripMargin('/')
+   val expected =
+     List(
+       Detections.constantValueSpecError(Location(EType.Field, "Complex Field Constant Value Test", "OPT-1", 2, 5,"OPT[1]-1[1]"), "this is a spec error"),
+       Detections.constantValueSpecError(Location(EType.Component, "Complex Component Test", "OPT-1.1", 2, 5,"OPT[1]-1[1].1"), "this is a spec error")
+   )
+   validate(m) must containTheSameElementsAs( expected )
+ }
 
   private def validate(m: String)(implicit Detections : ConfigurableDetections): Seq[Entry] = parse(m, mm) match {
     case Success(msg) =>

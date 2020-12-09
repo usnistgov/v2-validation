@@ -209,6 +209,28 @@ public class ConfigurableDetections {
 				r.max(), value);
 		return entry(l, desc, category, classification);
 	}
+
+	/**
+	 * @return A report entry for the constant value detection
+	 */
+	public  Entry constantValue(Location l, String constant, String value) {
+		String category = conf.getString("report.constant-value.category");
+		String classification = conf.getString("report.constant-value.classification");
+		String template = conf.getString("report.constant-value.template");
+		String desc = String.format(template, l.prettyString(), constant, value);
+		return entry(l, desc, category, classification);
+	}
+
+	/**
+	 * @return A report entry for the constant value detection
+	 */
+	public  Entry constantValueSpecError(Location l, String constant) {
+		String category = conf.getString("report.constant-value-spec-error.category");
+		String classification = conf.getString("report.constant-value-spec-error.classification");
+		String template = conf.getString("report.constant-value-spec-error.template");
+		String desc = String.format(template, l.prettyString(), constant);
+		return entry(l, desc, category, classification);
+	}
 	
 	public  Entry lengthSpecErrorNF(Location l) {
 		String category = conf.getString("report.length-spec-error-no-valid.category");

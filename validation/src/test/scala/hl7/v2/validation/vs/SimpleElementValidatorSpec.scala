@@ -3,12 +3,11 @@ package hl7.v2.validation.vs
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.{Location, Simple, Text}
 import hl7.v2.profile.{BindingStrength, Req, Usage, ValueSetSpec}
-import hl7.v2.validation.report.Detections
 import CodeUsage.{E, P, R}
 import org.specs2.Specification
 import hl7.v2.validation.report.ConfigurableDetections
 import com.typesafe.config.ConfigFactory
-import hl7.v2.validation.vs.{InternalValueSet => ValueSet}
+
 class SimpleElementValidatorSpec
   extends Specification  { def is = s2"""
 
@@ -37,31 +36,31 @@ class SimpleElementValidatorSpec
   val stability     = Some(Stability.Static)
   val extensibility = Some(Extensibility.Closed)
 
-  val vs1 = ValueSet("01", extensibility, stability, Nil)
-  val vs2 = ValueSet("02", extensibility, stability, codes = List(
+  val vs1 =  InternalValueSet("01", extensibility, stability, Nil)
+  val vs2 =  InternalValueSet("02", extensibility, stability, codes = List(
     Code("A", "", E,"" ),
     Code("B", "", P,"" ),
     Code("X", "", R,"" )
   ))
-  val vs3 = ValueSet("03", extensibility, stability, codes = List(
+  val vs3 =  InternalValueSet("03", extensibility, stability, codes = List(
     Code("A", "", E,"" ),
     Code("A", "", P,"" )
   ))
-  val vs4 = ValueSet("0396", extensibility, stability, codes = List(
+  val vs4 =  InternalValueSet("0396", extensibility, stability, codes = List(
     Code("x", "", E,"" ),
     Code("x", "", P,"" )
   ))
-  val vs5 = ValueSet("HL70396", extensibility, stability, codes = List(
+  val vs5 =  InternalValueSet("HL70396", extensibility, stability, codes = List(
     Code("x", "", E,"" ),
     Code("x", "", P,"" )
   ))
-  val vs6 = ValueSet("06", extensibility, stability, Nil)
+  val vs6 =  InternalValueSet("06", extensibility, stability, Nil)
 
   val noValidation = Seq("06")
 
   implicit val library = ValueSetLibraryImpl(
     noValidation,
-    Map[String, ValueSet](
+    Map[String,  InternalValueSet](
       "01" -> vs1,
       "02" -> vs2,
       "03" -> vs3,
@@ -101,8 +100,8 @@ class SimpleElementValidatorSpec
       override val position = -1
       override val instance = -1
       override val req = vsid match {
-        case "" => Req(-1, "", Usage.O, None, None, None, Nil)
-        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(vsid, None, None)::Nil)
+        case "" => Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
+        case x  => Req(-1, "", Usage.O, None, None, None, ValueSetSpec(vsid, None, None)::Nil, None, false, None)
       }
     }
 
