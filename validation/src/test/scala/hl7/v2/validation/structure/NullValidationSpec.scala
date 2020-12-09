@@ -83,19 +83,19 @@ trait NullValidationSpec
 
   //For SimpleField 
   def e11 = {
-    val p = Presence("4[1].1[1].1[1]")
+    val p = Presence("5[1].1[1].1[1]")
     eval(p, context) === Pass
   }
 
   //For ComplexField
   def e12 = {
-    val p = Presence("4[1].1[1].3[1]")
+    val p = Presence("5[1].1[1].3[1]")
     eval(p, context) === Pass
   }
 
   //A Null SimpleField should have "" value  
   def e2 = {
-    eval(PlainText("4[1].1[1].1[1]", Value.NULL, true), context) === Pass
+    eval(PlainText("5[1].1[1].1[1]", Value.NULL, true), context) === Pass
   }
 
   //An R Null Field should not raise a detection
@@ -126,14 +126,14 @@ trait NullValidationSpec
   //A Null ComplexField has no children
   def e5 = {
     //The parent is present
-    val p = Presence("4[1].1[1].3[1]")
+    val p = Presence("5[1].1[1].3[1]")
     assert(eval(p, context) === Pass)
 
     //Children not present
-    val pp = Presence("4[1].1[1].3[1].1[1]")
+    val pp = Presence("5[1].1[1].3[1].1[1]")
     val a = eval(pp, context) === Failures.presence(context, pp)
 
-    val ppp = Presence("4[1].1[1].3[1].2[1]")
+    val ppp = Presence("5[1].1[1].3[1].2[1]")
     val b = eval(ppp, context) === Failures.presence(context, ppp)
 
     b and a
@@ -145,8 +145,8 @@ trait NullValidationSpec
                /PID|11||~^^""^&""
                /UAC
                /UAC""".stripMargin('/')
-    val comp = query(context2,"4[1].1[1].3[2].3[1]")
-    val subcomp = query(context2,"4[1].1[1].3[2].4[1].2[1]")
+    val comp = query(context2,"5[1].1[1].3[2].3[1]")
+    val subcomp = query(context2,"5[1].1[1].3[2].4[1].2[1]")
     assert(comp.isSuccess)
     assert(subcomp.isSuccess)
     val expected =
@@ -179,7 +179,7 @@ trait NullValidationSpec
                /UAC
                /UAC""".stripMargin('/')
                
-    val field = query(context2,"4[1].1[1].3[1]")
+    val field = query(context2,"5[1].1[1].3[1]")
     assert(field.isSuccess)
     val expected =
       List(
@@ -204,7 +204,7 @@ trait NullValidationSpec
     val loc = Location(EType.Field, "The description", "The path", 1, 1)
     val lcs = Some( Range(2, "3") )
     val lcn = None
-    checkValue( Number("\"\""), lcs, None, loc) === Nil
+    checkValue( Number("\"\""), lcs, None, None, loc) === Nil
   }
   private def validate(m: String): Seq[Entry] = parse(m, mm) match {
     case Success(msg) =>

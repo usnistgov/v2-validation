@@ -63,7 +63,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     val map = c.children.groupBy( x => x.position )
 
     // Check every position defined in the model
-    val r = c.reqs.foldLeft( List[Entry]() ) { (acc, r) =>
+    val entries = c.reqs.foldLeft( List[Entry]() ) { (acc, r) =>
       // Get the children at the current position (r.position)
       val children = map.getOrElse(r.position, Nil)
 
@@ -95,8 +95,13 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       }
     }
 
-    // Check for extra children and return the result
-    if( c.hasExtra ) Detections.extra(c.location) :: r else r
+    // Check if complex has constant value requirement
+    val constantValueSpecError = if(c.req.constantValue.isDefined) Detections.constantValueSpecError(c.location, c.req.constantValue.get)::Nil else Nil
+    // Check for extra children
+    val extra = if( c.hasExtra ) Detections.extra(c.location) :: Nil else Nil
+
+    // Merge results
+    constantValueSpecError ::: extra ::: entries
   }
   
   private def positionHasNull(l : List[Element]): Boolean = {

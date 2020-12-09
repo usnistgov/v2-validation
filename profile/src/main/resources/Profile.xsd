@@ -100,6 +100,7 @@
 		<xs:attribute name="Binding" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="BindingStrength" type="BindingStrengthType" use="optional"/>
 		<xs:attribute name="BindingLocation" type="BindingLocationType" use="optional"/>
+		<xs:attribute name="ConstantValue" type="NonEmptyString" use="optional"/>
 		<xs:attribute name="Hide" type="xs:boolean" use="optional"/>
 	</xs:attributeGroup>
 
