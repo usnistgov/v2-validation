@@ -140,7 +140,16 @@
 	<!-- ============================================================================================================= 
 		========================= Value Expressions ======================================= 
 		============================================================================================================= -->
-	
+
+	<xs:complexType name="ComplexPathValueType">
+		<xs:attribute name="Path1" type="PathType" use="required" />
+		<xs:attribute name="Operator" type="OperatorType" use="required" />
+		<xs:attribute name="Path2" type="PathType" use="required" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
+		<xs:attribute name="Strict" type="xs:boolean" use="optional" />
+	</xs:complexType>
+
+
 	<xs:complexType name="PlainTextType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Text" type="NonEmptyString" use="required" />

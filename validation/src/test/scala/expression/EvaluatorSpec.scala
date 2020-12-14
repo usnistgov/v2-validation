@@ -19,6 +19,7 @@ trait EvaluatorSpec
   with EXISTSpec
   with StringFormatSpec
   with SubContextSpec
+  with ComplexPathValueSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -211,5 +212,26 @@ trait EvaluatorSpec
       SubContext evaluation should fail If not present behavior is FAIL and no element is found  $subContextNoElmFAIL
       SubContext evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $subContextNoElmINC
       SubContext evaluation should pass If not present behavior is PASS and no element is found $subContextNoElmPASS
+
+     ComplexPathValueSpec
+      ComplexPathValue should pass if both paths are not populated                        $complexPathValueBothPathNotPopulated
+      ComplexPathValue evaluation should be inconclusive if the path is invalid           $complexPathValuePathInvalid
+      ComplexPathValue evaluation should be inconclusive if the path is unreachable       $complexPathValuePathUnreachable
+      ComplexPathValue evaluation should be inconclusive if applied to incompatible elements (Complex/Simple)        $complexPathNotFieldOrComponent
+      ComplexPathValue evaluation should fail if one of the children in one path does not satisfy operator constraint applied to its counterpart (eg : A^B^C vs A^X^C, L1^A&B&C vs L1^A&X&C)   $complexPathChildNoMatch
+      ComplexPathValue evaluation should fail if one of the occurrences in one path does not satisfy operator constraint applied to its counterpart (eg: A^B^C~X^Y^Z vs A^B^C~X^Y^T)    $complexPathOccurrenceFail
+      ComplexPathValue should pass if all children are equally populated and satisfy operator constraint (eg: A&B&C vs A&B&C, L1^A&B&C vs L1^A&B&C)         $complexPathValueEqPopulated
+      ComplexPathValue should pass if all occurrences are equally populated and satisfy operator constraint (eg: A^B^C~X^Y^Z vs A^B^C~X^Y^Z)         $complexPathValueEqPopulatedOccurrence
+      Strict Mode
+        ComplexPathValue should fail if only one path is populated                                                                $complexPathValueOnePathPopulatedS
+        ComplexPathValue should fail if one of the children within one path is populated and not in the other (eg: A^^C vs A^B^C, L1^A&B&C vs L1^A&&C)   $complexPathValueOnePathChildPopulatedS
+        ComplexPathValue should fail if one of the occurrences has no match (all others satisfy operator constraint) (e.g A^B^C~X^Y^Z vs A^B^C)          $complexPathNotSameOccurrenceNumberStrict
+      Non-Strict Mode
+        ComplexPathValue should pass if only one path is populated                                                                  $complexPathValueOnePathPopulated
+        ComplexPathValue should pass if one of the children within one path is populated and not in the other (eg: A^^C vs A^B^C, L1^A&B&C vs L1^A&&C)
+        ComplexPathValue should pass if one of the occurrences has no match (all others satisfy operator constraint) (e.g A^B^C~X^Y^Z vs A^B^C)     $complexPathNotSameOccurrenceNumberNotStrict
+      ComplexPathValue evaluation should fail If not present behavior is FAIL and both paths not found                      $complexPathValueNoElmFAIL
+      ComplexPathValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and both paths not found   $complexPathValueNoElmINC
+      ComplexPathValue evaluation should pass If not present behavior is PASS and both paths not found                      $complexPathValueNoElmPASS
   """
 }

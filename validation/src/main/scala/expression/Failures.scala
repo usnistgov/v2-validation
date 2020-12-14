@@ -159,6 +159,84 @@ object Failures extends EscapeSeqHandler {
   }
 
   /**
+    * Creates and returns a complex path value failure stack traces
+    * This is used when only one path is populated
+    */
+  def complexPathValue( e: ComplexPathValue, s: Element, parent: Element, p: String): Fail = {
+    val m = s"${s.location.path}(${s.location.desc}) is populated but ${parent.location.path}(${parent.location.desc}).$p is not"
+    val reasons = Reason(s.location, m) :: Nil
+    Fail( Trace(e, reasons) :: Nil )
+  }
+
+  /**
+    * Creates and returns a complex path value failure stack traces
+    * This is used when only one path is populated
+    */
+  def complexPathValue( e: ComplexPathValue, s: Element, p: String): Fail = {
+    val m = s"${s.location.path}(${s.location.desc}) is populated but $p is not"
+    val reasons = Reason(s.location, m) :: Nil
+    Fail( Trace(e, reasons) :: Nil )
+  }
+
+  /**
+    * This is used when only one path value is not equal to the other
+    */
+  def complexPathValue( e: ComplexPathValue, s1: Simple, s2: Simple): Fail = {
+    val m = s"${s1.value} is not ${e.operator} ${s2.value}"
+    val reasons = Reason(s1.location, m) :: Nil
+    Fail( Trace(e, reasons) :: Nil )
+  }
+
+  /**
+    * This is used when path value cardinality is not the same
+    */
+  def complexPathValue( e: ComplexPathValue, s: Element, p1: String, p1s: Int, p2: String, p2s: Int): Fail = {
+    val root = s"${s.location.path}(${s.location.desc})"
+    val m = s"${root}.${p1} has ${p1s} occurrences but ${root}.${p2} has ${p2s} occurrences"
+    val reasons = Reason(s.location, m) :: Nil
+    Fail( Trace(e, reasons) :: Nil )
+  }
+
+  /**
+    * This is used when paths comparison is inconclusive
+    */
+  def complexPathValue( e: ComplexPathValue, c: Element, inconclusive: List[Inconclusive]): Inconclusive = {
+    val root = s"${c.location.path}(${c.location.desc})"
+    val m = s"One or more element comparisons within ${root}.${e.path1} and ${root}.${e.path2} were inconclusive"
+    val reasons = Reason(c.location, m) :: Nil
+    Inconclusive(Trace(e, reasons ::: inconclusive.flatMap(_.trace.reasons)))
+  }
+
+  /**
+    * This is used when paths comparison is inconclusive
+    */
+  def complexPathValue( e: ComplexPathValue, c: Element, failures: List[Fail]): Fail = {
+    val root = s"${c.location.path}(${c.location.desc})"
+    val m = s"One or more element comparisons within ${root}.${e.path1} and ${root}.${e.path2} failed"
+    val reasons = Reason(c.location, m) :: Nil
+    Fail( Trace(e, reasons) :: failures.flatMap(_.stack) )
+  }
+
+  /**
+    * This is used when paths types are different than component or field
+    */
+  def inconclusivePathComparison(e: ComplexPathValue, c1: Element, c2: Element): Inconclusive = {
+    val c1p = s"${c1.location.path}(${c1.location.desc})"
+    val c2p = s"${c2.location.path}(${c2.location.desc})"
+    val m = s"Comparing ${c1p} and ${c2p} of incompatible types (Complex/Simple)"
+    Inconclusive(Trace(e, Reason(c1.location, m) :: Nil))
+  }
+
+  /**
+    * This is used when path has duplicate elements with same instance and position
+    */
+  def inconclusivePathComparison(e: ComplexPathValue, c1: Element, p: Int, i: Int, elms: List[Element]): Inconclusive = {
+    val c1p = s"${c1.location.path}(${c1.location.desc})"
+    val m = s"Invalid parsing of message ${c1p}.${p}[${i}] returned ${elms.length} elements"
+    Inconclusive(Trace(e, Reason(c1.location, m) :: Nil))
+  }
+
+  /**
     * Creates and returns a value set failure stack traces
     */
   def valueSet(e: ValueSet, x: Entry): Fail = {

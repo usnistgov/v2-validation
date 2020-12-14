@@ -18,6 +18,7 @@ object AsString {
     case e: StringList => stringList(e, context)
     case e: SimpleValue => simpleValue(e, context)
     case e: PathValue => pathValue(e, context)
+    case e: ComplexPathValue => complexPathValue(e, context)
     case e: SubContext => subContext(e, context)
     case e: AND => and(e, context)
     case e: OR => or(e, context)
@@ -42,6 +43,7 @@ object AsString {
     case e: StringList => stringListC(e, context)
     case e: SimpleValue => simpleValueC(e, context)
     case e: PathValue => pathValueC(e, context)
+    case e: ComplexPathValue => complexPathValueC(e, context)
     case e: SubContext => subContextC(e, context)
     case e: AND => andC(e, context)
     case e: OR => orC(e, context)
@@ -123,8 +125,14 @@ object AsString {
   private def pathValue(e: PathValue, c: Element) =
     s"${path(c, e.path1)} SHALL be ${e.operator} ${path(c, e.path2)}"
 
+  private def complexPathValue(e: ComplexPathValue, c: Element) =
+    s"Complex element ${path(c, e.path1)} SHALL be ${e.operator} ${path(c, e.path2)}"
+
   private def pathValueC(e: PathValue, c: Element) =
     s"${path(c, e.path1)} is ${e.operator} ${path(c, e.path2)}"
+
+  private def complexPathValueC(e: ComplexPathValue, c: Element) =
+    s"Complex element ${path(c, e.path1)} is ${e.operator} ${path(c, e.path2)}"
     
   private def stringFormat(e: StringFormat, c: Element) = {
     val at = if (e.atLeastOnce) "At least one element from "
