@@ -20,6 +20,7 @@ case class SimpleValue( path: String, operator: Operator, value: Value, atLeastO
 
 case class PathValue( path1: String, operator: Operator, path2: String, notPresentBehavior : String = "PASS" ) extends Expression
 
+case class ComplexPathValue( path1: String, operator: Operator, path2: String, strict: Boolean = true, notPresentBehavior : String = "PASS" ) extends Expression
 
 case class isNULL(path: String) extends Expression
 

@@ -2,12 +2,13 @@ package expression
 
 import expression.EvalResult._
 import hl7.v2.instance.Query._
-import hl7.v2.instance._
+import hl7.v2.instance.{Complex, _}
 import hl7.v2.profile.Range
-import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
+import hl7.v2.validation.vs.{Validator, ValueSetLibrary}
 import gov.nist.validation.report.Entry
+
 import collection.JavaConverters._
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 import java.lang.reflect.Method
 
 trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
@@ -23,27 +24,28 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    */
   def eval(e: Expression, c: Element)(implicit l: ValueSetLibrary, s: Separators,
                                       t: Option[TimeZone], VSValidator : Validator): EvalResult = e match {
-    case x: Presence     => presence(x, c)
-    case x: PlainText    => plainText(x, c)
-    case x: Format       => format(x, c)
-    case x: NumberList   => numberList(x, c)
-    case x: StringList   => stringList(x, c)
-    case x: SimpleValue  => simpleValue(x, c)
-    case x: PathValue    => pathValue(x, c)
-    case x: SubContext   => subContext(x, c)
-    case x: AND          => and(x, c)
-    case x: OR           => or(x, c)
-    case x: NOT          => not(x, c)
-    case x: XOR          => xor(x, c)
-    case x: IMPLY        => imply(x, c)
-    case x: EXIST        => exist(x, c)
-    case x: FORALL       => forall(x, c)
-    case x: Plugin       => plugin(x, c)
-    case x: SetId        => setId(x, c)
-    case x: IZSetId      => IZsetId(x, c)
-    case x: ValueSet     => valueSet(x, c)
-    case x: isNULL       => isNull(x, c)
-    case x: StringFormat => stringFormat(x, c)
+    case x: Presence          => presence(x, c)
+    case x: PlainText         => plainText(x, c)
+    case x: Format            => format(x, c)
+    case x: NumberList        => numberList(x, c)
+    case x: StringList        => stringList(x, c)
+    case x: SimpleValue       => simpleValue(x, c)
+    case x: PathValue         => pathValue(x, c)
+    case x: ComplexPathValue  => complexPathValue(x, c)
+    case x: SubContext        => subContext(x, c)
+    case x: AND               => and(x, c)
+    case x: OR                => or(x, c)
+    case x: NOT               => not(x, c)
+    case x: XOR               => xor(x, c)
+    case x: IMPLY             => imply(x, c)
+    case x: EXIST             => exist(x, c)
+    case x: FORALL            => forall(x, c)
+    case x: Plugin            => plugin(x, c)
+    case x: SetId             => setId(x, c)
+    case x: IZSetId           => IZsetId(x, c)
+    case x: ValueSet          => valueSet(x, c)
+    case x: isNULL            => isNull(x, c)
+    case x: StringFormat      => stringFormat(x, c)
   }
 
   def notFound(expression: Expression, path: String, context: Element, notPresentBehavior: String): EvalResult =
@@ -199,6 +201,101 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case (Failure(e), _)              => inconclusive(pv, context.location, e)
       case (_, Failure(e))              => inconclusive(pv, context.location, e)
     }
+
+  /**
+    * Evaluates the path value expression and returns the result
+    * @param pv      - The path value expression
+    * @param context - The context
+    * @return The evaluation result
+    */
+  def complexPathValue(pv: ComplexPathValue, context: Element)(implicit dtz: Option[TimeZone]): EvalResult =
+    (query(context, pv.path1), query(context, pv.path2)) match {
+      case (Success(Nil), Success(Nil))      => notFound(pv, s"[ ${pv.path1}, ${pv.path2} ]", context, pv.notPresentBehavior)
+      case (Success(x :: Nil), Success(Nil)) => if(pv.strict) Failures.complexPathValue(pv, x, context, pv.path2) else Pass
+      case (Success(Nil), Success(x :: Nil)) => if(pv.strict) Failures.complexPathValue(pv, x, context, pv.path1) else Pass
+      case (Success(x1), Success(x2)) =>
+        val results = compareOccurrences(pv, context, x1, x2)
+        val (failure, inconclusive) = (
+          results.collect{ case f: Fail => f },
+          results.collect{ case inconclusive: Inconclusive => inconclusive }
+        )
+        if (failure.nonEmpty) Failures.complexPathValue(pv, context, failure)
+        else if(inconclusive.nonEmpty) Failures.complexPathValue(pv, context, inconclusive)
+        else Pass
+      case (Failure(e), _)              => inconclusive(pv, context.location, e)
+      case (_, Failure(e))              => inconclusive(pv, context.location, e)
+    }
+
+
+  type ElementWithLocation = (String, Option[Element])
+  type ComplexChildrenZip = ((Int, Int), Option[Element], Option[Element])
+  case class MoreThanOne(p: Int, i: Int, ls: List[Element], first: Boolean) extends Throwable
+
+  def childrenZipList[T <: Element](ls1: List[T], ls2: List[T]): Try[List[ComplexChildrenZip]] = {
+    val ls1Map = ls1.groupBy(e => (e.position, e.instance))
+    val ls2Map = ls2.groupBy(e => (e.position, e.instance))
+    val idx = (ls1Map.keys.toList:::ls2Map.keys.toList).distinct
+    Try(
+      for(i <- idx) yield {
+        val p1 = ls1Map.get(i)
+        val p2 = ls2Map.get(i)
+        if(p1.isDefined && p1.get.length > 1) throw MoreThanOne(i._1, i._2, p1.get, true)
+        if(p2.isDefined && p2.get.length > 1) throw MoreThanOne(i._1, i._2, p2.get, false)
+        (i, p1.map(_.head), p2.map(_.head))
+      }
+    )
+  }
+
+  def compareOccurrences(pv: ComplexPathValue, context: Element, ls1: List[Element], ls2: List[Element])(implicit dtz: Option[TimeZone]): List[EvalResult] = {
+    val ls1Map = ls1.groupBy(_.instance)
+    val ls2Map = ls2.groupBy(_.instance)
+    val idx = (ls1Map.keys.toList:::ls2Map.keys.toList).distinct
+    val elements = for(i <- idx) yield {
+      val p1 = ls1Map.get(i)
+      val p2 = ls2Map.get(i)
+      (i, p1.map(_.head), p2.map(_.head))
+    }
+    elements.flatMap((tuple) => {
+      val elm1 =  (s"${context.location.path}.${pv.path1} (instance : ${tuple._1})", tuple._2)
+      val elm2 =  (s"${context.location.path}.${pv.path2} (instance : ${tuple._1})", tuple._3)
+      compareElement(pv, elm1, elm2)
+    })
+  }
+
+  def compareElements(pv: ComplexPathValue, p1: Element, ls1: List[Element], p2: Element, ls2: List[Element])(implicit dtz: Option[TimeZone]): List[EvalResult] = {
+    childrenZipList(ls1, ls2) match {
+      case Success(ls) => ls.foldLeft(List[EvalResult]()) {
+        (acc, tuple) =>
+          val elm1 =  (s"${p1.location.path}(${p1.location.desc}).${tuple._1._1}[${tuple._1._2}]", tuple._2)
+          val elm2 =  (s"${p2.location.path}(${p2.location.desc}).${tuple._1._1}[${tuple._1._2}]", tuple._3)
+          compareElement(pv, elm1, elm2):::acc
+      }
+      case Failure(MoreThanOne(p, i, ls, f)) => Failures.inconclusivePathComparison(pv, if(f) p1 else p2, p, i, ls)::Nil
+      case _ => Nil
+    }
+  }
+
+  def compareElement(pv: ComplexPathValue, p1: ElementWithLocation, p2: ElementWithLocation)(implicit dtz: Option[TimeZone]): List[EvalResult] = {
+    (p1._2, p2._2) match {
+      case (Some(e1), Some(e2)) => (e1, e2) match {
+        case (s1: Simple, s2: Simple) => compareSimple(pv, s1, s2)::Nil
+        case (cc1: Complex, cc2: Complex) => compareElements(pv, cc1, cc1.children, cc2, cc2.children)
+        case _ => Failures.inconclusivePathComparison(pv, e1, e2)::Nil
+      }
+      case (None, Some(e2)) => if(pv.strict) Failures.complexPathValue(pv, e2, p1._1)::Nil else Nil
+      case (Some(e1), None) => if(pv.strict) Failures.complexPathValue(pv, e1, p2._1)::Nil else Nil
+      case (None, None) => Nil
+    }
+  }
+
+  def compareSimple(pv: ComplexPathValue, s1: Simple, s2: Simple)(implicit dtz: Option[TimeZone]): EvalResult = {
+    pv.operator.eval(s1.value, s2.value) match {
+      case Success(true)  => Pass
+      case Success(false) => Failures.complexPathValue(pv, s1, s2)
+      case Failure(e)     => inconclusive(pv, s1.location, e)
+    }
+  }
+
 
   /**
    * Evaluates the value set expression and returns the result
