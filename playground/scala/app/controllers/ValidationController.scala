@@ -26,16 +26,31 @@ import scala.xml.SAXParseException
 
 object ResourceType extends Enumeration {
   type ResourceType = Value
-  val Profile, Constraints, VsLib, VsSpec, Configuration = Value
+  val Profile, Constraints, VsLib, VsSpec, CoConstraints, Configuration = Value
 }
 
 import ResourceType._
 
-case class ValidationQuery(profile: String, constraints: String, vsLib: String, configuration: String, id: String, message: String)
+case class ValidationQuery(
+                            profile: String,
+                            constraints: String,
+                            vsLib: String,
+                            vsSpec: String,
+                            coConstraints: String,
+                            configuration: String,
+                            id: String,
+                            message: String)
 
 case class CheckResource(content: String, rType: ResourceType)
 
-case class ValidationResult(profile: ResourceCheckResult, constraints: ResourceCheckResult, vsLib: ResourceCheckResult, configuration: ResourceCheckResult, message: List[Entry])
+case class ValidationResult(
+                             profile: ResourceCheckResult,
+                             constraints: ResourceCheckResult,
+                             vsLib: ResourceCheckResult,
+                             vsSpec: ResourceCheckResult,
+                             coConstraints: ResourceCheckResult,
+                             configuration: ResourceCheckResult,
+                             message: List[Entry])
 
 case class Entry(category: String, classification: String, description: String, path: String, line: Int, column: Int)
 
@@ -55,6 +70,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
   val PROFIL_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd"
   val VSLIB_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ValueSets.xsd"
   val CONSTRAINTS_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd"
+  val COCONSTRAINT_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/CoConstraintContext.xsd"
+  val VSPEC_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ValueSetBindings.xsd"
 
 
   def index() = Action {
@@ -66,6 +83,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/profile.xml")).mkString,
       scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/constraints.xml")).mkString,
       scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/vsLib.xml")).mkString,
+      "<ValueSetBindingsContext></ValueSetBindingsContext>",
+      "<CoConstraintContext></CoConstraintContext>",
       scala.io.Source.fromInputStream(getClass.getResourceAsStream("/reference.conf")).mkString,
       "aa72383a-7b48-46e5-a74a-82e019591fe7",
       scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/message.hl7")).mkString)))
@@ -108,6 +127,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       case Profile => validateXML(content, PROFIL_XSD, "Profile")
       case Constraints => validateXML(content, CONSTRAINTS_XSD, "Constraints")
       case VsLib => validateXML(content, VSLIB_XSD, "Value Set Library")
+      case VsSpec => validateXML(content, VSPEC_XSD, "Value Set Bindings")
+      case CoConstraints => validateXML(content, COCONSTRAINT_XSD, "Co-Constraints")
       case Configuration => Try {
         ConfigFactory.parseReader(new StringReader(content)).resolve()
       } match {
@@ -135,7 +156,10 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     }
     val vsLib = ValueSetLibraryImpl(new ByteArrayInputStream(query.vsLib.getBytes)).get
     val constraints = content.DefaultConformanceContext(new ByteArrayInputStream(query.constraints.getBytes)).get
-    val validator = new HL7Validator(profile, vsLib, constraints, EmptyValueSetSpecification)
+    val vsSpec = hl7.v2.validation.vs.DefaultValueSetSpecification(new ByteArrayInputStream(query.vsSpec.getBytes)).get
+    val coConstraints = hl7.v2.validation.coconstraints.DefaultCoConstraintValidationContext(new ByteArrayInputStream(query.coConstraints.getBytes)).get
+
+    val validator = new HL7Validator(profile, vsLib, constraints, vsSpec, coConstraints)
 
 
       validator.validate(query.message, query.id, new StringReader(query.configuration)) map {
@@ -162,6 +186,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
         val profileCheck = check(query.profile, Profile)
         val constraintsCheck = check(query.constraints, Constraints)
         val vsLibCheck = check(query.vsLib, VsLib)
+        val vsSpecCheck = check(query.vsSpec, VsSpec)
+        val coConstraintCheck = check(query.coConstraints, CoConstraints)
         val configurationCheck = check(query.configuration, Configuration)
 
         val resourcesAreValid = !profileCheck.status || !constraintsCheck.status || !vsLibCheck.status || !configurationCheck.status
@@ -172,6 +198,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
             profileCheck,
             constraintsCheck,
             vsLibCheck,
+            vsSpecCheck,
+            coConstraintCheck,
             configurationCheck,
             list
           ))

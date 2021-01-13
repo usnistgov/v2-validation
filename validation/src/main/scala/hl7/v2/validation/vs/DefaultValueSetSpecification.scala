@@ -29,7 +29,7 @@ object DefaultValueSetSpecification {
 
   private val resourceResolver = Some(new ClassPathResourceResolver("/rules"))
 
-  def parse(context: InputStream): Try[ValueSetSpecification] = {
+  def apply(context: InputStream): Try[ValueSetSpecification] = {
     XOMDocumentBuilder.build(context, getClass.getResourceAsStream("/rules/ValueSetBindings.xsd"), resourceResolver) map { doc =>
       val root = doc.getRootElement.getFirstChildElement("ValueSetBindings")
       new DefaultValueSetSpecification(init(extractNodes(root, "Datatype"), vBinding),init(extractNodes(root, "Segment"), vBinding), init(extractNodes(root, "Group"), vBinding))
@@ -46,7 +46,7 @@ object DefaultValueSetSpecification {
     }
   }
 
-  private def vBinding(e: nu.xom.Element): ValueSetBinding = {
+  def vBinding(e: nu.xom.Element): ValueSetBinding = {
     val target = e.attribute("Target")
     if(!Path.isValid(target)) throw new Exception(s"Invalid target '$target'")
     val bs = asOption(e.attribute("BindingStrength")) map { x => BindingStrength(x).get }

@@ -12,6 +12,7 @@ export enum ResourceType {
   VALUESETSPEC = 'ValueSetSpec',
   CONFIGURATION = 'Configuration',
   CONSTRAINTS = 'Constraints',
+  COCONSTRAINTS = 'CoConstraints',
   MESSAGE = 'Message',
 }
 
@@ -59,6 +60,11 @@ export class DataService {
       status: Status.EMPTY,
       issues: [],
     },
+    [ResourceType.COCONSTRAINTS]: {
+      text: '',
+      status: Status.EMPTY,
+      issues: [],
+    },
     [ResourceType.CONFIGURATION]: {
       text: '',
       status: Status.EMPTY,
@@ -96,6 +102,7 @@ export class DataService {
       case ResourceType.PROFILE:
       case ResourceType.VALUESET:
       case ResourceType.VALUESETSPEC:
+      case ResourceType.COCONSTRAINTS:
         this.state[type].text = this.beautifyXML(this.state[type].text);
         break;
     }
@@ -111,6 +118,7 @@ export class DataService {
       case ResourceType.PROFILE:
       case ResourceType.VALUESET:
       case ResourceType.VALUESETSPEC:
+      case ResourceType.COCONSTRAINTS:
         this.putXML(type, value);
         break;
       default:

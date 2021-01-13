@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:include schemaLocation="Expressions.xsd"/>
+    <xs:include schemaLocation="ValueSetBindings.xsd"/>
+
+    <xs:element name="CoConstraintContext" type="CoConstraintContextType"/>
+
+    <xs:complexType name="CoConstraintContextType">
+        <xs:sequence>
+            <xs:element name="Group" type="GroupBindingType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GroupBindingType">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded" >
+                <xs:element name="SimpleTable" type="SimpleTableType"/>
+                <xs:element name="ConditionalTable" type="ConditionalTableType"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="Context" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Target" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="SimpleTableType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded" >
+            <xs:element name="CoConstraint" type="CoConstraintType"/>
+            <xs:element name="CoConstraintGroup" type="CoConstraintGroupType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="ConditionalTableType">
+        <xs:sequence>
+            <xs:element name="Condition" type="CoConstraintConditionType"/>
+            <xs:choice minOccurs="1" maxOccurs="unbounded" >
+                <xs:element name="CoConstraint" type="CoConstraintType"/>
+                <xs:element name="CoConstraintGroup" type="CoConstraintGroupType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CoConstraintConditionType">
+        <xs:sequence>
+            <xs:element name="Description" type="NonEmptyString"/>
+            <xs:element name="Assertion" type="AssertionType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AssertionType">
+        <xs:group ref="AnyExpressionGroup"/>
+    </xs:complexType>
+
+    <xs:complexType name="CoConstraintGroupType">
+        <xs:sequence>
+            <xs:element name="Primary" type="CoConstraintType"/>
+            <xs:element name="CoConstraint" type="CoConstraintType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="RequirementProperties"/>
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="CoConstraintType">
+        <xs:sequence>
+            <xs:element name="Selectors" type="CellsType"/>
+            <xs:element name="Constraints" type="CellsType"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="RequirementProperties"/>
+    </xs:complexType>
+
+    <xs:complexType name="CellsType">
+        <xs:choice maxOccurs="unbounded" >
+            <xs:element name="PlainText" type="PlainTextCellType"/>
+            <xs:element name="Code" type="CodeCellType"/>
+            <xs:element name="ValueSet" type="ValueSetCellType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="PlainTextCellType">
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Path" type="PathType" use="required"/>
+        <xs:attribute name="Value" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="CodeCellType">
+        <xs:sequence>
+            <xs:element name="BindingLocation" type="CoConstraintBindingLocationType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Path" type="PathType" use="required"/>
+        <xs:attribute name="Code" type="NonEmptyString" use="required"/>
+        <xs:attribute name="CodeSystem" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="CoConstraintBindingLocationType">
+        <xs:attribute name="Position" type="PositiveInteger" use="required"/>
+        <xs:attribute name="CodePath" type="PathType" use="required"/>
+        <xs:attribute name="CodeSystemPath" type="PathType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ValueSetCellType">
+        <xs:sequence>
+            <xs:element name="ValueSetBinding" type="ValueSetBindingType"/>
+        </xs:sequence>
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Path" type="PathType" use="required"/>
+    </xs:complexType>
+
+    <xs:attributeGroup name="RequirementProperties">
+        <xs:attribute name="Usage" type="CoConstraintUsageType" use="required"/>
+        <xs:attribute name="Min" type="PositiveInteger" use="required"/>
+        <xs:attribute name="Max" type="IntegerOrStar" use="required"/>
+    </xs:attributeGroup>
+
+    <xs:simpleType name="CoConstraintUsageType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="R"/>
+            <xs:enumeration value="S"/>
+            <xs:enumeration value="O"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

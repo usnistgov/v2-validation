@@ -1,12 +1,137 @@
 package hl7.v2.validation.coconstraints
 
-import hl7.v2.instance.Group
+import java.io.InputStream
 
-class DefaultCoConstraintValidationContext(
-          val coConstraintsMap: Map[String, List[CoConstraintBinding]]) extends CoConstraintValidationContext {
+import hl7.v2.instance.Group
+import hl7.v2.profile.Range
+import hl7.v2.validation.vs.DefaultValueSetSpecification
+import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
+
+import scala.util.Try
+
+class DefaultCoConstraintValidationContext(val coConstraintsMap: Map[String, List[CoConstraintBinding]]) extends CoConstraintValidationContext {
 
   override def coConstraintBindingsFor(g: Group): List[CoConstraintBinding] = {
     coConstraintsMap.getOrElse(g.model.id, Nil)
   }
 
+}
+
+object DefaultCoConstraintValidationContext {
+
+  import nist.xml.util.XOMExtensions._
+
+  /**
+    * The resource resolver
+    */
+  private val resourceResolver = Some(new ClassPathResourceResolver("/rules"))
+
+  /**
+    * The XSD schema
+    */
+  private def xsd = getClass.getResourceAsStream("/rules/CoConstraintContext.xsd")
+
+  def apply(context: InputStream): Try[CoConstraintValidationContext] = {
+    XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
+      new DefaultCoConstraintValidationContext(parse(doc))
+    }
+  }
+
+  def parse(doc: nu.xom.Document) : Map[String, List[CoConstraintBinding]] = {
+    val ccd = doc.getRootElement
+    if(ccd != null) {
+      ccd.getChildElements("Group").map(g => {
+        val gId = g.getAttributeValue("Context")
+        val binding = coConstraintBinding(g)
+        (gId -> binding)
+      }) groupBy(_._1) mapValues (_.map(_._2) toList)
+    }  else {
+      Map()
+    }
+  }
+
+  def coConstraintBinding(e: nu.xom.Element): CoConstraintBinding = {
+    val context = e.getAttributeValue("Context")
+    val target = e.getAttributeValue("Target")
+    val name = e.getAttributeValue("Name")
+    val simple = e.getChildElements("SimpleTable").map(t => simpleTable(t))
+    val conditional = e.getChildElements("ConditionalTable").map(t => conditionalTable(t))
+    CoConstraintBinding(context, target, name, (simple ++ conditional) toList)
+  }
+
+  def simpleTable(e: nu.xom.Element): SimpleCoConstraintTable = {
+    val cc = e.getChildElements("CoConstraint").map(t => coConstraint(t))
+    val grp = e.getChildElements("CoConstraintGroup").map(t => group(t))
+    SimpleCoConstraintTable(cc toList, grp toList)
+  }
+
+  def conditionalTable(e: nu.xom.Element): ConditionalCoConstraintTable = {
+    val cc = e.getChildElements("CoConstraint").map(t => coConstraint(t))
+    val cond = condition(e.getFirstChildElement("Condition"))
+    val grp = e.getChildElements("CoConstraintGroup").map(t => group(t))
+    ConditionalCoConstraintTable(cond, cc toList, grp toList)
+  }
+
+  def condition(e: nu.xom.Element): Condition = {
+    val desc = e.getFirstChildElement("Description").getValue
+    val assertion = e.getFirstChildElement("Assertion")
+    Condition(desc, expression.XMLDeserializer.expression(assertion.getChildElements().get(0)))
+  }
+
+  def coConstraint(e: nu.xom.Element): CoConstraint = {
+    val selectors = cells(e.getFirstChildElement("Selectors"))
+    val constraints = cells(e.getFirstChildElement("Constraints"))
+    val req = requirement(e)
+    CoConstraint(req, selectors, constraints)
+  }
+
+  def group(e: nu.xom.Element): CoConstraintGroup = {
+    val name = e.getAttributeValue("Name")
+    val req = requirement(e)
+    val primary = coConstraint(e.getFirstChildElement("Primary"))
+    val cc = e.getChildElements("CoConstraint").map(t => coConstraint(t))
+    CoConstraintGroup(name, req, primary, cc toList)
+  }
+
+  def requirement(e: nu.xom.Element): CoConstraintRequirement = {
+    val u = CoConstraintUsage.fromString(e.getAttributeValue("Usage"))
+    val min = e.getAttributeValue("Min")
+    val max = e.getAttributeValue("Max")
+    CoConstraintRequirement(u, Range(min.toInt, max))
+  }
+
+  def cells(e: nu.xom.Element): List[CoConstraintCell] = {
+    val pt = e.getChildElements("PlainText").map(t => plainText(t))
+    val cd = e.getChildElements("Code").map(t => code(t))
+    val vs = e.getChildElements("ValueSet").map(t => valueSet(t))
+    pt ++ cd ++ vs toList
+  }
+
+  def plainText(e: nu.xom.Element): PlainText = {
+    val element = e.getAttributeValue("Name")
+    val path = e.getAttributeValue("Path")
+    val value = e.getAttributeValue("Value")
+    PlainText(element, path, value)
+  }
+
+  def code(e: nu.xom.Element): Code = {
+    val element = e.getAttributeValue("Name")
+    val path = e.getAttributeValue("Path")
+    val code = e.getAttributeValue("Code")
+    val codeSys = e.getAttributeValue("CodeSystem")
+    val locations = e.getChildElements("BindingLocation").map(bl => {
+      val position = bl.getAttributeValue("Position").toInt
+      val code = bl.getAttributeValue("CodePath")
+      val codeSystem = bl.getAttributeValue("CodeSystemPath")
+      CoConstraintBindingLocation(position, code, codeSystem)
+    })
+    Code(element, path, code, codeSys, locations toList)
+  }
+
+  def valueSet(e: nu.xom.Element): ValueSet = {
+    val element = e.getAttributeValue("Name")
+    val path = e.getAttributeValue("Path")
+    val bindings = e.getChildElements("ValueSetBinding").map(vb => DefaultValueSetSpecification.vBinding(vb))
+    ValueSet(element, path, bindings toList)
+  }
 }

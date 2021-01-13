@@ -18,22 +18,15 @@ trait CoConstraintTable extends CoConstraintCollection {
 
 case class CoConstraintRequirement(usage: CoConstraintUsage, cardinality: hl7.v2.profile.Range)
 
-case class CoConstraintGroup(name: String, requirement: CoConstraintRequirement, coConstraints: List[GroupCoConstraint]) extends CoConstraintCollection
+case class CoConstraintGroup(name: String, requirement: CoConstraintRequirement, primary: CoConstraint, coConstraints: List[CoConstraint]) extends CoConstraintCollection
 
 case class Condition(description: String, assertion: Expression)
 
 case class ConditionalCoConstraintTable(condition: Condition, coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
 
-case class SimpleCoConstraintTable(coConstraints: List[SimpleCoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
+case class SimpleCoConstraintTable(coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
 
-trait CoConstraint {
-  val requirement: CoConstraintRequirement
-  val selectors: List[CoConstraintCell]
-  val constraints: List[CoConstraintCell]
-}
-
-case class GroupCoConstraint(requirement: CoConstraintRequirement, selectors: List[CoConstraintCell], constraints: List[CoConstraintCell], primary: Boolean) extends CoConstraint
-case class SimpleCoConstraint(requirement: CoConstraintRequirement, selectors: List[CoConstraintCell], constraints: List[CoConstraintCell]) extends CoConstraint
+case class CoConstraint(requirement: CoConstraintRequirement, selectors: List[CoConstraintCell], constraints: List[CoConstraintCell])
 
 sealed trait CoConstraintCell {
   val element: String
@@ -48,4 +41,13 @@ object CoConstraintUsage {
   case object R  extends CoConstraintUsage
   case object S extends CoConstraintUsage
   case object O  extends CoConstraintUsage
+
+  def fromString(s: String): CoConstraintUsage = {
+    s match {
+      case "R" => R
+      case "S" => S
+      case "O" => O
+      case _ => throw new Error(s"Invalid usage '${s}'")
+    }
+  }
 }
