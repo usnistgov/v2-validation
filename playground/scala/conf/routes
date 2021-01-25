@@ -3,3 +3,4 @@ GET     /                                       controllers.ValidationController
 POST    /api/validate                           controllers.ValidationController.validation
 POST    /api/checkResource                      controllers.ValidationController.checkResource
 GET     /api/loadVxuExample                     controllers.ValidationController.loadVxuExample
+GET     /public/*file                           controllers.Assets.at(path="/public", file)

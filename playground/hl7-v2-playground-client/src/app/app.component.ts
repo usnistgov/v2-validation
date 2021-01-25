@@ -69,6 +69,10 @@ export class AppComponent {
       text: 'ValueSet Bindings XML',
     },
     {
+      value: ResourceType.COCONSTRAINTS,
+      text: 'Co-Constraints',
+    },
+    {
       value: ResourceType.CONFIGURATION,
       text: 'Configuration',
     },
@@ -110,6 +114,8 @@ export class AppComponent {
         this.dataService.putValue(ResourceType.CONSTRAINTS, value.constraints);
         this.dataService.putValue(ResourceType.CONFIGURATION, value.configuration);
         this.dataService.putValue(ResourceType.VALUESET, value.vsLib);
+        this.dataService.putValue(ResourceType.VALUESETSPEC, value.vsSpec);
+        this.dataService.putValue(ResourceType.COCONSTRAINTS, value.coConstraints);
         this.dataService.putValue(ResourceType.MESSAGE, value.message);
       })
     ).subscribe(
@@ -139,6 +145,8 @@ export class AppComponent {
           profile: this.dataService.get(ResourceType.PROFILE).text,
           vsLib: this.dataService.get(ResourceType.VALUESET).text,
           constraints: this.dataService.get(ResourceType.CONSTRAINTS).text,
+          vsSpec: this.dataService.get(ResourceType.VALUESETSPEC).text,
+          coConstraints: this.dataService.get(ResourceType.COCONSTRAINTS).text,
           configuration: this.dataService.get(ResourceType.CONFIGURATION).text,
           id: messageId.id,
           message: this.dataService.get(ResourceType.MESSAGE).text,
@@ -148,6 +156,8 @@ export class AppComponent {
       this.dataService.putIssues(ResourceType.PROFILE, value.profile.issues);
       this.dataService.putIssues(ResourceType.VALUESET, value.vsLib.issues);
       this.dataService.putIssues(ResourceType.CONSTRAINTS, value.constraints.issues);
+      this.dataService.putIssues(ResourceType.VALUESETSPEC, value.vsSpec.issues);
+      this.dataService.putIssues(ResourceType.COCONSTRAINTS, value.coConstraints.issues);
       this.dataService.putIssues(ResourceType.CONFIGURATION, value.configuration.issues);
       this.dataService.putIssues(ResourceType.MESSAGE, value.message);
       this.blockUI.stop();
