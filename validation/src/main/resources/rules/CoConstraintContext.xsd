@@ -13,6 +13,7 @@
 
     <xs:complexType name="GroupBindingType">
         <xs:sequence>
+            <xs:element name="CoConstraintGroupId" type="CoConstraintGroupIdType"/>
             <xs:choice maxOccurs="unbounded" >
                 <xs:element name="SimpleTable" type="SimpleTableType"/>
                 <xs:element name="ConditionalTable" type="ConditionalTableType"/>
@@ -20,6 +21,18 @@
         </xs:sequence>
         <xs:attribute name="Context" type="NonEmptyString" use="required"/>
         <xs:attribute name="Target" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="CoConstraintGroupIdType">
+        <xs:sequence>
+            <xs:element name="IdPath" type="CoConstraintGroupIdPathType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CoConstraintGroupIdPathType">
+        <xs:attribute name="Priority" type="PositiveInteger" use="required"/>
+        <xs:attribute name="Path" type="PathType" use="required"/>
         <xs:attribute name="Name" type="NonEmptyString" use="required"/>
     </xs:complexType>
 

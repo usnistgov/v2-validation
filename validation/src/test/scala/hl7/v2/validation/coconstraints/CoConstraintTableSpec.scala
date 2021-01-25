@@ -405,19 +405,134 @@ trait CoConstraintTableSpec  extends Specification
     Seq(plaint, code, vsBinding) ++ combine
   }
 
+  def ccNoDistinctGroupId() = {
+    def binding(selectors: List[CoConstraintCell], gId: GroupId) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, List())
+      (simpleBindingGrouper(List(cc), List(), List(gId)), cc)
+    }
+
+    implicit val grp: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|x^^y|1"))
+    val gid = GroupId(1, "3[1]", "CCT-3")
+    val (sBinding, cc) = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), gid)
+    checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+      createEntry(NotDistinctGrouper(cc, CCGroupId(gid, assertGet(grp, "1[1].3[1]"), "1")))
+    )
+  }
+
+  def ccMatchPlainText() = {
+    def binding(selectors: List[CoConstraintCell], cnstr: List[CoConstraintCell]) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, cnstr)
+      simpleBinding(List(cc), List())
+    }
+    val cell = PlainText("CCT-1 (A)", "3[*]", "A")
+    val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), List(cell))
+
+    def success() = {
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|A"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(CoConstraintPlainTextSuccess(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].3[1]"), cell))
+      )
+    }
+
+    def failure() = {
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|B"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(CoConstraintPlainTextFailure(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].3[1]"), cell, "B"))
+      )
+    }
+    success and failure
+  }
+
+  def ccMatchFailCode() = {
+    def binding(selectors: List[CoConstraintCell], cnstr: List[CoConstraintCell]) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, cnstr)
+      simpleBinding(List(cc), List())
+    }
+    val cell = Code("CCT-1 (A)", "2[*]", "x", "y", List(
+      CoConstraintBindingLocation(1, "1[*]", "3[*]")
+    ))
+    val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), List(cell))
+
+    def success() = {
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|A"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(CoConstraintCodeSuccess(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].2[1]"), cell))
+      )
+    }
+
+    def failureCode() = {
+      implicit val grp: Group = group(List("CCT|CWE|z^^y|B"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(CoConstraintCodeFailureNotFound(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].2[1].1[1]"), cell))
+      )
+    }
+
+    def failureCodeSys() = {
+      implicit val grp: Group = group(List("CCT|CWE|x^^z|B"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(CoConstraintCodeFailureInvalidCs(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].2[1].3[1]"), cell, "z"))
+      )
+    }
+
+    def failureCodeSysNf() = {
+      implicit val grp: Group = group(List("CCT|CWE|x^^|B"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(CoConstraintCodeFailureNotFoundCs(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].2[1]"), cell))
+      )
+    }
+
+    success and failureCode and failureCodeSys and failureCodeSysNf
+  }
+
+  def ccMatchFailVs() = {
+    def binding(selectors: List[CoConstraintCell], cnstr: List[CoConstraintCell]) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, cnstr)
+      simpleBinding(List(cc), List())
+    }
+    val vb = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
+      BindingLocation("1[1]", Some("3[1]")),
+    ))
+    val cell = ValueSet("CCT-2 (B)", "2[*]", List(vb))
+    val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), List(cell))
+
+    def success() = {
+      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1|A"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(
+          CoConstraintVsBindingSuccess(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1].2[1]"), cell, vb,
+            VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs), Some(BindingStrength.R))
+          )
+        )
+      )
+    }
+
+    def failure() = {
+      implicit val grp: Group = group(List("CCT|CWE|X^^SYS1|A"))
+      checkGroupAndBindings(grp, List(sBinding)) must containTheSameElementsAs(
+        createEntry(
+          CoConstraintVsBindingFailure(sBinding.bindings.head.coConstraints.head, assertGet(grp, "1[1]"), cell,
+            VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), Some(BindingStrength.R))
+          )
+        )
+      )
+    }
+
+    success and failure
+  }
+
   def requiredGrp() = {
     val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
       PlainText("CCT-1 (A)", "1[*]", "CWE")
     ), List())
     val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List())
-    val sBinding = simpleBinding(List(), List(ccg))
+    val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
 
     def failure = {
       Seq(
         // One Segment
-        List("CCT|ST|x^^y"),
+        List("CCT|ST|x^^y|1"),
         // Multi Segment
-        List("CCT|ST|x^^y", "CCT|ST|x^^y")
+        List("CCT|ST|x^^y|1", "CCT|ST|x^^y|1")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -430,9 +545,9 @@ trait CoConstraintTableSpec  extends Specification
     def success = {
       Seq(
         // One Segment
-        List("CCT|CWE|x^^y"),
+        List("CCT|CWE|x^^y|1"),
         // Multi Segment
-        List("CCT|ST|x^^y", "CCT|CWE|x^^y")
+        List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|1")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -445,18 +560,20 @@ trait CoConstraintTableSpec  extends Specification
   }
 
   def minCardinalityGrp() = {
-    val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
+    val cc = scc(CoConstraintUsage.R, Range(1, "*"), List(
       PlainText("CCT-1 (A)", "1[*]", "CWE")
     ), List())
     val ccg = grp("GRP", CoConstraintUsage.R, Range(2, "*"), cc, List())
-    val sBinding = simpleBinding(List(), List(ccg))
+    val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
 
     def failure = {
       Seq(
         // One Segment, One match
-        List("CCT|CWE|x^^y"),
+        List("CCT|CWE|x^^y|1"),
         // Multi Segment, One match
-        List("CCT|ST|x^^y", "CCT|CWE|x^^y")
+        List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|1"),
+        // Multi Segment, Multi match, Same GroupId
+        List("CCT|CWE|x^^y|1", "CCT|CWE|x^^y|1")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -469,13 +586,13 @@ trait CoConstraintTableSpec  extends Specification
     def success = {
       Seq(
         // Two Segment, Two match
-        List("CCT|CWE|x^^y", "CCT|CWE|z^^t"),
+        List("CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2"),
         // Multi Segment, Two match
-        List("CCT|ST|x^^y", "CCT|CWE|x^^y", "CCT|CWE|z^^t"),
+        List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2"),
         // X Segment, X match
-        List("CCT|CWE|x^^y", "CCT|CWE|z^^t", "CCT|CWE|e^^f"),
+        List("CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2", "CCT|CWE|e^^f|3"),
         // Multi Segment, Multi match
-        List("CCT|ST|x^^y", "CCT|CWE|x^^y", "CCT|CWE|z^^t", "CCT|CWE|e^^f")
+        List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2", "CCT|CWE|e^^f|3")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -488,18 +605,20 @@ trait CoConstraintTableSpec  extends Specification
   }
 
   def maxCardinalityGrp() = {
-    val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
+    val cc = scc(CoConstraintUsage.R, Range(1, "*"), List(
       PlainText("CCT-1 (A)", "1[*]", "CWE")
     ), List())
     val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List())
-    val sBinding = simpleBinding(List(), List(ccg))
+    val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
 
     def success = {
       Seq(
         // One Segment, One match
-        List("CCT|CWE|x^^y"),
+        List("CCT|CWE|x^^y|1"),
         // Multi Segment, One match
-        List("CCT|ST|x^^y", "CCT|CWE|x^^y")
+        List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|2"),
+        // Multi Segment, Multi match, Same group Id
+        List("CCT|CWE|x^^y|1", "CCT|CWE|x^^y|1")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -512,13 +631,13 @@ trait CoConstraintTableSpec  extends Specification
     def failure = {
       Seq(
         // Two Segment, Two match
-        (List("CCT|CWE|x^^y", "CCT|CWE|z^^t"), 2),
+        (List("CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2"), 2),
         // Multi Segment, Two match
-        (List("CCT|ST|x^^y", "CCT|CWE|x^^y", "CCT|CWE|z^^t"), 2),
+        (List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2"), 2),
         // X Segment, X match
-        (List("CCT|CWE|x^^y", "CCT|CWE|z^^t", "CCT|CWE|e^^f"), 3),
+        (List("CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2", "CCT|CWE|e^^f|3"), 3),
         // Multi Segment, Multi match
-        (List("CCT|ST|x^^y", "CCT|CWE|x^^y", "CCT|CWE|z^^t", "CCT|CWE|e^^f"), 3)
+        (List("CCT|ST|x^^y|1", "CCT|CWE|x^^y|1", "CCT|CWE|z^^t|2", "CCT|CWE|e^^f|3"), 3)
       ) map (
         segments => {
           implicit val grp: Group = group(segments._1)
@@ -534,24 +653,24 @@ trait CoConstraintTableSpec  extends Specification
     def binding(selectors: List[CoConstraintCell]) = {
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, List())
       val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List())
-      val sBinding = simpleBinding(List(), List(ccg))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
       (sBinding, ccg, cc)
     }
 
     def plaint = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1"))
       val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")))
       checkGroupAndBindings(grp, List(sBinding._1)) must containTheSameElementsAs(Nil)
     }
     def code = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1"))
       val sBinding = binding(List(Code("CCT-1 (A)", "2[*]", "x", "y", List(
         CoConstraintBindingLocation(1, "1[*]", "3[*]")
       ))))
       checkGroupAndBindings(grp, List(sBinding._1)) must containTheSameElementsAs(Nil)
     }
     def vsBinding = {
-      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1"))
+      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1|1"))
       val sBinding = binding(List(ValueSet("CCT-1 (A)", "2[*]", List(
         ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
           BindingLocation("1[1]", Some("3[1]"))
@@ -560,7 +679,7 @@ trait CoConstraintTableSpec  extends Specification
       checkGroupAndBindings(grp, List(sBinding._1)) must containTheSameElementsAs(Nil)
     }
     def combine = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y||A^^SYS1"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1|A^^SYS1"))
       val sBinding = binding(List(
         PlainText("CCT-1 (A)", "1[*]", "CWE"),
         ValueSet("CCT-1 (A)", "4[*]", List(
@@ -583,19 +702,19 @@ trait CoConstraintTableSpec  extends Specification
     def binding(selectors: List[CoConstraintCell]) = {
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, List())
       val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List())
-      val sBinding = simpleBinding(List(), List(ccg))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
       (sBinding, ccg, cc)
     }
 
     def plaint = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1"))
       val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "ST")))
       checkGroupAndBindings(grp, List(sBinding._1)) must containTheSameElementsAs(
         createEntry(RequiredGroup(sBinding._2))
       )
     }
     def code = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1"))
       val sBinding = binding(List(Code("CCT-1 (A)", "2[*]", "z", "y", List(
         CoConstraintBindingLocation(1, "1[*]", "3[*]")
       ))))
@@ -604,7 +723,7 @@ trait CoConstraintTableSpec  extends Specification
       )
     }
     def vsBinding = {
-      implicit val grp: Group = group(List("CCT|CWE|E^^SYS1"))
+      implicit val grp: Group = group(List("CCT|CWE|E^^SYS1|1"))
       val sBinding = binding(List(ValueSet("CCT-1 (A)", "2[*]", List(
         ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
           BindingLocation("1[1]", Some("3[1]"))
@@ -617,13 +736,13 @@ trait CoConstraintTableSpec  extends Specification
     def combine = {
       Seq(
         //PlainText Fail
-        List("CCT|ST|x^^y||A^^SYS1"),
+        List("CCT|ST|x^^y|1|A^^SYS1"),
         //Code Fail
-        List("CCT|CWE|z^^y||A^^SYS1"),
+        List("CCT|CWE|z^^y|1|A^^SYS1"),
         //Vs Binding Fail
-        List("CCT|CWE|x^^y||E^^SYS1"),
+        List("CCT|CWE|x^^y|1|E^^SYS1"),
         //All Fail
-        List("CCT|ST|z^^y||E^^SYS1")
+        List("CCT|ST|z^^y|1|E^^SYS1")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -653,19 +772,19 @@ trait CoConstraintTableSpec  extends Specification
     def binding(selectors: List[CoConstraintCell]) = {
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, List())
       val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List())
-      val sBinding = simpleBinding(List(), List(ccg))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
       (sBinding, ccg, cc)
     }
 
     def plaint = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1"))
       val sBinding = binding(List(PlainText("CCT-1 (A)", "1", "ST")))
       checkGroupAndBindings(grp, List(sBinding._1)) must containTheSameElementsAs(
         createEntry(RequiredGroup(sBinding._2))
       )
     }
     def code = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1"))
       val sBinding = binding(List(Code("CCT-1 (A)", "2[*]", "z", "y", List(
         CoConstraintBindingLocation(1, "1[*].1[1]", "3[*]")
       ))))
@@ -674,7 +793,7 @@ trait CoConstraintTableSpec  extends Specification
       )
     }
     def vsBinding = {
-      implicit val grp: Group = group(List("CCT|CWE|E^^SYS1"))
+      implicit val grp: Group = group(List("CCT|CWE|E^^SYS1|1"))
       val sBinding = binding(List(ValueSet("CCT-1 (A)", "2[*]", List(
         ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
           BindingLocation("1[1].1[1]", Some("3[1]"))
@@ -698,22 +817,22 @@ trait CoConstraintTableSpec  extends Specification
       )
       Seq(
         //PlainText Fail
-        (List("CCT|CWE|x^^y||A^^SYS1"),
+        (List("CCT|CWE|x^^y|1|A^^SYS1"),
           Map("PT" -> PlainText("CCT-1 (A)", "1", "ST"))),
         //Code Fail
-        (List("CCT|CWE|x^^y||A^^SYS1"),
+        (List("CCT|CWE|x^^y|1|A^^SYS1"),
           Map("CD" -> Code("CCT-1 (A)", "2[*]", "z", "y", List(
             CoConstraintBindingLocation(1, "1[*].1[1]", "3[*]")
           )))),
         //Vs Binding Fail
-        (List("CCT|CWE|x^^y||A^^SYS1"),
+        (List("CCT|CWE|x^^y|1|A^^SYS1"),
           Map("VS" -> ValueSet("CCT-3 (C)", "4[*]", List(
             ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
               BindingLocation("1[1].1[1]", Some("3[1]"))
             ))
           )))),
         //All Fail
-        (List("CCT|CWE|x^^y||A^^SYS1"),
+        (List("CCT|CWE|x^^y|1|A^^SYS1"),
           Map("PT" -> PlainText("CCT-1 (A)", "1", "ST"),
             "CD" -> Code("CCT-1 (A)", "2[*]", "z", "y", List(
               CoConstraintBindingLocation(1, "1[*].1[1]", "3[*]")
@@ -741,19 +860,19 @@ trait CoConstraintTableSpec  extends Specification
     def binding(selectors: List[CoConstraintCell]) = {
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), selectors, List())
       val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List())
-      val sBinding = simpleBinding(List(), List(ccg))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
       (sBinding, ccg, cc)
     }
 
     def plaint = {
-      implicit val grp: Group = group(List("CCT||x^^y"))
+      implicit val grp: Group = group(List("CCT||x^^y|1"))
       val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")))
       checkGroupAndBindings(grp, List(sBinding._1)) must containTheSameElementsAs(
         createEntry(RequiredGroup(sBinding._2))
       )
     }
     def code = {
-      implicit val grp: Group = group(List("CCT|CWE|"))
+      implicit val grp: Group = group(List("CCT|CWE||1"))
       val sBinding = binding(List(Code("CCT-1 (A)", "2[*]", "x", "y", List(
         CoConstraintBindingLocation(1, "1[*]", "3[*]")
       ))))
@@ -762,7 +881,7 @@ trait CoConstraintTableSpec  extends Specification
       )
     }
     def vsBinding = {
-      implicit val grp: Group = group(List("CCT|CWE|"))
+      implicit val grp: Group = group(List("CCT|CWE||1"))
       val sBinding = binding(List(ValueSet("CCT-1 (A)", "2[*]", List(
         ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
           BindingLocation("1[1]", Some("3[1]"))
@@ -775,13 +894,13 @@ trait CoConstraintTableSpec  extends Specification
     def combine = {
       Seq(
         //PlainText Fail
-        List("CCT||x^^y||A^^SYS1"),
+        List("CCT||x^^y|1|A^^SYS1"),
         //Code Fail
-        List("CCT|CWE|||A^^SYS1"),
+        List("CCT|CWE||1|A^^SYS1"),
         //Vs Binding Fail
-        List("CCT|CWE|x^^y||"),
+        List("CCT|CWE|x^^y|1|"),
         //All Fail
-        List("CCT||||")
+        List("CCT|||1|")
       ) map (
         segments => {
           implicit val grp: Group = group(segments)
@@ -809,12 +928,12 @@ trait CoConstraintTableSpec  extends Specification
     def binding(primary: List[CoConstraintCell], ccList: List[CoConstraint]) = {
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), primary, List())
       val ccg = grp("GRPIE", CoConstraintUsage.R, Range(1, "1"), cc, ccList)
-      val sBinding = simpleBinding(List(), List(ccg))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
       (sBinding, ccg, cc)
     }
 
     def plainSuccess = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val cc =  scc(CoConstraintUsage.R, Range(1, "1"), List(
         PlainText("CCT-1 (B)", "1[*]", "ST")
       ), List(
@@ -827,7 +946,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def plainFailure = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
         PlainText("CCT-1 (B)", "1[*]", "ST")
       ), List(
@@ -840,7 +959,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def codeSuccess = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
         PlainText("CCT-1 (A)", "1[*]", "CWE")
       ), List(
@@ -855,7 +974,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def codeFailure = {
-      implicit val grp: Group = group(List("CCT|CWE|z^^y", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|z^^y|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val cc =  scc(CoConstraintUsage.R, Range(1, "1"), List(
         PlainText("CCT-1 (A)", "1[*]", "CWE")
       ), List(
@@ -870,7 +989,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def vsBindingSuccess = {
-      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val vsB = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
         BindingLocation("1[1]", Some("3[1]"))
       ))
@@ -891,7 +1010,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def vsBindingFailure = {
-      implicit val grp: Group = group(List("CCT|CWE|X^^SYS1", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|X^^SYS1|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val vsB = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
         BindingLocation("1[1]", Some("3[1]"))
       ))
@@ -912,7 +1031,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def combineSuccess = {
-      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|A^^SYS1|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val vsB = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
         BindingLocation("1[1]", Some("3[1]"))
       ))
@@ -940,7 +1059,7 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     def combineFailure = {
-      implicit val grp: Group = group(List("CCT|CWE|x^^y", "CCT|ST|a^^b", "CCT|TST"))
+      implicit val grp: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|a^^b|1", "CCT|TST||1"))
       val vsB = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(
         BindingLocation("1[1]", Some("3[1]"))
       ))
@@ -1091,5 +1210,104 @@ trait CoConstraintTableSpec  extends Specification
     }
 
     success and failure
+  }
+
+  def groupIdMatch() = {
+    def binding(primary: List[CoConstraintCell], secondary: List[CoConstraintCell]) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), primary, List())
+      val ccs = scc(CoConstraintUsage.R, Range(1, "1"), secondary, List())
+      val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List(ccs))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
+      (sBinding, ccg, cc)
+    }
+
+    implicit val g: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|x^^y|1"))
+    val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), List(PlainText("CCT-1 (A)", "1[*]", "ST")))
+    checkGroupAndBindings(g, List(sBinding._1)) must containTheSameElementsAs(Nil)
+  }
+
+  def groupIdNoMatch() = {
+    def binding(primary: List[CoConstraintCell], secondary: List[CoConstraintCell]) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), primary, List())
+      val ccs = scc(CoConstraintUsage.R, Range(1, "1"), secondary, List())
+      val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List(ccs))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
+      (sBinding, ccg, cc, ccs)
+    }
+
+    implicit val g: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|x^^y|2"))
+    val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), List(PlainText("CCT-1 (A)", "1[*]", "ST")))
+    checkGroupAndBindings(g, List(sBinding._1)) must containTheSameElementsAs(
+      createEntry(RequiredCoConstraint(sBinding._4))
+    )
+  }
+
+  def specErrTargetPathNoSeg() = {
+    val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
+      PlainText("CCT-1 (A)", "1[*]", "CWE")
+    ), List())
+
+    def binding = CoConstraintBinding("GRP", "1[*].1[*]", "CCT", Nil, List(
+      SimpleCoConstraintTable(List(cc), List())
+    ))
+
+    implicit val grp: Group = group(List("CCT|ST~CWE|x^^y|"))
+    checkGroupAndBindings(grp, List(binding)) must containTheSameElementsAs(
+        createEntry(ElementIsNotSegment("1[*].1[*]", assertGet(grp, "1[*].1[1]"))) :::
+        createEntry(ElementIsNotSegment("1[*].1[*]", assertGet(grp, "1[*].1[2]"))) :::
+        createEntry(RequiredCoConstraint(cc))
+    )
+  }
+
+  def specErrTargetPathInvalid() = {
+    val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
+      PlainText("CCT-1 (A)", "1[*]", "CWE")
+    ), List())
+
+    def binding = CoConstraintBinding("GRP", "1", "CCT", Nil, List(
+      SimpleCoConstraintTable(List(cc), List())
+    ))
+
+    implicit val grp: Group = group(List("CCT|ST~CWE|x^^y|"))
+    checkGroupAndBindings(grp, List(binding)) must containTheSameElementsAs(
+      createEntry(InconclusiveTarget(grp, "1", s"Invalid Path '1'"))
+    )
+  }
+
+  def specErrCondInconclusive() = {
+    implicit val grp: Group = makeGroupCond(
+      List("CCT|CWE|x^^y", "CCT|ST|a^^b", "CCT|TST"),
+      "CND|CWE"
+    )
+    val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(
+      PlainText("CCT-1 (A)", "1[*]", "CWE")
+    ), List())
+    val exp = expression.PlainText("2[1].1", "CWE", true)
+    val binding = conditionalBinding(
+      Condition("CONDITION", exp),
+      List(cc),
+      Nil
+    )
+    checkGroupAndBindings(grp, List(binding)) must containTheSameElementsAs(
+      createEntry(InconclusiveCondition(grp, "CONDITION", stackTrace(grp, Trace(exp, Reason(grp.location, s"Invalid Path '1'") :: Nil ) :: Nil)))
+    )
+  }
+
+  def specErrGroupIdInconclusive() = {
+    def binding(primary: List[CoConstraintCell], secondary: List[CoConstraintCell]) = {
+      val cc = scc(CoConstraintUsage.R, Range(1, "1"), primary, List())
+      val ccs = scc(CoConstraintUsage.R, Range(1, "1"), secondary, List())
+      val ccg = grp("GRP", CoConstraintUsage.R, Range(1, "1"), cc, List(ccs))
+      val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3", "CCT-3")))
+      (sBinding, ccg, cc)
+    }
+
+    implicit val g: Group = group(List("CCT|CWE|x^^y|1", "CCT|ST|x^^y|1"))
+    val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "CWE")), List(PlainText("CCT-1 (A)", "1[*]", "ST")))
+    checkGroupAndBindings(g, List(sBinding._1)) must containTheSameElementsAs(
+      createEntry(InconclusiveGrouper(assertGet(g, "1[1]"), "3", s"Invalid Path '3'")) :::
+      createEntry(InconclusiveGrouper(assertGet(g, "1[2]"), "3", s"Invalid Path '3'")) :::
+      createEntry(RequiredGroup(sBinding._2))
+    )
   }
 }

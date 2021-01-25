@@ -917,6 +917,30 @@ public class ConfigurableDetections {
 		return entry(e.location(), description, category, classification);
 	}
 
+	public Entry ccTargetSpecError(Element e, String path, String reason) {
+		String category = conf.getString("report.cc-target-spec-error.category");
+		String classification = conf.getString("report.cc-target-spec-error.classification");
+		String template = conf.getString("report.cc-target-spec-error.template");
+		String description = String.format(template, path, reason);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccGrouperSpecError(Element e, String path, String reason) {
+		String category = conf.getString("report.cc-grouper-spec-error.category");
+		String classification = conf.getString("report.cc-grouper-spec-error.classification");
+		String template = conf.getString("report.cc-grouper-spec-error.template");
+		String description = String.format(template, path, reason);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccNotDistinctGrouper(Element e, String cc, String value) {
+		String category = conf.getString("report.cc-grouper-not-distinct.category");
+		String classification = conf.getString("report.cc-grouper-not-distinct.classification");
+		String template = conf.getString("report.cc-grouper-not-distinct.template");
+		String description = String.format(template, cc, e.location().prettyString(), value);
+		return entry(e.location(), description, category, classification);
+	}
+
 	public Entry ccSpecError(Location location, String cell, String message) {
 		String category = conf.getString("report.cc-spec-error.category");
 		String classification = conf.getString("report.cc-spec-error.classification");

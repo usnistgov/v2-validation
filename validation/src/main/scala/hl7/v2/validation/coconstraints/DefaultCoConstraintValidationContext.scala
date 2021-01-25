@@ -43,7 +43,7 @@ object DefaultCoConstraintValidationContext {
       ccd.getChildElements("Group").map(g => {
         val gId = g.getAttributeValue("Context")
         val binding = coConstraintBinding(g)
-        (gId -> binding)
+        gId -> binding
       }) groupBy(_._1) mapValues (_.map(_._2) toList)
     }  else {
       Map()
@@ -56,7 +56,14 @@ object DefaultCoConstraintValidationContext {
     val name = e.getAttributeValue("Name")
     val simple = e.getChildElements("SimpleTable").map(t => simpleTable(t))
     val conditional = e.getChildElements("ConditionalTable").map(t => conditionalTable(t))
-    CoConstraintBinding(context, target, name, (simple ++ conditional) toList)
+    val ccGroupId = e.getFirstChildElement("CoConstraintGroupId")
+    CoConstraintBinding(context, target, name, groupId(ccGroupId), (simple ++ conditional) toList)
+  }
+
+  def groupId(e: nu.xom.Element): List[GroupId] = {
+    e.getChildElements("IdPath").map(id => {
+      GroupId(id.getAttributeValue("Priority").toInt, id.getAttributeValue("Path"), id.getAttributeValue("Name"))
+    }) sortBy(_.priority) toList
   }
 
   def simpleTable(e: nu.xom.Element): SimpleCoConstraintTable = {

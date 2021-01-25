@@ -62,11 +62,19 @@ trait CoConstraintSpecMocks {
     element
   }
 
-  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBinding("GRP", "1[*]", "CCT", List(
+  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBinding("GRP", "1[*]", "CCT", Nil, List(
     SimpleCoConstraintTable(cc, ccg)
   ))
 
-  def conditionalBinding(condition: Condition, cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBinding("GRP", "1[*]", "CCT", List(
+  def simpleBindingGrouper(cc: List[CoConstraint], ccg: List[CoConstraintGroup], grpId: List[GroupId]) = CoConstraintBinding("GRP", "1[*]", "CCT", grpId, List(
+    SimpleCoConstraintTable(cc, ccg)
+  ))
+
+  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup], groupId: List[GroupId]) = CoConstraintBinding("GRP", "1[*]", "CCT", groupId, List(
+    SimpleCoConstraintTable(cc, ccg)
+  ))
+
+  def conditionalBinding(condition: Condition, cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBinding("GRP", "1[*]", "CCT", Nil, List(
     ConditionalCoConstraintTable(condition, cc, ccg)
   ))
 

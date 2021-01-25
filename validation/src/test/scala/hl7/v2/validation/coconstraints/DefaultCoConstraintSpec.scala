@@ -45,13 +45,13 @@ object DefaultCoConstraintSpec extends Specification with CellCoConstraintSpec w
             Failed $ccNoMatchFailed
             Was Inconclusive $ccNoMatchInconclusive
             Was not evaluated because an element was not populated $ccNoMatchNotPopulated
+        Group ID
+          Should return a NonDistinctGroupId If individual co-constraint has a non-unique groupId $ccNoDistinctGroupId
         Constraint Failure
-          Should return a Failure for each failed constraint in a matched co-constraint
-          Failed PlainText
-          Inconclusive
-          Failed Code (Not Found)
-          Failed Code (Code System)
-          Failed VS Binding
+          Should check constraints of each in a matched co-constraint
+            PlainText $ccMatchPlainText
+            Code $ccMatchFailCode
+            VS Binding $ccMatchFailVs
 
       Co-Constraint Group Validation
         Requirement
@@ -64,6 +64,11 @@ object DefaultCoConstraintSpec extends Specification with CellCoConstraintSpec w
             Failed $grpNoMatchFailed
             Was Inconclusive $grpNoMatchInconclusive
             Was not evaluated because an element was not populated $grpNoMatchNotPopulated
+        Group ID
+          If segment has a different group Id than the matched primary
+            Should not [MATCH] a co-constraint from the group to the segment $groupIdNoMatch
+          If segment has the same group Id as the matched primary
+            Should [MATCH] a co-constraint from the group to the segment $groupIdMatch
         Constraint Failure
           Should return a failure for each failed co-constraint in the matched group $grpMatchEval
 
@@ -74,6 +79,13 @@ object DefaultCoConstraintSpec extends Specification with CellCoConstraintSpec w
           Co-Constraint Table should not be evaluated $conditionalFail
         If condition is INCONCLUSIVE
           Co-Constraint Spec Error should be returned $conditionalInc
+
+      Specification Errors
+        Should return a specification error
+          If co-constraint binding target path contains elements that are not segments $specErrTargetPathNoSeg
+          If co-constraint binding target path can't be reached $specErrTargetPathInvalid
+          If conditional co-constraint table's condition can't be evaluated $specErrCondInconclusive
+          If co-constraint group ID evaluation is inconclusive $specErrGroupIdInconclusive
 
 """
 }

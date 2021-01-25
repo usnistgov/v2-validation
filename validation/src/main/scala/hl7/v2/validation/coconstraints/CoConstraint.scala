@@ -6,6 +6,7 @@ import hl7.v2.validation.vs.ValueSetBinding
 case class CoConstraintBinding(context: String,
                                target: String,
                                segmentName: String,
+                               grouper: List[GroupId],
                                bindings: List[CoConstraintTable])
 
 trait CoConstraintCollection {
@@ -15,6 +16,8 @@ trait CoConstraintCollection {
 trait CoConstraintTable extends CoConstraintCollection {
   val coConstraintGroups: List[CoConstraintGroup]
 }
+
+case class GroupId(priority: Int, path: String, name: String)
 
 case class CoConstraintRequirement(usage: CoConstraintUsage, cardinality: hl7.v2.profile.Range)
 
