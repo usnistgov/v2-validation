@@ -11,6 +11,36 @@ object ValueConversionHelpers {
 
   import hl7.v2.instance.util.ValueFormatCheckers._
 
+  def truncateValue(v1: String, v2: String): Try[(String, String)] = {
+    val ln = Math.min(v1.length,v2.length)
+    Success(v1.substring(0, ln), v2.substring(0, ln))
+  }
+
+  def truncateDateTime(v1: String, v2: String): Try[(String, String)] = {
+    val (va, vtz1) = splitOnTZ(v1)
+    val (vb, vtz2) = splitOnTZ(v2)
+
+    val dateTime = truncateValue(va, vb).get
+//    val timeZone = truncateValue(vtz1, vtz2).get
+
+    Success(
+      s"${dateTime._1}${vtz1}",
+      s"${dateTime._2}${vtz2}"
+    )
+  }
+
+  def truncateNumber(v1: String, v2: String): Try[(String, String)] = {
+    val v1split = if(v1.contains(".")) v1.split('.') toList else List(v1, "")
+    val v2split = if(v2.contains(".")) v2.split('.') toList else List(v2, "")
+
+    val l1 = Math.min(v1split(1).length, v2split(1).length)
+
+    Success(
+      s"${v1split.head.toInt.toString}.${v1split(1).substring(0, l1)}",
+      s"${v2split.head.toInt.toString}.${v2split(1).substring(0, l1)}"
+    )
+  }
+
   /**
     * Converts number of days to milliseconds
     * @param n - The number of days
@@ -39,7 +69,7 @@ object ValueConversionHelpers {
     */
   def timeToMilliSeconds(s: String): Try[Long] =
     checkTimeFormat(s) map { ts =>
-      val(tm, tzs) = ts span ( c => c != '+' && c != '-' )
+      val(tm, tzs) = splitOnTZ(ts)
       val tz = if (tzs.isEmpty) 0 else timeZoneToMilliSeconds(tzs).get
 
       val hh = (tm take 2).toLong
@@ -47,7 +77,7 @@ object ValueConversionHelpers {
       val ss = tm drop 4 take 2 match { case "" => 0 case x => x.toLong }
       val ms = ( tm drop 7 padTo(4, '0') ).toLong
       val r  = ms + 1000 * (ss + 60 * mm + 3600 * hh)
-      r + tz
+      r - tz
     }
 
   /**
@@ -57,11 +87,24 @@ object ValueConversionHelpers {
     *         if the time zone is not defined and no default is provide.
     */
   def timeToMilliSeconds(s: String, dtz: Option[TimeZone]): Try[Long] = {
-    val(tm, tzs) = s span ( c => c != '+' && c != '-' )
+    val(tm, tzs) = splitOnTZ(s)
     defaultTZ(tzs, dtz) flatMap { tz =>  timeToMilliSeconds(s"$tm$tz") }
   }
 
-  private def defaultTZ(s: String, o: Option[TimeZone]): Try[String] =
+  def checkTimeZoneCompare(dtz: Option[TimeZone])(tz1: String, tz2: String): Try[(String, String)] = {
+    (defaultTZ(tz1, dtz), defaultTZ(tz2, dtz)) match {
+      case (Success(stz1), Success(stz2)) => Success(stz1, stz2)
+      case (Failure(_), Failure(_)) => Success(("+0000", "+0000"))
+      case (Success(_), Failure(ftz)) => Failure(ftz)
+      case (Failure(ftz), Success(_)) => Failure(ftz)
+    }
+  }
+
+  def splitOnTZ(s: String): (String, String) = {
+    s span ( c => c != '+' && c != '-' )
+  }
+
+  def defaultTZ(s: String, o: Option[TimeZone]): Try[String] =
     (s, o) match {
       case ("", None)    =>
         Failure(new Exception("Time Zone is missing and no default is set."))

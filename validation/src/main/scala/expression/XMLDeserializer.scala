@@ -57,7 +57,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path2 = e.attribute("Path2")
     val op    = operator( e.attribute("Operator") )
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    PathValue( path1, op, path2, npb )
+    PathValue( path1, op, path2, getComparisonMode(e), npb )
   }
 
   // Value Expressions
@@ -109,7 +109,7 @@ object XMLDeserializer extends EscapeSeqHandler {
     val _value = value( e.attribute("Value"), e.attribute("Type") )
     val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    SimpleValue( path, op, _value, atLeastOnce, npb)
+    SimpleValue( path, op, _value, getComparisonMode(e), atLeastOnce, npb)
   }
 
   private def subContext( e: Element ): SubContext = {
@@ -191,6 +191,10 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "GE" => Operator.GE
     case "LE" => Operator.LE
     case   _  => throw new Error(s"[Error] Invalid Operator $v")
+  }
+
+  private def getComparisonMode(e: Element): ComparisonMode = {
+    new ComparisonMode(toBoolean(e.attribute("IdenticalEquality")), toBoolean(e.attribute("Truncated")))
   }
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )

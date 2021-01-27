@@ -31,15 +31,15 @@ trait PathValueSpec extends Specification with Evaluator with Mocks {
     eval( PathValue("4[1]", Operator.LT, "4[1]"), c1 ) === Pass
 
   def pathValueNoElmFAIL = {
-    val f = PathValue("4[1]", Operator.LT, "4[1]", "FAIL")
+    val f = PathValue("4[1]", Operator.LT, "4[1]", ComparisonMode(false, false), "FAIL")
     eval(f, c1) === Failures.notPresentBehaviorFail(f, s"[ ${f.path1}, ${f.path2} ]", c1)
   }
   def pathValueNoElmINC = {
-    val f = PathValue("4[1]", Operator.LT, "4[1]", "INCONCLUSIVE")
+    val f = PathValue("4[1]", Operator.LT, "4[1]", ComparisonMode(false, false), "INCONCLUSIVE")
     eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, s"[ ${f.path1}, ${f.path2} ]", c1)
   }
   def pathValueNoElmPASS = {
-    val f = PathValue("4[1]", Operator.LT, "4[1]", "PASS")
+    val f = PathValue("4[1]", Operator.LT, "4[1]", ComparisonMode(false, false), "PASS")
     eval(f, c1) === Pass
   }
 

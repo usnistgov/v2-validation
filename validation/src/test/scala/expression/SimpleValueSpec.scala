@@ -32,15 +32,15 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
   def simpleValuePathNotPopulated = eval( SimpleValue("4[1]", Operator.LT, Text("xx")), c1 ) === Pass
 
   def simpleValueNoElmFAIL = {
-    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), false, "FAIL")
+    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), ComparisonMode(false, false), false, "FAIL")
     eval(f, c1) === Failures.notPresentBehaviorFail(f, f.path, c1)
   }
   def simpleValueNoElmINC = {
-    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), false, "INCONCLUSIVE")
+    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), ComparisonMode(false, false), false, "INCONCLUSIVE")
     eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, f.path, c1)
   }
   def simpleValueNoElmPASS = {
-    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), false, "PASS")
+    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), ComparisonMode(false, false), false, "PASS")
     eval(f, c1) === Pass
   }
 
@@ -98,12 +98,12 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
 
   assert( queryAsSimple(c1, "1[*]").isSuccess &&  queryAsSimple(c1, "1[*]").get.size > 1)
   def simpleValueAtLeastOnceT = {
-    val p = SimpleValue("1[*]", Operator.EQ, Text("S12"), true)
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S12"), ComparisonMode(false, false), true)
     eval( p, c1 ) === Pass
   }
 
   def simpleValueAtLeastOnceF = {
-    val p = SimpleValue("1[*]", Operator.EQ, Text("S12"), false)
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S12"), ComparisonMode(false, false), false)
 
     val `c1.1[1]`  = queryAsSimple(c1, "1[1]").get.head
     assert( `c1.1[1]`.value == Text("S11") )
