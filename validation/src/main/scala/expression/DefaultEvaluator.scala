@@ -163,7 +163,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         list match {
           case Nil => notFound(sv, sv.path, context, sv.notPresentBehavior)
           case ls =>
-            val evs = ls map { s => s -> sv.operator.eval(s.value, sv.value) }
+            val evs = ls map { s => s -> sv.operator.eval(s.value, sv.value, sv.comparisonMode) }
             evs partition {
               _._2.isFailure
             } match {
@@ -192,7 +192,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case (Success(x :: Nil), Success(Nil)) => Failures.pathValue(pv, x, pv.path2)
       case (Success(Nil), Success(x :: Nil)) => Failures.pathValue(pv, x, pv.path1)
       case (Success(x1 :: Nil), Success(x2 :: Nil)) =>
-        pv.operator.eval(x1.value, x2.value) match {
+        pv.operator.eval(x1.value, x2.value, pv.comparisonMode) match {
           case Success(true)  => Pass
           case Success(false) => Failures.pathValue(pv, x1, x2)
           case Failure(e)     => inconclusive(pv, context.location, e)
@@ -289,7 +289,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   }
 
   def compareSimple(pv: ComplexPathValue, s1: Simple, s2: Simple)(implicit dtz: Option[TimeZone]): EvalResult = {
-    pv.operator.eval(s1.value, s2.value) match {
+    pv.operator.eval(s1.value, s2.value, pv.comparisonMode) match {
       case Success(true)  => Pass
       case Success(false) => Failures.complexPathValue(pv, s1, s2)
       case Failure(e)     => inconclusive(pv, s1.location, e)

@@ -1,8 +1,10 @@
 package hl7.v2.parser.impl
 
 import hl7.v2.instance._
+import hl7.v2.instance.util.ValueConversionHelpers.splitOnTZ
+import hl7.v2.instance.util.ValueFormatCheckers.isValidDateTimeFormat
 import hl7.v2.parser.Parser
-import hl7.v2.profile.{ Group => GM, Message => MM, SegRefOrGroup => SGM, SegmentRef => SM }
+import hl7.v2.profile.{Group => GM, Message => MM, SegRefOrGroup => SGM, SegmentRef => SM}
 
 import scala.util.Try
 
@@ -27,11 +29,21 @@ trait DefaultParser extends Parser {
       implicit val ctr = Counter(scala.collection.mutable.Map[String, Int]())
       implicit val a = ambiguous
       val (children, unexpected) = processChildren(model.structure, valid)
-      val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
+      val tz: Option[TimeZone] = resolveTimeZone(children)
       val ils = invalid map (x => Line(x._1, x._2)) //FIXME Update PreProcessor to use Line
       val uls = (preUnexpected ::: unexpected) map (x => Line(x._1, x._2)) //FIXME Update PreProcessor to use Line
       Message(model, children.reverse, ils, uls, tz, s)
     }
+
+  def resolveTimeZone(children: LSG): Option[TimeZone] = {
+    children.find(c => c.position == 1).collect({
+      case segment: Segment if segment.model.ref.name.equals("MSH") =>
+        segment.children.find(f => f.position == 7).collect({
+          case sf: SimpleField if isValidDateTimeFormat(sf.value.raw) =>
+            Option(splitOnTZ(sf.value.raw)._2).filter(_.nonEmpty).map(TimeZone)
+        }) flatten
+    }) flatten
+  }
 
   // Type Aliases
   type Stack = List[Line] // List[(Int, String)]

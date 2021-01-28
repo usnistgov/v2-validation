@@ -129,6 +129,8 @@
 		<xs:attribute name="Path1" type="PathType" use="required" />
 		<xs:attribute name="Operator" type="OperatorType" use="required" />
 		<xs:attribute name="Path2" type="PathType" use="required" />
+		<xs:attribute name="Truncated" type="xs:boolean" use="optional" />
+		<xs:attribute name="IdenticalEquality" type="xs:boolean" use="optional" />
 		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
@@ -145,6 +147,8 @@
 		<xs:attribute name="Path1" type="PathType" use="required" />
 		<xs:attribute name="Operator" type="OperatorType" use="required" />
 		<xs:attribute name="Path2" type="PathType" use="required" />
+		<xs:attribute name="Truncated" type="xs:boolean" use="optional" />
+		<xs:attribute name="IdenticalEquality" type="xs:boolean" use="optional" />
 		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 		<xs:attribute name="Strict" type="xs:boolean" use="optional" />
 	</xs:complexType>
@@ -193,6 +197,8 @@
 		<xs:attribute name="Operator" type="OperatorType" use="required" />
 		<xs:attribute name="Value" type="NonEmptyString" use="required" />
 		<xs:attribute name="Type" type="ValueType" default="String" />
+		<xs:attribute name="Truncated" type="xs:boolean" use="optional" />
+		<xs:attribute name="IdenticalEquality" type="xs:boolean" use="optional" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>

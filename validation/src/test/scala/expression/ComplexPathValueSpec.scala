@@ -40,15 +40,15 @@ trait ComplexPathValueSpec extends Specification with Evaluator with Mocks {
     eval( ComplexPathValue("4[1]", Operator.LT, "4[1]"), c1 ) === Pass
 
   def complexPathValueNoElmFAIL = {
-    val f = ComplexPathValue("4[1]", Operator.LT, "4[1]", false, "FAIL")
+    val f = ComplexPathValue("4[1]", Operator.LT, "4[1]", false, ComparisonMode(false, false), "FAIL")
     eval(f, c1) === Failures.notPresentBehaviorFail(f, s"[ ${f.path1}, ${f.path2} ]", c1)
   }
   def complexPathValueNoElmINC = {
-    val f = ComplexPathValue("4[1]", Operator.LT, "4[1]", false, "INCONCLUSIVE")
+    val f = ComplexPathValue("4[1]", Operator.LT, "4[1]", false, ComparisonMode(false, false), "INCONCLUSIVE")
     eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, s"[ ${f.path1}, ${f.path2} ]", c1)
   }
   def complexPathValueNoElmPASS = {
-    val f = ComplexPathValue("4[1]", Operator.LT, "4[1]", false, "PASS")
+    val f = ComplexPathValue("4[1]", Operator.LT, "4[1]", false, ComparisonMode(false, false), "PASS")
     eval(f, c1) === Pass
   }
 

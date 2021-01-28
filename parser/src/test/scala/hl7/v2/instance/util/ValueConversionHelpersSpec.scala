@@ -46,7 +46,7 @@ class ValueConversionHelpersSpec extends Specification with ScalaCheck {
         val t = f"$hh%02d$mm%02d$ss%02d.$ssss%04d$s$th%02d$tm%02d"
         val tz = 1000 * (3600 * th + 60 * tm )
         val r =  ssss + 1000 * (ss + 60 * mm + 3600 * hh)
-        timeToMilliSeconds(t) === Success( if( s == "-") r - tz else r + tz )
+        timeToMilliSeconds(t) === Success( if( s == "-") r + tz else r - tz )
       }
     }
 

@@ -16,11 +16,11 @@ case class NumberList( path: String, csv: List[Double], atLeastOnce : Boolean = 
 
 case class StringList( path: String, csv: List[String], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
 
-case class SimpleValue( path: String, operator: Operator, value: Value, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS" ) extends Expression
+case class SimpleValue( path: String, operator: Operator, value: Value, comparisonMode: ComparisonMode = ComparisonMode(false, false), atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS" ) extends Expression
 
-case class PathValue( path1: String, operator: Operator, path2: String, notPresentBehavior : String = "PASS" ) extends Expression
+case class PathValue( path1: String, operator: Operator, path2: String, comparisonMode: ComparisonMode = ComparisonMode(false, false), notPresentBehavior : String = "PASS" ) extends Expression
 
-case class ComplexPathValue( path1: String, operator: Operator, path2: String, strict: Boolean = true, notPresentBehavior : String = "PASS" ) extends Expression
+case class ComplexPathValue( path1: String, operator: Operator, path2: String, strict: Boolean = true, comparisonMode: ComparisonMode = ComparisonMode(false, false), notPresentBehavior : String = "PASS" ) extends Expression
 
 case class isNULL(path: String) extends Expression
 

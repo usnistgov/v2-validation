@@ -1,7 +1,6 @@
 package expression
 
 import org.specs2.Specification
-
 import XMLDeserializer.expression
 import hl7.v2.instance.Number
 import hl7.v2.instance.Text
@@ -35,10 +34,13 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
 
   def pe1 = expression( <Presence Path="1[1]"/> ) === Presence( "1[1]" )
 
-  def pe2 = pe21 and pe22 and pe23
+  def pe2 = pe21 and pe22 and pe23 and pe24 and pe25 and pe26
   def pe21 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
-  def pe22 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", "FAIL")
-  def pe23 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", "INCONCLUSIVE")
+  def pe22 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, false), "FAIL")
+  def pe23 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  ComparisonMode(false, false), "INCONCLUSIVE")
+  def pe24 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", new ComparisonMode(true, false), "FAIL")
+  def pe25 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  new ComparisonMode(false, true), "INCONCLUSIVE")
+  def pe26 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  new ComparisonMode(true, true), "INCONCLUSIVE")
 
   def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38 and pe39 and pe310
   def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true)
@@ -80,10 +82,18 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     val e22 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" AtLeastOnce="false" Type="Number"/> )
     val e3 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" NotPresentBehavior="FAIL" /> )
     val e4 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" NotPresentBehavior="INCONCLUSIVE" /> )
+    val e41 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" /> )
+    val e42 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" IdenticalEquality="true" NotPresentBehavior="INCONCLUSIVE" /> )
+    val e43 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" Truncated="true" NotPresentBehavior="INCONCLUSIVE" /> )
+
 
     e1 === SimpleValue( "1[1]", Operator.NE, Text("XX") ) and e2 === SimpleValue( "1[1]", Operator.NE, Number("XX") ) and
-    e3 === SimpleValue( "1[1]", Operator.NE, Number("XX"), false, "FAIL") and e4 === SimpleValue( "1[1]", Operator.NE, Number("XX"), false, "INCONCLUSIVE") and
-    e21 === SimpleValue( "1[1]", Operator.NE, Number("XX"), true ) and e22 === SimpleValue( "1[1]", Operator.NE, Number("XX"), false )
+    e3 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), false, "FAIL") and e4 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), false, "INCONCLUSIVE") and
+    e21 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), true ) and e22 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), false ) and
+      e41 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(true, true), false, "INCONCLUSIVE") and
+      e42 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(true, false), false, "INCONCLUSIVE") and
+      e43 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(false, true), false, "INCONCLUSIVE")
+
   }
 
   def pe8  = expression( <AND><Presence Path="1[1]"/><Presence Path="2[2]"/></AND> ) === AND( Presence("1[1]"), Presence("2[2]") )
