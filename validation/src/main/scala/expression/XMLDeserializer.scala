@@ -26,6 +26,7 @@ object XMLDeserializer extends EscapeSeqHandler {
   def expression( e: Element ): Expression = e.getLocalName match {
     case "Presence"    => presence( e )
     case "PathValue"   => pathValue( e )
+    case "ComplexPathValue"   => complexPathValue( e )
     case "PlainText"   => plainText( e )
     case "Format"      => format( e )
     case "NumberList"  => numberList( e )
@@ -58,6 +59,15 @@ object XMLDeserializer extends EscapeSeqHandler {
     val op    = operator( e.attribute("Operator") )
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
     PathValue( path1, op, path2, getComparisonMode(e), npb )
+  }
+
+  private def complexPathValue( e: Element ): ComplexPathValue = {
+    val path1 = e.attribute("Path1")
+    val path2 = e.attribute("Path2")
+    val strict = toBooleanWithDefault(e.attribute("Strict"), true)
+    val op    = operator( e.attribute("Operator") )
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    ComplexPathValue( path1, op, path2, strict, getComparisonMode(e), npb )
   }
 
   // Value Expressions
@@ -181,6 +191,12 @@ object XMLDeserializer extends EscapeSeqHandler {
   private def toBoolean( s: String ) = 
     if( "true" == s || "1" == s ) true
     else if( "false" == s || "0" == s || "" == s ) false
+    else throw new Error(s"[Error] Invalid XSD:Boolean value $s")
+
+  private def toBooleanWithDefault( s: String, default: Boolean ) =
+    if( "true" == s || "1" == s ) true
+    else if( "false" == s || "0" == s ) false
+    else if( "" == s ) default
     else throw new Error(s"[Error] Invalid XSD:Boolean value $s")
 
   private def operator( v: String ) = v match {

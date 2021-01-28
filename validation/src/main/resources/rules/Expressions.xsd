@@ -278,6 +278,8 @@
 				maxOccurs="1" />
 			<xs:element name="PathValue" type="PathValueType"
 				minOccurs="1" maxOccurs="1" />
+			<xs:element name="ComplexPathValue" type="ComplexPathValueType"
+						minOccurs="1" maxOccurs="1" />
 			<xs:element name="StringFormat" type="StringFormatType"
 				minOccurs="1" maxOccurs="1" />
 			<xs:element name="PlainText" type="PlainTextType"

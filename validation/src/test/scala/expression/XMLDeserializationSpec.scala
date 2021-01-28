@@ -15,6 +15,7 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   Expression deserialization specification
     Deserialization of presence expression should work as expected        $pe1
     Deserialization of path value expression should work as expected      $pe2
+    Deserialization of complex path value expression should work as expected      $pe18
     Deserialization of plain text expression should work as expected      $pe3
     Deserialization of format expression should work as expected          $pe4
     Deserialization of number list expression should work as expected     $pe5
@@ -38,9 +39,18 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   def pe21 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
   def pe22 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, false), "FAIL")
   def pe23 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  ComparisonMode(false, false), "INCONCLUSIVE")
-  def pe24 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", new ComparisonMode(true, false), "FAIL")
-  def pe25 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  new ComparisonMode(false, true), "INCONCLUSIVE")
-  def pe26 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  new ComparisonMode(true, true), "INCONCLUSIVE")
+  def pe24 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, false), "FAIL")
+  def pe25 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, true), "INCONCLUSIVE")
+  def pe26 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE")
+
+  def pe18 = pe181 and pe182 and pe183 and pe184 and pe185 and pe186
+  def pe181 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]")
+  def pe182 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]", true, ComparisonMode(false, false), "FAIL")
+  def pe183 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]",  true, ComparisonMode(false, false), "INCONCLUSIVE")
+  def pe184 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" NotPresentBehavior="FAIL"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]", true, ComparisonMode(true, false), "FAIL")
+  def pe185 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]", true, ComparisonMode(false, true), "INCONCLUSIVE")
+  def pe186 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]", true, ComparisonMode(true, true), "INCONCLUSIVE")
+
 
   def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38 and pe39 and pe310
   def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true)
