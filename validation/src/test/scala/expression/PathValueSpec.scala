@@ -12,7 +12,7 @@ trait PathValueSpec extends Specification with Evaluator with Mocks {
 
   /*
   PathValueSpec
-      PathValue should pass if both pass are not populated                         $pathValueBothPathNotPopulated
+      PathValue should pass if both paths are not populated                         $pathValueBothPathNotPopulated
       PathValue evaluation should be inconclusive if the path is complex           $pathValuePathComplex
       PathValue evaluation should be inconclusive if the path is invalid           $pathValuePathInvalid
       PathValue evaluation should be inconclusive if the path is unreachable       $pathValuePathUnreachable
@@ -20,13 +20,28 @@ trait PathValueSpec extends Specification with Evaluator with Mocks {
       PathValue should be inconclusive if path1 and path2 resolve to many elements $pathValueManyElems
       PathValue should pass if operator = < and path1.value < path2.value          $pathValuePass
       PathValue should fail if operator = < and path1.value > path2.value          $pathValueFail
-
+      PathValue evaluation should fail If not present behavior is FAIL and both paths not found  $pathValueNoElmFAIL
+      PathValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and both paths not found $pathValueNoElmINC
+      PathValue evaluation should pass If not present behavior is PASS and both paths not found $pathValueNoElmPASS
   */
 
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
   def pathValueBothPathNotPopulated =
     eval( PathValue("4[1]", Operator.LT, "4[1]"), c1 ) === Pass
+
+  def pathValueNoElmFAIL = {
+    val f = PathValue("4[1]", Operator.LT, "4[1]", "FAIL")
+    eval(f, c1) === Failures.notPresentBehaviorFail(f, s"[ ${f.path1}, ${f.path2} ]", c1)
+  }
+  def pathValueNoElmINC = {
+    val f = PathValue("4[1]", Operator.LT, "4[1]", "INCONCLUSIVE")
+    eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, s"[ ${f.path1}, ${f.path2} ]", c1)
+  }
+  def pathValueNoElmPASS = {
+    val f = PathValue("4[1]", Operator.LT, "4[1]", "PASS")
+    eval(f, c1) === Pass
+  }
 
   // c1.2[3] is complex
   def pathValuePathComplex = {

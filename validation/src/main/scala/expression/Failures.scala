@@ -49,13 +49,13 @@ object Failures extends EscapeSeqHandler {
     Fail( Trace(e, reasons) :: Nil )
   }
   
-  def plainTextNoElm(p: PlainText, context: Element) : Fail = {
-    val msg = s"Path ${p.path} resolution from ${context.location.prettyString} returned no element"
+  def notPresentBehaviorFail(p: Expression, path: String, context: Element) : Fail = {
+    val msg = s"Path ${path} resolution from ${context.location.prettyString} returned no element"
     Fail( Trace(p, Reason(context.location, msg) :: Nil) :: Nil )
   }
   
-  def plainTextNoElmInc(p: PlainText, context: Element) : Inconclusive = {
-     val msg = s"Path ${p.path} resolution from ${context.location.prettyString} returned no element"
+  def notPresentBehaviorInconclusive(p: Expression, path: String, context: Element) : Inconclusive = {
+     val msg = s"Path ${path} resolution from ${context.location.prettyString} returned no element"
      Inconclusive( Trace(p, Reason(context.location, msg) :: Nil) )
   }
 

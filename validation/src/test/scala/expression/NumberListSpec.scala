@@ -21,11 +21,27 @@ trait NumberListSpec extends Specification with Evaluator with Mocks  {
       If the path is valued to multiple elements
         NumberList should pass if one of the elements is in the list and AtLeastOnce = True           $numberListAtLeastOnceT
         NumberList should fail if one of the elements is not in the list and AtLeastOnce = False           $numberListAtLeastOnceF
+      NumberList evaluation should fail If not present behavior is FAIL and no element is found  $numberListNoElmFAIL
+      NumberList evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $numberListNoElmINC
+      NumberList evaluation should pass If not present behavior is PASS and no element is found $numberListNoElmPASS
   */
 
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
   def numberListPathNotPopulated = eval( NumberList("4[1]", Nil), c1 ) === Pass
+
+  def numberListNoElmFAIL = {
+    val f = NumberList("4[1]", Nil, false, "FAIL")
+    eval(f, c1) === Failures.notPresentBehaviorFail(f, f.path, c1)
+  }
+  def numberListNoElmINC = {
+    val f = NumberList("4[1]", Nil, false, "INCONCLUSIVE")
+    eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, f.path, c1)
+  }
+  def numberListNoElmPASS = {
+    val f = NumberList("4[1]", Nil, false, "PASS")
+    eval(f, c1) === Pass
+  }
 
   // c1.2[3] is complex
   def numberListPathComplex = {

@@ -45,6 +45,7 @@ object Value {
       case "SI" => Number(raw)
       case "DT" => Date(raw)
       case "TM" => Time(raw)
+      case "SI" => Number(raw)
       case "DTM"=> DateTime(raw)
       case "FT" => FText(raw)
       case _    => Text(raw)

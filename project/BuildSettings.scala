@@ -5,7 +5,7 @@ object BuildSettings {
 
   lazy val basicSettings = Seq(
 
-    version              := "1.4.2",
+    version              := "1.5.0",
     //FIXME homepage             := Some(new URL("xxx")),
     organization         := "gov.nist",
     organizationHomepage := Some(new URL("http://nist.gov")),

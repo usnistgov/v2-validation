@@ -19,11 +19,30 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
       SimpleValue should be inconclusive if at least one value is invalid           $simpleValueInvalidValue
       SimpleValue should pass if operator = < and path.value < value                $simpleValuePass
       SimpleValue should fail if operator = < and path.value > value                $simpleValueFail
+      If the path is valued to multiple elements
+        SimpleValue should pass if one of the elements is in the list and AtLeastOnce = True           $simpleValueAtLeastOnceT
+        SimpleValue should fail if one of the elements is not in the list and AtLeastOnce = False           $simpleValueAtLeastOnceF
+      SimpleValue evaluation should fail If not present behavior is FAIL and no element is found  $simpleValueNoElmFAIL
+      SimpleValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $simpleValueNoElmINC
+      SimpleValue evaluation should pass If not present behavior is PASS and no element is found $simpleValueNoElmPASS
   */
 
   //c1.4[1] is not populated
   assert( queryAsSimple(c1, "4[1]") == Success(Nil) )
   def simpleValuePathNotPopulated = eval( SimpleValue("4[1]", Operator.LT, Text("xx")), c1 ) === Pass
+
+  def simpleValueNoElmFAIL = {
+    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), false, "FAIL")
+    eval(f, c1) === Failures.notPresentBehaviorFail(f, f.path, c1)
+  }
+  def simpleValueNoElmINC = {
+    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), false, "INCONCLUSIVE")
+    eval(f, c1) === Failures.notPresentBehaviorInconclusive(f, f.path, c1)
+  }
+  def simpleValueNoElmPASS = {
+    val f = SimpleValue("4[1]", Operator.LT, Text("xx"), false, "PASS")
+    eval(f, c1) === Pass
+  }
 
   // c1.2[3] is complex
   def simpleValuePathComplex = {
@@ -75,6 +94,22 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
     val s = `c2.5[1]`
     val reason = Reason(s.location, s"${v.raw} is not a valid Number. The format should be: [+|-]digits[.digits]")
     eval( p, c2 ) === Inconclusive( Trace(p, reason:: Nil) )
+  }
+
+  assert( queryAsSimple(c1, "1[*]").isSuccess &&  queryAsSimple(c1, "1[*]").get.size > 1)
+  def simpleValueAtLeastOnceT = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S12"), true)
+    eval( p, c1 ) === Pass
+  }
+
+  def simpleValueAtLeastOnceF = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S12"), false)
+
+    val `c1.1[1]`  = queryAsSimple(c1, "1[1]").get.head
+    assert( `c1.1[1]`.value == Text("S11") )
+    val `c1.1[3]`  = queryAsSimple(c1, "1[3]").get.head
+    assert( `c1.1[3]`.value == Text("S13") )
+    eval( p, c1 ) === Failures.simpleValue(p, `c1.1[1]`::`c1.1[3]`::Nil)
   }
 
 }
