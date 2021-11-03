@@ -90,7 +90,7 @@ public class Validator extends ConfigurableValidation {
             	if(e.req().usage() instanceof Usage.O$)
         			result.add(Detections.toAlert(x));
         		else
-        			result.add(checkExtensibility(spec, library, x));      
+        			result.add(x);
             }
             
         } 
@@ -102,28 +102,12 @@ public class Validator extends ConfigurableValidation {
 	            		if(e.req().usage() instanceof Usage.O$)
 	            			result.add(Detections.toAlert(x));
 	            		else
-	            			result.add(checkExtensibility(spec, library, x));      	
+	            			result.add(x);
 	            }
             // Check the children
             scala.collection.Iterator<Element> it = ((Complex) e).children().iterator();
             while( it.hasNext() )
                 checkValueSet(result, it.next(), library);
-        }
-    }
-    
-    public  Entry checkExtensibility(ValueSetSpec spec, ValueSetLibrary library, Entry e){
-    	try {
-            ValueSet vs = library.get( spec.valueSetId());
-            Extensibility ex = vs.extensibility().get();
-        	
-        	if(ex instanceof Extensibility.Open$){
-        		return Detections.toAlert(e);
-        	}
-        	else {
-        		return e;
-        	}
-        } catch (Exception exp) {
-            return e;
         }
     }
 
