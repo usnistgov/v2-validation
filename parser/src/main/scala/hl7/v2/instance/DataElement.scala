@@ -19,14 +19,14 @@ object DataElement {
       case true  => None
       case false => Some {
         d match {
-          case vr: Varies => UnresolvedField(vr, r, l, i,Text(v))
-          case p: Primitive => SimpleField(p, r, l, i, Value(p, v))
+          case vr: Varies => UnresolvedField(vr, r, l, i,Text(v), v)
+          case p: Primitive => SimpleField(p, r, l, i, Value(p, v), v)
           case c: Composite => if(isNull(v)){
-            NULLComplexField(c,r,l,i)
+            NULLComplexField(c,r,l,i, v)
           }
           else {
             val (hasExtra, components) = children(l, c.components, v, s.cs)
-            ComplexField(c, r, l, i, components, hasExtra) 
+            ComplexField(c, r, l, i, components, hasExtra, v)
           }
         }
       }
@@ -42,17 +42,17 @@ object DataElement {
     */
   def component(d: Datatype, r: Req, l: Location, v: String)
                        (implicit s: Separators): Option[Component] =
-    v matches emptyComponent( s.ss ) match {
-      case true  => None
-      case false =>
-        d match {
-          case p: Primitive => Some(SimpleComponent(p, r, l, Value(p, v)))
-          case c: Composite =>
-            val (hasExtra, x) = children(l, c.components, v, s.ss)
-            val components = x.asInstanceOf[List[SimpleComponent]]
-            Some(ComplexComponent(c, r, l, components, hasExtra))
-          case _ => None
-        }
+    if (v matches emptyComponent(s.ss)) {
+      None
+    } else {
+      d match {
+        case p: Primitive => Some(SimpleComponent(p, r, l, Value(p, v)))
+        case c: Composite =>
+          val (hasExtra, x) = children(l, c.components, v, s.ss)
+          val components = x.asInstanceOf[List[SimpleComponent]]
+          Some(ComplexComponent(c, r, l, components, hasExtra))
+        case _ => None
+      }
     }
 
   /**

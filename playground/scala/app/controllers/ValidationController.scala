@@ -6,7 +6,7 @@ import java.util.stream.Collectors
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import hl7.v2.profile.XMLDeserializer
 import hl7.v2.validation.{HL7Validator, content}
-import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
+import hl7.v2.validation.vs.ValueSetLibraryImpl
 import javax.inject._
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
@@ -26,31 +26,35 @@ import scala.xml.SAXParseException
 
 object ResourceType extends Enumeration {
   type ResourceType = Value
-  val Profile, Constraints, VsLib, VsSpec, CoConstraints, Configuration = Value
+  val Profile, Constraints, VsLib, VsSpec, CoConstraints, Slicing, Configuration = Value
 }
 
 import ResourceType._
 
 case class ValidationQuery(
-                            profile: String,
-                            constraints: String,
-                            vsLib: String,
-                            vsSpec: String,
-                            coConstraints: String,
-                            configuration: String,
-                            id: String,
-                            message: String)
+  profile: String,
+  constraints: String,
+  vsLib: String,
+  vsSpec: String,
+  coConstraints: String,
+  slicing: String,
+  configuration: String,
+  id: String,
+  message: String
+)
 
 case class CheckResource(content: String, rType: ResourceType)
 
 case class ValidationResult(
-                             profile: ResourceCheckResult,
-                             constraints: ResourceCheckResult,
-                             vsLib: ResourceCheckResult,
-                             vsSpec: ResourceCheckResult,
-                             coConstraints: ResourceCheckResult,
-                             configuration: ResourceCheckResult,
-                             message: List[Entry])
+  profile: ResourceCheckResult,
+  constraints: ResourceCheckResult,
+  vsLib: ResourceCheckResult,
+  vsSpec: ResourceCheckResult,
+  coConstraints: ResourceCheckResult,
+  slicing: ResourceCheckResult,
+  configuration: ResourceCheckResult,
+  message: List[Entry]
+)
 
 case class Entry(category: String, classification: String, description: String, path: String, line: Int, column: Int)
 
@@ -72,22 +76,28 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
   val CONSTRAINTS_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd"
   val COCONSTRAINT_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/CoConstraintContext.xsd"
   val VSPEC_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ValueSetBindings.xsd"
-
+  val SLICING_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ProfileSlicing.xsd"
 
   def index() = Action {
     Ok.sendResource("public/index.html", this.getClass.getClassLoader)
   }
 
   def loadVxuExample() = Action {
-    Ok(Json.toJson(ValidationQuery(
-      scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/profile.xml")).mkString,
-      scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/constraints.xml")).mkString,
-      scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/vsLib.xml")).mkString,
-      "<ValueSetBindingsContext></ValueSetBindingsContext>",
-      scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/coconstraints.xml")).mkString,
-      scala.io.Source.fromInputStream(getClass.getResourceAsStream("/reference.conf")).mkString,
-      "aa72383a-7b48-46e5-a74a-82e019591fe7",
-      scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/message.hl7")).mkString)))
+    Ok(
+      Json.toJson(
+        ValidationQuery(
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/profile.xml")).mkString,
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/constraints.xml")).mkString,
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/vsLib.xml")).mkString,
+          "<ValueSetBindingsContext></ValueSetBindingsContext>",
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/coconstraints.xml")).mkString,
+          "<ProfileSlicing></ProfileSlicing>",
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/reference.conf")).mkString,
+          "aa72383a-7b48-46e5-a74a-82e019591fe7",
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/message.hl7")).mkString
+        )
+      )
+    )
   }
 
   def validateXML(xmlFile: String, xsdUrl: String, category: String): ResourceCheckResult = {
@@ -96,29 +106,62 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     val schema = factory.newSchema(new URL(xsdUrl))
     val validator = schema.newValidator()
     val issues: mutable.ArrayStack[Entry] = mutable.ArrayStack()
-    validator.setErrorHandler(new ErrorHandler {
-      override def warning(e: SAXParseException): Unit = {
-        issues.push(Entry(category + " XML Validation", "Warning", e.getMessage, "", e.getLineNumber, e.getColumnNumber))
-      }
+    validator.setErrorHandler(
+      new ErrorHandler {
+        override def warning(e: SAXParseException): Unit = {
+          issues.push(
+            Entry(
+              category + " XML Validation",
+              "Warning",
+              e.getMessage,
+              "",
+              e.getLineNumber,
+              e.getColumnNumber
+            )
+          )
+        }
 
-      override def error(e: SAXParseException): Unit = {
-        issues.push(Entry(category + " XML Validation", "Error", e.getMessage, "", e.getLineNumber, e.getColumnNumber))
-      }
+        override def error(e: SAXParseException): Unit = {
+          issues.push(
+            Entry(
+              category + " XML Validation",
+              "Error",
+              e.getMessage,
+              "",
+              e.getLineNumber,
+              e.getColumnNumber
+            )
+          )
+        }
 
-      override def fatalError(e: SAXParseException): Unit = {
-        issues.push(Entry(category + " XML Validation", "Error", e.getMessage, "", e.getLineNumber, e.getColumnNumber))
+        override def fatalError(e: SAXParseException): Unit = {
+          issues.push(
+            Entry(
+              category + " XML Validation",
+              "Error",
+              e.getMessage,
+              "",
+              e.getLineNumber,
+              e.getColumnNumber
+            )
+          )
+        }
       }
-    })
+    )
     Try {
       validator.validate(new StreamSource(new StringReader(xmlFile)))
     } match {
       case Success(_) => ResourceCheckResult(issues.toList.isEmpty, issues.toList)
-      case Failure(e: SAXParseException) => ResourceCheckResult(status = false, List {
-        Entry(category + " XML Validation", "Error", e.getMessage, "", e.getLineNumber, e.getColumnNumber)
-      })
-      case Failure(e) => ResourceCheckResult(status = false, List {
-        Entry(category + " XML Validation", "FatalError", e.getMessage, "", 0, 0)
-      })
+      case Failure(e: SAXParseException) => ResourceCheckResult(
+        status = false, List {
+          Entry(category + " XML Validation", "Error", e.getMessage, "", e.getLineNumber, e.getColumnNumber)
+        }
+      )
+      case Failure(e) => ResourceCheckResult(
+        status = false, List {
+          Entry(category + " XML Validation", "FatalError", e.getMessage, "", 0, 0)
+        }
+      )
     }
   }
 
@@ -129,12 +172,21 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       case VsLib => validateXML(content, VSLIB_XSD, "Value Set Library")
       case VsSpec => validateXML(content, VSPEC_XSD, "Value Set Bindings")
       case CoConstraints => validateXML(content, COCONSTRAINT_XSD, "Co-Constraints")
+      case Slicing => validateXML(content, SLICING_XSD, "Slicing")
       case Configuration => Try {
         ConfigFactory.parseReader(new StringReader(content)).resolve()
       } match {
         case Success(_) => ResourceCheckResult(status = true, Nil)
-        case Failure(ex: ConfigException) => ResourceCheckResult(status = false, List { Entry("Configuration Validation", "Error", ex.getMessage, "", ex.origin().lineNumber(), 0) })
-        case Failure(ex) => ResourceCheckResult(status = false, List { Entry("Configuration Validation", "Error", ex.getMessage, "", 0, 0) })
+        case Failure(ex: ConfigException) => ResourceCheckResult(
+          status = false, List {
+            Entry("Configuration Validation", "Error", ex.getMessage, "", ex.origin().lineNumber(), 0)
+          }
+        )
+        case Failure(ex) => ResourceCheckResult(
+          status = false, List {
+            Entry("Configuration Validation", "Error", ex.getMessage, "", 0, 0)
+          }
+        )
       }
     }
   }
@@ -149,7 +201,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     }
   }
 
-  def validateMessage(query: ValidationQuery):  Future[List[Entry]] = {
+  def validateMessage(query: ValidationQuery): Future[List[Entry]] = {
     val profile = XMLDeserializer.deserialize(new ByteArrayInputStream(query.profile.getBytes)) match {
       case Success(p) => p
       case Failure(e) => throw e
@@ -157,22 +209,42 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     val vsLib = ValueSetLibraryImpl(new ByteArrayInputStream(query.vsLib.getBytes)).get
     val constraints = content.DefaultConformanceContext(new ByteArrayInputStream(query.constraints.getBytes)).get
     val vsSpec = hl7.v2.validation.vs.DefaultValueSetSpecification(new ByteArrayInputStream(query.vsSpec.getBytes)).get
-    val coConstraints = hl7.v2.validation.coconstraints.DefaultCoConstraintValidationContext(new ByteArrayInputStream(query.coConstraints.getBytes)).get
+    val coConstraints = hl7.v2.validation.coconstraints.DefaultCoConstraintValidationContext(
+      new ByteArrayInputStream(
+        query.coConstraints.getBytes
+      )
+    ).get
+    val slicing = hl7.v2.validation.slicing.DefaultProfileSlicingContext(
+      new ByteArrayInputStream(
+        query.slicing.getBytes
+      ),
+      profile
+    ).get
+    val validator = new HL7Validator(profile, vsLib, constraints, vsSpec, coConstraints, slicing)
 
-    val validator = new HL7Validator(profile, vsLib, constraints, vsSpec, coConstraints)
 
-
-      validator.validate(query.message, query.id, new StringReader(query.configuration)) map {
-        (result) =>
-          result.getEntries.values()
-            .stream()
-            .flatMap(_.stream())
-            .collect(Collectors.toList())
-            .asScala.toList
-            .map(v => Entry(v.getCategory(), v.getClassification(), v.getDescription(), v.getPath(), v.getLine(), v.getColumn()))
-      } recover {
-        case e => List { Entry("Message Validation Failure", "Error", e.getMessage, "", 0, 0) }
+    validator.validate(query.message, query.id, new StringReader(query.configuration)) map {
+      (result) =>
+        result.getEntries.values()
+          .stream()
+          .flatMap(_.stream())
+          .collect(Collectors.toList())
+          .asScala.toList
+          .map(
+            v => Entry(
+              v.getCategory(),
+              v.getClassification(),
+              v.getDescription(),
+              v.getPath(),
+              v.getLine(),
+              v.getColumn()
+            )
+          )
+    } recover {
+      case e => List {
+        Entry("Message Validation Failure", "Error", e.getMessage, "", 0, 0)
       }
+    }
   }
 
   def validation() = Action.async { implicit request =>
@@ -188,22 +260,32 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
         val vsLibCheck = check(query.vsLib, VsLib)
         val vsSpecCheck = check(query.vsSpec, VsSpec)
         val coConstraintCheck = check(query.coConstraints, CoConstraints)
+        val slicingCheck = check(query.slicing, Slicing)
         val configurationCheck = check(query.configuration, Configuration)
 
         val resourcesAreValid = !profileCheck.status || !constraintsCheck.status || !vsLibCheck.status || !configurationCheck.status
-        val entries = if(resourcesAreValid) Future { List{ Entry("Resource Validation Failure", "Error", "One or more resources are invalid", "", 0, 0) } } else validateMessage(query)
+        val entries = if (resourcesAreValid) Future {
+          List {
+            Entry("Resource Validation Failure", "Error", "One or more resources are invalid", "", 0, 0)
+          }
+        } else validateMessage(query)
 
-        entries.map((list) => Ok(
-          Json.toJson(ValidationResult(
-            profileCheck,
-            constraintsCheck,
-            vsLibCheck,
-            vsSpecCheck,
-            coConstraintCheck,
-            configurationCheck,
-            list
-          ))
-        ))
+        entries.map(
+          (list) => Ok(
+            Json.toJson(
+              ValidationResult(
+                profileCheck,
+                constraintsCheck,
+                vsLibCheck,
+                vsSpecCheck,
+                coConstraintCheck,
+                slicingCheck,
+                configurationCheck,
+                list
+              )
+            )
+          )
+        )
       }
     }
   }

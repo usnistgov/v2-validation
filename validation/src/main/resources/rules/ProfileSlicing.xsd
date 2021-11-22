@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:include schemaLocation="Expressions.xsd"/>
+
+    <xs:element name="ProfileSlicing" type="ProfileSlicingType"/>
+
+    <xs:complexType name="ProfileSlicingType">
+        <xs:sequence>
+            <xs:element name="SegmentSlicing" type="SegmentSlicingType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="FieldSlicing" type="FieldSlicingType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SegmentSlicingType">
+        <xs:sequence>
+            <xs:element name="Context" type="SegmentSlicingContextType" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="FieldSlicingType">
+        <xs:sequence>
+            <xs:element name="Context" type="FieldSlicingContextType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SegmentSlicingContextType">
+        <xs:choice maxOccurs="unbounded" >
+            <xs:element name="AssertionSlicing" type="AssertionSlicingType"/>
+            <xs:element name="OccurrenceSlicing" type="OccurrenceSlicingType"/>
+        </xs:choice>
+        <xs:attribute name="ID" type="XMLElementNamingConvention" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="FieldSlicingContextType">
+        <xs:choice maxOccurs="unbounded" >
+            <xs:element name="AssertionSlicing" type="AssertionSlicingType"/>
+            <xs:element name="OccurrenceSlicing" type="OccurrenceSlicingType"/>
+        </xs:choice>
+        <xs:attribute name="ID" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="AssertionSlicingType">
+        <xs:sequence>
+            <xs:element name="Slice" type="AssertionSliceType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Position" type="PositiveInteger" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="OccurrenceSlicingType">
+        <xs:sequence>
+            <xs:element name="Slice" type="OccurrenceSliceType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Position" type="PositiveInteger" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="OccurrenceSliceType">
+        <xs:attribute name="Ref" type="NonEmptyString" use="required"/>
+        <xs:attribute name="Occurrence" type="PositiveInteger" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="AssertionSliceType">
+        <xs:sequence>
+            <xs:element name="Description" type="NonEmptyString"/>
+            <xs:element name="Assertion" type="AssertionType"/>
+        </xs:sequence>
+        <xs:attribute name="Ref" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="AssertionType">
+        <xs:group ref="AnyExpressionGroup"/>
+    </xs:complexType>
+
+    <xs:simpleType name="XMLElementNamingConvention">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="[a-wyzA-WYZ_][a-zA-Z0-9_.-]*|[xX]|[xX][mM]|[xX][a-ln-zA-LN-Z0-9_.-][a-zA-Z0-9_.-]*|[xX][mM][a-km-zA-KM-Z0-9_.-][a-zA-Z0-9_.-]*"
+            />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

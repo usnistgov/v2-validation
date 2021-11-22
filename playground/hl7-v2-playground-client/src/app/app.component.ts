@@ -73,6 +73,10 @@ export class AppComponent {
       text: 'Co-Constraints',
     },
     {
+      value: ResourceType.SLICING,
+      text: 'Slicing',
+    },
+    {
       value: ResourceType.CONFIGURATION,
       text: 'Configuration',
     },
@@ -115,6 +119,7 @@ export class AppComponent {
         this.dataService.putValue(ResourceType.CONFIGURATION, value.configuration);
         this.dataService.putValue(ResourceType.VALUESET, value.vsLib);
         this.dataService.putValue(ResourceType.VALUESETSPEC, value.vsSpec);
+        this.dataService.putValue(ResourceType.SLICING, value.slicing);
         this.dataService.putValue(ResourceType.COCONSTRAINTS, value.coConstraints);
         this.dataService.putValue(ResourceType.MESSAGE, value.message);
       })
@@ -147,6 +152,7 @@ export class AppComponent {
           constraints: this.dataService.get(ResourceType.CONSTRAINTS).text,
           vsSpec: this.dataService.get(ResourceType.VALUESETSPEC).text,
           coConstraints: this.dataService.get(ResourceType.COCONSTRAINTS).text,
+          slicing: this.dataService.get(ResourceType.SLICING).text,
           configuration: this.dataService.get(ResourceType.CONFIGURATION).text,
           id: messageId.id,
           message: this.dataService.get(ResourceType.MESSAGE).text,
@@ -158,6 +164,7 @@ export class AppComponent {
       this.dataService.putIssues(ResourceType.CONSTRAINTS, value.constraints.issues);
       this.dataService.putIssues(ResourceType.VALUESETSPEC, value.vsSpec.issues);
       this.dataService.putIssues(ResourceType.COCONSTRAINTS, value.coConstraints.issues);
+      this.dataService.putIssues(ResourceType.SLICING, value.slicing.issues);
       this.dataService.putIssues(ResourceType.CONFIGURATION, value.configuration.issues);
       this.dataService.putIssues(ResourceType.MESSAGE, value.message);
       this.blockUI.stop();

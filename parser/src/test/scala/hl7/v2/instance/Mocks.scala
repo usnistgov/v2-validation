@@ -14,6 +14,7 @@ trait Mocks {
     /*val qProps   = QProps(QType.DT, "id", "name")*/
     val hasExtra = false
     val req = Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
+    val rawMessageValue = "";
   }
 
   case class S(override val position: Int, instance: Int, value: Value)
