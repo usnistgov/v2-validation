@@ -142,6 +142,7 @@ trait ValueSetValidationDefaultConfigurationSpec2 extends Specification
     val location: Location = Location(null, "desc ...", "Path", -1, -1)
     val hasExtra = false
     val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
+    val rawMessageValue = "";
   }
 
   case class S(override val position: Int, instance: Int, value: Value)

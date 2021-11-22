@@ -55,8 +55,8 @@ trait DefaultParser extends Parser {
    * Creates the children of a message or a group. Returns a pair consisting
    * of the list of children elements and the remaining stack.
    */
-  private def processChildren(models: List[SGM], stack: Stack)(implicit separators: Separators, ctr: Counter, ambiguous : Boolean): (LSG, Stack) = {
-    var isHead = true
+  protected def processChildren(models: List[SGM], stack: Stack, head: Boolean = true)(implicit separators: Separators, ctr: Counter, ambiguous : Boolean): (LSG, Stack) = {
+    var isHead = head
     models.foldLeft((List[SegOrGroup](), stack)) { (acc, x) =>
       x match {
         case sm: SM =>

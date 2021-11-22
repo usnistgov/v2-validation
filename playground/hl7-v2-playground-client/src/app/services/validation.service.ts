@@ -9,6 +9,7 @@ export interface IValidationQuery {
   vsLib: string;
   vsSpec: string;
   coConstraints: string;
+  slicing: string;
   configuration: string;
   id: string;
   message: string;
@@ -34,6 +35,7 @@ export interface IValidationResult {
   vsLib: ICheckResourceResult;
   vsSpec: ICheckResourceResult;
   coConstraints: ICheckResourceResult;
+  slicing: ICheckResourceResult;
   configuration: ICheckResourceResult;
   message: IEntry[];
 }

@@ -1029,6 +1029,56 @@ public class ConfigurableDetections {
 		return entry(e.location(), description, category, classification);
 	}
 
+	// Slicing Detections
+
+	public Entry assertionSlicingMatch(Element e, String assertion, String type, String ref) {
+		String category = conf.getString("report.assertion-slicing-match.category");
+		String classification = conf.getString("report.assertion-slicing-match.classification");
+		String template = conf.getString("report.assertion-slicing-match.template");
+		String description = String.format(template, assertion, e.location().prettyString(), type, ref);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry occurrenceSlicingMatch(Element e, int occurrence, String type, String ref) {
+		String category = conf.getString("report.occurrence-slicing-match.category");
+		String classification = conf.getString("report.occurrence-slicing-match.classification");
+		String template = conf.getString("report.occurrence-slicing-match.template");
+		String description = String.format(template, occurrence, e.location().prettyString(), type, ref);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry slicingNoMatch(Element e) {
+		String category = conf.getString("report.slicing-no-match.category");
+		String classification = conf.getString("report.slicing-no-match.classification");
+		String template = conf.getString("report.slicing-no-match.template");
+		String description = String.format(template, e.location().prettyString());
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry assertionSlicingInconclusive(Element e, String assertion, String type, String ref, String reason) {
+		String category = conf.getString("report.assertion-slicing-inconclusive.category");
+		String classification = conf.getString("report.assertion-slicing-inconclusive.classification");
+		String template = conf.getString("report.assertion-slicing-inconclusive.template");
+		String description = String.format(template, assertion, type, ref, e.location().prettyString(), reason);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry slicingTargetGroup(Element e) {
+		String category = conf.getString("report.slicing-target-group.category");
+		String classification = conf.getString("report.slicing-target-group.classification");
+		String template = conf.getString("report.slicing-target-group.template");
+		String description = String.format(template, e.location().prettyString());
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry slicingMatchError(Element e, String type, String ref, String reason) {
+		String category = conf.getString("report.slicing-match-error.category");
+		String classification = conf.getString("report.slicing-match-error.classification");
+		String template = conf.getString("report.slicing-match-error.template");
+		String description = String.format(template, type, ref, e.location().prettyString(), reason);
+		return entry(e.location(), description, category, classification);
+	}
+
 
 	class ValueSetDetails {
 

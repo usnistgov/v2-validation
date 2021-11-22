@@ -14,7 +14,7 @@ import scala.collection.JavaConverters._
 import java.io.Reader
 
 import hl7.v2.validation.coconstraints.{CoConstraintValidationContext, EmptyCoConstraintValidationContext}
-import hl7.v2.validation.content.DefaultConformanceContext
+import hl7.v2.validation.slicing.{EmptyProfileSlicingContext, ProfileSlicingContext}
 import hl7.v2.validation.vs.EmptyValueSetSpecification
 
 /**
@@ -24,7 +24,12 @@ import hl7.v2.validation.vs.EmptyValueSetSpecification
  * @author Hossam Tamri <hossam.tamri@gmail.com>
  */
 
-trait Validator { this: Parser with structure.Validator with content.Validator with vs.VsValidator with coconstraints.CoConstraintValidator =>
+trait Validator { this: Parser
+    with structure.Validator
+    with content.Validator
+    with vs.VsValidator
+    with slicing.SliceEvaluator
+    with coconstraints.CoConstraintValidator =>
 
   val profile: Profile
   val valueSetLibrary: vs.ValueSetLibrary
@@ -58,18 +63,18 @@ trait Validator { this: Parser with structure.Validator with content.Validator w
             val defaultConfig = ConfigFactory.load();
             implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).withFallback(defaultConfig).resolve());
             implicit val vsValidator: vs.Validator = new vs.Validator(detections)
-            val structErrors = checkStructure(m)
-            val contentErrors = checkContent(m)
-            val valueSetErrors = checkValueSets(m)
-            val legacyValueSetErrors = Future { vsValidator.checkValueSet(m, valueSetLibrary) }
-            val coConstraintErrors = checkCoConstraint(m)
+
             for {
-              r1 <- structErrors
-              r2 <- contentErrors
-              r3 <- valueSetErrors
-              r4 <- legacyValueSetErrors
-              r5 <- coConstraintErrors
-            } yield report.Report(r1, r2 ++ r5, asScalaBuffer(r4) ++ r3)
+              (sliceAppliedMessage, slicingDetections) <- applySlices(m)
+              r1 <- checkStructure(sliceAppliedMessage)
+              r2 <- checkContent(sliceAppliedMessage)
+              r3 <- checkValueSets(sliceAppliedMessage)
+              r4 <- Future { vsValidator.checkValueSet(sliceAppliedMessage, valueSetLibrary) }
+              r5 <- checkCoConstraint(sliceAppliedMessage)
+            } yield {
+              report.Report(r1 ++ slicingDetections, r2 ++ r5, asScalaBuffer(r4) ++ r3)
+            }
+
           case Failure(e) => Future failed e
         }
     }
@@ -84,10 +89,13 @@ class HL7Validator(
   val valueSetLibrary: vs.ValueSetLibrary,
   val conformanceContext: content.ConformanceContext,
   val vsSpecification : vs.ValueSetSpecification,
-  val coConstraintValidationContext: CoConstraintValidationContext) extends Validator
+  val coConstraintValidationContext: CoConstraintValidationContext,
+  val profileSlicingContext: ProfileSlicingContext,
+) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
     with content.DefaultValidator
+    with slicing.DefaultSliceEvaluator
     with vs.DefaultValueSetValidator
     with expression.DefaultEvaluator
     with coconstraints.DefaultValidator {
@@ -101,7 +109,8 @@ class HL7Validator(
       valueSetLibrary,
       conformanceContext,
       EmptyValueSetSpecification,
-      EmptyCoConstraintValidationContext
+      EmptyCoConstraintValidationContext,
+      EmptyProfileSlicingContext
     )
 
   /** v1.6.0+ vs specification (Empty Co-Constraint Specification) */
@@ -114,7 +123,8 @@ class HL7Validator(
       valueSetLibrary,
       conformanceContext,
       vsSpecification,
-      EmptyCoConstraintValidationContext
+      EmptyCoConstraintValidationContext,
+      EmptyProfileSlicingContext
     )
 
   /** v1.6.0+ co-constraints (Empty VS Specification) */
@@ -127,7 +137,19 @@ class HL7Validator(
       valueSetLibrary,
       conformanceContext,
       EmptyValueSetSpecification,
-      coConstraintValidationContext
+      coConstraintValidationContext,
+      EmptyProfileSlicingContext
+    )
+
+  /** v1.6.0+ Use ValidationContext (Builder) */
+  def this(context: ValidationContext) =
+    this(
+      context.profile,
+      context.valueSetLibrary,
+      context.conformanceContext,
+      context.vsSpecification,
+      context.coConstraintValidationContext,
+      context.slicingContext
     )
 }
 
@@ -140,8 +162,10 @@ class SyncHL7Validator(
         override val valueSetLibrary: vs.ValueSetLibrary,
         override val conformanceContext: content.ConformanceContext,
         override val vsSpecification : vs.ValueSetSpecification,
-        override val coConstraintValidationContext: CoConstraintValidationContext)
-  extends HL7Validator(profile, valueSetLibrary, conformanceContext, vsSpecification, coConstraintValidationContext) {
+        override val coConstraintValidationContext: CoConstraintValidationContext,
+        override val profileSlicingContext: ProfileSlicingContext
+)
+  extends HL7Validator(profile, valueSetLibrary, conformanceContext, vsSpecification, coConstraintValidationContext, profileSlicingContext) {
 
   /** v1 (Empty VS Specification, Empty Co-Constraint Specification) */
   def this(profile: Profile,
@@ -152,7 +176,8 @@ class SyncHL7Validator(
       valueSetLibrary,
       conformanceContext,
       EmptyValueSetSpecification,
-      EmptyCoConstraintValidationContext
+      EmptyCoConstraintValidationContext,
+      EmptyProfileSlicingContext
     )
 
   /** v1.6.0+ vs specification (Empty Co-Constraint Specification) */
@@ -165,7 +190,8 @@ class SyncHL7Validator(
       valueSetLibrary,
       conformanceContext,
       vsSpecification,
-      EmptyCoConstraintValidationContext
+      EmptyCoConstraintValidationContext,
+      EmptyProfileSlicingContext
     )
 
   /** v1.6.0+ co-constraints (Empty VS Specification) */
@@ -178,7 +204,19 @@ class SyncHL7Validator(
       valueSetLibrary,
       conformanceContext,
       EmptyValueSetSpecification,
-      coConstraintValidationContext
+      coConstraintValidationContext,
+      EmptyProfileSlicingContext
+    )
+
+  /** v1.6.0+ Use ValidationContext (Builder) */
+  def this(context: ValidationContext) =
+    this(
+      context.profile,
+      context.valueSetLibrary,
+      context.conformanceContext,
+      context.vsSpecification,
+      context.coConstraintValidationContext,
+      context.slicingContext
     )
 
 

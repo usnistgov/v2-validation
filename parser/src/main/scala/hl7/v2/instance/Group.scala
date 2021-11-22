@@ -8,7 +8,7 @@ import hl7.v2.profile.{Group => GM}
 case class Group (
     model: GM,
     instance: Int,
-    children: List[SegOrGroup]
+    children: List[SegOrGroup],
 ) extends SegOrGroup {
 
   // The group should contain an element with position = 1 and instance = 1

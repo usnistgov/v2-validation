@@ -10,6 +10,7 @@ sealed trait Field extends Element {
   def req: Req
   def location: Location
   def instance: Int
+  def rawMessageValue: String
 }
 
 /**
@@ -20,7 +21,8 @@ case class SimpleField(
     req: Req,
     location: Location,
     instance: Int,
-    value: Value
+    value: Value,
+    rawMessageValue: String
 ) extends Field with Simple
 
 /**
@@ -31,8 +33,9 @@ case class UnresolvedField(
     req: Req,
     location: Location,
     instance: Int,
-    value: Value
-) extends Field 
+    value: Value,
+    rawMessageValue: String
+) extends Field
 
 
 /**
@@ -44,7 +47,8 @@ case class ComplexField(
     location: Location,
     instance: Int,
     children: List[Component],
-    hasExtra: Boolean
+    hasExtra: Boolean,
+    rawMessageValue: String
 ) extends Field with Complex {
 
   def reqs = datatype.reqs
@@ -57,7 +61,8 @@ case class NULLComplexField (
       datatype: Composite,
       req: Req,
       location: Location,
-      instance: Int
+      instance: Int,
+      rawMessageValue: String
   ) extends Field with Complex {
   def reqs = datatype.reqs
   def children = Nil
