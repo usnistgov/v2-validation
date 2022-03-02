@@ -29,6 +29,12 @@ export interface ICheckResourceResult {
   issues: IEntry[];
 }
 
+export interface IParseQuery {
+  profile: string;
+  message: string;
+  id: string;
+}
+
 export interface IValidationResult {
   profile: ICheckResourceResult;
   constraints: ICheckResourceResult;
@@ -54,6 +60,10 @@ export class ValidationService {
 
   validate(query: IValidationQuery): Observable<IValidationResult> {
     return this.http.post<IValidationResult>('api/validate', query);
+  }
+
+  parse(query: IParseQuery): Observable<string> {
+    return this.http.post<string>('api/parse', query);
   }
 
   checkResource(content: string, rType: ResourceType): Observable<ICheckResourceResult> {

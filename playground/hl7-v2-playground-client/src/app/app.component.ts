@@ -4,6 +4,8 @@ import { mergeMap, tap } from 'rxjs/operators';
 import { IPlayGroundContent, DataService, ResourceType, Status } from './services/data.service';
 import { Observable, of } from 'rxjs';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { MatDialog } from '@angular/material/dialog';
+import { ParseDialogComponent } from './components/parse-dialog/parse-dialog.component';
 
 export interface IMessageID {
   structId: string;
@@ -91,6 +93,7 @@ export class AppComponent {
 
   constructor(
     private validationService: ValidationService,
+    private dialog: MatDialog,
     private dataService: DataService) {
     this.content = this.dataService.getState();
   }
@@ -140,6 +143,31 @@ export class AppComponent {
     } else {
       return of();
     }
+  }
+
+  parseMessage(): void {
+    this.getMessageId().pipe(
+      mergeMap((messageId) => {
+        this.blockUI.start('Parsing...');
+        return this.validationService.parse({
+          profile: this.dataService.get(ResourceType.PROFILE).text,
+          id: messageId.id,
+          message: this.dataService.get(ResourceType.MESSAGE).text,
+        });
+      })
+    ).subscribe((value) => {
+      this.dialog.open(ParseDialogComponent, {
+        height: '90vh',
+        minHeight: '90vh',
+        width: '90vw',
+        minWidth: '90vw',
+        data: {
+          message: value,
+        }
+      });
+      this.blockUI.stop();
+    },
+      () => this.blockUI.stop());
   }
 
   validate(): void {

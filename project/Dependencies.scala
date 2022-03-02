@@ -20,4 +20,7 @@ object Dependencies {
   val vreport       = "com.github.hl7-tools"          %   "validation-report"     %  "1.0.0"
   val scala_xml     = "org.scala-lang.modules"        %%   "scala-xml"        %  "1.0.6"
   val sext          = "com.github.nikita-volkov"      % "sext"                    % "0.2.4"
+  val json4s = "org.json4s" %% "json4s-jackson" % "3.5.0.RC1"
+
+
 }
