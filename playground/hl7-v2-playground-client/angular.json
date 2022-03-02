@@ -31,11 +31,11 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.scss",
               "./node_modules/bootstrap/dist/css/bootstrap.css"
             ],
-            "scripts": [
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -97,6 +97,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -128,6 +129,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "hl7-v2-playground-client"
 }

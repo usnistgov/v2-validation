@@ -51,6 +51,7 @@
             <button class="btn btn-primary btn-tool" (click)="format(activeTab)"> Format </button>
           </ng-container>
           <ng-container *ngIf="activeTab === resourceType.MESSAGE">
+            <button class="btn btn-primary btn-tool" (click)="parseMessage()" > Parse Message </button>
             <button class="btn btn-success btn-tool" (click)="validate()" > Validate </button>
           </ng-container>
         </div>

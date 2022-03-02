@@ -13,7 +13,8 @@ ThisBuild / scalacOptions := Seq(
   "-deprecation",
   "-target:jvm-1.8",
   "-language:_",
-  "-Dconfig.trace=loads"
+  "-Dconfig.trace=loads",
+  "-J-Xmx2g"
 )
 
 lazy val root = project.in(file(".")).aggregate(profile, parser, validation)
@@ -61,7 +62,8 @@ lazy val playground = Project("hl7-v2-validation-playground", file("playground/s
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
       guice,
-      "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+      "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
+      json4s
     ),
     scalacOptions ++= Seq(
       "-feature",

@@ -5,7 +5,7 @@ import java.util.stream.Collectors
 
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.{HL7Validator, content}
+import hl7.v2.validation.{HL7Validator, ValidationContext, content}
 import hl7.v2.validation.vs.ValueSetLibraryImpl
 import javax.inject._
 import javax.xml.transform.stream.StreamSource
@@ -16,6 +16,8 @@ import play.api.libs.json.{Json, Reads, Writes}
 import java.net.URL
 
 import controllers.ResourceType.{Constraints, Profile, VsLib}
+import hl7.v2.parser.impl.DefaultParser
+import service.{FormatParsedMessage, MessageNode}
 
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -56,12 +58,18 @@ case class ValidationResult(
   message: List[Entry]
 )
 
+case class ParseQuery(
+  profile: String,
+  message: String,
+  id: String,
+)
+
 case class Entry(category: String, classification: String, description: String, path: String, line: Int, column: Int)
 
 case class ResourceCheckResult(status: Boolean, issues: List[Entry])
 
 @Singleton
-class ValidationController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class ValidationController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with DefaultParser {
 
   implicit val vQueryReads: Reads[ValidationQuery] = Json.reads[ValidationQuery]
   implicit val vQueryWrites: Writes[ValidationQuery] = Json.writes[ValidationQuery]
@@ -70,6 +78,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
   implicit val valResultWrites: Writes[ValidationResult] = Json.writes[ValidationResult]
   implicit val genderReads: Reads[controllers.ResourceType.Value] = Reads.enumNameReads(ResourceType)
   implicit val checkResReads: Reads[CheckResource] = Json.reads[CheckResource]
+  implicit val parseReads: Reads[ParseQuery] = Json.reads[ParseQuery]
+  implicit val parseWrites: Writes[ParseQuery] = Json.writes[ParseQuery]
 
   val PROFIL_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd"
   val VSLIB_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ValueSets.xsd"
@@ -201,7 +211,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     }
   }
 
-  def validateMessage(query: ValidationQuery): Future[List[Entry]] = {
+  def getValidationContext(query: ValidationQuery): ValidationContext = {
     val profile = XMLDeserializer.deserialize(new ByteArrayInputStream(query.profile.getBytes)) match {
       case Success(p) => p
       case Failure(e) => throw e
@@ -220,8 +230,22 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       ),
       profile
     ).get
-    val validator = new HL7Validator(profile, vsLib, constraints, vsSpec, coConstraints, slicing)
+    ValidationContext(profile, vsLib, constraints, vsSpec, coConstraints, slicing)
+  }
 
+  def getParsedTree(query: ParseQuery) = {
+    val profile = XMLDeserializer.deserialize(new ByteArrayInputStream(query.profile.getBytes)) match {
+      case Success(p) => p
+      case Failure(e) => throw e
+    }
+    val messageParsed = parse(query.message, profile.getMessage(query.id)).get
+    FormatParsedMessage.format(messageParsed, false)
+  }
+
+
+  def validateMessage(query: ValidationQuery): Future[List[Entry]] = {
+    val context = getValidationContext(query)
+    val validator = new HL7Validator(context)
 
     validator.validate(query.message, query.id, new StringReader(query.configuration)) map {
       (result) =>
@@ -247,45 +271,73 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     }
   }
 
+  def checkValidationQueryAndDo[T](query: ValidationQuery, exec: (ValidationQuery, ValidationResult) => T): T = {
+    val profileCheck = check(query.profile, Profile)
+    val constraintsCheck = check(query.constraints, Constraints)
+    val vsLibCheck = check(query.vsLib, VsLib)
+    val vsSpecCheck = check(query.vsSpec, VsSpec)
+    val coConstraintCheck = check(query.coConstraints, CoConstraints)
+    val slicingCheck = check(query.slicing, Slicing)
+    val configurationCheck = check(query.configuration, Configuration)
+
+    exec(
+      query,
+      ValidationResult(
+        profileCheck,
+        constraintsCheck,
+        vsLibCheck,
+        vsSpecCheck,
+        coConstraintCheck,
+        slicingCheck,
+        configurationCheck,
+        List()
+      )
+    )
+  }
+
+
   def validation() = Action.async { implicit request =>
     request.body.asJson match {
       case None => Future {
         BadRequest("No Argument Found")
       }
       case Some(body) => {
-        val query = body.validate[ValidationQuery].get
+        checkValidationQueryAndDo(
+          body.validate[ValidationQuery].get,
+          (query, validationResult) => {
+            val resourcesAreValid =
+              !validationResult.profile.status ||
+              !validationResult.constraints.status ||
+              !validationResult.vsLib.status ||
+              !validationResult.configuration.status
+            val entries = if (resourcesAreValid) Future {
+              List {
+                Entry("Resource Validation Failure", "Error", "One or more resources are invalid", "", 0, 0)
+              }
+            } else validateMessage(query)
 
-        val profileCheck = check(query.profile, Profile)
-        val constraintsCheck = check(query.constraints, Constraints)
-        val vsLibCheck = check(query.vsLib, VsLib)
-        val vsSpecCheck = check(query.vsSpec, VsSpec)
-        val coConstraintCheck = check(query.coConstraints, CoConstraints)
-        val slicingCheck = check(query.slicing, Slicing)
-        val configurationCheck = check(query.configuration, Configuration)
-
-        val resourcesAreValid = !profileCheck.status || !constraintsCheck.status || !vsLibCheck.status || !configurationCheck.status
-        val entries = if (resourcesAreValid) Future {
-          List {
-            Entry("Resource Validation Failure", "Error", "One or more resources are invalid", "", 0, 0)
-          }
-        } else validateMessage(query)
-
-        entries.map(
-          (list) => Ok(
-            Json.toJson(
-              ValidationResult(
-                profileCheck,
-                constraintsCheck,
-                vsLibCheck,
-                vsSpecCheck,
-                coConstraintCheck,
-                slicingCheck,
-                configurationCheck,
-                list
+            entries.map(
+              (list) => Ok(
+                Json.toJson(
+                  validationResult.copy(message = list)
+                )
               )
             )
-          )
+
+          }
         )
+      }
+    }
+  }
+
+  def parseMessage() = Action { implicit request =>
+    request.body.asJson match {
+      case None => BadRequest("No Argument Found")
+      case Some(body) => {
+        val query = body.validate[ParseQuery].get
+        val profileCheck = check(query.profile, Profile)
+        if(profileCheck.status) Ok(Json.toJson(FormatParsedMessage.toJson(getParsedTree(query))))
+        else BadRequest("Invalid Profile")
       }
     }
   }

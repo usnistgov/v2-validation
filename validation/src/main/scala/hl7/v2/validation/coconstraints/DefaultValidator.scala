@@ -30,6 +30,7 @@ trait CoConstraintSelectorNoMatch extends CoConstraintSelector {
 
 case class RequiredGroup(group: CoConstraintGroup) extends CoConstraintValidationCode
 case class RequiredCoConstraint(coConstraint: CoConstraint) extends CoConstraintValidationCode
+/// TODO Required Co-Constraint In Group (with grouper)
 case class CardinalityCoConstraint(coConstraint: CoConstraint, found: Int) extends CoConstraintValidationCode
 case class CardinalityGroup(group: CoConstraintGroup, found: Int) extends CoConstraintValidationCode
 case class ElementIsNotSegment(path: String, element: Element) extends CoConstraintValidationCode
