@@ -28,7 +28,7 @@ import scala.xml.SAXParseException
 
 object ResourceType extends Enumeration {
   type ResourceType = Value
-  val Profile, Constraints, VsLib, VsSpec, CoConstraints, Slicing, Configuration = Value
+  val Profile, Constraints, VsLib, ValueSetSpec, CoConstraints, Slicing, Configuration = Value
 }
 
 import ResourceType._
@@ -180,7 +180,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       case Profile => validateXML(content, PROFIL_XSD, "Profile")
       case Constraints => validateXML(content, CONSTRAINTS_XSD, "Constraints")
       case VsLib => validateXML(content, VSLIB_XSD, "Value Set Library")
-      case VsSpec => validateXML(content, VSPEC_XSD, "Value Set Bindings")
+      case ValueSetSpec => validateXML(content, VSPEC_XSD, "Value Set Bindings")
       case CoConstraints => validateXML(content, COCONSTRAINT_XSD, "Co-Constraints")
       case Slicing => validateXML(content, SLICING_XSD, "Slicing")
       case Configuration => Try {
@@ -275,7 +275,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     val profileCheck = check(query.profile, Profile)
     val constraintsCheck = check(query.constraints, Constraints)
     val vsLibCheck = check(query.vsLib, VsLib)
-    val vsSpecCheck = check(query.vsSpec, VsSpec)
+    val vsSpecCheck = check(query.vsSpec, ValueSetSpec)
     val coConstraintCheck = check(query.coConstraints, CoConstraints)
     val slicingCheck = check(query.slicing, Slicing)
     val configurationCheck = check(query.configuration, Configuration)

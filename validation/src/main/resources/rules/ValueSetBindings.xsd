@@ -5,7 +5,6 @@
 	<xs:element name="ValueSetBindingsContext" type="ValueSetBindingsContextType"/>
 	<xs:complexType name="ValueSetBindingsContextType">
 		<xs:sequence>
-			<xs:element name="MetaData" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="ValueSetBindings" type="ValueSetBindingsType" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>

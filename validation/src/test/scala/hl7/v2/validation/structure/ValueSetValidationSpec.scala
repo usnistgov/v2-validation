@@ -20,7 +20,6 @@ trait ValueSetValidationSpec extends Specification
        with DefaultParser {def is = s2"""
 
   ValueSet Specification
-    Specification Errors
       Validation should detect an empty VS (Primitive/Single, Complex/Single, Complex/Multiple) $emptyVs
       Validation should detect an VS excluded from validation (Primitive/Single, Complex/Single, Complex/Multiple) $excludedVs
       Validation should detect a VS Not Found (Primitive/Single, Complex/Single, Complex/Multiple) $vsNotFound
