@@ -100,7 +100,7 @@ trait SlicingEvalSpec extends Specification
       SLICING,
       (fields, TARGET_FIELD, codes) => {
         val containsANoSliceMatch = codes must containTheSameElementsAs(List(
-          NoSliceMatch(SLICING, TARGET_FIELD)
+          NoSliceMatch(SLICING, TARGET_FIELD, TARGET_FIELD.asInstanceOf[Field].datatype.id)
         ))
 
         containsANoSliceMatch :: fields.filter(_.position == 2)
@@ -155,7 +155,7 @@ trait SlicingEvalSpec extends Specification
 
         val containsNoSliceMatchAndInconclusive = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_FIELD),
+            NoSliceMatch(SLICING, TARGET_FIELD, TARGET_FIELD.asInstanceOf[Field].datatype.id),
             AssertionSliceInconclusive(INCONCLUSIVE, TARGET_FIELD, INC_RESULT.trace)
           )
         )
@@ -394,7 +394,7 @@ trait SlicingEvalSpec extends Specification
       (fields, TARGET_FIELD, codes) => {
         val containsASliceMatch = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_FIELD(1)),
+            NoSliceMatch(SLICING, TARGET_FIELD(1), TARGET_FIELD(1).asInstanceOf[Field].datatype.id),
             OccurrenceSliceMatch(O2, TARGET_FIELD(2))
           )
         )
@@ -442,8 +442,8 @@ trait SlicingEvalSpec extends Specification
       (fields, TARGET_FIELD, codes) => {
         val containsASliceMatch = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_FIELD(1)),
-            NoSliceMatch(SLICING, TARGET_FIELD(2)),
+            NoSliceMatch(SLICING, TARGET_FIELD(1), TARGET_FIELD(1).asInstanceOf[Field].datatype.id),
+            NoSliceMatch(SLICING, TARGET_FIELD(2), TARGET_FIELD(2).asInstanceOf[Field].datatype.id),
           )
         )
         containsASliceMatch ::
@@ -488,8 +488,8 @@ trait SlicingEvalSpec extends Specification
       (fields, TARGET_FIELD, codes) => {
         val containsASliceMatch = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_FIELD(1)),
-            NoSliceMatch(SLICING, TARGET_FIELD(2)),
+            NoSliceMatch(SLICING, TARGET_FIELD(1), TARGET_FIELD(1).asInstanceOf[Field].datatype.id),
+            NoSliceMatch(SLICING, TARGET_FIELD(2), TARGET_FIELD(2).asInstanceOf[Field].datatype.id),
           )
         )
         containsASliceMatch ::
@@ -608,7 +608,7 @@ trait SlicingEvalSpec extends Specification
       SLICING,
       (segments, TARGET_SEGMENT, codes) => {
         val containsANoSliceMatch = codes must containTheSameElementsAs(List(
-          NoSliceMatch(SLICING, TARGET_SEGMENT)
+          NoSliceMatch(SLICING, TARGET_SEGMENT, TARGET_SEGMENT.asInstanceOf[Segment].model.ref.id)
         ))
 
         containsANoSliceMatch :: segments.filter(_.position == 1)
@@ -662,7 +662,7 @@ trait SlicingEvalSpec extends Specification
 
         val containsNoSliceMatchAndInconclusive = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_SEGMENT),
+            NoSliceMatch(SLICING, TARGET_SEGMENT, TARGET_SEGMENT.asInstanceOf[Segment].model.ref.id),
             AssertionSliceInconclusive(INCONCLUSIVE, TARGET_SEGMENT, INC_RESULT.trace)
           )
         )
@@ -855,7 +855,7 @@ trait SlicingEvalSpec extends Specification
       (segments, TARGET_SEGMENT, codes) => {
         val containsASliceMatch = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_SEGMENT(1)),
+            NoSliceMatch(SLICING, TARGET_SEGMENT(1), TARGET_SEGMENT(1).asInstanceOf[Segment].model.ref.id),
             OccurrenceSliceMatch(O2, TARGET_SEGMENT(2))
           )
         )
@@ -902,8 +902,8 @@ trait SlicingEvalSpec extends Specification
       (segments, TARGET_SEGMENT, codes) => {
         val containsASliceMatch = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_SEGMENT(1)),
-            NoSliceMatch(SLICING, TARGET_SEGMENT(2)),
+            NoSliceMatch(SLICING, TARGET_SEGMENT(1), TARGET_SEGMENT(1).asInstanceOf[Segment].model.ref.id),
+            NoSliceMatch(SLICING, TARGET_SEGMENT(2), TARGET_SEGMENT(2).asInstanceOf[Segment].model.ref.id),
           )
         )
         containsASliceMatch ::
@@ -945,8 +945,8 @@ trait SlicingEvalSpec extends Specification
       (segments, TARGET_SEGMENT, codes) => {
         val containsASliceMatch = codes must containTheSameElementsAs(
           List(
-            NoSliceMatch(SLICING, TARGET_SEGMENT(1)),
-            NoSliceMatch(SLICING, TARGET_SEGMENT(2)),
+            NoSliceMatch(SLICING, TARGET_SEGMENT(1), TARGET_SEGMENT(1).asInstanceOf[Segment].model.ref.id),
+            NoSliceMatch(SLICING, TARGET_SEGMENT(2), TARGET_SEGMENT(2).asInstanceOf[Segment].model.ref.id),
           )
         )
         containsASliceMatch ::
@@ -1128,8 +1128,8 @@ trait SlicingEvalSpec extends Specification
 
     GRP mustEqual(pGrp) and (codes must containTheSameElementsAs(
       List(
-        NoSliceMatch(SEG_SLICING, TARGET_SEGMENT),
-        NoSliceMatch(FIELD_SLICING, TARGET_FIELD),
+        NoSliceMatch(SEG_SLICING, TARGET_SEGMENT, TARGET_SEGMENT.asInstanceOf[Segment].model.ref.id),
+        NoSliceMatch(FIELD_SLICING, TARGET_FIELD, TARGET_FIELD.asInstanceOf[Field].datatype.id),
       )
     ))
   }

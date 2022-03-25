@@ -1047,11 +1047,11 @@ public class ConfigurableDetections {
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry slicingNoMatch(Element e) {
+	public Entry slicingNoMatch(Element e, String flavorName) {
 		String category = conf.getString("report.slicing-no-match.category");
 		String classification = conf.getString("report.slicing-no-match.classification");
 		String template = conf.getString("report.slicing-no-match.template");
-		String description = String.format(template, e.location().prettyString());
+		String description = String.format(template, e.location().prettyString(), flavorName);
 		return entry(e.location(), description, category, classification);
 	}
 
