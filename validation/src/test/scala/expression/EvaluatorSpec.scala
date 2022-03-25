@@ -46,6 +46,20 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         PlainText evaluation should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
         PlainText evaluation should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+        Min = 1 & Max = *
+          PlainText evaluation should fail if 0 of the elements value is equal to the expected $plainTextMinMax1s0
+          PlainText evaluation should pass if 1 of the elements value is equal to the expected $plainTextMinMax1s1
+          PlainText evaluation should pass if 2 of the elements value is equal to the expected $plainTextMinMax1s2
+          PlainText evaluation should pass if 3 (all) of the elements value is equal to the expected $plainTextMinMax1s3
+        Min = 2 & Max = 2
+          PlainText evaluation should fail if 0 of the elements value is equal to the expected $plainTextMinMax220
+          PlainText evaluation should fail if 1 of the elements value is equal to the expected $plainTextMinMax221
+          PlainText evaluation should pass if 2 of the elements value is equal to the expected $plainTextMinMax222
+          PlainText evaluation should fail if 3 (all) of the elements value is equal to the expected $plainTextMinMax223
+        Min = 0 & Max = *
+          PlainText evaluation should pass if 0 of the elements value is equal to the expected $plainTextMinMax0s0
+          PlainText evaluation should pass if 1 of the elements value is equal to the expected $plainTextMinMax0s1
+          PlainText evaluation should pass if 3 (all) of the elements value is equal to the expected $plainTextMinMax0s3
       PlainText evaluation should fail If not present behavior is FAIL and no element is found  $plainTextNoElmFAIL
       PlainText evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $plainTextNoElmINC
       PlainText evaluation should pass If not present behavior is PASS and no element is found $plainTextNoElmPASS
@@ -57,6 +71,20 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         Format should pass if one of the elements matches the pattern and AtLeastOnce = True           $formatAtLeastOnceT
         Format should fail if one of the elements doesn't match the pattern and AtLeastOnce = False           $formatAtLeastOnceF
+        Min = 1 & Max = *
+          Format evaluation should fail if 0 of the elements value matches the pattern $formatMinMax1s0
+          Format evaluation should pass if 1 of the elements value matches the pattern $formatMinMax1s1
+          Format evaluation should pass if 2 of the elements value matches the pattern $formatMinMax1s2
+          Format evaluation should pass if 3 (all) of the elements value matches the pattern $formatMinMax1s3
+        Min = 2 & Max = 2
+          Format evaluation should fail if 0 of the elements value matches the pattern $formatMinMax220
+          Format evaluation should fail if 1 of the elements value matches the pattern $formatMinMax221
+          Format evaluation should pass if 2 of the elements value matches the pattern $formatMinMax222
+          Format evaluation should fail if 3 (all) of the elements value matches the pattern $formatMinMax223
+        Min = 0 & Max = *
+          Format evaluation should pass if 0 of the elements value matches the pattern $formatMinMax0s0
+          Format evaluation should pass if 1 of the elements value matches the pattern $formatMinMax0s1
+          Format evaluation should pass if 3 (all) of the elements value matches the pattern $formatMinMax0s3
       Format evaluation should fail If not present behavior is FAIL and no element is found  $formatNoElmFAIL
       Format evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $formatNoElmINC
       Format evaluation should pass If not present behavior is PASS and no element is found $formatNoElmPASS
@@ -71,6 +99,20 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         StringList should pass if one of the elements is in the list and AtLeastOnce = True           $stringListAtLeastOnceT
         StringList should fail if one of the elements is not in the list and AtLeastOnce = False           $stringListAtLeastOnceF
+        Min = 1 & Max = *
+          StringList evaluation should fail if 0 of the elements value is in the list $stringListMinMax1s0
+          StringList evaluation should pass if 1 of the elements value is in the list $stringListMinMax1s1
+          StringList evaluation should pass if 2 of the elements value is in the list $stringListMinMax1s2
+          StringList evaluation should pass if 3 (all) of the elements value is in the list $stringListMinMax1s3
+        Min = 2 & Max = 2
+          StringList evaluation should fail if 0 of the elements value is in the list $stringListMinMax220
+          StringList evaluation should fail if 1 of the elements value is in the list $stringListMinMax221
+          StringList evaluation should pass if 2 of the elements value is in the list $stringListMinMax222
+          StringList evaluation should fail if 3 (all) of the elements value is in the list $stringListMinMax223
+        Min = 0 & Max = *
+          StringList evaluation should pass if 0 of the elements value is in the list $stringListMinMax0s0
+          StringList evaluation should pass if 1 of the elements value is in the list $stringListMinMax0s1
+          StringList evaluation should pass if 3 (all) of the elements value is in the list $stringListMinMax0s3
       StringList evaluation should fail If not present behavior is FAIL and no element is found  $stringListNoElmFAIL
       StringList evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringListNoElmINC
       StringList evaluation should pass If not present behavior is PASS and no element is found $stringListNoElmPASS
@@ -86,6 +128,20 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         NumberList should pass if one of the elements is in the list and AtLeastOnce = True           $numberListAtLeastOnceT
         NumberList should fail if one of the elements is not in the list and AtLeastOnce = False           $numberListAtLeastOnceF
+        Min = 1 & Max = *
+          NumberList evaluation should fail if 0 of the elements value is in the list $numberListMinMax1s0
+          NumberList evaluation should pass if 1 of the elements value is in the list $numberListMinMax1s1
+          NumberList evaluation should pass if 2 of the elements value is in the list $numberListMinMax1s2
+          NumberList evaluation should pass if 3 (all) of the elements value is in the list $numberListMinMax1s3
+        Min = 2 & Max = 2
+          NumberList evaluation should fail if 0 of the elements value is in the list $numberListMinMax220
+          NumberList evaluation should fail if 1 of the elements value is in the list $numberListMinMax221
+          NumberList evaluation should pass if 2 of the elements value is in the list $numberListMinMax222
+          NumberList evaluation should fail if 3 (all) of the elements value is in the list $numberListMinMax223
+        Min = 0 & Max = *
+          NumberList evaluation should pass if 0 of the elements value is in the list $numberListMinMax0s0
+          NumberList evaluation should pass if 1 of the elements value is in the list $numberListMinMax0s1
+          NumberList evaluation should pass if 3 (all) of the elements value is in the list $numberListMinMax0s3
       NumberList evaluation should fail If not present behavior is FAIL and no element is found  $numberListNoElmFAIL
       NumberList evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $numberListNoElmINC
       NumberList evaluation should pass If not present behavior is PASS and no element is found $numberListNoElmPASS
@@ -102,6 +158,20 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         SimpleValue should pass if one of the elements is in the list and AtLeastOnce = True           $simpleValueAtLeastOnceT
         SimpleValue should fail if one of the elements is not in the list and AtLeastOnce = False           $simpleValueAtLeastOnceF
+        Min = 1 & Max = *
+          SimpleValue evaluation should fail if 0 of the elements value eq expected value $simpleValueMinMax1s0
+          SimpleValue evaluation should pass if 1 of the elements value eq expected value $simpleValueMinMax1s1
+          SimpleValue evaluation should pass if 2 of the elements value eq expected value $simpleValueMinMax1s2
+          SimpleValue evaluation should pass if 3 (all) of the elements value eq expected value $simpleValueMinMax1s3
+        Min = 2 & Max = 2
+          SimpleValue evaluation should fail if 0 of the elements value eq expected value $simpleValueMinMax220
+          SimpleValue evaluation should fail if 1 of the elements value eq expected value $simpleValueMinMax221
+          SimpleValue evaluation should pass if 2 of the elements value eq expected value $simpleValueMinMax222
+          SimpleValue evaluation should fail if 3 (all) of the elements value eq expected value $simpleValueMinMax223
+        Min = 0 & Max = *
+          SimpleValue evaluation should pass if 0 of the elements value eq expected value $simpleValueMinMax0s0
+          SimpleValue evaluation should pass if 1 of the elements value eq expected value $simpleValueMinMax0s1
+          SimpleValue evaluation should pass if 3 (all) of the elements value eq expected value $simpleValueMinMax0s3
       SimpleValue evaluation should fail If not present behavior is FAIL and no element is found  $simpleValueNoElmFAIL
       SimpleValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $simpleValueNoElmINC
       SimpleValue evaluation should pass If not present behavior is PASS and no element is found $simpleValueNoElmPASS
@@ -190,6 +260,20 @@ trait EvaluatorSpec
       If the path is valued to multiple elements
         StringFormat should pass if one of the elements is in the list and AtLeastOnce = True           $stringFormatAtLeastOnceT
         StringFormat should fail if one of the elements is not in the list and AtLeastOnce = False           $stringFormatAtLeastOnceF
+        Min = 1 & Max = *
+          StringFormat evaluation should fail if 0 of the elements value matches expected format $stringFormatMinMax1s0
+          StringFormat evaluation should pass if 1 of the elements value matches expected format $stringFormatMinMax1s1
+          StringFormat evaluation should pass if 2 of the elements value matches expected format $stringFormatMinMax1s2
+          StringFormat evaluation should pass if 3 (all) of the elements value matches expected format $stringFormatMinMax1s3
+        Min = 2 & Max = 2
+          StringFormat evaluation should fail if 0 of the elements value matches expected format $stringFormatMinMax220
+          StringFormat evaluation should fail if 1 of the elements value matches expected format $stringFormatMinMax221
+          StringFormat evaluation should pass if 2 of the elements value matches expected format $stringFormatMinMax222
+          StringFormat evaluation should fail if 3 (all) of the elements value matches expected format $stringFormatMinMax223
+        Min = 0 & Max = *
+          StringFormat evaluation should pass if 0 of the elements value matches expected format $stringFormatMinMax0s0
+          StringFormat evaluation should pass if 1 of the elements value matches expected format $stringFormatMinMax0s1
+          StringFormat evaluation should pass if 3 (all) of the elements value matches expected format $stringFormatMinMax0s3
       StringFormat evaluation should fail If not present behavior is FAIL and no element is found  $stringFormatNoElmFAIL
       StringFormat evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringFormatNoElmINC
       StringFormat evaluation should pass If not present behavior is PASS and no element is found $stringFormatNoElmPASS

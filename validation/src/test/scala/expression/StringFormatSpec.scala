@@ -22,6 +22,20 @@ package expression
           If the path is valued to multiple elements
         		StringFormat should pass if one of the elements is in the list and AtLeastOnce = True           $stringFormatAtLeastOnceT
         		StringFormat should fail if one of the elements is not in the list and AtLeastOnce = False           $stringFormatAtLeastOnceF
+        		Min = 1 & Max = *
+							StringFormat evaluation should fail if 0 of the elements value matches expected format $stringFormatMinMax1s0
+							StringFormat evaluation should pass if 1 of the elements value matches expected format $stringFormatMinMax1s1
+							StringFormat evaluation should pass if 2 of the elements value matches expected format $stringFormatMinMax1s2
+							StringFormat evaluation should pass if 3 (all) of the elements value matches expected format $stringFormatMinMax1s3
+						Min = 2 & Max = 2
+							StringFormat evaluation should fail if 0 of the elements value matches expected format $stringFormatMinMax220
+							StringFormat evaluation should fail if 1 of the elements value matches expected format $stringFormatMinMax221
+							StringFormat evaluation should pass if 2 of the elements value matches expected format $stringFormatMinMax222
+							StringFormat evaluation should fail if 3 (all) of the elements value matches expected format $stringFormatMinMax223
+						Min = 0 & Max = *
+							StringFormat evaluation should pass if 0 of the elements value matches expected format $stringFormatMinMax0s0
+							StringFormat evaluation should pass if 1 of the elements value matches expected format $stringFormatMinMax0s1
+							StringFormat evaluation should pass if 3 (all) of the elements value matches expected format $stringFormatMinMax0s3
       		StringFormat evaluation should fail If not present behavior is FAIL and no element is found  $stringFormatNoElmFAIL
       		StringFormat evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringFormatNoElmINC
       		StringFormat evaluation should pass If not present behavior is PASS and no element is found $stringFormatNoElmPASS
@@ -81,4 +95,60 @@ package expression
 			assert( `c3.1[2]`.value == s_SNOMED.value )
 			eval( p, c3 ) === Failures.stringFromat(p, `c3.1[2]`::Nil)
 		}
+
+		def stringFormatMinMax1s0 = {
+			val p = StringFormat("1[*]", "LOINC", false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+			eval(p, cMinMaxSNO) === Failures.stringFromat(p, getValues(cMinMaxSNO, "1[1]"::"1[2]"::"1[3]"::Nil))
+		}
+
+		def stringFormatMinMax1s1 = {
+			val p = StringFormat("1[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
+		def stringFormatMinMax1s2 = {
+			val p = StringFormat("4[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
+		def stringFormatMinMax1s3 = {
+			val p = StringFormat("3[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
+		def stringFormatMinMax220 = {
+			val p = StringFormat("1[*]", "LOINC", false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+			eval(p, cMinMaxSNO) === Failures.stringFromat(p, getValues(cMinMaxSNO, "1[1]"::"1[2]"::"1[3]"::Nil))
+		}
+
+		def stringFormatMinMax221 = {
+			val p = StringFormat("1[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+			eval(p, cMinMaxSNO) === Failures.stringFromat(p, getValues(cMinMaxSNO, "1[2]"::"1[3]"::Nil))
+		}
+
+		def stringFormatMinMax222 = {
+			val p = StringFormat("4[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
+		def stringFormatMinMax223 = {
+			val p = StringFormat("3[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+			eval(p, cMinMaxSNO) === Failures.stringFromat(p, Nil)
+		}
+
+		def stringFormatMinMax0s0 = {
+			val p = StringFormat("1[*]", "LOINC", false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
+		def stringFormatMinMax0s1 = {
+			val p = StringFormat("1[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
+		def stringFormatMinMax0s3 = {
+			val p = StringFormat("3[*]", "SNOMED", false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+			eval(p, cMinMaxSNO) === Pass
+		}
+
 	}

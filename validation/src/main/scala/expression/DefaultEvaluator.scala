@@ -55,6 +55,12 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case _ => Pass
     }
 
+  def checkRange(atLeastOnce: Boolean, range: Option[Range], n: Int, all: Int): Boolean = {
+    range match {
+      case Some(r) => r.includes(n)
+      case None => if(atLeastOnce) n > 0 else n == all
+    }
+  }
 
   /**
    * Evaluates the presence expression and returns the result
@@ -81,8 +87,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         ls match {
           case Nil => notFound(p, p.path, context, p.notPresentBehavior)
           case list => list filter (x => notEqual(x, p.text, p.ignoreCase)) match {
-            case Nil => Pass
-            case xs  => if (p.atLeastOnce && (xs.size != list.size)) Pass else Failures.plainText(p, xs)
+            case xs  => if (checkRange(p.atLeastOnce, p.range,  list.size - xs.size, list.size)) Pass else Failures.plainText(p, xs)
           }
         }
       case Failure(e) => inconclusive(p, context.location, e)
@@ -100,8 +105,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         list match {
           case Nil => notFound(f, f.path, context, f.notPresentBehavior)
           case ls => ls filter (x => notMatch(x, f.pattern)) match {
-            case Nil => Pass
-            case xs  => if (f.atLeastOnce && (xs.size != ls.size)) Pass else Failures.format(f, xs)
+            case xs  => if (checkRange(f.atLeastOnce, f.range,  ls.size - xs.size, ls.size)) Pass else Failures.format(f, xs)
           }
         }
       case Failure(e) => inconclusive(f, context.location, e)
@@ -119,8 +123,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         list match {
           case Nil => notFound(sl, sl.path, context, sl.notPresentBehavior)
           case ls => ls filter (x => notInList(x.value.raw, sl.csv)) match {
-            case Nil => Pass
-            case xs  => if (sl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.stringList(sl, xs)
+            case xs  => if (checkRange(sl.atLeastOnce, sl.range,  ls.size - xs.size, ls.size)) Pass else Failures.stringList(sl, xs)
           }
         }
       case Failure(e) => inconclusive(sl, context.location, e)
@@ -142,8 +145,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
             l2 match {
               case Nil =>
                 l1 filter (x => notInList(x.value.raw.toDouble, nl.csv)) match {
-                  case Nil => Pass
-                  case xs  => if (nl.atLeastOnce && (xs.size != ls.size)) Pass else Failures.numberList(nl, xs)
+                  case xs  => if (checkRange(nl.atLeastOnce, nl.range,  ls.size - xs.size, ls.size)) Pass else Failures.numberList(nl, xs)
                 }
               case xs => Failures.numberListNaN(nl, xs)
             }
@@ -171,8 +173,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
                 xs filter {
                   _._2 == Success(false)
                 } match {
-                  case Nil => Pass
-                  case ys => if (sv.atLeastOnce && (xs.size != ys.size)) Pass else Failures.simpleValue(sv, ys map { x => x._1 })
+                  case ys => if (checkRange(sv.atLeastOnce, sv.range,  xs.size - ys.size, xs.size)) Pass else Failures.simpleValue(sv, ys map { x => x._1 })
                 }
               case (xs, _) => inconclusive(sv, xs)
             }
@@ -538,8 +539,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           ls match {
             case Nil => notFound(e, e.path, context, e.notPresentBehavior)
             case xs => xs.filter { elm => !validator.validate(elm.value.raw) } match {
-              case Nil => Pass
-              case ys => if (e.atLeastOnce && (xs.size != ys.size)) Pass else Failures.stringFromat(e, ys)
+              case ys => if (checkRange(e.atLeastOnce, e.range,  xs.size - ys.size, xs.size)) Pass else Failures.stringFromat(e, ys)
             }
           }
         case Failure(f) => inconclusive(e, context.location, f)

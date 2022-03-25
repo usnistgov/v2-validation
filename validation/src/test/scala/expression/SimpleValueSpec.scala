@@ -22,6 +22,20 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
       If the path is valued to multiple elements
         SimpleValue should pass if one of the elements is in the list and AtLeastOnce = True           $simpleValueAtLeastOnceT
         SimpleValue should fail if one of the elements is not in the list and AtLeastOnce = False           $simpleValueAtLeastOnceF
+        Min = 1 & Max = *
+          SimpleValue evaluation should fail if 0 of the elements value eq expected value $simpleValueMinMax1s0
+          SimpleValue evaluation should pass if 1 of the elements value eq expected value $simpleValueMinMax1s1
+          SimpleValue evaluation should pass if 2 of the elements value eq expected value $simpleValueMinMax1s2
+          SimpleValue evaluation should pass if 3 (all) of the elements value eq expected value $simpleValueMinMax1s3
+        Min = 2 & Max = 2
+          SimpleValue evaluation should fail if 0 of the elements value eq expected value $simpleValueMinMax220
+          SimpleValue evaluation should fail if 1 of the elements value eq expected value $simpleValueMinMax221
+          SimpleValue evaluation should pass if 2 of the elements value eq expected value $simpleValueMinMax222
+          SimpleValue evaluation should fail if 3 (all) of the elements value eq expected value $simpleValueMinMax223
+        Min = 0 & Max = *
+          SimpleValue evaluation should pass if 0 of the elements value eq expected value $simpleValueMinMax0s0
+          SimpleValue evaluation should pass if 1 of the elements value eq expected value $simpleValueMinMax0s1
+          SimpleValue evaluation should pass if 3 (all) of the elements value eq expected value $simpleValueMinMax0s3
       SimpleValue evaluation should fail If not present behavior is FAIL and no element is found  $simpleValueNoElmFAIL
       SimpleValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $simpleValueNoElmINC
       SimpleValue evaluation should pass If not present behavior is PASS and no element is found $simpleValueNoElmPASS
@@ -110,6 +124,61 @@ trait SimpleValueSpec extends Specification with Evaluator with Mocks  {
     val `c1.1[3]`  = queryAsSimple(c1, "1[3]").get.head
     assert( `c1.1[3]`.value == Text("S13") )
     eval( p, c1 ) === Failures.simpleValue(p, `c1.1[1]`::`c1.1[3]`::Nil)
+  }
+
+  def simpleValueMinMax1s0 = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("NONE"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Failures.simpleValue(p, getValues(cMinMax, "1[1]"::"1[2]"::"1[3]"::Nil))
+  }
+
+  def simpleValueMinMax1s1 = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S11"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def simpleValueMinMax1s2 = {
+    val p = SimpleValue("4[*]", Operator.EQ, Text("S4A"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def simpleValueMinMax1s3 = {
+    val p = SimpleValue("3[*]", Operator.EQ, Text("S3"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def simpleValueMinMax220 = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("NONE"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.simpleValue(p, getValues(cMinMax, "1[1]"::"1[2]"::"1[3]"::Nil))
+  }
+
+  def simpleValueMinMax221 = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S11"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.simpleValue(p, getValues(cMinMax, "1[2]"::"1[3]"::Nil))
+  }
+
+  def simpleValueMinMax222 = {
+    val p = SimpleValue("4[*]", Operator.EQ, Text("S4A"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def simpleValueMinMax223 = {
+    val p = SimpleValue("3[*]", Operator.EQ, Text("S3"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.simpleValue(p, Nil)
+  }
+
+  def simpleValueMinMax0s0 = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("NONE"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def simpleValueMinMax0s1 = {
+    val p = SimpleValue("1[*]", Operator.EQ, Text("S11"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def simpleValueMinMax0s3 = {
+    val p = SimpleValue("3[*]", Operator.EQ, Text("S3"), ComparisonMode(false, false), false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
   }
 
 }

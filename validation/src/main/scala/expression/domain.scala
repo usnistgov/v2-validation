@@ -8,15 +8,15 @@ sealed trait Expression
 
 case class Presence( path: String ) extends Expression
 
-case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
+case class PlainText( path: String, text: String, ignoreCase: Boolean, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS", range: Option[Range] = None) extends Expression
 
-case class Format( path: String, pattern: String, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
+case class Format( path: String, pattern: String, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS", range: Option[Range] = None) extends Expression
 
-case class NumberList( path: String, csv: List[Double], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
+case class NumberList( path: String, csv: List[Double], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS", range: Option[Range] = None) extends Expression
 
-case class StringList( path: String, csv: List[String], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
+case class StringList( path: String, csv: List[String], atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS", range: Option[Range] = None) extends Expression
 
-case class SimpleValue( path: String, operator: Operator, value: Value, comparisonMode: ComparisonMode = ComparisonMode(false, false), atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS" ) extends Expression
+case class SimpleValue( path: String, operator: Operator, value: Value, comparisonMode: ComparisonMode = ComparisonMode(false, false), atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS", range: Option[Range] = None) extends Expression
 
 case class PathValue( path1: String, operator: Operator, path2: String, comparisonMode: ComparisonMode = ComparisonMode(false, false), notPresentBehavior : String = "PASS" ) extends Expression
 
@@ -51,4 +51,4 @@ case class IZSetId(parent: String, element : String) extends Expression
 
 case class ValueSet(path: String, spec: ValueSetSpec, notPresentBehavior : String = "PASS") extends Expression
 
-case class StringFormat(path: String, format: String, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS") extends Expression
+case class StringFormat(path: String, format: String, atLeastOnce : Boolean = false, notPresentBehavior : String = "PASS", range: Option[Range] = None) extends Expression
