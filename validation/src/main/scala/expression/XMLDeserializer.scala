@@ -75,9 +75,11 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("Path")
     val text = e.attribute("Text")
     val ignoreCase = toBoolean( e.attribute("IgnoreCase") )
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    PlainText( path , text, ignoreCase, atLeastOnce, npb)
+    PlainText( path , text, ignoreCase, atLeastOnce, npb, range)
   }
   
     // Value Expressions
@@ -85,41 +87,52 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path = e.attribute("KeyPath")
     val text = e.attribute("KeyValue")
     val ignoreCase = if (e.attribute("IgnoreCase") != "") toBoolean( e.attribute("IgnoreCase") ) else true
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
-    PlainText( path , text, ignoreCase, atLeastOnce)
+    val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
+    PlainText( path , text, ignoreCase, atLeastOnce, npb, range)
   }
 
   private def format( e: Element ): Format = {
     val path = e.attribute("Path")
     val regex = e.attribute("Regex")
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    Format( path, regex, atLeastOnce, npb)
+    Format( path, regex, atLeastOnce, npb, range)
   }
 
   private def numberList( e: Element ): NumberList = {
     val path = e.attribute("Path")
     val csv  = e.attribute("CSV").split(',').toList map ( _.toDouble )
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    NumberList( path, csv, atLeastOnce, npb)
+    NumberList( path, csv, atLeastOnce, npb, range)
   }
 
   private def stringList( e: Element ): StringList = {
     val path = e.attribute("Path")
     val csv  = e.attribute("CSV").split(',').toList //No need to trim since no spaces in the schema
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    StringList( path, csv, atLeastOnce, npb)
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
+    StringList( path, csv, atLeastOnce, npb, range)
   }
 
   private def simpleValue( e: Element ): SimpleValue = {
     val path = e.attribute("Path")
     val op   = operator( e.attribute("Operator") )
     val _value = value( e.attribute("Value"), e.attribute("Type") )
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    SimpleValue( path, op, _value, getComparisonMode(e), atLeastOnce, npb)
+    SimpleValue( path, op, _value, getComparisonMode(e), atLeastOnce, npb, range)
   }
 
   private def subContext( e: Element ): SubContext = {
@@ -168,9 +181,11 @@ object XMLDeserializer extends EscapeSeqHandler {
   private def stringFormat(e: Element) = {
     val path = e.attribute("Path")
     val format = e.attribute("Format")
-    val atLeastOnce = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false;
+    val atLeastOnce = getAtLeastOnce(e)
+    val range = getRange(e)
+    atLeastOnceAndRangeCheck(e, range)
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    StringFormat(path, format, atLeastOnce, npb)
+    StringFormat(path, format, atLeastOnce, npb, range)
   }
 
   private def isNull(e : Element) = isNULL( e.attribute("Path") )
@@ -210,8 +225,39 @@ object XMLDeserializer extends EscapeSeqHandler {
   }
 
   private def getComparisonMode(e: Element): ComparisonMode = {
-    new ComparisonMode(toBoolean(e.attribute("IdenticalEquality")), toBoolean(e.attribute("Truncated")))
+    val identicalEquality = e.attribute("IdenticalEquality")
+    val truncated = e.attribute("Truncated")
+
+
+    ComparisonMode(
+      identicalEquality match {
+        case "" | null => false
+        case value => toBoolean(value)
+      },
+      truncated match {
+        case "" | null => false
+        case value => toBoolean(value)
+      }
+    )
   }
+
+  private def getRange(e: Element): Option[Range] =
+    asOption(e.attribute("Min")) map { min =>
+      Range(min.toInt, e.attribute("Max"))
+    }
+
+  private def getAtLeastOnce(e: Element): Boolean = if (e.attribute("AtLeastOnce") != "") toBoolean(e.attribute("AtLeastOnce")) else false
+
+  private def atLeastOnceAndRangeCheck(e: Element, range: Option[Range]): Unit = {
+    range match {
+      case None => Unit
+      case Some(_) =>
+        if (e.attribute("AtLeastOnce") != "")
+          throw new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)")
+    }
+  }
+
+
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
 

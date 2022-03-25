@@ -52,7 +52,7 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   def pe186 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]", true, ComparisonMode(true, true), "INCONCLUSIVE")
 
 
-  def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38 and pe39 and pe310
+  def pe3 = pe31 and pe32 and pe33 and pe34 and pe35 and pe36 and pe37 and pe38 and pe39 and pe310 and pe311 and pe312 and pe313
   def pe31 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true"/> )  === PlainText( "1[1]", "XX", true)
   def pe32 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="1"/> )     === PlainText( "1[1]", "XX", true)
   def pe33 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="false"/> ) === PlainText( "1[1]", "XX", false)
@@ -63,27 +63,39 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   def pe38 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="0" AtLeastOnce="0"/> )     === PlainText( "1[1]", "XX", false)
   def pe39 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="FAIL" /> )  === PlainText( "1[1]", "XX", true, false, "FAIL")
   def pe310 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="INCONCLUSIVE" /> )  === PlainText( "1[1]", "XX", true, false, "INCONCLUSIVE")
+  def pe311 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" /> )  === PlainText( "1[1]", "XX", true, false, "INCONCLUSIVE", Some(Range(0, "*")))
+  def pe312 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="INCONCLUSIVE" AtLeastOnce="true" Min="0" Max="*" /> )  must throwA(new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)"))
+  def pe313 = expression( <PlainText Path="1[1]" Text="XX" IgnoreCase="true" NotPresentBehavior="INCONCLUSIVE" AtLeastOnce="true" Min="0" /> )  must throwA(new AssertionError("assertion failed: Invalid Range, max is required # 0.."))
 
-  def pe4 = pe41 and pe42 and pe43 and pe44 and pe45
+  def pe4 = pe41 and pe42 and pe43 and pe44 and pe45 and pe46 and pe47 and pe48
   def pe41 = expression( <Format Path="1[1]" Regex="XX"/> ) === Format( "1[1]", "XX")
   def pe42 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="false" /> ) === Format( "1[1]", "XX")
   def pe43 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" /> ) === Format( "1[1]", "XX", true)
   def pe44 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" NotPresentBehavior="FAIL" /> ) === Format( "1[1]", "XX", true, "FAIL")
   def pe45 = expression( <Format Path="1[1]" Regex="XX" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" /> ) === Format( "1[1]", "XX", true, "INCONCLUSIVE")
+  def pe46 = expression( <Format Path="1[1]" Regex="XX" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*"  /> ) === Format( "1[1]", "XX", false, "INCONCLUSIVE", Some(Range(0, "*")))
+  def pe47 = expression( <Format Path="1[1]" Regex="XX" NotPresentBehavior="INCONCLUSIVE" AtLeastOnce="true" Min="0" Max="*"  /> ) must throwA(new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)"))
+  def pe48 = expression( <Format Path="1[1]" Regex="XX" NotPresentBehavior="INCONCLUSIVE" AtLeastOnce="true" Min="0"  /> ) must throwA(new AssertionError("assertion failed: Invalid Range, max is required # 0.."))
 
-  def pe5 = pe51 and pe52 and pe53 and pe54 and pe55
+  def pe5 = pe51 and pe52 and pe53 and pe54 and pe55 and pe56 and pe57 and pe58
   def pe51 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 "/> ) === NumberList( "1[1]", List(1, 2.0, 3))
   def pe52 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="false" /> ) === NumberList( "1[1]", List(1, 2.0, 3))
   def pe53 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true)
   def pe54 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" NotPresentBehavior="FAIL" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true, "FAIL")
   def pe55 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" /> ) === NumberList( "1[1]", List(1, 2.0, 3), true, "INCONCLUSIVE")
+  def pe56 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" /> ) === NumberList( "1[1]", List(1, 2.0, 3), false, "INCONCLUSIVE", Some(Range(0, "*")))
+  def pe57 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" /> ) must throwA(new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)"))
+  def pe58 = expression( <NumberList Path="1[1]" CSV=" 1 , 2.0 , 3 " AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" Min="0"/> )  must throwA(new AssertionError("assertion failed: Invalid Range, max is required # 0.."))
 
-  def pe6 = pe61 and pe62 and pe63 and pe64 and pe65
+  def pe6 = pe61 and pe62 and pe63 and pe64 and pe65 and pe66 and pe67 and pe68
   def pe61 = expression( <StringList Path="1[1]" CSV="1,2"/> ) === StringList( "1[1]", List("1", "2"))
   def pe62 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="false" /> ) === StringList( "1[1]", List("1", "2"))
   def pe63 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" /> ) === StringList( "1[1]", List("1", "2"), true)
   def pe64 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" NotPresentBehavior="FAIL" /> ) === StringList( "1[1]", List("1", "2"), true, "FAIL")
   def pe65 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" /> ) === StringList( "1[1]", List("1", "2"), true, "INCONCLUSIVE")
+  def pe66 = expression( <StringList Path="1[1]" CSV="1,2" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" /> ) === StringList( "1[1]", List("1", "2"), false, "INCONCLUSIVE", Some(Range(0, "*")))
+  def pe67 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" /> ) must throwA(new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)"))
+  def pe68 = expression( <StringList Path="1[1]" CSV="1,2" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" Min="0" /> ) must throwA(new AssertionError("assertion failed: Invalid Range, max is required # 0.."))
 
   def pe7 = {
     val e1 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX"/> )
@@ -95,6 +107,9 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     val e41 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" /> )
     val e42 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" IdenticalEquality="true" NotPresentBehavior="INCONCLUSIVE" /> )
     val e43 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" Truncated="true" NotPresentBehavior="INCONCLUSIVE" /> )
+    val e5 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" NotPresentBehavior="INCONCLUSIVE"  Min="0" Max="*"   /> )
+    def e6 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" Truncated="true" NotPresentBehavior="INCONCLUSIVE" AtLeastOnce="true"  Min="0" Max="*"  /> ) must throwA(new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)"))
+    def e7 = expression( <SimpleValue Path="1[1]" Operator="NE" Value="XX" Type="Number" Truncated="true" NotPresentBehavior="INCONCLUSIVE"  Min="0"  /> )  must throwA(new AssertionError("assertion failed: Invalid Range, max is required # 0.."))
 
 
     e1 === SimpleValue( "1[1]", Operator.NE, Text("XX") ) and e2 === SimpleValue( "1[1]", Operator.NE, Number("XX") ) and
@@ -102,8 +117,9 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
     e21 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), true ) and e22 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), false ) and
       e41 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(true, true), false, "INCONCLUSIVE") and
       e42 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(true, false), false, "INCONCLUSIVE") and
-      e43 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(false, true), false, "INCONCLUSIVE")
-
+      e43 === SimpleValue( "1[1]", Operator.NE, Number("XX"), new ComparisonMode(false, true), false, "INCONCLUSIVE") and
+      e5 === SimpleValue( "1[1]", Operator.NE, Number("XX"), ComparisonMode(false, false), false, "INCONCLUSIVE", Some(Range(0, "*"))) and
+      e6 and e7
   }
 
   def pe8  = expression( <AND><Presence Path="1[1]"/><Presence Path="2[2]"/></AND> ) === AND( Presence("1[1]"), Presence("2[2]") )
@@ -128,12 +144,15 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
   def pe163 = expression( <SubContext Path="1[*]" AtLeastOnce="true" NotPresentBehavior="FAIL"><PlainText Path="1[1]" Text="XX" IgnoreCase="true"/></SubContext> ) ===  SubContext(PlainText( "1[1]", "XX", true), "1[*]", None, Some(true), "FAIL")
   def pe164 = expression( <SubContext Path="1[*]" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE"><PlainText Path="1[1]" Text="XX" IgnoreCase="true"/></SubContext> ) ===  SubContext(PlainText( "1[1]", "XX", true), "1[*]", None, Some(true), "INCONCLUSIVE")
 
-  def pe17 = pe171 and pe172 and pe173 and pe174 and pe175
+  def pe17 = pe171 and pe172 and pe173 and pe174 and pe175 and pe176 and pe177 and pe178
   def pe171 = expression(<StringFormat Path="1[*]" Format="LOINC" />) === StringFormat("1[*]", "LOINC")
   def pe172 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="false" />) === StringFormat("1[*]", "LOINC")
   def pe173 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" />) === StringFormat("1[*]", "LOINC", true)
   def pe174 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" NotPresentBehavior="FAIL" />) === StringFormat("1[*]", "LOINC", true, "FAIL")
   def pe175 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" />) === StringFormat("1[*]", "LOINC", true, "INCONCLUSIVE")
+  def pe176 = expression(<StringFormat Path="1[*]" Format="LOINC" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" />) === StringFormat("1[*]", "LOINC", false, "INCONCLUSIVE", Some(Range(0, "*")))
+  def pe177 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" Min="0" Max="*" />) must throwA(new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)"))
+  def pe178 = expression(<StringFormat Path="1[*]" Format="LOINC" AtLeastOnce="true" NotPresentBehavior="INCONCLUSIVE" Min="0"/>) must throwA(new AssertionError("assertion failed: Invalid Range, max is required # 0.."))
 
   private implicit def toXOM( e: scala.xml.Node ): nu.xom.Element = {
     val r = new nu.xom.Element( e.label )

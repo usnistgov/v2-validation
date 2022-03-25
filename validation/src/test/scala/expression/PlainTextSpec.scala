@@ -1,14 +1,11 @@
 package expression
 
 import expression.EvalResult.Pass
-import hl7.v2.instance.Query
+import hl7.v2.instance.{Query, Text}
 import Query.queryAsSimple
-import hl7.v2.instance.Text
 import org.specs2.Specification
 
 import scala.util.Success
-import expression.EvalResult.Inconclusive
-import expression.EvalResult.Fail
 
 trait PlainTextSpec extends Specification with Evaluator with Mocks {
 
@@ -25,6 +22,20 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
       If the path is valued to multiple elements
         PlainText evaluation should fail if one of the elements value is different than the expected value with AtLeastOnce = False $plainTextAtLeastOnceF
         PlainText evaluation should pass if one of the elements value is equal to the expected value with AtLeastOnce = True $plainTextAtLeastOnceT
+        Min = 1 & Max = *
+          PlainText evaluation should fail if 0 of the elements value is equal to the expected $plainTextMinMax1s0
+          PlainText evaluation should pass if 1 of the elements value is equal to the expected $plainTextMinMax1s1
+          PlainText evaluation should pass if 2 of the elements value is equal to the expected $plainTextMinMax1s2
+          PlainText evaluation should pass if 3 (all) of the elements value is equal to the expected $plainTextMinMax1s3
+        Min = 2 & Max = 2
+          PlainText evaluation should fail if 0 of the elements value is equal to the expected $plainTextMinMax220
+          PlainText evaluation should fail if 1 of the elements value is equal to the expected $plainTextMinMax221
+          PlainText evaluation should pass if 2 of the elements value is equal to the expected $plainTextMinMax222
+          PlainText evaluation should fail if 3 (all) of the elements value is equal to the expected $plainTextMinMax223
+        Min = 0 & Max = *
+          PlainText evaluation should pass if 0 of the elements value is equal to the expected $plainTextMinMax0s0
+          PlainText evaluation should pass if 1 of the elements value is equal to the expected $plainTextMinMax0s1
+          PlainText evaluation should pass if 3 (all) of the elements value is equal to the expected $plainTextMinMax0s3
       PlainText evaluation should fail If not present behavior is FAIL and no element is found  $plainTextNoElmFAIL
       PlainText evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $plainTextNoElmINC
       PlainText evaluation should pass If not present behavior is PASS and no element is found $plainTextNoElmPASS
@@ -110,5 +121,60 @@ trait PlainTextSpec extends Specification with Evaluator with Mocks {
   def plainTextAtLeastOnceT = {
     val p = PlainText("1[*]", "S12", false, true)
     eval(p, c1) === Pass
+  }
+
+  def plainTextMinMax1s0 = {
+    val p = PlainText("1[*]", "NONE", false, false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Failures.plainText(p, getValues(cMinMax, "1[1]"::"1[2]"::"1[3]"::Nil))
+  }
+
+  def plainTextMinMax1s1 = {
+    val p = PlainText("1[*]", "S11", false, false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def plainTextMinMax1s2 = {
+    val p = PlainText("4[*]", "S4A", false, false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def plainTextMinMax1s3 = {
+    val p = PlainText("3[*]", "S3", false, false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def plainTextMinMax220 = {
+    val p = PlainText("1[*]", "NONE", false, false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.plainText(p, getValues(cMinMax, "1[1]"::"1[2]"::"1[3]"::Nil))
+  }
+
+  def plainTextMinMax221 = {
+    val p = PlainText("1[*]", "S11", false, false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.plainText(p, getValues(cMinMax, "1[2]"::"1[3]"::Nil))
+  }
+
+  def plainTextMinMax222 = {
+    val p = PlainText("4[*]", "S4A", false, false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def plainTextMinMax223 = {
+    val p = PlainText("3[*]", "S3", false, false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.plainText(p, Nil)
+  }
+
+  def plainTextMinMax0s0 = {
+    val p = PlainText("1[*]", "NONE", false, false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def plainTextMinMax0s1 = {
+    val p = PlainText("1[*]", "S11", false, false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def plainTextMinMax0s3 = {
+    val p = PlainText("3[*]", "S3", false, false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
   }
 }

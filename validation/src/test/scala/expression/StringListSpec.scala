@@ -20,6 +20,20 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
       If the path is valued to multiple elements
         StringList should pass if one of the elements is in the list and AtLeastOnce = True           $stringListAtLeastOnceT
         StringList should fail if one of the elements is not in the list and AtLeastOnce = False           $stringListAtLeastOnceF
+        Min = 1 & Max = *
+          StringList evaluation should fail if 0 of the elements value is in the list $stringListMinMax1s0
+          StringList evaluation should pass if 1 of the elements value is in the list $stringListMinMax1s1
+          StringList evaluation should pass if 2 of the elements value is in the list $stringListMinMax1s2
+          StringList evaluation should pass if 3 (all) of the elements value is in the list $stringListMinMax1s3
+        Min = 2 & Max = 2
+          StringList evaluation should fail if 0 of the elements value is in the list $stringListMinMax220
+          StringList evaluation should fail if 1 of the elements value is in the list $stringListMinMax221
+          StringList evaluation should pass if 2 of the elements value is in the list $stringListMinMax222
+          StringList evaluation should fail if 3 (all) of the elements value is in the list $stringListMinMax223
+        Min = 0 & Max = *
+          StringList evaluation should pass if 0 of the elements value is in the list $stringListMinMax0s0
+          StringList evaluation should pass if 1 of the elements value is in the list $stringListMinMax0s1
+          StringList evaluation should pass if 3 (all) of the elements value is in the list $stringListMinMax0s3
       StringList evaluation should fail If not present behavior is FAIL and no element is found  $stringListNoElmFAIL
       StringList evaluation should be inconclusive If not present behavior is INCONCLUSIVE and no element is found $stringListNoElmINC
       StringList evaluation should pass If not present behavior is PASS and no element is found $stringListNoElmPASS
@@ -91,6 +105,61 @@ trait StringListSpec extends Specification with Evaluator with Mocks  {
     val `c1.1[3]`  = queryAsSimple(c1, "1[3]").get.head
     assert( `c1.1[3]`.value == Text("S13") )
     eval( p, c1 ) === Failures.stringList(p, `c1.1[1]`::`c1.1[3]`::Nil)
+  }
+
+  def stringListMinMax1s0 = {
+    val p = StringList("1[*]", List("NONE"), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Failures.stringList(p, getValues(cMinMax, "1[1]"::"1[2]"::"1[3]"::Nil))
+  }
+
+  def stringListMinMax1s1 = {
+    val p = StringList("1[*]", List("S11"), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def stringListMinMax1s2 = {
+    val p = StringList("4[*]", List("S4A"), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def stringListMinMax1s3 = {
+    val p = StringList("3[*]", List("S3"), false, "PASS", Some(hl7.v2.profile.Range(1, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def stringListMinMax220 = {
+    val p = StringList("1[*]", List("NONE"), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.stringList(p, getValues(cMinMax, "1[1]"::"1[2]"::"1[3]"::Nil))
+  }
+
+  def stringListMinMax221 = {
+    val p = StringList("1[*]", List("S11"), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.stringList(p, getValues(cMinMax, "1[2]"::"1[3]"::Nil))
+  }
+
+  def stringListMinMax222 = {
+    val p = StringList("4[*]", List("S4A"), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def stringListMinMax223 = {
+    val p = StringList("3[*]", List("S3"), false, "PASS", Some(hl7.v2.profile.Range(2, "2")))
+    eval(p, cMinMax) === Failures.stringList(p, Nil)
+  }
+
+  def stringListMinMax0s0 = {
+    val p = StringList("1[*]", List("NONE"), false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def stringListMinMax0s1 = {
+    val p = StringList("1[*]", List("S11"), false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
+  }
+
+  def stringListMinMax0s3 = {
+    val p = StringList("3[*]", List("S3"), false, "PASS", Some(hl7.v2.profile.Range(0, "*")))
+    eval(p, cMinMax) === Pass
   }
 
 }
