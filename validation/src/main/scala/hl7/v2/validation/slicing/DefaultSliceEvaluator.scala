@@ -25,7 +25,7 @@ case class AssertionSliceInconclusive[T](
 
 case class MatchError[T](slice: Slice[T], context: Element, message: String) extends SlicingCode
 
-case class NoSliceMatch[T](slicing: Slicing[T], element: Element) extends SlicingCode
+case class NoSliceMatch[T](slicing: Slicing[T], element: Element, flavorName: String) extends SlicingCode
 
 case class SegmentSliceTargetIsGroup[T](slicing: Slicing[T], element: Group) extends SlicingCode
 
@@ -107,7 +107,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
           case None => (child, detections ::: codes ::: Nil) /// TODO Is this correct? Shouldn't ever fall in this case
         }
       case None =>
-        (child, NoSliceMatch(slicing, child) :: detections ::: Nil)
+        (child, NoSliceMatch(slicing, child, child.datatype.id) :: detections ::: Nil)
     }
 
   }
@@ -131,7 +131,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
             val (appliedSegmentRef, codes) = applySegmentToSegmentRef(segmentInstance, slice)
             (appliedSegmentRef, detections ::: codes ::: Nil)
           case None =>
-            (segmentInstance, NoSliceMatch(slicing, segmentInstance) :: detections ::: Nil)
+            (segmentInstance, NoSliceMatch(slicing, segmentInstance, segmentInstance.model.ref.id) :: detections ::: Nil)
         }
     }
 
@@ -242,7 +242,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
       case d: Datatype => Detections.slicingMatchError(context, "datatype", d.id, message)
       case s: Segment => Detections.slicingMatchError(context, "segment", s.id, message)
     }
-    case NoSliceMatch(_, element) =>  Detections.slicingNoMatch(element)
+    case NoSliceMatch(_, element, flavorName) =>  Detections.slicingNoMatch(element, flavorName)
     case SegmentSliceTargetIsGroup(_, element) => Detections.slicingTargetGroup(element)
   }
 
