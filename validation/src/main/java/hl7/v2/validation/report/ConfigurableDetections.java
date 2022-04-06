@@ -877,35 +877,35 @@ public class ConfigurableDetections {
 		return String.format(template, s1, s2, s3, s4, s5);
 	}
 
-	public Entry ccRequiredGroup(Element e, String segment, String group) {
+	public Entry ccRequiredGroup(Element e, String group, String cc) {
 		String category = conf.getString("report.required-group.category");
 		String classification = conf.getString("report.required-group.classification");
 		String template = conf.getString("report.required-group.template");
-		String description = String.format(template, segment, group);
+		String description = String.format(template, group, group, cc);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccRequiredCoConstraint(Element e, String cc) {
+	public Entry ccRequiredCoConstraint(String groupInstance, Element e, String cc) {
 		String category = conf.getString("report.required-co-constraint.category");
 		String classification = conf.getString("report.required-co-constraint.classification");
 		String template = conf.getString("report.required-co-constraint.template");
-		String description = String.format(template, cc);
+		String description = String.format(template, groupInstance, cc);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccCardinalityGroup(Element e, String segment, String group, Range r, int nb) {
+	public Entry ccCardinalityGroup(Element e, String group, Range r, int nb, String grouper, String values) {
 		String category = conf.getString("report.cardinality-group.category");
 		String classification = conf.getString("report.cardinality-group.classification");
 		String template = conf.getString("report.cardinality-group.template");
-		String description = String.format(template, segment, group, r.min(), r.max(), nb);
+		String description = String.format(template, group, r.min(), r.max(), nb, grouper, values);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccCardinalityCoConstraint(Element e, String cc, Range r, int nb) {
+	public Entry ccCardinalityCoConstraint(String groupInstance, Element e, String cc, Range r, int nb) {
 		String category = conf.getString("report.cardinality-co-constraint.category");
 		String classification = conf.getString("report.cardinality-co-constraint.classification");
 		String template = conf.getString("report.cardinality-co-constraint.template");
-		String description = String.format(template, cc, r.min(), r.max(), nb);
+		String description = String.format(template, groupInstance, cc, r.min(), r.max(), nb);
 		return entry(e.location(), description, category, classification);
 	}
 
@@ -933,11 +933,11 @@ public class ConfigurableDetections {
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccNotDistinctGrouper(Element e, String cc, String value) {
+	public Entry ccNotDistinctGrouper(Element e, String cc, String value, String context) {
 		String category = conf.getString("report.cc-grouper-not-distinct.category");
 		String classification = conf.getString("report.cc-grouper-not-distinct.classification");
 		String template = conf.getString("report.cc-grouper-not-distinct.template");
-		String description = String.format(template, cc, e.location().prettyString(), value);
+		String description = String.format(template, cc, e.location().prettyString(), value, context);
 		return entry(e.location(), description, category, classification);
 	}
 
@@ -965,67 +965,51 @@ public class ConfigurableDetections {
 		return entry(location, description, category, classification, stack, null);
 	}
 
-	public Entry ccPlainTextFailure(Element e, String cc, String cell, String found) {
+	public Entry ccPlainTextFailure(String groupInstance, Element e, String cc, String cell, String found) {
 		String category = conf.getString("report.cc-plain-text-failure.category");
 		String classification = conf.getString("report.cc-plain-text-failure.classification");
 		String template = conf.getString("report.cc-plain-text-failure.template");
-		String description = String.format(template, cc, cell, found);
+		String description = String.format(template, groupInstance, cc, cell, found);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccPlainTextSuccess(Element e, String cc, String cell) {
-		String category = conf.getString("report.cc-plain-text-success.category");
-		String classification = conf.getString("report.cc-plain-text-success.classification");
-		String template = conf.getString("report.cc-plain-text-success.template");
-		String description = String.format(template, cc, cell);
-		return entry(e.location(), description, category, classification);
-	}
-
-	public Entry ccCodeFailure(Element e, String cc, String cell) {
+	public Entry ccCodeFailure(String groupInstance, Element e, String cc, String cell, String codeFound, String codeExpected) {
 		String category = conf.getString("report.cc-code-failure.category");
 		String classification = conf.getString("report.cc-code-failure.classification");
 		String template = conf.getString("report.cc-code-failure.template");
-		String description = String.format(template, cc, cell);
+		String description = String.format(template, groupInstance, cc, cell, codeFound, codeExpected);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccCodeFailureInvalidCs(Element e, String cc, String cell, String cs) {
+	public Entry ccCodeFailureInvalidCs(String groupInstance, Element e, String cc, String cell, String cs, String csExpected) {
 		String category = conf.getString("report.cc-code-failure-invalid-codesys.category");
 		String classification = conf.getString("report.cc-code-failure-invalid-codesys.classification");
 		String template = conf.getString("report.cc-code-failure-invalid-codesys.template");
-		String description = String.format(template, cc, cell, cs);
+		String description = String.format(template, groupInstance, cc, cell, cs, csExpected);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccCodeFailureNotFoundCs(Element e, String cc, String cell) {
+	public Entry ccCodeFailureNotFoundCs(String groupInstance, Element e, String cc, String cell, String csLocation) {
 		String category = conf.getString("report.cc-code-failure-notfound-codesys.category");
 		String classification = conf.getString("report.cc-code-failure-notfound-codesys.classification");
 		String template = conf.getString("report.cc-code-failure-notfound-codesys.template");
-		String description = String.format(template, cc, cell);
+		String description = String.format(template, groupInstance, cc, cell, csLocation);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccCodeSuccess(Element e, String cc, String cell) {
-		String category = conf.getString("report.cc-code-success.category");
-		String classification = conf.getString("report.cc-code-success.classification");
-		String template = conf.getString("report.cc-code-success.template");
-		String description = String.format(template, cc, cell);
-		return entry(e.location(), description, category, classification);
-	}
-
-	public Entry ccVsFailure(Element e, String cc, String cell) {
+	public Entry ccVsFailure(String groupInstance, Element e, String cc, String cell) {
 		String category = conf.getString("report.cc-vs-failure.category");
 		String classification = conf.getString("report.cc-vs-failure.classification");
 		String template = conf.getString("report.cc-vs-failure.template");
-		String description = String.format(template, cc, cell);
+		String description = String.format(template, groupInstance, cc, cell);
 		return entry(e.location(), description, category, classification);
 	}
 
-	public Entry ccVsSuccess(Element e, String cc, String cell) {
-		String category = conf.getString("report.cc-vs-success.category");
-		String classification = conf.getString("report.cc-vs-success.classification");
-		String template = conf.getString("report.cc-vs-success.template");
-		String description = String.format(template, cc, cell);
+	public Entry ccCellSuccess(String groupInstance, Element e, String cc, String cell) {
+		String category = conf.getString("report.cc-success.category");
+		String classification = conf.getString("report.cc-success.classification");
+		String template = conf.getString("report.cc-success.template");
+		String description = String.format(template, groupInstance, cc, cell);
 		return entry(e.location(), description, category, classification);
 	}
 
