@@ -3,7 +3,7 @@ package hl7.v2.validation.vs
 import java.io.InputStream
 
 import hl7.v2.instance.{Component, Element, Field, Group, Path, Segment}
-import hl7.v2.profile.BindingStrength
+import hl7.v2.profile.{BindingLocation => BL, BindingStrength, Composite, Datatype, Segment => SM, Profile, ValueSetSpec}
 import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
 import nist.xml.util.XOMExtensions._
 
@@ -32,9 +32,62 @@ object DefaultValueSetSpecification {
   def apply(context: InputStream): Try[ValueSetSpecification] = {
     XOMDocumentBuilder.build(context, getClass.getResourceAsStream("/rules/ValueSetBindings.xsd"), resourceResolver) map { doc =>
       val root = doc.getRootElement.getFirstChildElement("ValueSetBindings")
-      new DefaultValueSetSpecification(init(extractNodes(root, "Datatype"), vBinding),init(extractNodes(root, "Segment"), vBinding), init(extractNodes(root, "Group"), vBinding))
+      new DefaultValueSetSpecification(
+        init(extractNodes(root, "Datatype"), vBinding),
+        init(extractNodes(root, "Segment"), vBinding),
+        init(extractNodes(root, "Group"), vBinding))
     }
   }
+
+  def extractFromProfile(profile: Profile): DefaultValueSetSpecification = {
+    val datatypes = profile.datatypes.mapValues(extractFromDatatype)
+    val segments = profile.segments.mapValues(extractFromSegment)
+    new DefaultValueSetSpecification(datatypes, segments, Map.empty[String, List[ValueSetBinding]])
+  }
+
+  def extractFromDatatype(dt: Datatype): List[ValueSetBinding] =  {
+    dt match {
+      case c: Composite => c.components.foldLeft(List[ValueSetBinding]()) {
+        (acc, cmp) => cmp.req.vsSpec match {
+          case Nil => acc
+          case ls => acc ::: ls.map(mapLegacyToImprovedValueSetBindingSpec(cmp.req.position, cmp.datatype, _))
+        }
+      }
+      case _ => Nil
+    }
+  }
+
+  def extractFromSegment(segment: SM): List[ValueSetBinding] = {
+    segment.fields.foldLeft(List[ValueSetBinding]()) {
+      (acc, field) =>
+        field.req.vsSpec match {
+          case Nil => acc
+          case ls => acc ::: ls.map(mapLegacyToImprovedValueSetBindingSpec(field.req.position, field.datatype, _))
+        }
+    }
+  }
+
+  def mapLegacyToImprovedValueSetBindingSpec(position: Int, dt: Datatype, vsSpec: ValueSetSpec): ValueSetBinding = {
+    val isCoded = isCodedElement(dt)
+    val strength = vsSpec.bindingStrength
+    val target = s"${position}[*]"
+    val bindings = vsSpec.valueSetId.split(":").toList
+    val bindingLocations = vsSpec.bindingLocation match {
+      case None => List(BindingLocation(".", None))
+      case Some(bl) => bl match {
+        case BL.Position(value) => List(mapBindingLocation(value, isCoded))
+        case BL.XOR(position1, position2) => List(
+          mapBindingLocation(position1, isCoded),
+          mapBindingLocation(position2, isCoded)
+        )
+      }
+    }
+    ValueSetBinding(target, strength, bindings, bindingLocations)
+  }
+
+  def mapBindingLocation(position: Int, coded: Boolean): BindingLocation = BindingLocation(s"${position}[1]", if(coded) Some(s"${position + 2}[1]") else None)
+
+  def isCodedElement(dt: Datatype): Boolean = dt.name.matches("C(W|N)?E")
 
   private def asOption(s: String) = if (s == "") None else Some(s)
 

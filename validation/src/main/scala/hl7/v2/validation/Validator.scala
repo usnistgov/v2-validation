@@ -15,7 +15,7 @@ import java.io.Reader
 
 import hl7.v2.validation.coconstraints.{CoConstraintValidationContext, EmptyCoConstraintValidationContext}
 import hl7.v2.validation.slicing.{EmptyProfileSlicingContext, ProfileSlicingContext}
-import hl7.v2.validation.vs.EmptyValueSetSpecification
+import hl7.v2.validation.vs.{DefaultValueSetSpecification, EmptyValueSetSpecification}
 
 /**
  * Trait defining the message validation
@@ -32,6 +32,7 @@ trait Validator { this: Parser
     with coconstraints.CoConstraintValidator =>
 
   val profile: Profile
+  val legacyVsValidationSpecification: Option[vs.ValueSetSpecification]
   val valueSetLibrary: vs.ValueSetLibrary
 
   /**
@@ -68,11 +69,10 @@ trait Validator { this: Parser
               (sliceAppliedMessage, slicingDetections) <- applySlices(m)
               r1 <- checkStructure(sliceAppliedMessage)
               r2 <- checkContent(sliceAppliedMessage)
-              r3 <- checkValueSets(sliceAppliedMessage)
-              r4 <- Future { vsValidator.checkValueSet(sliceAppliedMessage, valueSetLibrary) }
-              r5 <- checkCoConstraint(sliceAppliedMessage)
+              r3 <- checkValueSets(sliceAppliedMessage, legacyVsValidationSpecification)
+              r4 <- checkCoConstraint(sliceAppliedMessage)
             } yield {
-              report.Report(r1 ++ slicingDetections, r2 ++ r5, asScalaBuffer(r4) ++ r3)
+              report.Report(r1 ++ slicingDetections, r2 ++ r4, r3)
             }
 
           case Failure(e) => Future failed e
@@ -99,6 +99,8 @@ class HL7Validator(
     with vs.DefaultValueSetValidator
     with expression.DefaultEvaluator
     with coconstraints.DefaultValidator {
+
+  val legacyVsValidationSpecification: Option[vs.ValueSetSpecification] =  Some(DefaultValueSetSpecification.extractFromProfile(profile))
 
   /** v1 (Empty VS Specification, Empty Co-Constraint Specification) */
   def this(profile: Profile,

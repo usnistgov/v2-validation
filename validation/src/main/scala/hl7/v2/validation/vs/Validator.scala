@@ -20,7 +20,7 @@ trait VsValidator {
     * @param m - The message to be checked
     * @return - The list of problems
     */
-  def checkValueSets(m: Message)(implicit Detections: ConfigurableDetections): Future[Seq[Entry]]
+  def checkValueSets(m: Message, additionalVsBindings: Option[ValueSetSpecification] = None)(implicit Detections: ConfigurableDetections): Future[Seq[Entry]]
 
   def check(elements: List[Element], spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[VsEntry]
 

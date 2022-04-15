@@ -39,7 +39,6 @@ sealed trait VSValidationCodeFoundInSingleVS extends VSValidationCodeFound {
   def getValueSets: List[ValueSet] = List(vs)
 }
 
-
 trait Resolve[T] {
   def isValue: Boolean
   def get: T
@@ -74,45 +73,25 @@ case class VsEntry(target: Element, code: VSValidationCode, strength: Option[Bin
 
 object VSValidationCode {
 
-  //Check
   case class VSNotFound(vs: String) extends VSValidationCode
-  //Check
   case class EmptyVS(vs: ValueSet) extends VSValidationCode
-  //Check
   case class ExcludedVS(vs: String) extends VSValidationCode
-  //Check
   case class UBS(binding: ValueSetBinding) extends VSValidationCode
-  //Check
   case class MultipleVSForPrimitive(binding: ValueSetBinding) extends VSValidationCodeSpecError
-  //Check
   case class InvalidCodeBindingLocation(location: String, multiple: Boolean) extends VSValidationCodeSpecError
-  //Check
   case class InvalidCodeSystemBindingLocation(location: String, multiple: Boolean) extends VSValidationCodeSpecError
-  //Check
   case class MultipleCodesFoundInValueSet(value: String, vs: ValueSet, codes: List[Code]) extends VSValidationCodeSpecError with VSValidationCodeFoundInSingleVS
-  //Check
   case class MultipleCodeAndCodeSystemFound(value: String, cs: String, vs: ValueSet, codes: List[Code]) extends VSValidationCodeSpecError with VSValidationCodeFoundInSingleVS
-  //Check
   case class FoundInMultipleValueSets(code: String, codeSystem: Option[String], vsList: List[ValueSet]) extends VSValidationCodeSpecError with VSValidationCodeFoundInMultiVS
-  //Check
   case class RVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  //Check
   case class PVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  //Check
   case class EVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  //Check
   case class NoUsage(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  //Check
   case class CodedElementXOR(element: List[CodeHolder], vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  //Internal
   case class SimpleCodeNotFound(code: String, valueSet: String) extends VSValidationCode
-  //Internal
   case class CodeAndCodeSystemNotFound(code: String, codeSystem: String, valueSet: String) extends VSValidationCode
-  //Check
   case class SimpleCodeFoundInvalidCodeSystem(code: String, expected: String, found: String, vs: ValueSet) extends VSValidationCode
-  //Check
   case class CodeNotFound(code: String, codeSystem: Option[String], bindings: List[ValueSet]) extends VSValidationCode
-  //Check
   case class UsageAndExtensibilityNotCompatible(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS with VSValidationCodeSpecError
   //TODO
   case class DynamicValueSet(vs: ValueSet) extends VSValidationCodeFoundInSingleVS
@@ -122,35 +101,40 @@ object VSValidationCode {
 trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
 
 
-  def checkValueSets(m: Message)(implicit Detections: ConfigurableDetections): Future[Seq[Entry]] = Future {
+  def checkValueSets(m: Message, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): Future[Seq[Entry]] = Future {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
     implicit val model: profile.Message = m.model
-    check(m.asGroup);
+    check(m.asGroup, additionalVsBindings)
   }
 
   // Checks if specification is available on element and checks it, then dives into complex elements
-  def check(e: Element)(implicit Detections: ConfigurableDetections): List[Entry] = {
+  def check(e: Element, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): List[Entry] = {
 
-    val entries = vsSpecification.vsSpecificationFor(e) match {
-      case Some(ls) => ls.foldRight(List[Entry]()) {
-        (x, acc) => check(e, x)
+    val entries = getBindingsForElement(e, additionalVsBindings) match {
+      case Nil => Nil
+      case ls => ls.foldRight(List[Entry]()) {
+        (x, acc) => acc ::: check(e, x)
       }
-      case None => Nil
     }
 
     e match {
-      case c: Complex => c.children.foldLeft(entries) { (acc, cc) => acc ::: check(cc) }
+      case c: Complex => c.children.foldLeft(entries) { (acc, cc) => acc ::: check(cc, additionalVsBindings) }
       case _ => entries
     }
+  }
+
+  def getBindingsForElement(e: Element, additionalVsBindings: Option[ValueSetSpecification] = None): List[ValueSetBinding] = {
+    val fromVsBindingsSpecification = vsSpecification.vsSpecificationFor(e)
+    val fromAdditionalVsBindings = additionalVsBindings.flatMap(_.vsSpecificationFor(e))
+    fromVsBindingsSpecification.getOrElse(Nil) ::: fromAdditionalVsBindings.getOrElse(Nil)
   }
 
   // Resolve complex binding target as complex elements, fails on simple elements, and check complex binding
   def check(e: Element, spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[Entry] = {
     Query.query(e, spec.target) match {
-      case Success(x) => {
+      case Success(x) =>
         check(x, spec).map(entry => createEntry(entry.target, entry.code, entry.strength))
-      }
       case _ => Nil
     }
   }
@@ -193,7 +177,6 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     val valueSets = collectValues(rValueSets)
 
     for (target <- targets) yield {
-
       // Resolver Code Holders
       val rCodeHolders = for (location <- spec.bindingLocations) yield {
         codeHolder(target, location)
