@@ -146,6 +146,14 @@ public class ConfigurableDetections {
 		return entry(l, desc, category, classification);
 	}
 
+	public  Entry oUsageComplex(Location l) {
+		String category = conf.getString("report.o-usage-complex.category");
+		String classification = conf.getString("report.o-usage-complex.classification");
+		String template = conf.getString("report.o-usage-complex.template");
+		String desc = String.format(template, l.prettyString());
+		return entry(l, desc, category, classification);
+	}
+
 	/**
 	 * @return A report entry for the X usage detection
 	 */

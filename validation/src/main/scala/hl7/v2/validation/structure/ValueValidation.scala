@@ -10,10 +10,8 @@ import hl7.v2.validation.report.ConfigurableDetections
 object ValueValidation extends EscapeSeqHandler {
 
   def check(s: Simple)(implicit x: Separators, Detections: ConfigurableDetections): List[Entry] = {
-    s.req.usage match {
-      case Usage.O => Detections.ousage(s.location, s.value.raw) :: Nil
-      case _ => checkValue(s.value, s.req.length, s.req.confRange, s.req.constantValue, s.location)
-    }
+    val optional = if(s.req.usage.equals(Usage.O)) Detections.ousage(s.location, s.value.raw) :: Nil else Nil
+    checkValue(s.value, s.req.length, s.req.confRange, s.req.constantValue, s.location) ::: optional
   }
 
   /**

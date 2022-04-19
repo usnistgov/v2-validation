@@ -99,9 +99,11 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     val constantValueSpecError = if(c.req.constantValue.isDefined) Detections.constantValueSpecError(c.location, c.req.constantValue.get)::Nil else Nil
     // Check for extra children
     val extra = if( c.hasExtra ) Detections.extra(c.location) :: Nil else Nil
+    // Check if it's a complex O element
+    val optionalPopulated = if(c.req.usage.equals(Usage.O) && c.children.nonEmpty) Detections.oUsageComplex(c.location) :: Nil else Nil
 
     // Merge results
-    constantValueSpecError ::: extra ::: entries
+    constantValueSpecError ::: extra ::: optionalPopulated ::: entries
   }
   
   private def positionHasNull(l : List[Element]): Boolean = {
