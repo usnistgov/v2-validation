@@ -36,6 +36,7 @@
     </Segment>
     <Segment ID="OPT" Name="OPT" Description="Optional Segment Test">
       <Field Name="Complex Field Constant Value Test" Datatype="TES" Usage="O" Min="1" Max="1" MinLength="1" MaxLength="*" ConstantValue="this is a spec error" ItemNo="01834"/>
+      <Field Name="Optional Field" Datatype="ST" Usage="O" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01834"/>
     </Segment>
     <Segment ID="UAC" Name="UAC" Description="User Authentication Credential Segment">
       <Field Name="User Authentication Credential Type Code" Datatype="HD" Usage="X" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02267"/>
