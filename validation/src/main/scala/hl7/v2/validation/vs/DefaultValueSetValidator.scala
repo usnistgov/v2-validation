@@ -83,10 +83,10 @@ object VSValidationCode {
   case class MultipleCodesFoundInValueSet(value: String, vs: ValueSet, codes: List[Code]) extends VSValidationCodeSpecError with VSValidationCodeFoundInSingleVS
   case class MultipleCodeAndCodeSystemFound(value: String, cs: String, vs: ValueSet, codes: List[Code]) extends VSValidationCodeSpecError with VSValidationCodeFoundInSingleVS
   case class FoundInMultipleValueSets(code: String, codeSystem: Option[String], vsList: List[ValueSet]) extends VSValidationCodeSpecError with VSValidationCodeFoundInMultiVS
-  case class RVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  case class PVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  case class EVS(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
-  case class NoUsage(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  case class RVS(code: Code, found: String, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  case class PVS(code: Code, found: String, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  case class EVS(code: Code, found: String, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
+  case class NoUsage(code: Code, found: String, vs: ValueSet) extends VSValidationCodeFoundInSingleVS
   case class CodedElementXOR(element: List[CodeHolder], vs: ValueSet) extends VSValidationCodeFoundInSingleVS
   case class SimpleCodeNotFound(code: String, valueSet: String) extends VSValidationCode
   case class CodeAndCodeSystemNotFound(code: String, codeSystem: String, valueSet: String) extends VSValidationCode
@@ -303,22 +303,22 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     val codes = vs.getCodes(code)
     if (codes.size() == 0) Detection[Code](VSValidationCode.SimpleCodeNotFound(code, vs.id))
     else if (codes.size() > 1) Detection[Code](VSValidationCode.MultipleCodesFoundInValueSet(code, vs, codes.asScala.toList))
-    else PayloadAndDetection[Code](codes.get(0), codeToVsValidation(codes.get(0), vs))
+    else PayloadAndDetection[Code](codes.get(0), codeToVsValidation(codes.get(0), code, vs))
   }
 
-  def codeToVsValidation(code: Code, vs: ValueSet): VSValidationCode = {
+  def codeToVsValidation(code: Code, value: String, vs: ValueSet): VSValidationCode = {
     code.usage match {
-      case CodeUsage.P => VSValidationCode.PVS(code, vs)
-      case CodeUsage.E => VSValidationCode.EVS(code, vs)
-      case CodeUsage.R => VSValidationCode.RVS(code, vs)
-      case _ => VSValidationCode.NoUsage(code, vs)
+      case CodeUsage.P => VSValidationCode.PVS(code, value, vs)
+      case CodeUsage.E => VSValidationCode.EVS(code, value, vs)
+      case CodeUsage.R => VSValidationCode.RVS(code, value, vs)
+      case _ => VSValidationCode.NoUsage(code, value, vs)
     }
   }
 
   def expandVSValidationCode(vsCode: VSValidationCode): List[VSValidationCode] = {
     vsCode match {
-      case detection : VSValidationCode.MultipleCodesFoundInValueSet => detection :: detection.codes.map(code => codeToVsValidation(code, detection.vs))
-      case detection : VSValidationCode.MultipleCodeAndCodeSystemFound => detection :: detection.codes.map(code => codeToVsValidation(code, detection.vs))
+      case detection : VSValidationCode.MultipleCodesFoundInValueSet => detection :: detection.codes.map(code => codeToVsValidation(code, detection.value, detection.vs))
+      case detection : VSValidationCode.MultipleCodeAndCodeSystemFound => detection :: detection.codes.map(code => codeToVsValidation(code, detection.value, detection.vs))
       case detection : VSValidationCode.PVS =>
         val extensibility = detection.vs.extensibility match {
           case Some(Extensibility.Closed) => VSValidationCode.UsageAndExtensibilityNotCompatible(detection.code, detection.vs)::Nil
@@ -342,7 +342,7 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
         val codeAndCodeSys = detection.codes.filter(code => code.codeSys.equals(codeSys))
         if(codeAndCodeSys.size > 1) VSValidationCode.MultipleCodeAndCodeSystemFound(value, codeSys, vs, codeAndCodeSys)
         else if(codeAndCodeSys.isEmpty) VSValidationCode.CodeAndCodeSystemNotFound(value, codeSys, vs.id)
-        else codeToVsValidation(codeAndCodeSys.head, vs)
+        else codeToVsValidation(codeAndCodeSys.head, value, vs)
       }
       case Detection(detection) => detection
     }
@@ -350,10 +350,10 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
 
   def createEntry(element: Element, issue: VSValidationCode, bindingStrength: Option[BindingStrength])(implicit Detections: ConfigurableDetections): Entry = {
     issue match {
-      case VSValidationCode.NoUsage(code, vs) => Detections.vsCodeFound("no-code-usage", element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
-      case VSValidationCode.RVS(code, vs) => Detections.vsCodeFound("rvs", element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
-      case VSValidationCode.PVS(code, vs) => Detections.vsCodeFound("pvs", element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
-      case VSValidationCode.EVS(code, vs) => Detections.vsCodeFound("evs",element.location, code.value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.NoUsage(code, value, vs) => Detections.vsCodeFound("no-code-usage", element.location, value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull, code.pattern.isDefined, code.value, code.pattern.getOrElse(""))
+      case VSValidationCode.RVS(code, value, vs) => Detections.vsCodeFound("rvs", element.location, value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull, code.pattern.isDefined, code.value, code.pattern.getOrElse(""))
+      case VSValidationCode.PVS(code, value, vs) => Detections.vsCodeFound("pvs", element.location, value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull, code.pattern.isDefined, code.value, code.pattern.getOrElse(""))
+      case VSValidationCode.EVS(code, value, vs) => Detections.vsCodeFound("evs",element.location, value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull, code.pattern.isDefined, code.value, code.pattern.getOrElse(""))
       case VSValidationCode.MultipleCodesFoundInValueSet(value, vs, _) => Detections.duplicateCode(element.location, value, vs.id)
       case VSValidationCode.MultipleCodeAndCodeSystemFound(value, cs, vs, _) => Detections.duplicateCodeAndCodeSystem(element.location, value, cs, vs.id)
       case VSValidationCode.FoundInMultipleValueSets(value, cs, vs) => cs match {
@@ -398,6 +398,4 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     else None
   }
 
-
-  def duplicateTriplet(element: List[Element], vs: String): List[Entry] = Nil
 }

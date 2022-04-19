@@ -33,6 +33,7 @@
 												use="optional" default="R"/>
 												<xs:attribute name="Comments" type="xs:string"
 												use="optional"/>
+												<xs:attribute name="CodePattern" type="NonEmptyString" />
 											</xs:complexType>
 										</xs:element>
 									</xs:sequence>

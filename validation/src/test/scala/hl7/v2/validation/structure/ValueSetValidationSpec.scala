@@ -31,6 +31,13 @@ trait ValueSetValidationSpec extends Specification
       Complex element with unresolvable binding location should return a spec error $unresolvableBL
       Complex element with unresolvable code system binding location should return a spec error $unresolvableCsBL
 
+    Code Pattern Matching
+      Simple element with value that matches a code pattern present in the value set should return an RVS detection $simpleCodePatternMatch
+      Simple element with value that matches the VALUE but not the pattern of a code present in the value set should return a CodeNotFound detection $simpleCodePatternMatchValueNotRegex
+      Simple element with value that matches a code pattern and a simple code should return a duplicate code detection and a found detection for each match with the correct found detection for usage $simpleCodePatternMatchCodeAndPattern
+      Complex element with value that matches a code pattern present in the value set should return an RVS detection $complexCodePatternMatch
+      Complex element with value that matches the VALUE but not the pattern of an R code present in the value set should return a CodeNotFound detection $complexCodePatternMatchValueNotRegex
+      Complex element with value that matches a code pattern and a simple code should return a duplicate code detection and a found detection for each match with the correct found detection for usage $complexCodePatternMatchCodeAndPattern
 
     Primitive
       Simple element with R code present in the value set should return an RVS detection $checkSimpleBindingR
@@ -91,6 +98,12 @@ trait ValueSetValidationSpec extends Specification
     S(3, 1, Text("F"))
   ))
 
+  val HD_CP: C = C(0, 1, List(
+    S(1, 1, Text("A1")),
+    S(2, 1, Text("A5")),
+    S(3, 1, Text("PAT"))
+  ))
+
   val CWE_2_7: C = C(0, 1, List(
     S(1, 1, Text("A")),
     S(3, 1, Text("SYS")),
@@ -99,6 +112,17 @@ trait ValueSetValidationSpec extends Specification
     S(6, 1, Text("SYS")),
 
     S(10, 1, Text("C")),
+    S(12, 1, Text("SYS"))
+  ))
+
+  val CWE_2_7_CP: C = C(0, 1, List(
+    S(1, 1, Text("A1")),
+    S(3, 1, Text("SYS")),
+
+    S(4, 1, Text("A5")),
+    S(6, 1, Text("SYS")),
+
+    S(10, 1, Text("PAT")),
     S(12, 1, Text("SYS"))
   ))
 
@@ -128,6 +152,8 @@ trait ValueSetValidationSpec extends Specification
   val vs1_closed: ValueSet = ValueSet("vs1_closed", Some(Extensibility.Closed), None, List(Code("A", "des", CodeUsage.P, "SYS"),Code("B", "des", CodeUsage.P, "SYS"),Code("C", "des", CodeUsage.P, "SYS")))
   val vs1_dynamic: ValueSet = ValueSet("vs1_dynamic", None, Some(Stability.Dynamic), List(Code("A", "des", CodeUsage.P, "SYS"),Code("H", "des", CodeUsage.P, "SYS"),Code("G", "des", CodeUsage.P, "SYS")))
 
+  val vsCodePattern: ValueSet = ValueSet("vsCodePattern", None, None, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS")))
+
   val vs1_cs: ValueSet = ValueSet("vs1_cs", None, None, List(Code("A", "des", CodeUsage.R, "SYS1"),Code("B", "des", CodeUsage.P, "SYS1"),Code("C", "des", CodeUsage.E, "SYS1")))
   val vs1_cs_1: ValueSet = ValueSet("vs1_cs_1", None, None, List(Code("A", "des", CodeUsage.R, "SYS2"),Code("B", "des", CodeUsage.P, "SYS2"),Code("C", "des", CodeUsage.E, "SYS2")))
 
@@ -145,9 +171,41 @@ trait ValueSetValidationSpec extends Specification
   val vs4_1: ValueSet = ValueSet("vs4_1", None, None, List(Code("M", "des", CodeUsage.P, "SYS1"),Code("N", "des", CodeUsage.R, "SYS")))
 
   val empty: ValueSet = ValueSet("empty", None, None, List())
-  val valueSetLibrary = new ValueSetLibraryImpl(List("excluded"), (vs1::vs2::vs3::vs1_1::vs2_2::vs1_cs::vs1_cs_1::vs1_1_cs::vs3_1::vs2_2_2::vs4::vs4_1::empty::vs1_no_usage::vs1_closed::vs1_dynamic::Nil).map(x => { (x.id, x) }).toMap)
+  val valueSetLibrary = new ValueSetLibraryImpl(List("excluded"), (vsCodePattern::vs1::vs2::vs3::vs1_1::vs2_2::vs1_cs::vs1_cs_1::vs1_1_cs::vs3_1::vs2_2_2::vs4::vs4_1::empty::vs1_no_usage::vs1_closed::vs1_dynamic::Nil).map(x => { (x.id, x) }).toMap)
 
   // ============================================ TEST CASES ===========================================
+
+  val simpleCodePatternMatch = {
+    check(HD_CP, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A1", vsCodePattern), Some(BindingStrength.R))
+    ))
+  }
+
+  val simpleCodePatternMatchValueNotRegex = check(HD_CP, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
+    createEntry(HD_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
+  ))
+
+  val simpleCodePatternMatchCodeAndPattern = check(HD_CP, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None))))  must containTheSameElementsAs(List(
+    createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
+    createEntry(HD_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
+    createEntry(HD_CP, VSValidationCode.MultipleCodesFoundInValueSet("A5",vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
+  ))
+
+  val complexCodePatternMatch = {
+    check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("1[*]", Some("3[*]"))))) must containTheSameElementsAs(List(
+      createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A1", vsCodePattern), Some(BindingStrength.R))
+    ))
+  }
+
+  val complexCodePatternMatchValueNotRegex = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("10[*]", Some("12[*]"))))) must containTheSameElementsAs(List(
+    createEntry(CWE_2_7_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
+  ))
+
+  val complexCodePatternMatchCodeAndPattern = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("4[*]", Some("6[*]")))))  must containTheSameElementsAs(List(
+    createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
+    createEntry(CWE_2_7_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
+    createEntry(CWE_2_7_CP, VSValidationCode.MultipleCodeAndCodeSystemFound("A5", "SYS", vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
+  ))
 
 
   val emptyVs: Seq[MatchResult[List[Entry]]] = {
@@ -171,7 +229,7 @@ trait ValueSetValidationSpec extends Specification
     val parts: Seq[(Element, ValueSetBinding)] = sBindings.map(b => (HD_1, b)) ::: cBindings.map(b => (CWE_2_7, b))
     parts.map(c => check(c._1, c._2) must containTheSameElementsAs(List(
       createEntry(c._1, VSValidationCode.UsageAndExtensibilityNotCompatible(Code("A", "des", CodeUsage.P, "SYS"), vs1_closed), Some(BindingStrength.R)),
-      createEntry(c._1, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), vs1_closed), Some(BindingStrength.R))
+      createEntry(c._1, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), "A", vs1_closed), Some(BindingStrength.R))
     )))
   }
 
@@ -185,7 +243,7 @@ trait ValueSetValidationSpec extends Specification
     val parts: Seq[(Element, ValueSetBinding)] = sBindings.map(b => (HD_1, b)) ::: cBindings.map(b => (CWE_2_7, b))
     parts.map(c => check(c._1, c._2) must containTheSameElementsAs(List(
       createEntry(c._1, VSValidationCode.DynamicValueSet(vs1_dynamic), Some(BindingStrength.R)),
-      createEntry(c._1, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), vs1_dynamic), Some(BindingStrength.R))
+      createEntry(c._1, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), "A", vs1_dynamic), Some(BindingStrength.R))
     )))
   }
 
@@ -264,25 +322,25 @@ trait ValueSetValidationSpec extends Specification
 
   val checkSimpleBindingR: MatchResult[List[Entry]] = {
     check(HD_1, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
-      createEntry(HD_1, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(HD_1, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkSimpleBindingNoUsage: MatchResult[List[Entry]] = {
     check(HD_1, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_no_usage"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
-      createEntry(HD_1, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), vs1_no_usage), Some(BindingStrength.R))
+      createEntry(HD_1, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), "A", vs1_no_usage), Some(BindingStrength.R))
     ))
   }
 
   val checkSimpleBindingP: MatchResult[List[Entry]] = {
     check(HD_1, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
-      createEntry(HD_1, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(HD_1, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkSimpleBindingE: MatchResult[List[Entry]] = {
     check(HD_1, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
-      createEntry(HD_1, VSValidationCode.EVS(Code("C", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(HD_1, VSValidationCode.EVS(Code("C", "des", CodeUsage.P, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
@@ -294,33 +352,33 @@ trait ValueSetValidationSpec extends Specification
 
   val simpleSingleVsDuplicate: MatchResult[List[Entry]] = {
     check(HD_2, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs2"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
-      createEntry(HD_2, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), vs2), Some(BindingStrength.R)),
-      createEntry(HD_2, VSValidationCode.PVS(Code("D", "des", CodeUsage.P, "SYS"), vs2), Some(BindingStrength.R)),
+      createEntry(HD_2, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
+      createEntry(HD_2, VSValidationCode.PVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
       createEntry(HD_2, VSValidationCode.MultipleCodesFoundInValueSet("D",vs2, List(Code("D", "des", CodeUsage.R, "SYS"),Code("D", "des", CodeUsage.P, "SYS"))), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingR: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingNoUsage: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_no_usage"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), vs1_no_usage), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), "A", vs1_no_usage), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingP: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingE: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("10[1]", Some("12[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
@@ -339,33 +397,33 @@ trait ValueSetValidationSpec extends Specification
 
   val checkComplexBindingDuplicateInVs: MatchResult[List[Entry]] = {
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs2"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7_a, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), vs2), Some(BindingStrength.R)),
-      createEntry(CWE_2_7_a, VSValidationCode.PVS(Code("D", "des", CodeUsage.P, "SYS"), vs2), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_a, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_a, VSValidationCode.PVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
       createEntry(CWE_2_7_a, VSValidationCode.MultipleCodeAndCodeSystemFound("D", "SYS", vs2, List(Code("D", "des", CodeUsage.R, "SYS"),Code("D", "des", CodeUsage.P, "SYS"))), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsNoUsage: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_no_usage", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), vs1_no_usage), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), "A", vs1_no_usage), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsR: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsE: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsP: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("10[1]", Some("12[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
@@ -385,14 +443,14 @@ trait ValueSetValidationSpec extends Specification
 
   val checkComplexBindingMultiVsValidAndInvalidCS: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_cs_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiDuplicate: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs3_1", "vs1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R)),
-      createEntry(CWE_2_7, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), vs3_1), Some(BindingStrength.R)),
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R)),
+      createEntry(CWE_2_7, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), "A", vs3_1), Some(BindingStrength.R)),
       createEntry(CWE_2_7, VSValidationCode.FoundInMultipleValueSets("A", Some("SYS"), List(vs3_1,vs1)), Some(BindingStrength.R))
     ))
   }
@@ -403,14 +461,14 @@ trait ValueSetValidationSpec extends Specification
         CodeHolder(S(1, 1, Text("A")), Some(S(3, 1, Text("SYS"))), BindingLocation("1[1]", Some("3[1]"))),
         CodeHolder(S(4, 1, Text("B")), Some(S(6, 1, Text("SYS"))), BindingLocation("4[1]", Some("6[1]")))
       ), vs1), Some(BindingStrength.R)),
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R)),
-      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R)),
+      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiBLRNotFound: MatchResult[List[Entry]] = {
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("10[1]", Some("12[1]")), BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7_a, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7_a, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
@@ -436,21 +494,21 @@ trait ValueSetValidationSpec extends Specification
         CodeHolder(S(1, 1, Text("A")), Some(S(3, 1, Text("SYS"))), BindingLocation("1[1]", Some("3[1]"))),
         CodeHolder(S(4, 1, Text("B")), Some(S(6, 1, Text("SYS"))), BindingLocation("4[1]", Some("6[1]")))
       ), vs1), Some(BindingStrength.R)),
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), vs1), Some(BindingStrength.R)),
-      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R)),
+      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiBLMultiVsRP_2: MatchResult[List[Entry]] = {
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7, VSValidationCode.RVS(Code("D", "des", CodeUsage.R, "SYS"), vs1_1), Some(BindingStrength.R)),
-      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7, VSValidationCode.RVS(Code("D", "des", CodeUsage.R, "SYS"), "D", vs1_1), Some(BindingStrength.R)),
+      createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiBLMultiVsRNotFound: MatchResult[List[Entry]] = {
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs2_2"), List(BindingLocation("10[1]", Some("12[1]")), BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7_a, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), vs1), Some(BindingStrength.R))
+      createEntry(CWE_2_7_a, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
@@ -463,8 +521,8 @@ trait ValueSetValidationSpec extends Specification
 
   val checkComplexBindingMultiBLMultiVsOneInvalidCsOtherPass: MatchResult[List[Entry]] = {
     check(CWE_2_7_b, ValueSetBinding(".", Some(BindingStrength.R), List("vs4", "vs4_1"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
-      createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("M", "des", CodeUsage.R, "SYS"), vs4), Some(BindingStrength.R)),
-      createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("N", "des", CodeUsage.R, "SYS"), vs4_1), Some(BindingStrength.R))
+      createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("M", "des", CodeUsage.R, "SYS"), "M", vs4), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("N", "des", CodeUsage.R, "SYS"), "N", vs4_1), Some(BindingStrength.R))
     ))
   }
 
