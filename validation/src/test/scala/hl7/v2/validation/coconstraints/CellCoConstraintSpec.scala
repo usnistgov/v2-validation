@@ -478,9 +478,9 @@ trait CellCoConstraintSpec extends Specification
   def vsBindingSuccess() = {
     def one = {
       Seq(
-        ("CCT|ST|A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs)),
-        ("CCT|ST|B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), vs1_cs)),
-        ("CCT|ST|C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), vs1_cs)),
+        ("CCT|ST|A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs)),
+        ("CCT|ST|B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), "B", vs1_cs)),
+        ("CCT|ST|C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), "C", vs1_cs)),
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vbL = Seq("vs1_cs", "vs1_1") map (vs =>
@@ -499,9 +499,9 @@ trait CellCoConstraintSpec extends Specification
 
     def oneManyBl = {
       Seq(
-        ("CCT|ST|x^^y^A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs)),
-        ("CCT|ST|x^^y^B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), vs1_cs)),
-        ("CCT|ST|x^^y^C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), vs1_cs)),
+        ("CCT|ST|x^^y^A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs)),
+        ("CCT|ST|x^^y^B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), "B", vs1_cs)),
+        ("CCT|ST|x^^y^C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), "C", vs1_cs)),
       ) map(tuple => {
         val s = segment(tuple._1, 1)
           val vbL = Seq("vs1_cs", "vs1_1") map (vs =>
@@ -523,9 +523,9 @@ trait CellCoConstraintSpec extends Specification
 
     def manyOne = {
       Seq(
-        ("CCT|ST|x^^y~A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs)),
-        ("CCT|ST|x^^y~B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), vs1_cs)),
-        ("CCT|ST|x^^y~C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), vs1_cs)),
+        ("CCT|ST|x^^y~A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs)),
+        ("CCT|ST|x^^y~B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), "B", vs1_cs)),
+        ("CCT|ST|x^^y~C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), "C", vs1_cs)),
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vbL = Seq("vs1_cs", "vs1_1") map (vs =>
@@ -544,9 +544,9 @@ trait CellCoConstraintSpec extends Specification
 
     def manyOneManyBl = {
       Seq(
-        ("CCT|ST|s^^t~x^^y^A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs)),
-        ("CCT|ST|s^^t~x^^y^B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), vs1_cs)),
-        ("CCT|ST|s^^t~x^^y^C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), vs1_cs)),
+        ("CCT|ST|s^^t~x^^y^A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs)),
+        ("CCT|ST|s^^t~x^^y^B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), "B", vs1_cs)),
+        ("CCT|ST|s^^t~x^^y^C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), "C", vs1_cs)),
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vbL = Seq("vs1_cs", "vs1_1") map (vs =>
@@ -566,9 +566,9 @@ trait CellCoConstraintSpec extends Specification
 
     def manyMany = {
       Seq(
-        ("CCT|ST|A^^SYS1~A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs)),
-        ("CCT|ST|B^^SYS1~B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), vs1_cs)),
-        ("CCT|ST|C^^SYS1~C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), vs1_cs)),
+        ("CCT|ST|A^^SYS1~A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs)),
+        ("CCT|ST|B^^SYS1~B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), "B", vs1_cs)),
+        ("CCT|ST|C^^SYS1~C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), "C", vs1_cs)),
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vbL = Seq("vs1_cs", "vs1_1") map (vs =>
@@ -590,9 +590,9 @@ trait CellCoConstraintSpec extends Specification
 
     def manyManyManyBl = {
       Seq(
-        ("CCT|ST|x^^y^A^^SYS1~x^^y^A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), vs1_cs)),
-        ("CCT|ST|x^^y^B^^SYS1~x^^y^B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), vs1_cs)),
-        ("CCT|ST|x^^y^C^^SYS1~x^^y^C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), vs1_cs)),
+        ("CCT|ST|x^^y^A^^SYS1~x^^y^A^^SYS1|A||||", VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs)),
+        ("CCT|ST|x^^y^B^^SYS1~x^^y^B^^SYS1|A||||", VSValidationCode.PVS(VCode("B", "des", CodeUsage.P, "SYS1"), "B", vs1_cs)),
+        ("CCT|ST|x^^y^C^^SYS1~x^^y^C^^SYS1|A||||", VSValidationCode.EVS(VCode("C", "des", CodeUsage.E, "SYS1"), "C", vs1_cs)),
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vbL = Seq("vs1_cs", "vs1_1") map (vs =>

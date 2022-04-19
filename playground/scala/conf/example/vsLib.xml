@@ -260,6 +260,8 @@
 			<ValueElement Value="PA" CodeSystem="HL70322" DisplayName="Partially Administered"/>
 		</ValueSetDefinition>
 		<ValueSetDefinition BindingIdentifier="HL70396_IZ" Name="Coding system">
+			<ValueElement Value="HL7nnnn" CodeSystem="HL70396" CodePattern="HL7[0-9]{4}"
+						  DisplayName="HL7 Code System"/>
 			<ValueElement Value="99zzz" CodeSystem="HL70396"
 				DisplayName="Local general code (where z is an alphanumeric character)"/>
 			<ValueElement Value="L" CodeSystem="HL70396" DisplayName="Local code"/>
@@ -4223,6 +4225,8 @@
 				DisplayName="use 3-character (alphabetic) form of ISO 3166"/>
 		</ValueSetDefinition>
 		<ValueSetDefinition BindingIdentifier="HL70396" Name="Coding system">
+			<ValueElement Value="HL7nnnn" CodeSystem="HL70396" CodePattern="HL7[0-9]{4}"
+						  DisplayName="HL7 Code System"/>
 			<ValueElement Value="99zzz or L" CodeSystem="HL70396"
 				DisplayName="Local general code (where z is an alphanumeric character)"/>
 			<ValueElement Value="ACR" CodeSystem="HL70396"

@@ -17,7 +17,7 @@ object CodeUsage {
 /**
   * Class representing a code
   */
-case class Code(value: String, description: String, usage: CodeUsage, codeSys: String)
+case class Code(value: String, description: String, usage: CodeUsage, codeSys: String, pattern: Option[String] = None)
 
 /**
   * Trait representing a value set extensibility
@@ -58,9 +58,16 @@ case class InternalValueSet(
     private val codes: List[Code]
 ) extends ValueSet {
 
+  private def codeMatch(code: Code, value: String): Boolean = {
+    code.pattern match {
+      case Some(pattern) => value.matches(pattern)
+      case None => code.value == value
+    }
+  }
+
   def isEmpty: Boolean = codes.isEmpty
-  def getCodes(value: String): JList[Code] = seqAsJavaList( codes filter(c => c.value == value) )
-  def contains(value: String): Boolean = codes.exists(c => c.value == value )
+  def getCodes(value: String): JList[Code] = seqAsJavaList(codes filter(c => codeMatch(c, value)))
+  def contains(value: String): Boolean = codes.exists(c => codeMatch(c, value))
   def codesList(): JList[Code] = seqAsJavaList(codes)
 }
 

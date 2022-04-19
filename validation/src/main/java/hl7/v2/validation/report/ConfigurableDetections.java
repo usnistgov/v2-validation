@@ -48,11 +48,15 @@ public class ConfigurableDetections {
 	}
 
 	public Entry vsCodeFound(String key, Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+		return vsCodeFound(key, l, value, vs, stab, ext, strength, false, "", "");
+	}
+
+	public Entry vsCodeFound(String key, Location l, String value, String vs, Stability stab, Extensibility ext, BindingStrength strength, boolean isCodePattern, String code, String pattern) {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
 		String staKey = stability(stab);
 
-		String desc = vsTemplate3(key, value, l.prettyString(), vs);
+		String desc = vsTemplate4(key, value, l.prettyString(), vs, isCodePattern ? "; Matched from code pattern '" + code + "' (regex = " + pattern + ")" : "");
 		String classification = vsClassification(key, staKey, extKey, strKey);
 		String category = conf.getString("report." + key + ".category");
 

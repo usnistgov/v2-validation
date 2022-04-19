@@ -1,8 +1,6 @@
 package hl7.v2.validation.vs
 
 import java.io.InputStream
-import java.lang.Boolean
-
 import nist.xml.util.XOMDocumentBuilder
 
 import scala.util.Try
@@ -12,7 +10,7 @@ case class ValueSetLibraryImpl(
     library: Map[String, ValueSet]
   ) extends ValueSetLibrary {
 
-  override def isExcludedFromTheValidation(id: String): Boolean =
+  override def isExcludedFromTheValidation(id: String): java.lang.Boolean =
     noValidation contains id
 
   override def get(id: String): ValueSet =
@@ -89,12 +87,19 @@ object ValueSetLibraryImpl {
       case x => throw new Exception(s"Invalid value set extensibility '$x'")
     }
 
+  private def pattern(s: String): Option[String] =
+    s match {
+      case "" => None
+      case x  => Some(x)
+    }
+
   private def code(e: nu.xom.Element): Code = {
     val value   = e.attribute("Value")
     val desc    = e.attribute("DisplayName")
     val usage   = codeUsage( e.attribute("Usage") )
     val codeSys = e.attribute("CodeSystem")
-    Code(value, desc, usage, codeSys)
+    val codePattern = pattern( e.attribute("CodePattern") )
+    Code(value, desc, usage, codeSys, codePattern)
   }
 
   private def codeUsage(s: String): CodeUsage = s match {
