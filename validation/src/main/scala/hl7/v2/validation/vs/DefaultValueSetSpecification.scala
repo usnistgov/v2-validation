@@ -126,9 +126,6 @@ object DefaultValueSetSpecification {
   private def byIDEntries[T](e: nu.xom.Element, f: nu.xom.Element => T) =
     (e.attribute("ID"), (e.getChildElements map f).toList)
 
-  private def byNameEntries[T](e: nu.xom.Element, f: nu.xom.Element => T) =
-    (e.attribute("Name"), (e.getChildElements map f).toList)
-
   private def init[T](es: nu.xom.Elements, f: nu.xom.Element => T) = {
     val i = Map[String, List[T]]()
     if (es == null)

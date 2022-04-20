@@ -12,11 +12,6 @@
 	<xs:complexType name="ValueSetBindingsType">
 		<xs:sequence>
 			<xs:element name="Datatype" type="BindingContextType" minOccurs="0" maxOccurs="1">
-				<!--  The Name attribute of a by-name context must be unique -->
-				<xs:key name="DTByNameContextTypeKey">
-					<xs:selector xpath="./ByName"/>
-					<xs:field xpath="@Name"/>
-				</xs:key>
 				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="DTByIDContextTypeKey">
 					<xs:selector xpath="./ByID"/>
@@ -24,11 +19,6 @@
 				</xs:key>
 			</xs:element>
 			<xs:element name="Segment" type="BindingContextType" minOccurs="0" maxOccurs="1">
-				<!--  The Name attribute of a by-name context must be unique -->
-				<xs:key name="SegByNameContextTypeKey">
-					<xs:selector xpath="./ByName"/>
-					<xs:field xpath="@Name"/>
-				</xs:key>
 				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="SegByIDContextTypeKey">
 					<xs:selector xpath="./ByID"/>
@@ -36,11 +26,6 @@
 				</xs:key>
 			</xs:element>
 			<xs:element name="Group" type="BindingContextType" minOccurs="0" maxOccurs="1">
-				<!--  The Name attribute of a by-name context must be unique -->
-				<xs:key name="GroupByNameContextTypeKey">
-					<xs:selector xpath="./ByName"/>
-					<xs:field xpath="@Name"/>
-				</xs:key>
 				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="GroupByIDContextTypeKey">
 					<xs:selector xpath="./ByID"/>
@@ -48,11 +33,6 @@
 				</xs:key>
 			</xs:element>
 			<xs:element name="Message" type="BindingContextType" minOccurs="0" maxOccurs="1">
-				<!--  The Name attribute of a by-name context must be unique -->
-				<xs:key name="MessageByNameContextTypeKey">
-					<xs:selector xpath="./ByName"/>
-					<xs:field xpath="@Name"/>
-				</xs:key>
 				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="MessageByIDContextTypeKey">
 					<xs:selector xpath="./ByID"/>
@@ -63,7 +43,6 @@
 	</xs:complexType>
 	<xs:complexType name="BindingContextType">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element name="ByName" type="BindingByNameContexType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="ByID" type="BindingByIDContexType" minOccurs="1" maxOccurs="1"/>
 		</xs:choice>
 	</xs:complexType>
@@ -81,7 +60,6 @@
 	</xs:complexType>
 	<xs:complexType name="ValueSetBindingType">
 		<xs:sequence>
-			<xs:element ref="Predicate" minOccurs="0"/>
 			<xs:element ref="BindingLocations"/>
 			<xs:element ref="Bindings"/>
 		</xs:sequence>
@@ -113,108 +91,17 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:choice>
-			<!-- <xs:group ref="BindingLocationExpressionGroup"/> -->
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="Predicate">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="Description"/>
-				<xs:element ref="Condition"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="Condition">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:group ref="ConditionGroup"/>
-			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Bindings">
 		<xs:complexType>
 			<xs:sequence>
-				<!-- <xs:group ref="BindingExpressionGroup"/>-->
 				<xs:element name="Binding" minOccurs="1" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:attribute name="BindingIdentifier" use="required"/>
-						<!-- <xs:attribute name="BindingStrength" use="required">
-							<xs:simpleType>
-								<xs:restriction base="xs:string">
-									<xs:enumeration value="R"/>
-									<xs:enumeration value="S"/>
-									<xs:enumeration value="U"/>
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:attribute> -->
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<!-- Binding operation with 2 or more parameters -->
-	<!-- <xs:complexType name="OP_1">
-		<xs:group ref="BindingExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
-	</xs:complexType> -->
-	<!-- <xs:group name="BindingExpressionGroup">
-		<xs:choice>
-			<xs:element name="AND" type="OP_1" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="OR" type="OP_1" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="XOR" type="OP_1" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="Binding" minOccurs="1" maxOccurs="1">
-				<xs:complexType>
-					<xs:attribute name="BindingIdentifier" use="required"/>
-				</xs:complexType>
-			</xs:element>
-		</xs:choice>
-	</xs:group> -->
-	<!-- Binding Location operation with 2 or more parameters -->
-	<!-- <xs:complexType name="OP_2">
-		<xs:group ref="BindingLocationExpressionGroup" minOccurs="2" maxOccurs="unbounded"/>
-	</xs:complexType> -->
-	<!-- <xs:group name="BindingLocationExpressionGroup">
-		<xs:choice>
-			<xs:element name="AND" type="OP_2" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="OR" type="OP_2" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="XOR" type="OP_2" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="BindingLocation" minOccurs="1" maxOccurs="1">
-				<xs:complexType>
-					<xs:attribute name="CodeLocation" use="required"/>
-					<xs:attribute name="CodeSystemLocation"/>
-				</xs:complexType>
-			</xs:element>
-		</xs:choice>
-	</xs:group>-->
-	<!-- Condition operation with exaclty 2 parameters -->
-	<xs:complexType name="OP_3">
-		<xs:group ref="ConditionGroup" minOccurs="2" maxOccurs="2"/>
-	</xs:complexType>
-	<!-- Condition operation with 2 or more parameters -->
-	<xs:complexType name="OP_4">
-		<xs:group ref="ConditionGroup" minOccurs="2" maxOccurs="unbounded"/>
-	</xs:complexType>
-	<xs:group name="ConditionGroup">
-		<xs:choice>
-			<xs:element name="Presence" type="PresenceType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="PathValue" type="PathValueType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="StringFormat" type="StringFormatType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="PlainText" type="PlainTextType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="Format" type="FormatType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="NumberList" type="NumberListType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="StringList" type="StringListType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="SimpleValue" type="SimpleValueType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="NOT" minOccurs="1" maxOccurs="1">
-				<xs:complexType>
-					<xs:group ref="ConditionGroup"/>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="AND" type="OP_3" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="OR" type="OP_3" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="XOR" type="OP_3" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="IMPLY" type="OP_3" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="FORALL" type="OP_4" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="EXIST" type="OP_4" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="Plugin" type="PluginType" minOccurs="1" maxOccurs="1"/>
-		</xs:choice>
-	</xs:group>
 </xs:schema>
