@@ -3,14 +3,9 @@ package hl7.v2.validation.structure
 import gov.nist.validation.report.Entry
 import org.specs2.Specification
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.validation.vs.{BindingLocation, Code, CodeHolder, CodeUsage, EmptyValueSetSpecification, Extensibility, Stability, VSValidationCode, ValueSetBinding, ValueSetLibraryImpl, ValueSetSpecification, InternalValueSet => ValueSet}
-import hl7.v2.profile.{BindingStrength, Req, Usage}
-import hl7.v2.instance.Location
-import hl7.v2.instance.Value
-import hl7.v2.instance.Simple
-import hl7.v2.instance.Element
-import hl7.v2.instance.Complex
-import hl7.v2.instance.Text
+import hl7.v2.validation.vs.{BindingLocation, Code, CodeHolder, CodeUsage, DefaultValueSetSpecification, EmptyValueSetSpecification, Extensibility, Stability, VSValidationCode, ValueSetBinding, ValueSetLibraryImpl, ValueSetSpecification, InternalValueSet => ValueSet}
+import hl7.v2.profile.{BindingStrength, Composite, Primitive, Req, Usage}
+import hl7.v2.instance.{Complex, ComplexComponent, Element, Location, Simple, SimpleComponent, Text, Value}
 import org.specs2.matcher.MatchResult
 
 
@@ -30,6 +25,11 @@ trait ValueSetValidationSpec extends Specification
       Validation should detect a dynamic value set in the case of a Code Not Found code (Primitive/Single, Complex/Single, Complex/Multiple) $NotFoundDynamic
       Complex element with unresolvable binding location should return a spec error $unresolvableBL
       Complex element with unresolvable code system binding location should return a spec error $unresolvableCsBL
+
+    Only check relevant elements
+      Skip checking Binding Targets when usage is X or W $skipTargets
+      Skip checking Binding when context element usage is X or W $skipContext
+      Skip checking children of element when element usage is X or W $skipContextChildren
 
     Code Pattern Matching
       Simple element with value that matches a code pattern present in the value set should return an RVS detection $simpleCodePatternMatch
@@ -175,37 +175,72 @@ trait ValueSetValidationSpec extends Specification
 
   // ============================================ TEST CASES ===========================================
 
-  val simpleCodePatternMatch = {
+  val simpleCodePatternMatch: MatchResult[List[Entry]] = {
     check(HD_CP, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A1", vsCodePattern), Some(BindingStrength.R))
     ))
   }
 
-  val simpleCodePatternMatchValueNotRegex = check(HD_CP, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
+  val simpleCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = check(HD_CP, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
     createEntry(HD_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
   ))
 
-  val simpleCodePatternMatchCodeAndPattern = check(HD_CP, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None))))  must containTheSameElementsAs(List(
+  val simpleCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = check(HD_CP, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None))))  must containTheSameElementsAs(List(
     createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
     createEntry(HD_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
     createEntry(HD_CP, VSValidationCode.MultipleCodesFoundInValueSet("A5",vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
   ))
 
-  val complexCodePatternMatch = {
+  val complexCodePatternMatch: MatchResult[List[Entry]] = {
     check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("1[*]", Some("3[*]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A1", vsCodePattern), Some(BindingStrength.R))
     ))
   }
 
-  val complexCodePatternMatchValueNotRegex = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("10[*]", Some("12[*]"))))) must containTheSameElementsAs(List(
+  val complexCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("10[*]", Some("12[*]"))))) must containTheSameElementsAs(List(
     createEntry(CWE_2_7_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
   ))
 
-  val complexCodePatternMatchCodeAndPattern = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("4[*]", Some("6[*]")))))  must containTheSameElementsAs(List(
+  val complexCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("4[*]", Some("6[*]")))))  must containTheSameElementsAs(List(
     createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
     createEntry(CWE_2_7_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
     createEntry(CWE_2_7_CP, VSValidationCode.MultipleCodeAndCodeSystemFound("A5", "SYS", vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
   ))
+
+  val skipTargets : Seq[MatchResult[List[Entry]]] = {
+    Seq(Usage.X, Usage.W) map(u => {
+      val CWE_2_7_X = CWE_2_7.copy(req = CWE_2_7.req.copy(usage = u))
+      check(CWE_2_7_X, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[*]", Some("3[*]")))))  must containTheSameElementsAs(Nil)
+    })
+  }
+
+  val skipContext: Seq[MatchResult[List[Entry]]] = {
+    Seq(Usage.X, Usage.W) map(u => {
+      val CWE_2_7_X = CWE_2_7.copy(req = CWE_2_7.req.copy(usage = u))
+      val complexComponent = makeComponent(CWE_2_7_X, "CWE", Map(1 -> "ST", 3 -> "ST", 4 -> "ST", 6 -> "ST", 10 -> "ST", 12 -> "ST"))
+      val valueSetSpecification: ValueSetSpecification = new DefaultValueSetSpecification(
+        Map("CWE"-> List(ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[*]", Some("3[*]")))))),
+        Map(),
+        Map()
+      )
+
+      checkMsgElement(complexComponent, Some(valueSetSpecification)) must containTheSameElementsAs(Nil)
+    })
+  }
+
+  val skipContextChildren: Seq[MatchResult[List[Entry]]] = {
+    Seq(Usage.X, Usage.W) map(u => {
+      val CWE_2_7_X = CWE_2_7.copy(req = CWE_2_7.req.copy(usage = u))
+      val complexComponent = makeComponent(CWE_2_7_X, "CWE", Map(1 -> "ST", 3 -> "ST", 4 -> "ST", 6 -> "ST", 10 -> "ST", 12 -> "ST"))
+      val valueSetSpecification: ValueSetSpecification = new DefaultValueSetSpecification(
+        Map("ST"-> List(ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None))))),
+        Map(),
+        Map()
+      )
+
+      checkMsgElement(complexComponent, Some(valueSetSpecification)) must containTheSameElementsAs(Nil)
+    })
+  }
 
 
   val emptyVs: Seq[MatchResult[List[Entry]]] = {
@@ -533,13 +568,26 @@ trait ValueSetValidationSpec extends Specification
     val reqs: List[Req] = List[Req]()
     val location: Location = Location(null, "desc ...", "Path", -1, -1)
     val hasExtra = false
-    val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
-    val rawMessageValue = "";
+    val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, hide = false, None)
+    val rawMessageValue = ""
   }
 
-  case class S(override val position: Int, instance: Int, value: Value)
+  case class S(override val position: Int, instance: Int, value: Value, override val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, hide = false, None))
     extends Simple  with Default
 
-  case class C(override val position: Int, instance: Int, children: List[Element])
+  case class C(override val position: Int, instance: Int, children: List[Element], override val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, hide = false, None))
     extends Complex with Default
+
+  def makeComponent(complex: C, id: String, children: Map[Int, String]): ComplexComponent = {
+    ComplexComponent(
+      Composite(
+        id, "name", "desc", "2", Nil
+      ),
+      complex.req.copy(position = complex.position), complex.location, complex.children.map(s => makeSimpleComponent(s.asInstanceOf[S], children(s.position))), complex.hasExtra
+    )
+  }
+
+  def makeSimpleComponent(simple: S, id: String): SimpleComponent = {
+    SimpleComponent(Primitive(id, "name", "desc", "2"), simple.req.copy(position = simple.position), simple.location, simple.value)
+  }
 }
