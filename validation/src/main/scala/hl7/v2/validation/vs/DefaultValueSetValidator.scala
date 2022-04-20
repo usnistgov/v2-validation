@@ -11,7 +11,7 @@ import hl7.v2.profile
 
 import collection.JavaConverters._
 import scala.util.{Failure, Success}
-import hl7.v2.profile.BindingStrength
+import hl7.v2.profile.{BindingStrength, Usage}
 
 sealed trait VSValidationCode {
   val isSpecError: Boolean = false
@@ -105,12 +105,27 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
     implicit val model: profile.Message = m.model
-    check(m.asGroup, additionalVsBindings)
+    checkMsgElement(m.asGroup, additionalVsBindings)
+  }
+
+  // Only check bindings when element should not be skipped
+  def checkMsgElement(e: Element, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): List[Entry] = {
+    skipElementCheck(e) match {
+      case true => Nil
+      case false => check(e, additionalVsBindings)
+    }
+  }
+
+  // skip element validation when Usage is X or W
+  def skipElementCheck(element: Element): Boolean = {
+    element.req.usage match {
+      case Usage.X | Usage.W => true
+      case _ => false
+    }
   }
 
   // Checks if specification is available on element and checks it, then dives into complex elements
   def check(e: Element, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): List[Entry] = {
-
     val entries = getBindingsForElement(e, additionalVsBindings) match {
       case Nil => Nil
       case ls => ls.foldRight(List[Entry]()) {
@@ -119,7 +134,7 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
 
     e match {
-      case c: Complex => c.children.foldLeft(entries) { (acc, cc) => acc ::: check(cc, additionalVsBindings) }
+      case c: Complex => c.children.foldLeft(entries) { (acc, cc) => acc ::: checkMsgElement(cc, additionalVsBindings) }
       case _ => entries
     }
   }
@@ -130,11 +145,16 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     fromVsBindingsSpecification.getOrElse(Nil) ::: fromAdditionalVsBindings.getOrElse(Nil)
   }
 
-  // Resolve complex binding target as complex elements, fails on simple elements, and check complex binding
+  /* Resolve binding target from context.
+     Validates binding if target is not skipped (skip on target Usage X or W)
+   */
   def check(e: Element, spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[Entry] = {
     Query.query(e, spec.target) match {
-      case Success(x) =>
-        check(x, spec).map(entry => createEntry(entry.target, entry.code, entry.strength))
+      case Success(targets) =>
+        targets.filterNot(skipElementCheck) match {
+          case Nil => Nil
+          case checkable => check(checkable, spec).map(entry => createEntry(entry.target, entry.code, entry.strength))
+        }
       case _ => Nil
     }
   }
