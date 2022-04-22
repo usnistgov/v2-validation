@@ -83,7 +83,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
 
   val PROFIL_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd"
   val VSLIB_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ValueSets.xsd"
-  val CONSTRAINTS_XSD = "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd"
+  val CONSTRAINTS_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ConformanceContext.xsd"
   val COCONSTRAINT_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/CoConstraintContext.xsd"
   val VSPEC_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ValueSetBindings.xsd"
   val SLICING_XSD = "file:///Users/hnt5/SharedProjects/v2-validation-legacy/validation/src/main/resources/rules/ProfileSlicing.xsd"
