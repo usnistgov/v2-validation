@@ -1,5 +1,6 @@
 package hl7.v2.validation.report;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,11 +54,28 @@ public class ConfigurableDetections {
 		String strKey = bindingStrength(strength);
 		String staKey = stability(stab);
 
-		String desc = vsTemplate4(key, value, l.prettyString(), vs, isCodePattern ? "; Matched from code pattern '" + code + "' (regex = " + pattern + ")" : "");
-		String classification = vsClassification(key, staKey, extKey, strKey);
-		String category = conf.getString("report." + key + ".category");
+		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
+				conf.getString("report." + key + ".category"),
+				conf.getString("report." + key + ".classification"),
+				conf.getString("report." + key + ".template")
+		);
 
-		return entry(l, desc, category, classification, null, null);
+		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
+				defaultEntryConfig,
+				staKey,
+				extKey,
+				strKey,
+				key
+		);
+
+		String desc = String.format(
+				effectiveEntryConfig.getTemplate(),
+				value,
+				l.prettyString(),
+				vs, isCodePattern ? "; Matched from code pattern '" + code + "' (regex = " + pattern + ")" : ""
+		);
+
+		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
 	}
 
 	public Entry duplicateCode(Location l, String value, String vs) {
@@ -81,38 +99,83 @@ public class ConfigurableDetections {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
 		String stbKey = stability(stab);
-		
-		String classification = vsClassification("code-not-found", stbKey, extKey, strKey);
-		String category = conf.getString("report.code-not-found.category");
 
-		String desc = vsTemplate3("code-not-found", value, l.prettyString(), vs);
-		
-		return entry(l, desc, category, classification, null, null);
+		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
+				conf.getString("report.code-not-found.category"),
+				conf.getString("report.code-not-found.classification"),
+				conf.getString("report.code-not-found.template")
+		);
+
+		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
+				defaultEntryConfig,
+				stbKey,
+				extKey,
+				strKey,
+				"code-not-found"
+		);
+
+		String desc = String.format(
+				effectiveEntryConfig.getTemplate(),
+				value,
+				l.prettyString(),
+				vs
+		);
+
+		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
 	}
 	
 	public  Entry codeNotFoundInvalidCodeSystem(Location l, String value, String vs, String expected, String found, Stability stab, Extensibility ext, BindingStrength strength) {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
 		String stbKey = stability(stab);
-		
-		String classification = vsClassification("code-not-found-cs", stbKey, extKey, strKey);
-		String category = conf.getString("report.code-not-found-cs.category");
 
-		String desc = vsTemplate5("code-not-found-cs", value, found, l.prettyString(), vs, expected);
-		
-		return entry(l, desc, category, classification, null, null);
+		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
+				conf.getString("report.code-not-found-cs.category"),
+				conf.getString("report.code-not-found-cs.classification"),
+				conf.getString("report.code-not-found-cs.template")
+		);
+
+		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
+				defaultEntryConfig,
+				stbKey,
+				extKey,
+				strKey,
+				"code-not-found-cs"
+		);
+
+		String desc = String.format(
+				effectiveEntryConfig.getTemplate(),
+				value, found, l.prettyString(), vs, expected
+		);
+
+		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
 	}
 
 	public Entry codedElementXOR(Location l, String locations, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
-		String staKey = stability(stab);
+		String stbKey = stability(stab);
 
-		String desc = vsTemplate2("coded-element-xor", locations, vs);
-		String classification = vsClassification("coded-element-xor", staKey, extKey, strKey);
-		String category = conf.getString("report.coded-element-xor.category");
+		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
+				conf.getString("report.coded-element-xor.category"),
+				conf.getString("report.coded-element-xor.classification"),
+				conf.getString("report.coded-element-xor.template")
+		);
 
-		return entry(l, desc, category, classification, null, null);
+		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
+				defaultEntryConfig,
+				stbKey,
+				extKey,
+				strKey,
+				"coded-element-xor"
+		);
+
+		String desc = String.format(
+				effectiveEntryConfig.getTemplate(),
+				locations, vs
+		);
+
+		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
 	}
 	/*
 	 * ========================================================================
@@ -537,44 +600,52 @@ public class ConfigurableDetections {
 
 	
 	public String bindingStrength(BindingStrength strength){
-		if(strength == null) return "";
+		if(strength == null) return "no-value";
 		if(strength instanceof BindingStrength.R$) return "required";
 		if(strength instanceof BindingStrength.S$) return "suggested";
-		return "";
+		return "no-value";
 	}
 	
 	public String stability(Stability stability){
-		if(stability == null) return "";
+		if(stability == null) return "no-value";
 		if(stability instanceof Stability.Static$) return "static";
 		if(stability instanceof Stability.Dynamic$) return "dynamic";
-		return "";
+		return "no-value";
 	}
 	
 	public String extensibility(Extensibility ext){
-		return ext == null ? "" : ext instanceof Extensibility.Closed$ ? "closed" : "open";
+		return ext == null ? "no-value" : ext instanceof Extensibility.Closed$ ? "closed" : "open";
 	}
-	
-	public String vsClassification(String configKey, String stab, String ext, String str){
-		String root = "report."+configKey+".classification";
-		try {
-			if(this.stringIsDefined(stab)) {
-				String key = root +"."+stab;
-				if(this.stringIsDefined(ext)) {
-					key += "."+ext;
-					if(this.stringIsDefined(str)) {
-						key += "."+str;
-						return conf.getString(key);
-					}
-					key += ".default";
-					return conf.getString(key);
+
+	public SimpleEntryWrapper vsDetectionInfo(SimpleEntryWrapper entry, String stability, String extensibility, String strength, String key) {
+		if(conf.hasPath("report." + key + ".overrides")) {
+			StringBuilder configPath = new StringBuilder("report.").append(key).append(".overrides");
+			for(String step: Arrays.asList(strength, extensibility, stability)) {
+				if(conf.hasPath(configPath + "." + step)) {
+					configPath.append(".").append(step);
+				} else if(conf.hasPath(configPath + ".default")) {
+					return overrideEntryConfig(entry, configPath + ".default");
+				} else {
+					return entry;
 				}
-				key += ".default";
-				return conf.getString(key);
 			}
-		} catch(Exception e) {
-//			e.printStackTrace();
+
+			return overrideEntryConfig(entry, configPath.toString());
+		} else {
+			return entry;
 		}
-		return conf.getString(root + ".default");
+	}
+
+	public SimpleEntryWrapper overrideEntryConfig(SimpleEntryWrapper entry, String key) {
+		String classification = key + ".classification";
+		String template = key + ".template";
+		String category = key + ".category";
+
+		return new SimpleEntryWrapper(
+				conf.hasPath(category) ? conf.getString(category) : entry.getCategory(),
+				conf.hasPath(classification) ? conf.getString(classification) : entry.getClassification(),
+				conf.hasPath(template) ? conf.getString(template) : entry.getTemplate()
+		);
 	}
 
 	public boolean stringIsDefined(String key) {
