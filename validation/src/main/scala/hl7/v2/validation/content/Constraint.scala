@@ -38,6 +38,7 @@ case class Constraint(
     id: String,
     reference: Option[Reference],
     classification : Option[Classification],
+    strength: Option[ConstraintStrength],
     description: String,
     assertion: Expression
 )
@@ -58,6 +59,12 @@ sealed trait Classification
 object Classification {
   case class W()  extends Classification 
   case class A()  extends Classification
+}
+
+sealed trait ConstraintStrength
+object ConstraintStrength {
+  case class SHALL() extends ConstraintStrength
+  case class SHOULD() extends ConstraintStrength
 }
 
 /**

@@ -115,6 +115,7 @@
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 		<xs:attribute name="Classification" type="ClassificationType" use="optional"/>
 		<xs:attribute name="Target" type="PathType" use="optional"/>
+		<xs:attribute name="Strength" type="ConstraintStrengthType" use="optional"/>
 	</xs:complexType>
 	
 	<xs:complexType name="CoConstraintType">

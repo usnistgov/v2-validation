@@ -61,6 +61,13 @@
 			<xs:enumeration value="A" />
 		</xs:restriction>
 	</xs:simpleType>
+
+	<xs:simpleType name="ConstraintStrengthType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SHALL" />
+			<xs:enumeration value="SHOULD" />
+		</xs:restriction>
+	</xs:simpleType>
 	
 	<xs:simpleType name="OperatorType">
 		<xs:restriction base="xs:string">
