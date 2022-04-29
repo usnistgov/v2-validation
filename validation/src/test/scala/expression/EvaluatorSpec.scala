@@ -182,9 +182,31 @@ trait EvaluatorSpec
       PathValue evaluation should be inconclusive if the path is invalid           $pathValuePathInvalid
       PathValue evaluation should be inconclusive if the path is unreachable       $pathValuePathUnreachable
       PathValue should fail if only one path is populated                          $pathValueOnePathPopulated
-      PathValue should be inconclusive if path1 and path2 resolve to many elements $pathValueManyElems
-      PathValue should pass if operator = < and path1.value < path2.value          $pathValuePass
-      PathValue should fail if operator = < and path1.value > path2.value          $pathValueFail
+      Single (Mode: All, AtLeastOnce, One, Count = 1)
+        PathValue should pass if operator = < and path1.value < path2.value          $pathValuePass
+        PathValue should fail if operator = < and path1.value > path2.value          $pathValueFail
+      Multiple
+        AtLeastOnce
+          AtLeastOnce
+            Pass
+              ([A, "B", C], [D, "B", E, ....]) $aloTalo1
+              (["A", "B", C], ["A", "B", ....]) $aloTalo2
+              ([A, "B", C], [D, "B", "B", ....]) $aloTalo3
+              (["B", "B", "B"], ["B", "B", "B"]) $aloTalo4
+            Fail
+              ([A, B, C], [D, E, F]) $$faloTalo1
+          All
+             ([A, B, C, ....], [A, A, A])
+             ([A, A, C, ....], [A, A, A])
+          Count
+        All
+          AtLeastOnce
+          All
+          Count
+        Count
+          AtLeastOnce
+          All
+          Count
       PathValue evaluation should fail If not present behavior is FAIL and both paths not found  $pathValueNoElmFAIL
       PathValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and both paths not found $pathValueNoElmINC
       PathValue evaluation should pass If not present behavior is PASS and both paths not found $pathValueNoElmPASS

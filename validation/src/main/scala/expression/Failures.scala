@@ -5,6 +5,7 @@ import hl7.v2.instance._
 import hl7.v2.profile.Range
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.Query._
+
 import scala.util.{Failure, Success}
 import expression.EvalResult.Inconclusive
 object Failures extends EscapeSeqHandler {
@@ -127,6 +128,12 @@ object Failures extends EscapeSeqHandler {
   def pathValue( e: PathValue, s1: Simple, s2: Simple ): Fail = {
     val m = s"${s1.value} is not ${e.operator} ${s2.value}"
     val reasons = Reason(s1.location, m) :: Nil
+    Fail( Trace(e, reasons) :: Nil )
+  }
+
+  def pathValue(e: PathValue, s1: List[Simple], s2: List[Simple]) = {
+    val m = s"${MultiCompareMode.toString(e.path1Mode)} element(s) from ${s1.map(_.value.raw).mkString("[", ",", "]")} are not ${e.operator} ${MultiCompareMode.toString(e.path2Mode)} element(s) from ${s2.map(_.value.raw).mkString("[", ",", "]")}"
+    val reasons = Reason(s1.head.location, m) :: Nil
     Fail( Trace(e, reasons) :: Nil )
   }
 
