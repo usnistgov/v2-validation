@@ -240,7 +240,6 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def checkMode(mode: MultiCompareMode, passCount: Int, failCount: Int): Boolean = {
     mode match {
       case MultiCompareMode.AtLeastOne() => passCount >= 1
-      case MultiCompareMode.ExactlyOne() => passCount == 1
       case MultiCompareMode.All() => failCount == 0
       case MultiCompareMode.Count(n) => passCount == n
     }

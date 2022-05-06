@@ -57,14 +57,12 @@ case class StringFormat(path: String, format: String, atLeastOnce : Boolean = fa
 sealed trait MultiCompareMode
 object MultiCompareMode {
   case class AtLeastOne() extends MultiCompareMode
-  case class ExactlyOne() extends MultiCompareMode
   case class All() extends MultiCompareMode
   case class Count(n: Int) extends MultiCompareMode
 
   def toString(mcm: MultiCompareMode): String = {
     mcm match {
       case MultiCompareMode.AtLeastOne() => "At Least One"
-      case MultiCompareMode.ExactlyOne() => "Exactly One"
       case MultiCompareMode.All() => "All"
       case MultiCompareMode.Count(n) => s"${n}"
     }
