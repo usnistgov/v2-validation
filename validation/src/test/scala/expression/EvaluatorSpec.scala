@@ -194,19 +194,115 @@ trait EvaluatorSpec
               ([A, "B", C], [D, "B", "B", ....]) $aloTalo3
               (["B", "B", "B"], ["B", "B", "B"]) $aloTalo4
             Fail
-              ([A, B, C], [D, E, F]) $$faloTalo1
+              ([A, B, C], [D, E, F]) $faloTalo1
           All
-             ([A, B, C, ....], [A, A, A])
-             ([A, A, C, ....], [A, A, A])
+            Pass
+              (["A", B, C], ["A", "A", "A", As....]) $aloTall1
+              (["B", "B", C], ["B", "B", Bs....]) $aloTall2
+              (["C", "C", "C"], ["C", "C", "C", Cs....]) $aloTall3
+            Fail
+              ([A, B, C], [A, B, C]) $faloTall1
+              ([A, B, C], [A, A, C]) $faloTall2
           Count
+            Pass
+              (Count = 1)
+                ([A, "B", C], [D, "B", E, ...]) $aloToc11
+                ([A, "B", "C"], [D, "B", "C"]) $aloToc12
+                (["B", "B", "B"], [A, "B", C]) $aloToc13
+                (["A", "B", "C"], ["A", "B", "C"]) $aloToc14
+                ([A, "B", "C"], ["B", "B", "C"]) $aloToc15
+              (Count = 2)
+                ([A, "B", C], [D, "B", "B", ...]) $aloToc21
+                ([A, "B", "C"], [D, "B", "B", "C", "C", ....]) $aloToc22
+            Fail
+              (Count = 1)
+                ([A, B, C], [D, E, F]) $faloToc11
+                ([B, B, B], [B, B, B]) $faloToc12
+                ([A, B, C], [B, B, D]) $faloToc13
+              (Count = 2)
+                ([A, "B", C], [D, "B", E, ...]) $faloToc21
+                ([A, "B", "C"], [D, "B", "C"]) $faloToc22
         All
           AtLeastOnce
+            Pass
+              (["A", "B", "C"], ["A", "B", "C", ....]) $allToalo1
+              (["A", "B", "C"], ["A", "A", "B", "C", ....]) $allToalo2
+              (["A", "B", "C"], ["A", "A", "B", "B", "C", "C", ....]) $allToalo3
+            Fail
+              (["A", "B", "C"], ["A", "B", ....]) $fallToalo1
+              (["A", "B", "C"], ["A",  .....]) $fallToalo2
+              (["A", "B", "C"], [X, Y, Z]) $fallToalo3
           All
+            Pass
+              (["A", "A", "A"], ["A", "A", As....]) $allToall1
+            Fail
+              (["A", "B", "C"], ["A", "B", "C"]) $fallToall1
+              (["A", "A"], ["A", "A", "C"]) $fallToall2
           Count
+            Pass
+              (Count = 1)
+                (["A", "B", "C"], ["A", "B", "C", ....]) $allToc11
+              (Count = 2)
+                (["A", "B", "C"], ["A", "A", "B", "B", "C", "C", ....]) $allToc12
+            Fail
+              (Count = 1)
+                (["A", "B", "C"], ["A", "A", "B", "C", ....]) $fallToc11
+                (["A", "B", "C"], ["A", "A", "B", "B", "C", "C", ....]) $fallToc12
+                (["A", "B", "C"], ["A", Y, Z]) $fallToc13
+              (Count = 2)
+                (["A", "B", "C"], ["A", "A", "A", "B", "B", "C", "C", ....]) $fallToc21
+                (["A", "B", "C"], ["A", "B", "C", ....]) $fallToc22
         Count
           AtLeastOnce
+            Pass
+              (Count = 1)
+                (["A", "B", "C"], ["A", "X", "Y",....]) $cTalo11
+                (["A", "B", "C"], ["A", "A", "X", "Y", ....]) $cTalo12
+              (Count = 2)
+                (["A", "B", "C"], ["A", "B", "X", "Y",....]) $cTalo21
+                (["A", "B", "C"], ["A", "A", "C", "X", "Y", ....]) $cTalo22
+            Fail
+              (Count = 1)
+                (["A", "B", "C"], ["X", "Y", "Z", ....]) $fcTalo11
+                (["A", "B", "C"], ["A", "A", "B", "X", "Y", ....]) $fcTalo12
+              (Count = 2)
+                (["A", "B", "C"], ["A", "X", "Y",....]) $fcTalo21
+                (["A", "B", "C"], ["A", "B", "C", "X", "Y", ....]) $fcTalo22
           All
+            Pass
+              (Count = 1)
+                (["A", "B", "C"], ["A", "A", "A", As....]) $cTall11
+                (["A", "B", "C"], ["B", "B", "B", Bs....]) $cTall12
+              (Count = 2)
+                (["A", "A", "C"], ["A", "A", "A", As....]) $cTall21
+                (["A", "B", "B"], ["B", "B", "B", Bs....]) $cTall22
+            Fail
+              (Count = 1)
+                (["A", "B", "C"], ["A", "B", "C",....]) $fcTall11
+                (["A", "A", "C"], ["A", "A", "A", As....]) $fcTall12
+              (Count = 2)
+                (["A", "B", "C"], ["A", "A", "A", As....]) $fcTall21
           Count
+            Pass
+              (Count = 1 / Count = 1)
+                (["A", "B", "C"], ["A", "X", "Y", ....]) $cTc111
+                (["A", "B", "C"], ["A", "B", "B", "X", "Y", ....]) $cTc112
+              (Count = 1 / Count = 2)
+                (["A", "B", "C"], ["A", "A", "B", "C", ....]) $cTc121
+              (Count = 2 / Count = 1)
+                (["A", "B", "C"], ["A", "B", "C", "C", "X", "Y", ....]) $cTc211
+              (Count = 2 / Count = 2)
+                (["A", "B", "C"], ["A", "B", "B", "C", "C", "X", "Y", ....]) $cTc221
+            Fail
+              (Count = 1 / Count = 1)
+                (["A", "B", "C"], ["X", "Y", "Z"]) $fcTc111
+                (["A", "B", "C"], ["A", "B", "Y", ....]) $fcTc112
+              (Count = 1 / Count = 2)
+                (["A", "B", "C"], ["A", "A", "B", "B", "C", ....]) $fcTc121
+              (Count = 2 / Count = 1)
+                (["A", "B", "C"], ["A", "B", "B", "C", "C", "X", "Y", ....]) $fcTc211
+              (Count = 2 / Count = 2)
+                (["A", "B", "C"], ["A", "A", "B", "B", "C", "C", "X", "Y", ....]) $fcTc221
       PathValue evaluation should fail If not present behavior is FAIL and both paths not found  $pathValueNoElmFAIL
       PathValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and both paths not found $pathValueNoElmINC
       PathValue evaluation should pass If not present behavior is PASS and both paths not found $pathValueNoElmPASS
