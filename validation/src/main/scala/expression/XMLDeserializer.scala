@@ -57,14 +57,22 @@ object XMLDeserializer extends EscapeSeqHandler {
     val path1 = e.attribute("Path1")
     val path2 = e.attribute("Path2")
     val op    = operator( e.attribute("Operator") )
+    val path1Mode = e.attribute("Path1Mode") match {
+      case ""|null => MultiCompareMode.All()
+      case mode => pathMode(mode)
+    }
+    val path2Mode = e.attribute("Path2Mode") match {
+      case ""|null => MultiCompareMode.All()
+      case mode => pathMode(mode)
+    }
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
-    PathValue( path1, op, path2, getComparisonMode(e), npb )
+    PathValue( path1, op, path2, getComparisonMode(e), npb, path1Mode, path2Mode )
   }
 
   private def complexPathValue( e: Element ): ComplexPathValue = {
     val path1 = e.attribute("Path1")
     val path2 = e.attribute("Path2")
-    val strict = toBooleanWithDefault(e.attribute("Strict"), true)
+    val strict = toBooleanWithDefault(e.attribute("Strict"), default = true)
     val op    = operator( e.attribute("Operator") )
     val npb = notPresentBehavior(e.attribute("NotPresentBehavior")).getOrElse(PASS)
     ComplexPathValue( path1, op, path2, strict, getComparisonMode(e), npb )
@@ -222,6 +230,18 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "GE" => Operator.GE
     case "LE" => Operator.LE
     case   _  => throw new Error(s"[Error] Invalid Operator $v")
+  }
+
+  private def pathMode( v: String ) = v match {
+    case "All" => MultiCompareMode.All()
+    case "AtLeastOne" => MultiCompareMode.AtLeastOne()
+    case x => try {
+      val n = x.toInt
+      if(n >= 0) MultiCompareMode.Count(n)
+      else throw new Error(s"[Error] value '$x' is not a valid path comparison mode (must be >= 0)")
+    } catch {
+      case _: NumberFormatException  => throw new Error(s"[Error] value '$x' is not a recognized path comparison mode")
+    }
   }
 
   private def getComparisonMode(e: Element): ComparisonMode = {

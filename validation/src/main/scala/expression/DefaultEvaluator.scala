@@ -192,16 +192,58 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case (Success(Nil), Success(Nil))      => notFound(pv, s"[ ${pv.path1}, ${pv.path2} ]", context, pv.notPresentBehavior)
       case (Success(x :: Nil), Success(Nil)) => Failures.pathValue(pv, x, pv.path2)
       case (Success(Nil), Success(x :: Nil)) => Failures.pathValue(pv, x, pv.path1)
-      case (Success(x1 :: Nil), Success(x2 :: Nil)) =>
-        pv.operator.eval(x1.value, x2.value, pv.comparisonMode) match {
-          case Success(true)  => Pass
-          case Success(false) => Failures.pathValue(pv, x1, x2)
-          case Failure(e)     => inconclusive(pv, context.location, e)
-        }
-      case (Success(xs1), Success(xs2)) => inconclusive(pv, context, xs1, xs2)
+//      case (Success(x1 :: Nil), Success(x2 :: Nil)) =>
+//        pv.operator.eval(x1.value, x2.value, pv.comparisonMode) match {
+//          case Success(true)  => Pass
+//          case Success(false) => Failures.pathValue(pv, x1, x2)
+//          case Failure(e)     => inconclusive(pv, context.location, e)
+//        }
+      case (Success(xs1), Success(xs2)) => multiElementsCompare(pv, xs1, xs2)
+//        inconclusive(pv, context, xs1, xs2)
       case (Failure(e), _)              => inconclusive(pv, context.location, e)
       case (_, Failure(e))              => inconclusive(pv, context.location, e)
     }
+
+  case class PassFail(pass: Int, fail: Int)
+
+  def multiElementsCompare(pv: PathValue, elementsLeft: List[Simple], elementsRight: List[Simple])(implicit dtz: Option[TimeZone]): EvalResult = {
+    val allComparisons = elementsLeft.map(el => evaluate(el.value, elementsRight.map(_.value), pv))
+    val checkRightModeResult = splitBooleanList(
+      allComparisons.map(comparison => checkMode(pv.path2Mode, comparison.pass, comparison.fail))
+    )
+    if (checkMode(pv.path1Mode, checkRightModeResult.pass, checkRightModeResult.fail)) {
+      EvalResult.Pass
+    } else {
+      Failures.pathValue(
+        pv,
+        elementsLeft,
+        elementsRight,
+      )
+    }
+  }
+
+  def splitBooleanList(list: List[Boolean]): PassFail = {
+    list partition (x => x) match {
+      case (pass, fail) => PassFail(pass.size, fail.size)
+    }
+  }
+
+  def evaluate(element: Value, elements: List[Value], pv: PathValue)(implicit dtz: Option[TimeZone]): PassFail = {
+    splitBooleanList(
+      elements.map(pv.operator.eval(element, _, pv.comparisonMode) match {
+        case Success(true) => true
+        case _ => false
+      })
+    )
+  }
+
+  def checkMode(mode: MultiCompareMode, passCount: Int, failCount: Int): Boolean = {
+    mode match {
+      case MultiCompareMode.AtLeastOne() => passCount >= 1
+      case MultiCompareMode.All() => failCount == 0
+      case MultiCompareMode.Count(n) => passCount == n
+    }
+  }
 
   /**
     * Evaluates the path value expression and returns the result

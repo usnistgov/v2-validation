@@ -123,6 +123,15 @@
 			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
+
+	<xs:simpleType name="MultiCompareModeType">
+		<xs:annotation>
+			<xs:documentation>Possible Values : 'AtLeastOne', 'All', or an integer number</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="AtLeastOne|All|[0-9]+" />
+		</xs:restriction>
+	</xs:simpleType>
 	
 	<!-- ============================================================================================================= 
 		========================= Generic Expressions ======================================= 
@@ -139,6 +148,8 @@
 		<xs:attribute name="Truncated" type="xs:boolean" use="optional" />
 		<xs:attribute name="IdenticalEquality" type="xs:boolean" use="optional" />
 		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
+		<xs:attribute name="Path1Mode" type="MultiCompareModeType" use="optional" />
+		<xs:attribute name="Path2Mode" type="MultiCompareModeType" use="optional" />
 	</xs:complexType>
 	
 	<!-- <xs:complexType name="PluginType"> <xs:sequence> <xs:element name="Params"> 
