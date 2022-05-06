@@ -35,13 +35,19 @@ class XMLDeserializationSpec extends Specification { def is = s2"""
 
   def pe1 = expression( <Presence Path="1[1]"/> ) === Presence( "1[1]" )
 
-  def pe2 = pe21 and pe22 and pe23 and pe24 and pe25 and pe26
+  def pe2 = pe21 and pe22 and pe23 and pe24 and pe25 and pe26 and pe27 and pe28 and pe29 and pe210 and pe211 and pe212
   def pe21 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]")
-  def pe22 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, false), "FAIL")
-  def pe23 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  ComparisonMode(false, false), "INCONCLUSIVE")
-  def pe24 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, false), "FAIL")
-  def pe25 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, true), "INCONCLUSIVE")
-  def pe26 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE")
+  def pe22 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, false), "FAIL", MultiCompareMode.All(), MultiCompareMode.All())
+  def pe23 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]",  ComparisonMode(false, false), "INCONCLUSIVE", MultiCompareMode.All(), MultiCompareMode.All())
+  def pe24 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" NotPresentBehavior="FAIL"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, false), "FAIL", MultiCompareMode.All(), MultiCompareMode.All())
+  def pe25 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(false, true), "INCONCLUSIVE", MultiCompareMode.All(), MultiCompareMode.All())
+  def pe26 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE", MultiCompareMode.All(), MultiCompareMode.All())
+  def pe27 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE", MultiCompareMode.All(), MultiCompareMode.All())
+  def pe28 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" Path1Mode="All" Path2Mode="AtLeastOne" /> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE", MultiCompareMode.All(), MultiCompareMode.AtLeastOne())
+  def pe29 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" Path1Mode="All" Path2Mode="2"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE", MultiCompareMode.All(), MultiCompareMode.Count(2))
+  def pe210 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" Path1Mode="AtLeastOne" Path2Mode="123243"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE", MultiCompareMode.AtLeastOne(), MultiCompareMode.Count(123243))
+  def pe211 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" Path1Mode="0" Path2Mode="smt"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE") must throwA(new Error(s"[Error] value 'smt' is not a recognized path comparison mode"))
+  def pe212 = expression( <PathValue Path1="1[1]" Operator="EQ" Path2="1[1]" IdenticalEquality="true" Truncated="true" NotPresentBehavior="INCONCLUSIVE" Path1Mode="-1" Path2Mode="All"/> ) === PathValue( "1[1]", Operator.EQ, "1[1]", ComparisonMode(true, true), "INCONCLUSIVE") must throwA(new Error(s"[Error] value '-1' is not a valid path comparison mode (must be >= 0)"))
 
   def pe18 = pe181 and pe182 and pe183 and pe184 and pe185 and pe186
   def pe181 = expression( <ComplexPathValue Path1="1[1]" Operator="EQ" Path2="1[1]"/> ) === ComplexPathValue( "1[1]", Operator.EQ, "1[1]")

@@ -236,7 +236,9 @@ object XMLDeserializer extends EscapeSeqHandler {
     case "All" => MultiCompareMode.All()
     case "AtLeastOne" => MultiCompareMode.AtLeastOne()
     case x => try {
-      MultiCompareMode.Count(x.toInt)
+      val n = x.toInt
+      if(n >= 0) MultiCompareMode.Count(n)
+      else throw new Error(s"[Error] value '$x' is not a valid path comparison mode (must be >= 0)")
     } catch {
       case _: NumberFormatException  => throw new Error(s"[Error] value '$x' is not a recognized path comparison mode")
     }
