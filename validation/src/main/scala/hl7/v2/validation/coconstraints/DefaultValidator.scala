@@ -280,7 +280,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   }
 
   def checkGroupRequirement(group: CoConstraintGroup, groupers: List[CCGroupId]): List[CoConstraintValidationCode] = {
-    if (groupers.size == 0 && group.requirement.usage.equals(CoConstraintUsage.R))  RequiredGroup(group)::Nil
+    if (groupers.isEmpty && group.requirement.usage.equals(CoConstraintUsage.R))  RequiredGroup(group)::Nil
     else if (!group.requirement.cardinality.includes(groupers.size)) CardinalityGroup(group, groupers.size, groupers.head.grouper.name, groupers.map(_.value).sorted.mkString("[", ",", "]"))::Nil
     else Nil
   }

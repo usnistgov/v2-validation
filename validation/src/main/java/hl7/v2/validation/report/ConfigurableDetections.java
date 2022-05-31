@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -15,6 +16,7 @@ import gov.nist.validation.report.Trace;
 import gov.nist.validation.report.impl.EntryImpl;
 import hl7.v2.instance.Element;
 import hl7.v2.instance.Location;
+import hl7.v2.instance.Simple;
 import hl7.v2.profile.BindingStrength;
 import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
@@ -177,6 +179,80 @@ public class ConfigurableDetections {
 
 		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
 	}
+
+	public Entry singleCodeMultiLocationXOR(String expectedCode, String expectedCs, List<Element> locations, Element context) {
+		String category = conf.getString("report.single-code-xor.category");
+		String template = conf.getString("report.single-code-xor.template");
+		String classification = conf.getString("report.single-code-xor.classification");
+		String locationsDefs = locations.stream().map(l -> l.location().path()).collect(Collectors.joining(", ", ": [", "]"));
+		String desc = String.format(
+				template,
+				expectedCode,
+				expectedCs,
+				locationsDefs,
+				context.location().prettyString()
+		);
+		return entry(context.location(), desc, category, classification, null, null);
+	}
+
+	public Entry singleCodeInvalidCodeSystem(String expectedCode, String expectedCs, Simple code, Simple codeSystem, Element context) {
+		String category = conf.getString("report.single-code-cs-invalid.category");
+		String template = conf.getString("report.single-code-cs-invalid.template");
+		String classification = conf.getString("report.single-code-cs-invalid.classification");
+		String desc = String.format(
+				template,
+				expectedCode,
+				expectedCs,
+				code.location().prettyString(),
+				codeSystem.value().raw(),
+				codeSystem.location().prettyString(),
+				expectedCs
+		);
+		return entry(context.location(), desc, category, classification, null, null);
+	}
+
+	public Entry singleCodeCSNotFound(String expectedCode, String expectedCs, Simple code, String csLocation, Element context) {
+		String category = conf.getString("report.single-code-cs-not-found.category");
+		String template = conf.getString("report.single-code-cs-not-found.template");
+		String classification = conf.getString("report.single-code-cs-not-found.classification");
+		String desc = String.format(
+				template,
+				expectedCode,
+				expectedCs,
+				code.location().prettyString(),
+				csLocation
+		);
+		return entry(context.location(), desc, category, classification, null, null);
+	}
+
+	public Entry singleCodeCodeNotFound(String expectedCode, String expectedCs, Simple code, Element context) {
+		String category = conf.getString("report.single-code-not-found.category");
+		String template = conf.getString("report.single-code-not-found.template");
+		String classification = conf.getString("report.single-code-not-found.classification");
+		String desc = String.format(
+				template,
+				expectedCode,
+				expectedCs,
+				code.value().raw(),
+				code.location().prettyString(),
+				expectedCode
+		);
+		return entry(context.location(), desc, category, classification, null, null);
+	}
+
+	public Entry singleCodeSuccess(String expectedCode, String expectedCs, Simple code, Element context) {
+		String category = conf.getString("report.single-code-success.category");
+		String template = conf.getString("report.single-code-success.template");
+		String classification = conf.getString("report.single-code-success.classification");
+		String desc = String.format(
+				template,
+				expectedCode,
+				expectedCs,
+				code.location().prettyString()
+		);
+		return entry(context.location(), desc, category, classification, null, null);
+	}
+
 	/*
 	 * ========================================================================
 	 * Structure related entries

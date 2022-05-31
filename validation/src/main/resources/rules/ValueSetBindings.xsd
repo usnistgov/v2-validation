@@ -5,7 +5,8 @@
 	<xs:element name="ValueSetBindingsContext" type="ValueSetBindingsContextType"/>
 	<xs:complexType name="ValueSetBindingsContextType">
 		<xs:sequence>
-			<xs:element name="ValueSetBindings" type="ValueSetBindingsType" maxOccurs="1"/>
+			<xs:element name="ValueSetBindings" type="ValueSetBindingsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SingleCodeBindings" type="SingleCodeBindingsType" minOccurs="0"  maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<!-- Binding context -->
@@ -41,9 +42,46 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="SingleCodeBindingsType">
+		<xs:sequence>
+			<xs:element name="Datatype" type="SingleCodeBindingContextType" minOccurs="0" maxOccurs="1">
+				<!--  The ID attribute of a by-id context must be unique -->
+				<xs:key name="DTByIDContextTypeKeySG">
+					<xs:selector xpath="./ByID"/>
+					<xs:field xpath="@ID"/>
+				</xs:key>
+			</xs:element>
+			<xs:element name="Segment" type="SingleCodeBindingContextType" minOccurs="0" maxOccurs="1">
+				<!--  The ID attribute of a by-id context must be unique -->
+				<xs:key name="SegByIDContextTypeKeySG">
+					<xs:selector xpath="./ByID"/>
+					<xs:field xpath="@ID"/>
+				</xs:key>
+			</xs:element>
+			<xs:element name="Group" type="SingleCodeBindingContextType" minOccurs="0" maxOccurs="1">
+				<!--  The ID attribute of a by-id context must be unique -->
+				<xs:key name="GroupByIDContextTypeKeySG">
+					<xs:selector xpath="./ByID"/>
+					<xs:field xpath="@ID"/>
+				</xs:key>
+			</xs:element>
+			<xs:element name="Message" type="SingleCodeBindingContextType" minOccurs="0" maxOccurs="1">
+				<!--  The ID attribute of a by-id context must be unique -->
+				<xs:key name="MessageByIDContextTypeKeySG">
+					<xs:selector xpath="./ByID"/>
+					<xs:field xpath="@ID"/>
+				</xs:key>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="BindingContextType">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
 			<xs:element name="ByID" type="BindingByIDContexType" minOccurs="1" maxOccurs="1"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="SingleCodeBindingContextType">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="ByID" type="SingleCodeBindingByIDContextType" minOccurs="1" maxOccurs="1"/>
 		</xs:choice>
 	</xs:complexType>
 	<xs:complexType name="BindingByNameContexType">
@@ -58,6 +96,22 @@
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
 	</xs:complexType>
+	<xs:complexType name="SingleCodeBindingByIDContextType">
+		<xs:sequence minOccurs="1">
+			<xs:element name="SingleCodeBinding" type="SingleCodeBindingType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ID" type="NonEmptyString" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="SingleCodeBindingType">
+		<xs:sequence>
+			<xs:element ref="BindingLocations"/>
+		</xs:sequence>
+		<xs:attribute name="Target" use="required"/>
+		<xs:attribute name="Code" use="required"/>
+		<xs:attribute name="CodeSystem" use="required"/>
+	</xs:complexType>
+
 	<xs:complexType name="ValueSetBindingType">
 		<xs:sequence>
 			<xs:element ref="BindingLocations"/>

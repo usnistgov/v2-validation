@@ -7,7 +7,8 @@ import scala.util.{Failure, Success, Try}
 
 
 trait ValueSetSpecification {
-    def vsSpecificationFor(e: Element): Option[List[ValueSetBinding]]    
+    def vsSpecificationFor(e: Element): Option[List[ValueSetBinding]]
+    def singleCodeSpecificationFor(e: Element): Option[List[SingleCodeBinding]]
 }
 
 case class BindingLocation(codeLocation : String, codeSystemLocation : Option[String])
@@ -27,6 +28,10 @@ case class BindingMetadata(strength : Option[BindingStrength], stability : Optio
 
 case class ValueSetBinding(target: String, strength: Option[BindingStrength], bindings: List[String], bindingLocations: List[BindingLocation])
 
+case class SingleCodeBinding(target: String, code: String, codeSystem: String, bindingLocations: List[BindingLocation])
+
 case class CodeHolder(code : Simple, codeSystem : Option[Simple], location : BindingLocation)
 
 case class ValueSetValidationPayload(target: Element, values: List[CodeHolder], valueSets: List[ValueSet], strength: Option[BindingStrength], detections: List[VSValidationCode])
+
+case class SingleCodeValidationPayload(target: Element, values: List[CodeHolder], spec: SingleCodeBinding, detections: List[VSValidationCode])

@@ -23,6 +23,7 @@ trait VsValidator {
   def checkValueSets(m: Message, additionalVsBindings: Option[ValueSetSpecification] = None)(implicit Detections: ConfigurableDetections): Future[Seq[Entry]]
 
   def check(elements: List[Element], spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[VsEntry]
+  def check(elements: List[Element], spec: SingleCodeBinding)(implicit Detections: ConfigurableDetections): List[VsEntry]
 
   def createEntry(element: Element, issue: VSValidationCode, bindingStrength: Option[BindingStrength])(implicit Detections: ConfigurableDetections): Entry
 
