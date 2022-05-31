@@ -10,19 +10,27 @@ import nist.xml.util.XOMExtensions._
 import scala.util.Try
 
 class DefaultValueSetSpecification(
-  val datatypeSpec : Map[String, List[ValueSetBinding]],
-  val segmentSpec : Map[String, List[ValueSetBinding]],
-  val groupSpec : Map[String, List[ValueSetBinding]]
+  val datatypeVsSpec : Map[String, List[ValueSetBinding]],
+  val segmentVsSpec : Map[String, List[ValueSetBinding]],
+  val groupVsSpec : Map[String, List[ValueSetBinding]],
+  val datatypeSgSpec : Map[String, List[SingleCodeBinding]],
+  val segmentSgSpec : Map[String, List[SingleCodeBinding]],
+  val groupSgSpec : Map[String, List[SingleCodeBinding]],
 ) extends ValueSetSpecification {
 
-
   def vsSpecificationFor(e: Element) = e match {
-    case c: Component => datatypeSpec.get(c.datatype.id)
-    case f: Field => datatypeSpec.get(f.datatype.id)
-    case s: Segment => segmentSpec.get(s.model.ref.id)
-    case g: Group => groupSpec.get(g.model.id)
+    case c: Component => datatypeVsSpec.get(c.datatype.id)
+    case f: Field => datatypeVsSpec.get(f.datatype.id)
+    case s: Segment => segmentVsSpec.get(s.model.ref.id)
+    case g: Group => groupVsSpec.get(g.model.id)
   }
 
+  override def singleCodeSpecificationFor(e: Element): Option[List[SingleCodeBinding]] = e match {
+    case c: Component => datatypeSgSpec.get(c.datatype.id)
+    case f: Field => datatypeSgSpec.get(f.datatype.id)
+    case s: Segment => segmentSgSpec.get(s.model.ref.id)
+    case g: Group => groupSgSpec.get(g.model.id)
+  }
 }
 
 object DefaultValueSetSpecification {
@@ -31,18 +39,30 @@ object DefaultValueSetSpecification {
 
   def apply(context: InputStream): Try[ValueSetSpecification] = {
     XOMDocumentBuilder.build(context, getClass.getResourceAsStream("/rules/ValueSetBindings.xsd"), resourceResolver) map { doc =>
-      val root = doc.getRootElement.getFirstChildElement("ValueSetBindings")
+      val vsBindingsRoot = doc.getRootElement.getFirstChildElement("ValueSetBindings")
+      val sgBindingsRoot = doc.getRootElement.getFirstChildElement("SingleCodeBindings")
+
       new DefaultValueSetSpecification(
-        init(extractNodes(root, "Datatype"), vBinding),
-        init(extractNodes(root, "Segment"), vBinding),
-        init(extractNodes(root, "Group"), vBinding))
+        init(extractNodes(vsBindingsRoot, "Datatype"), vBinding),
+        init(extractNodes(vsBindingsRoot, "Segment"), vBinding),
+        init(extractNodes(vsBindingsRoot, "Group"), vBinding),
+        init(extractNodes(sgBindingsRoot, "Datatype"), sgBinding),
+        init(extractNodes(sgBindingsRoot, "Segment"), sgBinding),
+        init(extractNodes(sgBindingsRoot, "Group"), sgBinding))
     }
   }
 
   def extractFromProfile(profile: Profile): DefaultValueSetSpecification = {
     val datatypes = profile.datatypes.mapValues(extractFromDatatype)
     val segments = profile.segments.mapValues(extractFromSegment)
-    new DefaultValueSetSpecification(datatypes, segments, Map.empty[String, List[ValueSetBinding]])
+    new DefaultValueSetSpecification(
+      datatypes,
+      segments,
+      Map.empty[String, List[ValueSetBinding]],
+      Map.empty[String, List[SingleCodeBinding]],
+      Map.empty[String, List[SingleCodeBinding]],
+      Map.empty[String, List[SingleCodeBinding]]
+    )
   }
 
   def extractFromDatatype(dt: Datatype): List[ValueSetBinding] =  {
@@ -104,6 +124,20 @@ object DefaultValueSetSpecification {
     if(!Path.isValid(target)) throw new Exception(s"Invalid target '$target'")
     val bs = asOption(e.attribute("BindingStrength")) map { x => BindingStrength(x).get }
     ValueSetBinding(target, bs, bindingIdentifiers(e.getFirstChildElement("Bindings")), bindingLocations(e.getFirstChildElement("BindingLocations")))
+  }
+
+  def sgBinding(e: nu.xom.Element): SingleCodeBinding = {
+    val target = e.attribute("Target")
+    if(!Path.isValid(target)) throw new Exception(s"Invalid target '$target'")
+    val code = e.attribute("Code") match {
+      case "" | null => throw new Error("Single Code Binding's Code attribute is required")
+      case c => c
+    }
+    val cs = e.attribute("CodeSystem") match {
+      case "" | null => throw new Error("Single Code Binding's CodeSystem attribute is required")
+      case c => c
+    }
+    SingleCodeBinding(target, code, cs, bindingLocations(e.getFirstChildElement("BindingLocations")))
   }
 
   private def bindingLocations(e: nu.xom.Element): List[BindingLocation] = {

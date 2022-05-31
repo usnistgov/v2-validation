@@ -221,6 +221,9 @@ trait ValueSetValidationSpec extends Specification
       val valueSetSpecification: ValueSetSpecification = new DefaultValueSetSpecification(
         Map("CWE"-> List(ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[*]", Some("3[*]")))))),
         Map(),
+        Map(),
+        Map(),
+        Map(),
         Map()
       )
 
@@ -234,6 +237,9 @@ trait ValueSetValidationSpec extends Specification
       val complexComponent = makeComponent(CWE_2_7_X, "CWE", Map(1 -> "ST", 3 -> "ST", 4 -> "ST", 6 -> "ST", 10 -> "ST", 12 -> "ST"))
       val valueSetSpecification: ValueSetSpecification = new DefaultValueSetSpecification(
         Map("ST"-> List(ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None))))),
+        Map(),
+        Map(),
+        Map(),
         Map(),
         Map()
       )
