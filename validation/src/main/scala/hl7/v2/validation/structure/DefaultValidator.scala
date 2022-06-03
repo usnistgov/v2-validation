@@ -10,6 +10,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import hl7.v2.validation.report.ConfigurableDetections
 
+import scala.util.{Failure, Success}
+
 /**
   * Default implementation of the structure validation
   */
@@ -53,12 +55,53 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
   private def check(ss: Simple)(implicit s: Separators, Detections : ConfigurableDetections): List[Entry] =
     ValueValidation.check(ss)
 
+
+  private def collectNoteAboutSelectedDynamicMapping(segInstance: Segment)(implicit s: Separators, Detections : ConfigurableDetections): List[Entry] = {
+    segInstance.model.ref.mappings match {
+      case mappings => mappings.foldRight(List[Entry]()) {
+        (mapping, acc) => {
+          val path = s"""${mapping.position}[*]"""
+          val referenceValues = List(mapping.reference, mapping.secondReference).flatMap(referenceOption => {
+            referenceOption.map(ref => s"""${ref}[1]""") match {
+              case Some(referenceElementOnePath) => Query.queryAsSimple(segInstance, referenceElementOnePath) match {
+                case Failure(_) => None
+                case Success(value) => value.headOption
+              }
+              case None => None
+            }
+          })
+            .map(refElm => s"""${refElm.location.uidPath} = ${refElm.value.raw}""")
+            .mkString("(", ", ", ")")
+
+          Query.query(segInstance, path) match {
+            case Failure(_) => acc
+            case Success(dynElems) =>
+
+              val entries = dynElems.map {
+                case sf: SimpleField => Detections.dynMappingNote(sf.location, sf.datatype.id, referenceValues)
+                case cf: ComplexField => Detections.dynMappingNote(cf.location, cf.datatype.id, referenceValues)
+              }
+
+              entries ::: acc
+          }
+        }
+      }
+
+      case _ => Nil
+    }
+  }
+
   /**
     * Checks the children of the complex element against their requirements
     * @param c - The complex element to be checked
     * @return A list of problems found
     */
   private def check(c: Complex)(implicit s: Separators, Detections : ConfigurableDetections): List[Entry] = {
+    val dynMappingNotes = c match {
+      case segInst: Segment => collectNoteAboutSelectedDynamicMapping(segInst)
+      case _ => Nil
+    }
+
     // Sort the children by position
     val map = c.children.groupBy( x => x.position )
 
@@ -103,7 +146,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     val optionalPopulated = if(c.req.usage.equals(Usage.O) && c.children.nonEmpty) Detections.oUsageComplex(c.location) :: Nil else Nil
 
     // Merge results
-    constantValueSpecError ::: extra ::: optionalPopulated ::: entries
+    constantValueSpecError ::: extra ::: optionalPopulated ::: entries ::: dynMappingNotes
   }
   
   private def positionHasNull(l : List[Element]): Boolean = {

@@ -103,9 +103,9 @@ public class ConfigurableDetections {
 		String stbKey = stability(stab);
 
 		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
-				conf.getString("report.code-not-found.category"),
-				conf.getString("report.code-not-found.classification"),
-				conf.getString("report.code-not-found.template")
+				conf.getString("report.code-not-found-simple.category"),
+				conf.getString("report.code-not-found-simple.classification"),
+				conf.getString("report.code-not-found-simple.template")
 		);
 
 		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
@@ -113,7 +113,7 @@ public class ConfigurableDetections {
 				stbKey,
 				extKey,
 				strKey,
-				"code-not-found"
+				"code-not-found-simple"
 		);
 
 		String desc = String.format(
@@ -125,7 +125,68 @@ public class ConfigurableDetections {
 
 		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
 	}
-	
+
+	public  Entry codeNotFoundCodedElement(Location l, String code, String codeSystem, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+		String extKey = extensibility(ext);
+		String strKey = bindingStrength(strength);
+		String stbKey = stability(stab);
+
+		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
+				conf.getString("report.code-not-found-coded-element.category"),
+				conf.getString("report.code-not-found-coded-element.classification"),
+				conf.getString("report.code-not-found-coded-element.template")
+		);
+
+		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
+				defaultEntryConfig,
+				stbKey,
+				extKey,
+				strKey,
+				"code-not-found-coded-element"
+		);
+
+		String desc = String.format(
+				effectiveEntryConfig.getTemplate(),
+				code,
+				codeSystem,
+				l.prettyString(),
+				vs
+		);
+
+		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
+	}
+
+	public  Entry codeNotFoundCsNotPopulated(Location l, String value, String cs, String csLocation, String vs, Stability stab, Extensibility ext, BindingStrength strength) {
+		String extKey = extensibility(ext);
+		String strKey = bindingStrength(strength);
+		String stbKey = stability(stab);
+
+		SimpleEntryWrapper defaultEntryConfig = new SimpleEntryWrapper(
+				conf.getString("report.code-not-found-cs-empty.category"),
+				conf.getString("report.code-not-found-cs-empty.classification"),
+				conf.getString("report.code-not-found-cs-empty.template")
+		);
+
+		SimpleEntryWrapper effectiveEntryConfig = this.vsDetectionInfo(
+				defaultEntryConfig,
+				stbKey,
+				extKey,
+				strKey,
+				"code-not-found-cs-empty"
+		);
+
+		String desc = String.format(
+				effectiveEntryConfig.getTemplate(),
+				value,
+				l.prettyString(),
+				vs,
+				cs,
+				csLocation
+		);
+
+		return entry(l, desc, effectiveEntryConfig.getCategory(), effectiveEntryConfig.getClassification(), null, null);
+	}
+
 	public  Entry codeNotFoundInvalidCodeSystem(Location l, String value, String vs, String expected, String found, Stability stab, Extensibility ext, BindingStrength strength) {
 		String extKey = extensibility(ext);
 		String strKey = bindingStrength(strength);
@@ -395,7 +456,23 @@ public class ConfigurableDetections {
 		String desc = String.format(template, l.prettyString());
 		return entry(l, desc, category, classification);
 	}
-	
+
+	public  Entry dynMappingNote(Location l, String match, String references) {
+		String category = conf.getString("report.dynamic-mapping-match.category");
+		String classification = conf.getString("report.dynamic-mapping-match.classification");
+		String template = conf.getString("report.dynamic-mapping-match.template");
+		String desc = String.format(template, l.prettyString(), match, references);
+		return entry(l, desc, category, classification);
+	}
+
+	public  Entry predicateUsageNote(Location l, String usage, String trueUsage, String falseUsage, String condition, boolean eval) {
+		String category = conf.getString("report.predicate-usage-selection.category");
+		String classification = conf.getString("report.predicate-usage-selection.classification");
+		String template = conf.getString("report.predicate-usage-selection.template");
+		String desc = String.format(template, usage, l.prettyString(), trueUsage, falseUsage, condition, eval ? "True" : "False");
+		return entry(l, desc, category, classification);
+	}
+
 	/**
 	 * @return A report entry for the format detection
 	 */

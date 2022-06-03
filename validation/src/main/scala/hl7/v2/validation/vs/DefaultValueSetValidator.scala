@@ -92,6 +92,7 @@ object VSValidationCode {
   case class SimpleCodeNotFound(code: String, valueSet: String) extends VSValidationCode
   case class CodeAndCodeSystemNotFound(code: String, codeSystem: String, valueSet: String) extends VSValidationCode
   case class SimpleCodeFoundInvalidCodeSystem(code: String, expected: String, found: String, vs: ValueSet) extends VSValidationCode
+  case class SimpleCodeFoundCodeSystemNotPopulated(code: String, cs: String, location: String, vs: ValueSet) extends VSValidationCode
   case class CodeNotFound(code: String, codeSystem: Option[String], bindings: List[ValueSet]) extends VSValidationCode
   case class UsageAndExtensibilityNotCompatible(code: Code, vs: ValueSet) extends VSValidationCodeFoundInSingleVS with VSValidationCodeSpecError
   //TODO
@@ -380,9 +381,12 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
       val invalidCodeSystem: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else splitValidationCodes._2.collect({
         case (_, _, value: VSValidationCode.SimpleCodeFoundInvalidCodeSystem) => value
       })
-      val codeNotFound: Option[VSValidationCode] = if(codesFound.isEmpty) Some(VSValidationCode.CodeNotFound(code._1.code.value.raw, code._1.codeSystem.map(_.value.raw), code._2.map(_._2))) else None
+      val csNotPopulated: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else splitValidationCodes._2.collect({
+        case (_, _, value: VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated) => value
+      })
+      val codeNotFound: Option[VSValidationCode] = if(codesFound.isEmpty && csNotPopulated.isEmpty) Some(VSValidationCode.CodeNotFound(code._1.code.value.raw, code._1.codeSystem.map(_.value.raw), code._2.map(_._2))) else None
 
-      val detections = codesFound:::specIssues:::invalidCodeSystem:::codeNotFound.map(_ :: Nil).getOrElse(Nil):::duplicateCodeFound.map(_ :: Nil).getOrElse(Nil)
+      val detections = codesFound:::specIssues:::invalidCodeSystem:::csNotPopulated:::codeNotFound.map(_ :: Nil).getOrElse(Nil):::duplicateCodeFound.map(_ :: Nil).getOrElse(Nil)
       val matches = codesFound.map(_.asInstanceOf[VSValidationCodeFound]).flatMap(_.getValueSets)
       (code._1, detections.flatMap(expandVSValidationCode), matches)
     }
@@ -414,9 +418,15 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     else None
   }
 
-  def checkCode(code: CodeHolder, vs: ValueSet)(implicit Detections: ConfigurableDetections): VSValidationCode = {
-    code match {
-      case CodeHolder(code, None, _) => checkValue(code.value.raw, vs).detection
+  def checkCode(holder: CodeHolder, vs: ValueSet)(implicit Detections: ConfigurableDetections): VSValidationCode = {
+    holder match {
+      case CodeHolder(code, None, _) => holder.location.codeSystemLocation match {
+        case Some(csLocation) => checkValue(code.value.raw, vs) match {
+          case Detection(detection) => detection
+          case PayloadAndDetection(code, _) => VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated(code.value, code.codeSys, csLocation, vs)
+        }
+        case None => checkValue(code.value.raw, vs).detection
+      }
       case CodeHolder(code, Some(codeSys), _) => checkTriplet(code.value.raw, codeSys.value.raw, vs)
     }
   }
@@ -483,8 +493,12 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
         case None => Detections.duplicateCode(element.location, value, vs.map(_.id).mkString("[", " ,", "]"))
       }
       case VSValidationCode.CodedElementXOR(codes, vs) => Detections.codedElementXOR(element.location, codes.map(_.code.location.prettyString).mkString(", "), vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
-      case VSValidationCode.CodeNotFound(code, codeSys, vsList) => Detections.codeNotFound(element.location, code, vsList.map(_.id).mkString("[", " ,", "]"), getStability(vsList).orNull, getExtensibility(vsList).orNull, bindingStrength.orNull)
+      case VSValidationCode.CodeNotFound(code, codeSys, vsList) => codeSys match {
+        case Some(cs) => Detections.codeNotFoundCodedElement(element.location, code, cs, vsList.map(_.id).mkString("[", " ,", "]"), getStability(vsList).orNull, getExtensibility(vsList).orNull, bindingStrength.orNull)
+        case None =>  Detections.codeNotFound(element.location, code, vsList.map(_.id).mkString("[", " ,", "]"), getStability(vsList).orNull, getExtensibility(vsList).orNull, bindingStrength.orNull)
+      }
       case VSValidationCode.SimpleCodeFoundInvalidCodeSystem(code, expected, found, vs) => Detections.codeNotFoundInvalidCodeSystem(element.location, code, vs.id, expected, found, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
+      case VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated(code, cs, location, vs) => Detections.codeNotFoundCsNotPopulated(element.location, code, cs, location, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull)
       case VSValidationCode.EmptyVS(vs) => Detections.emptyVS(element.location, vs, null)
       case VSValidationCode.ExcludedVS(vs) => Detections.vsNoVal(element.location, vs)
       case VSValidationCode.VSNotFound(vs) => Detections.vsNotFound(element.location, vs)

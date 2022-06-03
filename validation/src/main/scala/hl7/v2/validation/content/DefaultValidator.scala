@@ -162,8 +162,8 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
 
   private def check(e: Element, p: Predicate)(implicit s: Separators, dtz: Option[TimeZone], Detections : ConfigurableDetections, VSValidator : vs.Validator): List[Entry] =
     eval(p.condition, e) match {
-      case Pass => checkUsage(e, p, p.trueUsage)
-      case Fail(_) | FailPlugin(_,_) => checkUsage(e, p, p.falseUsage)
+      case Pass => checkUsage(e, p, p.trueUsage, predicatePass = true)
+      case Fail(_) | FailPlugin(_,_) => checkUsage(e, p, p.falseUsage, predicatePass = false)
       case Inconclusive(t) => Detections.predicateSpecErr(e, p, stackTrace(e, t :: Nil)) :: Nil
     }
 
@@ -179,7 +179,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
   /**
    * Checks if the target path of the predicate satisfy the usage 'u'
    */
-  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage)(implicit Detections : ConfigurableDetections): List[Entry] =
+  private def checkUsage(e: Element, p: Predicate, u: PredicateUsage, predicatePass: Boolean)(implicit Detections : ConfigurableDetections): List[Entry] =
     try {
       val (ccontexts, path) = reducePath(e, p.target)
       val contexts = cleanFromNull(ccontexts)
@@ -187,7 +187,7 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
         Detections.predicateSuccess(e, p) :: Nil //Nothing to do the parent is missing
       else {
         lazy val l = contexts flatMap { c => Query.query(c, path).get }
-        u match {
+        val predicateErrors = u match {
           case R if l.isEmpty =>
             contexts map { c =>
               val dl = Utils.defaultLocation(c.asInstanceOf[Complex], path).getOrElse(c.location)
@@ -200,6 +200,8 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
           }
           case _ => Detections.predicateSuccess(e, p) :: Nil
         }
+        val notes = l.map(elm => Detections.predicateUsageNote(elm.location, u.toString, p.trueUsage.toString, p.falseUsage.toString, p.description, predicatePass))
+        predicateErrors ::: notes
       }
     } catch {
       case f: Throwable =>

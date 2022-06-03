@@ -56,6 +56,7 @@ trait ValueSetValidationSpec extends Specification
           Complex element with NoUsage code present in the value set should return a NoUsage detection $checkComplexBindingNoUsage
           Complex element with code not present in the value set should return a CodeNotFound detection $checkComplexBindingNotFound
           Complex element with code present with different code system in the value set should return a Invalid Code System and a Code Not Found detection $checkComplexBindingInvalidCodeSystem
+          Complex element with code present in the value set and code system not populated should return a Code System Not Populated and a Code Not Found detection $checkComplexBindingCodeSystemNp
           Complex element with code present multiple times in the value set should return a duplicate code detection and a found detection for each match with the correct usage $checkComplexBindingDuplicateInVs
         Multiple Value Set
           Complex element with R code present in one of the value sets should return an RVS detection $checkComplexBindingMultiVsR
@@ -63,6 +64,7 @@ trait ValueSetValidationSpec extends Specification
           Complex element with E code present in one of the value sets should return an EVS detection $checkComplexBindingMultiVsE
           Complex element with NoUsage code present in one of the value sets should return a NoUsage detection $checkComplexBindingMultiVsNoUsage
           Complex element with code not present in any of the value sets should return a CodeNotFound detection $checkComplexBindingMultiVsNotFound
+          Complex element with a code present in multiple value sets with code system not populated should return a Code System Not Populated from each VS / Match and a code not found detection  $checkComplexBindingMultiVsCSNP
           Complex element with a code present in multiple value sets with the wrong code system should return an Invalid Code System from each VS / Match and a code not found detection  $checkComplexBindingMultiVsInvalidCS
           Complex element with a code present in one value set with the right code system and another with the wrong code system should return an RVS detection of the right code found $checkComplexBindingMultiVsValidAndInvalidCS
           Complex element with code present in multiple value sets should return a duplicate code detection $checkComplexBindingMultiDuplicate
@@ -72,14 +74,13 @@ trait ValueSetValidationSpec extends Specification
           Complex element with multiple (2) binding locations with different codes one found (E) in value set and one not found should return an EVS and not return a code not found detection for the second location $checkComplexBindingMultiBLRNotFound
           Complex element with multiple (2) binding locations with different codes both not present in value set should return multiple (2) code not found detection $checkComplexBindingMultiBLBothNotFound
           Complex element with multiple (2) binding locations with different codes both with wrong code system in value set should return invalid code system and code not found detection for each location $checkComplexBindingMultiBLBothInvalidCs
+          Complex element with multiple (2) binding locations with different codes both in value set but code system is not populated should return code system not populated and code not found detection for each location $checkComplexBindingMultiBLBothCSNP
         Multiple Value Set
           Complex element with multiple (2) binding locations with different codes found in same value set (RVS and PVS) should return an RVS and PVS detection and an XOR detection $checkComplexBindingMultiBLMultiVsRP_1
           Complex element with multiple (2) binding locations with different codes each found in a different value set (RVS and PVS) should return an RVS and PVS detection $checkComplexBindingMultiBLMultiVsRP_2
           Complex element with multiple (2) binding locations with different codes one found (E) in value set and one not found should return an EVS and not return a code not found detection for the second location $checkComplexBindingMultiBLMultiVsRNotFound
           Complex element with multiple (2) binding locations with different codes both not present in any value set should return multiple (2) code not found detection $checkComplexBindingMultiBLMultiVsBothNotFound
           Complex element with multiple (2) binding locations with different codes with each present in one value set with the right code system (R) and wrong code system in the other (P) should return RVS for each location $checkComplexBindingMultiBLMultiVsOneInvalidCsOtherPass
-
-
   """
 
   val vsSpecification: ValueSetSpecification = EmptyValueSetSpecification
@@ -110,6 +111,15 @@ trait ValueSetValidationSpec extends Specification
 
     S(4, 1, Text("B")),
     S(6, 1, Text("SYS")),
+
+    S(10, 1, Text("C")),
+    S(12, 1, Text("SYS"))
+  ))
+
+  val CWE_2_7_CSNP: C = C(0, 1, List(
+    S(1, 1, Text("A")),
+
+    S(4, 1, Text("B")),
 
     S(10, 1, Text("C")),
     S(12, 1, Text("SYS"))
@@ -198,7 +208,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val complexCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("10[*]", Some("12[*]"))))) must containTheSameElementsAs(List(
-    createEntry(CWE_2_7_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
+    createEntry(CWE_2_7_CP, VSValidationCode.CodeNotFound("PAT", Some("SYS"), List(vsCodePattern)), Some(BindingStrength.R))
   ))
 
   val complexCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("4[*]", Some("6[*]")))))  must containTheSameElementsAs(List(
@@ -298,7 +308,7 @@ trait ValueSetValidationSpec extends Specification
     val parts: Seq[(Element, ValueSetBinding)] = sBindings.map(b => (HD_1, b)) ::: cBindings.map(b => (CWE_2_7, b))
     parts.map(c => check(c._1, c._2) must containTheSameElementsAs(List(
       createEntry(c._1, VSValidationCode.DynamicValueSet(vs1_dynamic), Some(BindingStrength.R)),
-      createEntry(c._1, VSValidationCode.CodeNotFound("B", Some("SYS"), if(c._2.bindings.size === 1) List(vs1_dynamic) else List(vs2_2, vs1_dynamic)), Some(BindingStrength.R))
+      createEntry(c._1, VSValidationCode.CodeNotFound("B", if(c._2.bindingLocations.head.codeSystemLocation.isDefined) Some("SYS") else None, if(c._2.bindings.size === 1) List(vs1_dynamic) else List(vs2_2, vs1_dynamic)), Some(BindingStrength.R))
     )))
   }
 
@@ -436,6 +446,13 @@ trait ValueSetValidationSpec extends Specification
     ))
   }
 
+  val checkComplexBindingCodeSystemNp: MatchResult[List[Entry]] = {
+    check(CWE_2_7_CSNP, ValueSetBinding(".", Some(BindingStrength.R), List("vs3"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
+//      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("A", None, List(vs3)), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("A", "SYS1", "3[1]", vs3), Some(BindingStrength.R))
+    ))
+  }
+
   val checkComplexBindingDuplicateInVs: MatchResult[List[Entry]] = {
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs2"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_a, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
@@ -481,6 +498,16 @@ trait ValueSetValidationSpec extends Specification
       createEntry(CWE_2_7, VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS2", "SYS", vs1_cs_1), Some(BindingStrength.R))
     ))
   }
+
+  val checkComplexBindingMultiVsCSNP: MatchResult[List[Entry]] = {
+    check(CWE_2_7_CSNP, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs", "vs1_cs_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
+//      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("A", None, List(vs1_cs, vs1_cs_1)), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("A", "SYS1", "3[1]", vs1_cs), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("A", "SYS2", "3[1]", vs1_cs_1), Some(BindingStrength.R))
+    ))
+  }
+
+
 
   val checkComplexBindingMultiVsValidAndInvalidCS: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_cs_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
@@ -528,6 +555,17 @@ trait ValueSetValidationSpec extends Specification
       createEntry(CWE_2_7, VSValidationCode.SimpleCodeFoundInvalidCodeSystem("B", "SYS1", "SYS", vs1_cs), Some(BindingStrength.R))
     ))
   }
+
+  val checkComplexBindingMultiBLBothCSNP: MatchResult[List[Entry]] = {
+    check(CWE_2_7_CSNP, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
+//      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("A", None, List(vs1_cs)), Some(BindingStrength.R)),
+//      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("B", None, List(vs1_cs)), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("A", "SYS1", "3[1]", vs1_cs), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("B", "SYS1", "6[1]", vs1_cs), Some(BindingStrength.R))
+    ))
+  }
+
+
 
   val checkComplexBindingMultiBLMultiVsRP_1: MatchResult[List[Entry]] = {
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs2_2"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
