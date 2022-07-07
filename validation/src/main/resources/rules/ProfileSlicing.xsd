@@ -13,7 +13,7 @@
 
     <xs:complexType name="SegmentSlicingType">
         <xs:sequence>
-            <xs:element name="Context" type="SegmentSlicingContextType" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="Message" type="SegmentSlicingMessageContextType" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
 
@@ -23,12 +23,19 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="SegmentSlicingContextType">
+    <xs:complexType name="SegmentSlicingGroupContextType">
         <xs:choice maxOccurs="unbounded" >
             <xs:element name="AssertionSlicing" type="AssertionSlicingType"/>
             <xs:element name="OccurrenceSlicing" type="OccurrenceSlicingType"/>
         </xs:choice>
         <xs:attribute name="ID" type="XMLElementNamingConvention" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="SegmentSlicingMessageContextType">
+        <xs:sequence>
+            <xs:element name="Group" type="SegmentSlicingGroupContextType" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="ID" type="NonEmptyString" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="FieldSlicingContextType">
