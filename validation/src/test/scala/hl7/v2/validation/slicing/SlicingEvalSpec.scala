@@ -1025,7 +1025,7 @@ trait SlicingEvalSpec extends Specification
     val OCCURRENCE: OccurrenceSlice[Datatype] = OccurrenceSlice(1, CWE_FLV1)
 
     implicit val profileSlicingContext: ProfileSlicingContext = new DefaultProfileSlicingContext(
-      Map("GROUP_ID" ->
+      Map(MESSAGE.id -> Map("GROUP_ID" ->
         Map(1 ->
           SegmentAssertionSlicing(
             position = 1,
@@ -1034,7 +1034,7 @@ trait SlicingEvalSpec extends Specification
             )
           )
         )
-      ),
+      )),
       Map("SEGMENT_B_FLV2" ->
         Map(2 ->
           FieldOccurrenceSlicing(
@@ -1049,7 +1049,7 @@ trait SlicingEvalSpec extends Specification
 
     val LSGS = mkMessage("SGA||A^B^C^D" :: "SGB||A^B^C^D" :: Nil, MESSAGE)
     val GRP = Group(MESSAGE.asGroup, 1, LSGS)
-    val (pGrp, codes) = applySegmentSlices(GRP)
+    val (pGrp, codes) = applySegmentSlices(MESSAGE.id, GRP)
     val TARGET_SEGMENT = assertGet(GRP, "2[*].1[*]")
     val TARGET_FIELD = assertGet(TARGET_SEGMENT, "2[*]")
 
@@ -1090,7 +1090,7 @@ trait SlicingEvalSpec extends Specification
     val LSGS = mkMessage("SGA||A^B^C^D" :: "SGB||A^B^C^D" :: Nil, MESSAGE)
     val GRP = Group(MESSAGE.asGroup, 1, LSGS)
     implicit val profileSlicingContext: ProfileSlicingContext = EmptyProfileSlicingContext
-    val (pGrp, _) = applySegmentSlices(GRP)
+    val (pGrp, _) = applySegmentSlices(MESSAGE.id, GRP)
 
     GRP mustEqual(pGrp)
   }
@@ -1113,16 +1113,16 @@ trait SlicingEvalSpec extends Specification
     )
 
     implicit val profileSlicingContext: ProfileSlicingContext = new DefaultProfileSlicingContext(
-      Map("GROUP_ID" ->
+      Map("MSG_ID" -> Map("GROUP_ID" ->
         Map(1 -> SEG_SLICING)
-      ),
+      )),
       Map("SEGMENT_B_BASE" ->
         Map(2 -> FIELD_SLICING)
       ),
     )
     val LSGS = mkMessage("SGA||A^B^C^D" :: "SGB||A^B^C^D" :: Nil, MESSAGE)
     val GRP = Group(MESSAGE.asGroup, 1, LSGS)
-    val (pGrp, codes) = applySegmentSlices(GRP)
+    val (pGrp, codes) = applySegmentSlices(MESSAGE.id, GRP)
     val TARGET_SEGMENT = assertGet(GRP, "2[*].1[*]")
     val TARGET_FIELD = assertGet(TARGET_SEGMENT, "2[*]")
 

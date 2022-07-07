@@ -9,15 +9,18 @@ import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
 import scala.util.{Failure, Try}
 
 class DefaultProfileSlicingContext(
-  val segmentSlicing : Map[String, Map[Int, Slicing[Segment]]],
+  val segmentSlicing : Map[String, Map[String, Map[Int, Slicing[Segment]]]],
   val fieldSlicing: Map[String, Map[Int, Slicing[Datatype]]]
 ) extends ProfileSlicingContext {
   /**
     * Returns the list of possible slices defined for this Segment Reference at Position (position) in Group (group)
     */
-  override def segmentSlicingForGroupAtPosition[T](group: Group, position: Int): Option[Slicing[Segment]] = {
-    segmentSlicing.get(group.model.id) match {
-      case Some(byContext) => byContext.get(position)
+  override def segmentSlicingForMessageGroupAtPosition[T](messageId: String, group: Group, position: Int): Option[Slicing[Segment]] = {
+    segmentSlicing.get(messageId) match {
+      case Some(message) => message.get(group.model.id) match {
+        case Some(group) => group.get(position)
+        case None => None
+      }
       case None => None
     }
   }
@@ -42,7 +45,7 @@ object DefaultProfileSlicingContext {
         implicit val p: Profile = profile;
         val (segments, fields) = SlicingXMLDeserializer.deserialize(doc)
         new DefaultProfileSlicingContext(
-          segments.getOrElse(Map[String, Map[Int, Slicing[Segment]]]()),
+          segments.getOrElse(Map[String, Map[String, Map[Int, Slicing[Segment]]]]()),
           fields.getOrElse(Map[String, Map[Int, Slicing[Datatype]]]())
         )
       }

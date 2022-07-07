@@ -19,7 +19,7 @@
 
     <xs:complexType name="FieldSlicingType">
         <xs:sequence>
-            <xs:element name="Context" type="FieldSlicingContextType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="SegmentContext" type="FieldSlicingContextType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -33,7 +33,7 @@
 
     <xs:complexType name="SegmentSlicingMessageContextType">
         <xs:sequence>
-            <xs:element name="Group" type="SegmentSlicingGroupContextType" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="GroupContext" type="SegmentSlicingGroupContextType" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="ID" type="NonEmptyString" use="required"/>
     </xs:complexType>

@@ -6,7 +6,7 @@ object EmptyProfileSlicingContext extends ProfileSlicingContext {
   /**
     * Returns the list of possible slices defined for this Segment Reference at Position (position) in Group (group)
     */
-  override def segmentSlicingForGroupAtPosition[T](group: Group, position: Int): Option[Slicing[Segment]] = None
+  override def segmentSlicingForMessageGroupAtPosition[T](messageId: String, group: Group, position: Int): Option[Slicing[Segment]] = None
 
   /**
     * Returns the list of possible slices defined for this Field at Position (position) in Segment (segment)

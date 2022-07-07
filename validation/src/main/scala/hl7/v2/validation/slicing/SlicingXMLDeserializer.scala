@@ -6,40 +6,45 @@ object SlicingXMLDeserializer {
   import nist.xml.util.XOMExtensions._
 
 
-  type SegmentSlicingDefs = Map[String, Map[Int, Slicing[Segment]]]
+  type SegmentSlicingDefs = Map[String, Map[String, Map[Int, Slicing[Segment]]]]
   type FieldSlicingDefs = Map[String, Map[Int, Slicing[Datatype]]]
   type PickTarget[T] = (Profile, String) => Option[T]
   type SlicingParser[E, T>: Slicing[E]] = (Int, List[Slice[E]]) => T
 
   def deserialize(doc: nu.xom.Document)(implicit profile: Profile): (Option[SegmentSlicingDefs], Option[FieldSlicingDefs]) = {
-    val slicing = doc.getRootElement.getFirstChildElement("Slicing")
+    val slicing = doc.getRootElement
     if(slicing != null) {
-      (deserializeSegmentSlicing(slicing), deserializeFieldSlicing(slicing))
+      (deserializeSegmentSlicingByMessage(slicing), deserializeFieldSlicing(slicing))
     } else {
       (None, None)
     }
   }
 
-  def deserializeSegmentSlicing(elm: nu.xom.Element)(implicit profile: Profile): Option[SegmentSlicingDefs] = {
+  def deserializeSegmentSlicingByMessage(elm: nu.xom.Element)(implicit profile: Profile): Option[SegmentSlicingDefs] = {
     val segmentSlicing = elm.getFirstChildElement("SegmentSlicing")
     if(segmentSlicing != null) {
-      Some(deserializeSlicingContext[Segment](
-        segmentSlicing,
-        (p, ref) => p.segments.get(ref),
-        (i, slices) => SegmentAssertionSlicing(i, slices),
-        (i, slices) => SegmentOccurrenceSlicing(i, slices)
-      ))
+      val contexts = segmentSlicing.getChildElements("Message")
+      val byMessage = for(context <- contexts) yield {
+        context.attribute("ID") -> deserializeSlicingContext[Segment](
+          context,
+          "GroupContext",
+          (p, ref) => p.segments.get(ref),
+          (i, slices) => SegmentAssertionSlicing(i, slices),
+          (i, slices) => SegmentOccurrenceSlicing(i, slices)
+        )
+      }
+      Some(byMessage.toMap)
     } else {
       None
     }
   }
-
 
   def deserializeFieldSlicing(elm: nu.xom.Element)(implicit profile: Profile): Option[FieldSlicingDefs] = {
     val fieldSlicing = elm.getFirstChildElement("FieldSlicing")
     if(fieldSlicing != null) {
       Some(deserializeSlicingContext(
         fieldSlicing,
+        "SegmentContext",
         (p, ref) => p.datatypes.get(ref),
         (i, slices) => FieldAssertionSlicing(i, slices),
         (i, slices) => FieldOccurrenceSlicing(i, slices)
@@ -49,8 +54,8 @@ object SlicingXMLDeserializer {
     }
   }
 
-  def deserializeSlicingContext[T](elm: nu.xom.Element, pickTarget: PickTarget[T], assertionBuilder: (Int, List[AssertionSlice[T]]) => Slicing[T], occurrenceBuilder: (Int, List[OccurrenceSlice[T]]) => Slicing[T])(implicit profile: Profile): Map[String, Map[Int, Slicing[T]]] = {
-    val contexts = elm.getChildElements("Context")
+  def deserializeSlicingContext[T](elm: nu.xom.Element, elmName: String, pickTarget: PickTarget[T], assertionBuilder: (Int, List[AssertionSlice[T]]) => Slicing[T], occurrenceBuilder: (Int, List[OccurrenceSlice[T]]) => Slicing[T])(implicit profile: Profile): Map[String, Map[Int, Slicing[T]]] = {
+    val contexts = elm.getChildElements(elmName)
     contexts.map(elm => elm).groupBy({
       ctx => ctx.attribute("ID")
     }).map({
@@ -101,11 +106,11 @@ object SlicingXMLDeserializer {
         val description = textElement(slice.getFirstChildElement("Description"), "Description for Assertion Slicing must be valued")
         val reference = attribute(slice.attribute("Ref"), "Target Reference (Ref Attribute) for Assertion Slicing must be valued")
         val assertion = slice.getFirstChildElement("Assertion")
-        if(assertion == null) {
-          throw new Exception("Assertion in AssertionSlicing must be valued")
+        if(assertion == null || assertion.getChildElements.size() != 1) {
+          throw new Exception("Assertion in AssertionSlicing must be valued with an expression")
         }
         pickTarget(profile, reference) match {
-          case Some(value) => AssertionSlice(description, expression.XMLDeserializer.expression(assertion), value)
+          case Some(value) => AssertionSlice(description, expression.XMLDeserializer.expression(assertion.getChildElements.get(0)), value)
           case None => throw new Exception("Not found slice reference " + reference)
         }
     }).toList

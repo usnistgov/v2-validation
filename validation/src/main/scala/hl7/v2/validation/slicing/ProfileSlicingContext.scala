@@ -8,7 +8,7 @@ trait ProfileSlicingContext {
   /**
     * Returns the list of possible slices defined for this Segment Reference at Position (position) in Group (group)
     */
-  def segmentSlicingForGroupAtPosition[T](group: Group, position: Int): Option[Slicing[Segment]]
+  def segmentSlicingForMessageGroupAtPosition[T](messageId: String, group: Group, position: Int): Option[Slicing[Segment]]
   /**
     * Returns the list of possible slices defined for this Field at Position (position) in Segment (segment)
     */

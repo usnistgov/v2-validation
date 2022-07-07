@@ -35,11 +35,11 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
     implicit val context = profileSlicingContext
-    val apply = applySegmentSlices(m.asGroup)
+    val apply = applySegmentSlices(m.model.id, m.asGroup)
     (m.copy(children = apply._1.children), apply._2.map(slicingCodeToDetection))
   }
 
-  def applySegmentSlices(group: Group)
+  def applySegmentSlices(messageId: String, group: Group)
     (
       implicit s: Separators,
       t: Option[TimeZone],
@@ -49,7 +49,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
     ): (Group, List[SlicingCode]) = {
 
     val segOrGroupsAndIssues = group.children.foldLeft((List[SegOrGroup](), List[SlicingCode]())) {
-      (acc, child) => profileSlicingContext.segmentSlicingForGroupAtPosition(group, child.position) match {
+      (acc, child) => profileSlicingContext.segmentSlicingForMessageGroupAtPosition(messageId, group, child.position) match {
         case None =>  (acc._1 ::: List(child), acc._2)
         case Some(slicing) => val (parsed, issues) =  applySegmentSlices(slicing, child)
           (acc._1 ::: List(parsed), acc._2 ::: issues)
@@ -58,7 +58,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
 
     val processed = segOrGroupsAndIssues._1.foldLeft((List[SegOrGroup](), List[SlicingCode]())) {
       (acc, child) => child match {
-        case grp: Group => val (parsed, issues) = applySegmentSlices(grp)
+        case grp: Group => val (parsed, issues) = applySegmentSlices(messageId, grp)
           (acc._1 ::: List(parsed), acc._2 ::: issues)
         case seg: SegmentInstance => val (parsed, issues) = applyFieldSlices(seg)
           (acc._1 ::: List(parsed), acc._2 ::: issues)
