@@ -7,20 +7,31 @@
 
     <xs:complexType name="CoConstraintContextType">
         <xs:sequence>
-            <xs:element name="Group" type="GroupBindingType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="ByMessage" type="MessageBindingType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="GroupBindingType">
+    <xs:complexType name="MessageBindingType">
         <xs:sequence>
-            <xs:element name="CoConstraintGroupId" type="CoConstraintGroupIdType"/>
-            <xs:choice maxOccurs="unbounded" >
-                <xs:element name="SimpleTable" type="SimpleTableType"/>
-                <xs:element name="ConditionalTable" type="ConditionalTableType"/>
-            </xs:choice>
+            <xs:element name="Context" type="MessageContextBindingType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="Context" type="NonEmptyString" use="required"/>
-        <xs:attribute name="Target" type="NonEmptyString" use="required"/>
+        <xs:attribute name="ID" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="MessageContextBindingType">
+        <xs:sequence>
+            <xs:element name="Segment" type="SegmentContextBindingType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Path" type="PathType" use="required"/>
+        <xs:attribute name="Name" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="SegmentContextBindingType">
+        <xs:choice maxOccurs="unbounded" >
+            <xs:element name="SimpleTable" type="SimpleTableType"/>
+            <xs:element name="ConditionalTable" type="ConditionalTableType"/>
+        </xs:choice>
+        <xs:attribute name="Path" type="PathType" use="required"/>
         <xs:attribute name="Name" type="NonEmptyString" use="required"/>
     </xs:complexType>
 
@@ -37,14 +48,19 @@
     </xs:complexType>
 
     <xs:complexType name="SimpleTableType">
-        <xs:choice minOccurs="1" maxOccurs="unbounded" >
-            <xs:element name="CoConstraint" type="CoConstraintType"/>
-            <xs:element name="CoConstraintGroup" type="CoConstraintGroupType"/>
-        </xs:choice>
+        <xs:sequence>
+            <xs:element name="CoConstraintGroupId" type="CoConstraintGroupIdType" minOccurs="0"/>
+            <xs:choice minOccurs="1" maxOccurs="unbounded" >
+                <xs:element name="CoConstraint" type="CoConstraintType"/>
+                <xs:element name="CoConstraintGroup" type="CoConstraintGroupType"/>
+            </xs:choice>
+        </xs:sequence>
+
     </xs:complexType>
 
     <xs:complexType name="ConditionalTableType">
         <xs:sequence>
+            <xs:element name="CoConstraintGroupId" type="CoConstraintGroupIdType" minOccurs="0"/>
             <xs:element name="Condition" type="CoConstraintConditionType"/>
             <xs:choice minOccurs="1" maxOccurs="unbounded" >
                 <xs:element name="CoConstraint" type="CoConstraintType"/>

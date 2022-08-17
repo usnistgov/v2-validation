@@ -35,6 +35,7 @@ case class RequiredCoConstraint(groupInstance: Option[GroupInstance], coConstrai
 case class CardinalityCoConstraint(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, found: Int) extends CoConstraintValidationCode
 case class CardinalityGroup(group: CoConstraintGroup, found: Int, grouper: String, values: String) extends CoConstraintValidationCode
 case class ElementIsNotSegment(path: String, element: Element) extends CoConstraintValidationCode
+case class ElementIsNotGroupOrMessage(path: String, element: Element) extends CoConstraintValidationCode
 case class CoConstraintPlainTextFailure(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: PlainText, value: String) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
 case class CoConstraintPlainTextSuccess(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: PlainText) extends CoConstraintValidationCode with CoConstraintSelectorMatch
 case class CoConstraintCodeFailureNotFound(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Simple, constraint: Code) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
@@ -49,56 +50,69 @@ case class InconclusiveVsBinding(cell: CoConstraintCell, binding: ValueSetBindin
 case class NotDistinctGrouper(coConstraint: CoConstraint, groupId: CCGroupId) extends CoConstraintValidationCode
 case class InconclusiveGrouper(context: Element, path: String, message: String) extends CoConstraintValidationCode
 case class InconclusiveTarget(context: Element, path: String, message: String) extends CoConstraintValidationCode
+case class InconclusiveContext(context: Element, path: String, message: String) extends CoConstraintValidationCode
 case class CCSegment(segment: Segment, groupId: Option[CCGroupId])
 case class CCGroupId(grouper: GroupId, element: Element, value: String)
 
 trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValidator with EscapeSeqHandler {
 
   private val conf = ConfigFactory.load
+
+
   def checkCoConstraint(m: Message)(implicit Detections : ConfigurableDetections, VSValidator : Validator): Future[Seq[Entry]] = Future {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
     implicit val model: profile.Message = m.model
-    checkGroup(m.asGroup)
+    checkMessage(m)
   }
 
   /*
-    For each GROUP in the message check if it has a co-constraint binding and validate it
- */
-  def checkGroup(group: Group)(implicit Detections : ConfigurableDetections, s: Separators, t: Option[TimeZone], VSValidator : Validator): List[Entry] = {
-    group.children.foldLeft(List[Entry]()) {
-      (acc, child) => child match {
-        case group: Group => acc ++ checkGroupAndBindings(group, coConstraintValidationContext.coConstraintBindingsFor(group))
-        case _ => acc
+  * Evaluate each binding on the message
+  */
+  def checkMessage(m: Message)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator): List[Entry]  = {
+    val bindings = coConstraintValidationContext.coConstraintBindingsFor(m)
+    bindings.foldLeft(List[Entry]()) {
+      (acc, binding) => acc ++ checkBindingContext(m.asGroup, binding)
+    }
+  }
+
+  /*
+  * Evaluate a binding on a message
+  * Check if context is group or message
+  */
+  def checkBindingContext(e: Group, context: CoConstraintBindingContext)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator): List[Entry] = {
+    query(e, context.path) match {
+      case Failure(exception) => Detections.ccContextSpecError(e, context.path, exception.getMessage) :: Nil
+      case Success(elements) => elements.foldLeft(List[Entry]()) {
+        (acc, element) => {
+          element match {
+            case group: Group => acc ++ context.segments.foldLeft(List[Entry]()) {
+              (acc, segmentBinding) => acc ++ checkBindingSegment(group, segmentBinding)
+            }
+            case message: Message => acc ++ context.segments.foldLeft(List[Entry]()) {
+              (acc, segmentBinding) => acc ++ checkBindingSegment(message.asGroup, segmentBinding)
+            }
+            case fail => Detections.ccElementIsNotGroupOrMessage(fail, context.path, e) :: Nil
+          }
+        }
       }
     }
   }
 
   /*
-    Called when a group has a list of co-constraint bindings defined (validates the bindings)
+  * Evaluate segment binding from context
+  * Check if elements are segments
   */
-  def checkGroupAndBindings(group: Group, bindings: List[CoConstraintBinding])(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator): List[Entry] = {
-    bindings.foldLeft(List[Entry]()) {
-      (acc, binding) => acc ++ checkGroupAndBinding(group, binding)
-    }
-  }
-
-  /*
-    Validates a co-constraint binding on a group
-    1 - gets the list of segments targeted by the CC Binding
-    2 - qualifies the segments by their cc-groupId if defined (e.g OBX-4 value)
-    3 - checks the co-constraints against the list of qualified segments
-  */
-  def checkGroupAndBinding(group: Group, binding: CoConstraintBinding)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator): List[Entry] = {
-    implicit val segmentName: String = binding.segmentName
+  def checkBindingSegment(group: Group, segment: CoConstraintBindingSegment)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator): List[Entry] = {
+    implicit val segmentName: String = segment.name
     implicit val context: Group = group
-    query(group, binding.target) match {
-      case Success(elements) =>
-        val (segments, issues) = sanitizeElementList(binding.target, elements)
-        val (qualifiedSegment, groupIdIssues) = qualifySegments(segments, binding.grouper)
-        val detections: List[CoConstraintValidationCode] = issues ::: groupIdIssues ::: checkCoConstraints(qualifiedSegment, binding)
+    query(group, segment.path) match {
+      case Failure(exception) => createEntry(InconclusiveTarget(group, segment.path, exception.getMessage))
+      case Success(elements) => {
+        val (segments, issues) = sanitizeElementList(segment.path, elements)
+        val detections: List[CoConstraintValidationCode] = issues ::: checkCoConstraints(segments, segment.bindings)
         detections.flatMap(createEntry)
-      case Failure(exception) => createEntry(InconclusiveTarget(group, binding.target, exception.getMessage))
+      }
     }
   }
 
@@ -137,12 +151,14 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   /*
     Checks all the co-constraint tables defined on the list of target segments (Conditional and Simple Tables)
    */
-  def checkCoConstraints(segments: List[CCSegment], binding: CoConstraintBinding)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator, context: Element): List[CoConstraintValidationCode] = {
-    binding.bindings.foldLeft(List[CoConstraintValidationCode]()) {
-      (acc, table) => table match {
-        case simple: SimpleCoConstraintTable => acc ++ checkCoConstraintTable(segments, simple.coConstraints, simple.coConstraintGroups)
-        case conditional: ConditionalCoConstraintTable => acc ++ checkConditionalCoConstraintTable(segments, conditional)
-      }
+  def checkCoConstraints(ls: List[Segment], tables: List[CoConstraintTable])(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], VSValidator : Validator, context: Element): List[CoConstraintValidationCode] = {
+    tables.foldLeft(List[CoConstraintValidationCode]()) {
+      (acc, table) =>
+        val (segments, groupIdIssues) = qualifySegments(ls, table.grouper)
+        table match {
+          case simple: SimpleCoConstraintTable => acc ++ checkCoConstraintTable(segments, simple.coConstraints, simple.coConstraintGroups) ++ groupIdIssues
+          case conditional: ConditionalCoConstraintTable => acc ++ checkConditionalCoConstraintTable(segments, conditional) ++ groupIdIssues
+        }
     }
   }
 

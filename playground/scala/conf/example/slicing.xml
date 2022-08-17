@@ -1,0 +1,30 @@
+<ProfileSlicing>
+    <SegmentSlicing>
+        <Message ID="aa72383a-7b48-46e5-a74a-82e019591fe7">
+            <GroupContext ID="VXU_V04.ORDER">
+                <AssertionSlicing Position="3">
+                    <Slice Ref="RXA_IZ01">
+                        <Description>RXA-9.1 is valued '00'</Description>
+                        <Assertion>
+                            <PlainText Path="9[1].1[1]" Text="00" />
+                        </Assertion>
+                    </Slice>
+                    <Slice Ref="RXA_IZ02">
+                        <Description>RXA-9.1 is valued '01'</Description>
+                        <Assertion>
+                            <PlainText Path="9[1].1[1]" Text="01" />
+                        </Assertion>
+                    </Slice>
+                </AssertionSlicing>
+            </GroupContext>
+        </Message>
+    </SegmentSlicing>
+    <FieldSlicing>
+        <SegmentContext ID="PID_IZ 1_5">
+            <OccurrenceSlicing Position="13">
+                <Slice Ref="XTN_IZ01" Occurrence="1" />
+                <Slice Ref="XTN_IZ02" Occurrence="2" />
+            </OccurrenceSlicing>
+        </SegmentContext>
+    </FieldSlicing>
+</ProfileSlicing>

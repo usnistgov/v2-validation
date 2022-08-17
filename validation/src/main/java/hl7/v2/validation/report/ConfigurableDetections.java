@@ -1106,10 +1106,26 @@ public class ConfigurableDetections {
 		return entry(e.location(), description, category, classification);
 	}
 
+	public Entry ccElementIsNotGroupOrMessage(Element e, String path, Element context) {
+		String category = conf.getString("report.cc-context-not-group-or-message.category");
+		String classification = conf.getString("report.cc-context-not-group-or-message.classification");
+		String template = conf.getString("report.cc-context-not-group-or-message.template");
+		String description = String.format(template, path, context.location().prettyString(), e.location().prettyString());
+		return entry(e.location(), description, category, classification);
+	}
+
 	public Entry ccTargetSpecError(Element e, String path, String reason) {
 		String category = conf.getString("report.cc-target-spec-error.category");
 		String classification = conf.getString("report.cc-target-spec-error.classification");
 		String template = conf.getString("report.cc-target-spec-error.template");
+		String description = String.format(template, path, reason);
+		return entry(e.location(), description, category, classification);
+	}
+
+	public Entry ccContextSpecError(Element e, String path, String reason) {
+		String category = conf.getString("report.cc-context-spec-error.category");
+		String classification = conf.getString("report.cc-context-spec-error.classification");
+		String template = conf.getString("report.cc-context-spec-error.template");
 		String description = String.format(template, path, reason);
 		return entry(e.location(), description, category, classification);
 	}

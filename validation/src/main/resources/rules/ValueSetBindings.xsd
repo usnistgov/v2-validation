@@ -26,13 +26,6 @@
 					<xs:field xpath="@ID"/>
 				</xs:key>
 			</xs:element>
-			<xs:element name="Group" type="BindingContextType" minOccurs="0" maxOccurs="1">
-				<!--  The ID attribute of a by-id context must be unique -->
-				<xs:key name="GroupByIDContextTypeKey">
-					<xs:selector xpath="./ByID"/>
-					<xs:field xpath="@ID"/>
-				</xs:key>
-			</xs:element>
 			<xs:element name="Message" type="BindingContextType" minOccurs="0" maxOccurs="1">
 				<!--  The ID attribute of a by-id context must be unique -->
 				<xs:key name="MessageByIDContextTypeKey">

@@ -2,17 +2,17 @@ package hl7.v2.validation.coconstraints
 
 import java.io.InputStream
 
-import hl7.v2.instance.Group
+import hl7.v2.instance.Message
 import hl7.v2.profile.Range
 import hl7.v2.validation.vs.DefaultValueSetSpecification
 import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
 
-import scala.util.Try
+import scala.util.{Failure, Try}
 
-class DefaultCoConstraintValidationContext(val coConstraintsMap: Map[String, List[CoConstraintBinding]]) extends CoConstraintValidationContext {
+class DefaultCoConstraintValidationContext(val coConstraintsMap: Map[String, List[CoConstraintBindingContext]]) extends CoConstraintValidationContext {
 
-  override def coConstraintBindingsFor(g: Group): List[CoConstraintBinding] = {
-    coConstraintsMap.getOrElse(g.model.id, Nil)
+  override def coConstraintBindingsFor(message: Message): List[CoConstraintBindingContext] = {
+    coConstraintsMap.getOrElse(message.model.id, Nil)
   }
 
 }
@@ -32,32 +32,47 @@ object DefaultCoConstraintValidationContext {
   private def xsd = getClass.getResourceAsStream("/rules/CoConstraintContext.xsd")
 
   def apply(context: InputStream): Try[CoConstraintValidationContext] = {
+    Failure(new Exception())
     XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
       new DefaultCoConstraintValidationContext(parse(doc))
     }
   }
 
-  def parse(doc: nu.xom.Document) : Map[String, List[CoConstraintBinding]] = {
+  def parse(doc: nu.xom.Document) : Map[String, List[CoConstraintBindingContext]] = {
     val ccd = doc.getRootElement
     if(ccd != null) {
-      ccd.getChildElements("Group").map(g => {
-        val gId = g.getAttributeValue("Context")
-        val binding = coConstraintBinding(g)
-        gId -> binding
-      }) groupBy(_._1) mapValues (_.map(_._2) toList)
+      ccd.getChildElements("ByMessage").map(message => {
+        val messageId = message.getAttributeValue("ID")
+        val bindings = byMessageBinding(message)
+        messageId -> bindings
+      }) groupBy(_._1) mapValues (_.flatMap(_._2) toList)
     }  else {
       Map()
     }
   }
 
-  def coConstraintBinding(e: nu.xom.Element): CoConstraintBinding = {
-    val context = e.getAttributeValue("Context")
-    val target = e.getAttributeValue("Target")
-    val name = e.getAttributeValue("Name")
+  def byMessageBinding(message: nu.xom.Element): List[CoConstraintBindingContext] = {
+    message.getChildElements("Context").map(context => {
+      val path = context.getAttributeValue("Path")
+      val name = context.getAttributeValue("Name")
+      val bindings = messageContextBinding(context)
+      CoConstraintBindingContext(name, path, bindings)
+    }) toList
+  }
+
+  def messageContextBinding(context: nu.xom.Element): List[CoConstraintBindingSegment] = {
+    context.getChildElements("Segment").map(segment => {
+      val path = segment.getAttributeValue("Path")
+      val name = segment.getAttributeValue("Name")
+      val bindings = coConstraintTables(segment)
+      CoConstraintBindingSegment(name, path, bindings)
+    }) toList
+  }
+
+  def coConstraintTables(e: nu.xom.Element): List[CoConstraintTable] = {
     val simple = e.getChildElements("SimpleTable").map(t => simpleTable(t))
     val conditional = e.getChildElements("ConditionalTable").map(t => conditionalTable(t))
-    val ccGroupId = e.getFirstChildElement("CoConstraintGroupId")
-    CoConstraintBinding(context, target, name, groupId(ccGroupId), (simple ++ conditional) toList)
+    (simple ++ conditional) toList
   }
 
   def groupId(e: nu.xom.Element): List[GroupId] = {
@@ -67,16 +82,18 @@ object DefaultCoConstraintValidationContext {
   }
 
   def simpleTable(e: nu.xom.Element): SimpleCoConstraintTable = {
+    val grouper = e.getFirstChildElement("CoConstraintGroupId")
     val cc = e.getChildElements("CoConstraint").map(t => coConstraint(t))
     val grp = e.getChildElements("CoConstraintGroup").map(t => group(t))
-    SimpleCoConstraintTable(cc toList, grp toList)
+    SimpleCoConstraintTable(if(grouper == null) Nil else groupId(grouper), cc toList, grp toList)
   }
 
   def conditionalTable(e: nu.xom.Element): ConditionalCoConstraintTable = {
+    val grouper = e.getFirstChildElement("CoConstraintGroupId")
     val cc = e.getChildElements("CoConstraint").map(t => coConstraint(t))
     val cond = condition(e.getFirstChildElement("Condition"))
     val grp = e.getChildElements("CoConstraintGroup").map(t => group(t))
-    ConditionalCoConstraintTable(cond, cc toList, grp toList)
+    ConditionalCoConstraintTable(cond, if(grouper == null) Nil else groupId(grouper), cc toList, grp toList)
   }
 
   def condition(e: nu.xom.Element): Condition = {

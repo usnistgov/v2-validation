@@ -1,6 +1,6 @@
 package hl7.v2.validation.coconstraints
 
-import hl7.v2.instance.{Group, Simple}
+import hl7.v2.instance.{Group, Message, Simple}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{BindingStrength, Range}
 import hl7.v2.validation.structure.Helpers
@@ -8,7 +8,7 @@ import hl7.v2.validation.vs.{BindingLocation, CodeUsage, VSValidationCode, Value
 import org.specs2.Specification
 
 object EmptyCcContext extends CoConstraintValidationContext {
-  override def coConstraintBindingsFor(e: Group): List[CoConstraintBinding] = Nil
+  override def coConstraintBindingsFor(e: Message): List[CoConstraintBindingContext] = Nil
 }
 trait CellCoConstraintSpec extends Specification
   with hl7.v2.validation.coconstraints.DefaultValidator

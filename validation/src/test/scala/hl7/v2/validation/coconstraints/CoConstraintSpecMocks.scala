@@ -62,20 +62,28 @@ trait CoConstraintSpecMocks {
     element
   }
 
-  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBinding("GRP", "1[*]", "CCT", Nil, List(
-    SimpleCoConstraintTable(cc, ccg)
+  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBindingContext("GRP", ".", List(
+    CoConstraintBindingSegment("CCT", "1[*]", List(
+      SimpleCoConstraintTable(Nil, cc, ccg)
+    ))
   ))
 
-  def simpleBindingGrouper(cc: List[CoConstraint], ccg: List[CoConstraintGroup], grpId: List[GroupId]) = CoConstraintBinding("GRP", "1[*]", "CCT", grpId, List(
-    SimpleCoConstraintTable(cc, ccg)
+  def simpleBindingGrouper(cc: List[CoConstraint], ccg: List[CoConstraintGroup], grpId: List[GroupId]) = CoConstraintBindingContext("GRP", ".", List(
+    CoConstraintBindingSegment("CCT", "1[*]", List(
+      SimpleCoConstraintTable(grpId, cc, ccg)
+    ))
   ))
 
-  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup], groupId: List[GroupId]) = CoConstraintBinding("GRP", "1[*]", "CCT", groupId, List(
-    SimpleCoConstraintTable(cc, ccg)
+  def simpleBinding(cc: List[CoConstraint], ccg: List[CoConstraintGroup], groupId: List[GroupId]) = CoConstraintBindingContext("GRP", ".", List(
+    CoConstraintBindingSegment("CCT", "1[*]", List(
+      SimpleCoConstraintTable(groupId, cc, ccg)
+    ))
   ))
 
-  def conditionalBinding(condition: Condition, cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBinding("GRP", "1[*]", "CCT", Nil, List(
-    ConditionalCoConstraintTable(condition, cc, ccg)
+  def conditionalBinding(condition: Condition, cc: List[CoConstraint], ccg: List[CoConstraintGroup]) = CoConstraintBindingContext("GRP", ".", List(
+    CoConstraintBindingSegment("CCT", "1[*]", List(
+      ConditionalCoConstraintTable(condition, Nil, cc, ccg)
+    ))
   ))
 
   def scc(usage: CoConstraintUsage, cardinality: Range, selectors: List[CoConstraintCell], constraints: List[CoConstraintCell]) = CoConstraint(

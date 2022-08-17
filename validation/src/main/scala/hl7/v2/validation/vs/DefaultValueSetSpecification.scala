@@ -45,10 +45,10 @@ object DefaultValueSetSpecification {
       new DefaultValueSetSpecification(
         init(extractNodes(vsBindingsRoot, "Datatype"), vBinding),
         init(extractNodes(vsBindingsRoot, "Segment"), vBinding),
-        init(extractNodes(vsBindingsRoot, "Group"), vBinding),
+        init(extractNodes(vsBindingsRoot, "Message"), vBinding),
         init(extractNodes(sgBindingsRoot, "Datatype"), sgBinding),
         init(extractNodes(sgBindingsRoot, "Segment"), sgBinding),
-        init(extractNodes(sgBindingsRoot, "Group"), sgBinding))
+        init(extractNodes(sgBindingsRoot, "Message"), sgBinding))
     }
   }
 

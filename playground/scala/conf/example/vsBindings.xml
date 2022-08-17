@@ -1,0 +1,50 @@
+<ValueSetBindingsContext>
+    <ValueSetBindings>
+        <Segment>
+            <ByID ID="MSH_IZ 1_5_Z22">
+
+                <!-- Country Code -->
+                <ValueSetBinding BindingStrength="R" Target="17[*]">
+                    <BindingLocations>
+                        <SimpleBindingLocation CodeLocation="."/>
+                    </BindingLocations>
+                    <Bindings>
+                        <Binding BindingIdentifier="HL70399"/>
+                    </Bindings>
+                </ValueSetBinding>
+
+            </ByID>
+            <ByID ID="RXA_IZ01">
+
+                <!-- Administered -->
+                <ValueSetBinding BindingStrength="R" Target="5[*]">
+                    <BindingLocations>
+                        <ComplexBindingLocation CodeLocation="1[1]" CodeSystemLocation="3[1]"/>
+                        <ComplexBindingLocation CodeLocation="4[1]" CodeSystemLocation="6[1]"/>
+                    </BindingLocations>
+                    <Bindings>
+                        <Binding BindingIdentifier="CVX"/>
+                        <Binding BindingIdentifier="NDC_Sale"/>
+                        <Binding BindingIdentifier="NDC_Use"/>
+                    </Bindings>
+                </ValueSetBinding>
+
+            </ByID>
+        </Segment>
+    </ValueSetBindings>
+    <SingleCodeBindings>
+        <Segment>
+            <ByID ID="RXA_IZ01">
+
+                <!-- Administered -->
+                <SingleCodeBinding Code="00005-1971-01" CodeSystem="NDC" Target="5[*]">
+                    <BindingLocations>
+                        <ComplexBindingLocation CodeLocation="1[1]" CodeSystemLocation="3[1]"/>
+                        <ComplexBindingLocation CodeLocation="4[1]" CodeSystemLocation="6[1]"/>
+                    </BindingLocations>
+                </SingleCodeBinding>
+
+            </ByID>
+        </Segment>
+    </SingleCodeBindings>
+</ValueSetBindingsContext>

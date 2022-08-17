@@ -99,9 +99,9 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/profile.xml")).mkString,
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/constraints.xml")).mkString,
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/vsLib.xml")).mkString,
-          "<ValueSetBindingsContext></ValueSetBindingsContext>",
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/vsBindings.xml")).mkString,
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/coconstraints.xml")).mkString,
-          "<ProfileSlicing></ProfileSlicing>",
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/slicing.xml")).mkString,
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/reference.conf")).mkString,
           "aa72383a-7b48-46e5-a74a-82e019591fe7",
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/message.hl7")).mkString

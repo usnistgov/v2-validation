@@ -3,17 +3,15 @@ package hl7.v2.validation.coconstraints
 import expression.Expression
 import hl7.v2.validation.vs.ValueSetBinding
 
-case class CoConstraintBinding(context: String,
-                               target: String,
-                               segmentName: String,
-                               grouper: List[GroupId],
-                               bindings: List[CoConstraintTable])
+case class CoConstraintBindingContext(name: String, path: String, segments: List[CoConstraintBindingSegment])
+case class CoConstraintBindingSegment(name: String, path: String, bindings: List[CoConstraintTable])
 
 trait CoConstraintCollection {
   val coConstraints: List[CoConstraint]
 }
 
 trait CoConstraintTable extends CoConstraintCollection {
+  val grouper: List[GroupId]
   val coConstraintGroups: List[CoConstraintGroup]
 }
 
@@ -25,9 +23,9 @@ case class CoConstraintGroup(name: String, requirement: CoConstraintRequirement,
 
 case class Condition(description: String, assertion: Expression)
 
-case class ConditionalCoConstraintTable(condition: Condition, coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
+case class ConditionalCoConstraintTable(condition: Condition, grouper: List[GroupId], coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
 
-case class SimpleCoConstraintTable(coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
+case class SimpleCoConstraintTable(grouper: List[GroupId], coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup]) extends CoConstraintTable
 
 case class CoConstraint(requirement: CoConstraintRequirement, selectors: List[CoConstraintCell], constraints: List[CoConstraintCell])
 

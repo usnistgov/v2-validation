@@ -588,6 +588,62 @@
 			<Field Name="Administered Barcode Identifier" Usage="O" Min="0" Max="1" Datatype="CWE" MinLength="1" MaxLength="60" ItemNo="01698"/>
 			<Field Name="Pharmacy Order Type" Usage="O" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="1" Binding="HL70480" BindingStrength="R" ItemNo="01699"/>
 		</Segment>
+		<Segment ID="RXA_IZ02" Label="RXA_IZ02" Name="RXA" Description="Pharmacy/Treatment Administration">
+			<Field Name="Give Sub-ID Counter" Usage="R" Min="1" Max="1" Datatype="NM" MinLength="1" MaxLength="1" ItemNo="00342" />
+			<Field Name="Administration Sub-ID Counter" Usage="R" Min="1" Max="1" Datatype="NM" MinLength="1" MaxLength="1" ItemNo="00344" />
+			<Field Name="Date/Time Start of Administration" Usage="R" Min="1" Max="1" Datatype="TS_NZ" MinLength="1" MaxLength="26" ItemNo="00345" />
+			<Field Name="Date/Time End of Administration" Usage="O" Min="0" Max="1" Datatype="TS" MinLength="1" MaxLength="26" ItemNo="00346" />
+			<Field Name="Administered Code" Usage="X" Min="1" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="CVX:NDC_Use:NDC_Sale" BindingStrength="R" BindingLocation="1" ItemNo="00347" />
+			<Field Name="Administered Amount" Usage="R" Min="1" Max="1" Datatype="NM" MinLength="1" MaxLength="20" ItemNo="00348" />
+			<Field Name="Administered Units" Usage="C" Min="0" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="UCUM" BindingStrength="R" BindingLocation="1" ItemNo="00349" />
+			<Field Name="Administered Dosage Form" Usage="O" Min="0" Max="1" Datatype="CE" MinLength="1" MaxLength="250" ItemNo="00350" />
+			<Field Name="Administration Notes" Usage="C" Min="0" Max="*" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="NIP001" BindingStrength="R" BindingLocation="1" ItemNo="00351" />
+			<Field Name="Administering Provider" Usage="C" Min="0" Max="1" Datatype="XCN_IZ" MinLength="1" MaxLength="250" ItemNo="00352" />
+			<Field Name="Administered-at Location" Usage="C" Min="0" Max="1" Datatype="LA2_IZ" MinLength="1" MaxLength="200" ItemNo="00353" />
+			<Field Name="Administered Per (Time Unit)" Usage="O" Min="0" Max="1" Datatype="ST" MinLength="1" MaxLength="20" ItemNo="00354" />
+			<Field Name="Administered Strength" Usage="O" Min="0" Max="1" Datatype="NM" MinLength="1" MaxLength="20" ItemNo="01134" />
+			<Field Name="Administered Strength Units" Usage="O" Min="0" Max="1" Datatype="CE" MinLength="1" MaxLength="250" ItemNo="01135" />
+			<Field Name="Substance Lot Number" Usage="C" Min="0" Max="*" Datatype="ST" MinLength="1" MaxLength="20" ItemNo="01129" />
+			<Field Name="Substance Expiration Date" Usage="C" Min="0" Max="1" Datatype="TS_M" MinLength="1" MaxLength="26" ItemNo="01130" />
+			<Field Name="Substance Manufacturer Name" Usage="C" Min="0" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="MVX" BindingStrength="R" BindingLocation="1" ItemNo="01131" />
+			<Field Name="Substance/Treatment Refusal Reason" Usage="C" Min="0" Max="*" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="NIP002" BindingStrength="R" BindingLocation="1" ItemNo="01136" />
+			<Field Name="Indication" Usage="O" Min="0" Max="*" Datatype="CE" MinLength="1" MaxLength="250" ItemNo="01123" />
+			<Field Name="Completion Status" Usage="RE" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="2" Binding="HL70322_IZ" BindingStrength="R" ItemNo="01223" />
+			<Field Name="Action Code - RXA" Usage="C" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="2" Binding="HL70323_IZ" BindingStrength="R" ItemNo="01224" />
+			<Field Name="System Entry Date/Time" Usage="O" Min="0" Max="1" Datatype="TS" MinLength="1" MaxLength="26" ItemNo="01225" />
+			<Field Name="Administered Drug Strength Volume" Usage="O" Min="0" Max="1" Datatype="NM" MinLength="1" MaxLength="5" ItemNo="01696" />
+			<Field Name="Administered Drug Strength Volume Units" Usage="O" Min="0" Max="1" Datatype="CWE" MinLength="1" MaxLength="250" ItemNo="01697" />
+			<Field Name="Administered Barcode Identifier" Usage="O" Min="0" Max="1" Datatype="CWE" MinLength="1" MaxLength="60" ItemNo="01698" />
+			<Field Name="Pharmacy Order Type" Usage="O" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="1" Binding="HL70480" BindingStrength="R" ItemNo="01699" />
+		</Segment>
+		<Segment ID="RXA_IZ01" Label="RXA_IZ01" Name="RXA" Description="Pharmacy/Treatment Administration">
+			<Field Name="Give Sub-ID Counter" Usage="R" Min="1" Max="1" Datatype="NM" MinLength="1" MaxLength="1" ItemNo="00342" />
+			<Field Name="Administration Sub-ID Counter" Usage="R" Min="1" Max="1" Datatype="NM" MinLength="1" MaxLength="1" ItemNo="00344" />
+			<Field Name="Date/Time Start of Administration" Usage="R" Min="1" Max="1" Datatype="TS_NZ" MinLength="1" MaxLength="26" ItemNo="00345" />
+			<Field Name="Date/Time End of Administration" Usage="O" Min="0" Max="1" Datatype="TS" MinLength="1" MaxLength="26" ItemNo="00346" />
+			<Field Name="Administered Code" Usage="R" Min="1" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="CVX:NDC_Use:NDC_Sale" BindingStrength="R" BindingLocation="1" ItemNo="00347" />
+			<Field Name="Administered Amount" Usage="R" Min="1" Max="1" Datatype="NM" MinLength="1" MaxLength="20" ItemNo="00348" />
+			<Field Name="Administered Units" Usage="C" Min="0" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="UCUM" BindingStrength="R" BindingLocation="1" ItemNo="00349" />
+			<Field Name="Administered Dosage Form" Usage="O" Min="0" Max="1" Datatype="CE" MinLength="1" MaxLength="250" ItemNo="00350" />
+			<Field Name="Administration Notes" Usage="C" Min="0" Max="*" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="NIP001" BindingStrength="R" BindingLocation="1" ItemNo="00351" />
+			<Field Name="Administering Provider" Usage="C" Min="0" Max="1" Datatype="XCN_IZ" MinLength="1" MaxLength="250" ItemNo="00352" />
+			<Field Name="Administered-at Location" Usage="C" Min="0" Max="1" Datatype="LA2_IZ" MinLength="1" MaxLength="200" ItemNo="00353" />
+			<Field Name="Administered Per (Time Unit)" Usage="O" Min="0" Max="1" Datatype="ST" MinLength="1" MaxLength="20" ItemNo="00354" />
+			<Field Name="Administered Strength" Usage="O" Min="0" Max="1" Datatype="NM" MinLength="1" MaxLength="20" ItemNo="01134" />
+			<Field Name="Administered Strength Units" Usage="O" Min="0" Max="1" Datatype="CE" MinLength="1" MaxLength="250" ItemNo="01135" />
+			<Field Name="Substance Lot Number" Usage="C" Min="0" Max="*" Datatype="ST" MinLength="1" MaxLength="20" ItemNo="01129" />
+			<Field Name="Substance Expiration Date" Usage="C" Min="0" Max="1" Datatype="TS_M" MinLength="1" MaxLength="26" ItemNo="01130" />
+			<Field Name="Substance Manufacturer Name" Usage="C" Min="0" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="MVX" BindingStrength="R" BindingLocation="1" ItemNo="01131" />
+			<Field Name="Substance/Treatment Refusal Reason" Usage="C" Min="0" Max="*" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="NIP002" BindingStrength="R" BindingLocation="1" ItemNo="01136" />
+			<Field Name="Indication" Usage="O" Min="0" Max="*" Datatype="CE" MinLength="1" MaxLength="250" ItemNo="01123" />
+			<Field Name="Completion Status" Usage="RE" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="2" Binding="HL70322_IZ" BindingStrength="R" ItemNo="01223" />
+			<Field Name="Action Code - RXA" Usage="C" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="2" Binding="HL70323_IZ" BindingStrength="R" ItemNo="01224" />
+			<Field Name="System Entry Date/Time" Usage="O" Min="0" Max="1" Datatype="TS" MinLength="1" MaxLength="26" ItemNo="01225" />
+			<Field Name="Administered Drug Strength Volume" Usage="O" Min="0" Max="1" Datatype="NM" MinLength="1" MaxLength="5" ItemNo="01696" />
+			<Field Name="Administered Drug Strength Volume Units" Usage="O" Min="0" Max="1" Datatype="CWE" MinLength="1" MaxLength="250" ItemNo="01697" />
+			<Field Name="Administered Barcode Identifier" Usage="O" Min="0" Max="1" Datatype="CWE" MinLength="1" MaxLength="60" ItemNo="01698" />
+			<Field Name="Pharmacy Order Type" Usage="O" Min="0" Max="1" Datatype="ID" MinLength="1" MaxLength="1" Binding="HL70480" BindingStrength="R" ItemNo="01699" />
+		</Segment>
 		<Segment ID="RXR_IZ 1_5" Label="RXR_IZ 1_5" Name="RXR" Description="Pharmacy/Treatment Route">
 			<Field Name="Route" Usage="R" Min="1" Max="1" Datatype="CE_IZ" MinLength="1" MaxLength="250" Binding="NCIT" BindingStrength="R" BindingLocation="1" ItemNo="00309"/>
 			<Field Name="Administration Site" Usage="RE" Min="0" Max="1" Datatype="CWE_IZ" MinLength="1" MaxLength="250" Binding="HL70163_IZ" BindingStrength="R" BindingLocation="1" ItemNo="00310"/>
@@ -717,6 +773,34 @@
 			<Component Name="Professional Suffix" Usage="O" Datatype="ST" MinLength="1" MaxLength="199"/>
 			<Component Name="Assigning Jurisdiction" Usage="O" Datatype="CWE" MinLength="1" MaxLength="705"/>
 			<Component Name="Assigning Agency or Department" Usage="O" Datatype="CWE" MinLength="1" MaxLength="705"/>
+		</Datatype>
+		<Datatype ID="XTN_IZ01" Label="XTN_IZ" Name="XTN" Description="Extended Telecommunication Number">
+			<Component Name="Telephone Number" Usage="X" Datatype="ST" MinLength="1" MaxLength="199" />
+			<Component Name="Telecommunication Use Code" Usage="R" Datatype="ID" MinLength="1" MaxLength="3" Binding="HL70201_IZ" BindingStrength="R" />
+			<Component Name="Telecommunication Equipment Type" Usage="RE" Datatype="ID" MinLength="1" MaxLength="8" Binding="HL70202_IZ" BindingStrength="R" />
+			<Component Name="Email Address" Usage="C" Datatype="ST" MinLength="1" MaxLength="199" />
+			<Component Name="Country Code" Usage="O" Datatype="NM" MinLength="1" MaxLength="3" />
+			<Component Name="Area/City Code" Usage="C" Datatype="NM" MinLength="1" MaxLength="3" />
+			<Component Name="Local Number" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+			<Component Name="Extension" Usage="O" Datatype="NM" MinLength="1" MaxLength="5" />
+			<Component Name="Any Text" Usage="O" Datatype="ST" MinLength="1" MaxLength="199" />
+			<Component Name="Extension Prefix" Usage="O" Datatype="ST" MinLength="1" MaxLength="4" />
+			<Component Name="Speed Dial Code" Usage="O" Datatype="ST" MinLength="1" MaxLength="6" />
+			<Component Name="Unformatted Telephone number" Usage="O" Datatype="ST" MinLength="1" MaxLength="199" />
+		</Datatype>
+		<Datatype ID="XTN_IZ02" Label="XTN_IZ" Name="XTN" Description="Extended Telecommunication Number">
+			<Component Name="Telephone Number" Usage="R" Datatype="ST" MinLength="1" MaxLength="199" />
+			<Component Name="Telecommunication Use Code" Usage="R" Datatype="ID" MinLength="1" MaxLength="3" Binding="HL70201_IZ" BindingStrength="R" />
+			<Component Name="Telecommunication Equipment Type" Usage="RE" Datatype="ID" MinLength="1" MaxLength="8" Binding="HL70202_IZ" BindingStrength="R" />
+			<Component Name="Email Address" Usage="C" Datatype="ST" MinLength="1" MaxLength="199" />
+			<Component Name="Country Code" Usage="O" Datatype="NM" MinLength="1" MaxLength="3" />
+			<Component Name="Area/City Code" Usage="C" Datatype="NM" MinLength="1" MaxLength="3" />
+			<Component Name="Local Number" Usage="C" Datatype="NM" MinLength="1" MaxLength="9" />
+			<Component Name="Extension" Usage="O" Datatype="NM" MinLength="1" MaxLength="5" />
+			<Component Name="Any Text" Usage="O" Datatype="ST" MinLength="1" MaxLength="199" />
+			<Component Name="Extension Prefix" Usage="O" Datatype="ST" MinLength="1" MaxLength="4" />
+			<Component Name="Speed Dial Code" Usage="O" Datatype="ST" MinLength="1" MaxLength="6" />
+			<Component Name="Unformatted Telephone number" Usage="O" Datatype="ST" MinLength="1" MaxLength="199" />
 		</Datatype>
 		<Datatype ID="LA2_IZ" Label="LA2_IZ" Name="LA2" Description="Location with Address Variation 2">
 			<Component Name="Point of Care" Usage="O" Datatype="IS" MinLength="1" MaxLength="20" Binding="HL70302" BindingStrength="R"/>
