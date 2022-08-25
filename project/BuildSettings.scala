@@ -5,7 +5,7 @@ object BuildSettings {
 
   lazy val basicSettings = Seq(
 
-    version              := "1.5.1",
+    version              := "1.5.3",
     //FIXME homepage             := Some(new URL("xxx")),
     organization         := "gov.nist",
     organizationHomepage := Some(new URL("http://nist.gov")),
@@ -34,7 +34,7 @@ object BuildSettings {
         publishMavenStyle := true,
         credentials       += Credentials(Path.userHome / ".nexusCredentials"),
         publishTo         := {
-          val nexus = "https://hit-dev.nist.gov:9001/"
+          val nexus = "http://hit-dev-admin.nist.gov:9001/"
           if (version.value.trim.endsWith("SNAPSHOT"))
             Some("snapshots" at nexus + "repository/snapshots")
           else

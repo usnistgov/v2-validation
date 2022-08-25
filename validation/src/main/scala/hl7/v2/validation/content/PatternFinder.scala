@@ -33,7 +33,7 @@ trait PatternFinder extends expression.Evaluator {
      query(e, c.contextPath) match {
       case Success(Nil) => missingContext(c,e)
       case Success(x)   => checkPatterns(x, c.Patterns,e, validator)
-      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,err.getMessage,Presence(c.contextPath)), err.getMessage,  Nil))
+      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,None,err.getMessage,Presence(c.contextPath)), err.getMessage,  Nil))
     }
   }
   
