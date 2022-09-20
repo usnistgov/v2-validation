@@ -25,7 +25,8 @@
     "titleBar.inactiveForeground": "#e7e7e799",
     "sash.hoverBorder": "#c24493",
     "statusBarItem.remoteBackground": "#9f3477",
-    "statusBarItem.remoteForeground": "#e7e7e7"
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799"
   },
   "peacock.color": "#9f3477",
   "typescript.tsdk": "node_modules/typescript/lib"

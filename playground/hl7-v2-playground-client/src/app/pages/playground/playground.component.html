@@ -44,7 +44,7 @@
             <label for="bundle" class="custom-file-upload btn btn-warning">
               Load Bundle (ZIP)
             </label>
-            <input id="bundle" type="file"/>
+            <input id="bundle" type="file" (change)="loadZipBundle($event)"/>
           </div>
         </div>
         <div>

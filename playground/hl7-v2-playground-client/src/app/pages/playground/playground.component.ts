@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ZipService } from './../../services/zip.service';
+import { Component } from '@angular/core';
 import { ValidationService } from '../../services/validation.service';
-import { mergeMap, tap } from 'rxjs/operators';
+import { mergeMap, tap, take } from 'rxjs/operators';
 import { IPlayGroundContent, DataService, ResourceType, Status } from '../../services/data.service';
 import { Observable, of } from 'rxjs';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
@@ -93,6 +94,7 @@ export class PlaygroundComponent {
   constructor(
     private validationService: ValidationService,
     private dialog: MatDialog,
+    private zipService: ZipService,
     private dataService: DataService) {
     this.content = this.dataService.getState();
   }
@@ -109,6 +111,23 @@ export class PlaygroundComponent {
         this.dataService.putValue(type, fr.result as string);
       };
       fr.readAsText(fileInput.files[0]);
+    }
+  }
+
+  loadZipBundle(a: Event) {
+    const fileInput = (a.target as HTMLInputElement);
+    if (fileInput && fileInput.files && fileInput.files.length === 1) {
+      this.zipService.getZipContent(fileInput.files[0]).pipe(
+        take(1),
+        tap((bundle) => {
+          this.dataService.putValue(ResourceType.CONSTRAINTS, bundle.constraints);
+          this.dataService.putValue(ResourceType.VALUESET, bundle.vsLib);
+          this.dataService.putValue(ResourceType.VALUESETSPEC, bundle.vsBindings);
+          this.dataService.putValue(ResourceType.SLICING, bundle.slicings || '');
+          this.dataService.putValue(ResourceType.PROFILE, bundle.profile);
+          this.dataService.putValue(ResourceType.COCONSTRAINTS, bundle.coConstraints || '');
+        })
+      ).subscribe();
     }
   }
 

@@ -771,21 +771,23 @@ public class ConfigurableDetections {
 	}
 
 	public SimpleEntryWrapper vsDetectionInfo(SimpleEntryWrapper entry, String stability, String extensibility, String strength, String key) {
+		SimpleEntryWrapper cursor = entry;
 		if(conf.hasPath("report." + key + ".overrides")) {
 			StringBuilder configPath = new StringBuilder("report.").append(key).append(".overrides");
 			for(String step: Arrays.asList(strength, extensibility, stability)) {
+				if(conf.hasPath(configPath + ".default")) {
+					cursor = overrideEntryConfig(cursor, configPath + ".default");
+				}
 				if(conf.hasPath(configPath + "." + step)) {
 					configPath.append(".").append(step);
-				} else if(conf.hasPath(configPath + ".default")) {
-					return overrideEntryConfig(entry, configPath + ".default");
 				} else {
-					return entry;
+					return cursor;
 				}
 			}
 
-			return overrideEntryConfig(entry, configPath.toString());
+			return overrideEntryConfig(cursor, configPath.toString());
 		} else {
-			return entry;
+			return cursor;
 		}
 	}
 
