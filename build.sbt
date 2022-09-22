@@ -3,7 +3,7 @@ import sbt._
 import Keys._
 
 ThisBuild / organization  := "gov.nist"
-ThisBuild / version       := "1.6.0-SNAPSHOT"
+ThisBuild / version       := "1.6.1-SNAPSHOT"
 ThisBuild / scalaVersion  := "2.12.10"
 ThisBuild / resolvers    ++= Dependencies.resolutionRepos
 ThisBuild / scalacOptions := Seq(
@@ -17,27 +17,49 @@ ThisBuild / scalacOptions := Seq(
   "-J-Xmx2g"
 )
 
-lazy val root = project.in(file(".")).aggregate(profile, parser, validation)
+lazy val moduleSettings =
+    Seq(
+      crossPaths := false,
+      publishMavenStyle := true,
+      credentials += Credentials(Path.userHome / ".nexusCredentials"),
+      publishTo := {
+        val nexus = "http://hit-dev-admin.nist.gov:9001/"
+        if (version.value.trim.endsWith("SNAPSHOT"))
+          Some(("snapshots" at nexus + "repository/snapshots").withAllowInsecureProtocol(true))
+        else
+          Some(("releases" at nexus + "repository/releases").withAllowInsecureProtocol(true))
+      }
+    )
+
+lazy val noPublishing = Seq(
+  publish := None,
+  publishLocal := None,
+  publishTo := None
+)
+
+lazy val root = project.in(file(".")).aggregate(profile, parser, validation).settings(noPublishing: _*)
 
 // ============================ PROFILE MODULE ==========================
 
 lazy val profile = Project("hl7-v2-profile", file("profile"))
+  .settings(moduleSettings: _*)
   .settings(libraryDependencies ++= Seq(
     xom,
-    `xml-util`,
+    xmlUtil,
     scala_xml,
-    sext,
     spec2)
   )
 
 // ============================ PARSER MODULE ============================
 
 lazy val parser = Project("hl7-v2-parser", file("parser"))
+  .settings(moduleSettings: _*)
   .dependsOn(profile % "test->test; compile->compile")
 
 // ============================ VALIDATION MODULE ========================
 
 lazy val validation = Project("hl7-v2-validation", file("validation"))
+  .settings(moduleSettings: _*)
   .dependsOn(parser % "test->test; compile->compile")
   .enablePlugins(BuildInfoPlugin).
   settings(
@@ -47,13 +69,12 @@ lazy val validation = Project("hl7-v2-validation", file("validation"))
     libraryDependencies ++= Seq(
       typesafe_config,
       stringUtils,
-      jx_core,
-      vreport,
-      spray_json
+      vreport
     )
   )
 
 lazy val playground = Project("hl7-v2-validation-playground", file("playground/scala"))
+  .settings(noPublishing: _*)
   .enablePlugins(PlayScala)
   .dependsOn(validation % "test->test; compile->compile")
   .settings(
@@ -62,7 +83,6 @@ lazy val playground = Project("hl7-v2-validation-playground", file("playground/s
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
       guice,
-      "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
       json4s
     ),
     scalacOptions ++= Seq(

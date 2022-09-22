@@ -35,7 +35,6 @@ case class RequiredCoConstraint(groupInstance: Option[GroupInstance], coConstrai
 case class CardinalityCoConstraint(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, found: Int) extends CoConstraintValidationCode
 case class CardinalityGroup(group: CoConstraintGroup, found: Int, grouper: String, values: String) extends CoConstraintValidationCode
 case class ElementIsNotSegment(path: String, element: Element) extends CoConstraintValidationCode
-case class ElementIsNotGroupOrMessage(path: String, element: Element) extends CoConstraintValidationCode
 case class CoConstraintPlainTextFailure(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: PlainText, value: String) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
 case class CoConstraintPlainTextSuccess(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: PlainText) extends CoConstraintValidationCode with CoConstraintSelectorMatch
 case class CoConstraintCodeFailureNotFound(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Simple, constraint: Code) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
@@ -50,7 +49,6 @@ case class InconclusiveVsBinding(cell: CoConstraintCell, binding: ValueSetBindin
 case class NotDistinctGrouper(coConstraint: CoConstraint, groupId: CCGroupId) extends CoConstraintValidationCode
 case class InconclusiveGrouper(context: Element, path: String, message: String) extends CoConstraintValidationCode
 case class InconclusiveTarget(context: Element, path: String, message: String) extends CoConstraintValidationCode
-case class InconclusiveContext(context: Element, path: String, message: String) extends CoConstraintValidationCode
 case class CCSegment(segment: Segment, groupId: Option[CCGroupId])
 case class CCGroupId(grouper: GroupId, element: Element, value: String)
 

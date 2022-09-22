@@ -9,7 +9,7 @@ import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{R, X}
 import hl7.v2.profile.{Message => MM}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._

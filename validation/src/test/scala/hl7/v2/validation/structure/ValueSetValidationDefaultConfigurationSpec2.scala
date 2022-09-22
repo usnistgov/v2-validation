@@ -11,18 +11,18 @@ trait ValueSetValidationDefaultConfigurationSpec2 extends Specification
   with hl7.v2.validation.vs.DefaultValueSetValidator
   with Helpers {
   def is =s2"""
-      MultiVSForPrimitive Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $multi_vs_closed_dynamic_required
-      MultiVSForPrimitive Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ALERT $multi_vs_open_dynamic_required
-      MultiVSForPrimitive Detection when a value set is Closed/ Static and Binding Strength is Required should be ALERT $multi_vs_closed_static_required
-      MultiVSForPrimitive Detection when a value set is Open/ Static and Binding Strength is Required should be ALERT $multi_vs_open_static_required
+      MultiVSForPrimitive Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be SPEC_ERROR $multi_vs_closed_dynamic_required
+      MultiVSForPrimitive Detection when a value set is Open/ Dynamic and Binding Strength is Required should be SPEC_ERROR $multi_vs_open_dynamic_required
+      MultiVSForPrimitive Detection when a value set is Closed/ Static and Binding Strength is Required should be SPEC_ERROR $multi_vs_closed_static_required
+      MultiVSForPrimitive Detection when a value set is Open/ Static and Binding Strength is Required should be SPEC_ERROR $multi_vs_open_static_required
 
-      MultiVSForPrimitive Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $multi_vs_closed_dynamic_suggested
-      MultiVSForPrimitive Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $multi_vs_open_dynamic_suggested
-      MultiVSForPrimitive Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $multi_vs_closed_static_suggested
-      MultiVSForPrimitive Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $multi_vs_open_static_suggested
+      MultiVSForPrimitive Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be SPEC_ERROR $multi_vs_closed_dynamic_suggested
+      MultiVSForPrimitive Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be SPEC_ERROR $multi_vs_open_dynamic_suggested
+      MultiVSForPrimitive Detection when a value set is Closed/ Static and Binding Strength is Suggested should be SPEC_ERROR $multi_vs_closed_static_suggested
+      MultiVSForPrimitive Detection when a value set is Open/ Static and Binding Strength is Suggested should be SPEC_ERROR $multi_vs_open_static_suggested
 
-      VSNotFound Detection when  Binding Strength is Required should be ALERT $vs_not_found_required
-      VSNotFound Detection when  Binding Strength is Suggested should be ALERT $vs_not_found_suggested
+      VSNotFound Detection when  Binding Strength is Required should be SPEC_ERROR $vs_not_found_required
+      VSNotFound Detection when  Binding Strength is Suggested should be SPEC_ERROR $vs_not_found_suggested
 
       EmptyVS Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $empty_vs_closed_dynamic_required
       EmptyVS Detection when a value set is Open/ Dynamic and Binding Strength is Required should be ALERT $empty_vs_open_dynamic_required
@@ -44,9 +44,8 @@ trait ValueSetValidationDefaultConfigurationSpec2 extends Specification
   val ERROR: String = _default.getString("report.classification.error")
   val WARNING: String = _default.getString("report.classification.warning")
   val ALERT: String = _default.getString("report.classification.alert")
-  val HIGH_ALERT: String = _default.getString("report.classification.high-alert")
-  val INFO: String = _default.getString("report.classification.informational")
-  val AFFIRMATIVE: String =  _default.getString("report.classification.affirmative")
+  val SPEC_ERROR: String = _default.getString("report.classification.spec-error")
+  val AFFIRMATIVE: String = _default.getString("report.classification.affirmative")
 
   val PCode: Code = Code("A", "B", CodeUsage.P, "C")
   val RCode: Code = Code("A", "B", CodeUsage.R, "C")
@@ -56,19 +55,19 @@ trait ValueSetValidationDefaultConfigurationSpec2 extends Specification
   //------ TEST CASES
 
   //--MultiVSForPrimitive : only for primitive datatypes that have multiple VS
-  val multi_vs_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
-  val multi_vs_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
-  val multi_vs_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
-  val multi_vs_open_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), ALERT)
+  val multi_vs_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), SPEC_ERROR)
+  val multi_vs_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), SPEC_ERROR)
+  val multi_vs_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), SPEC_ERROR)
+  val multi_vs_open_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.R), SPEC_ERROR)
 
-  val multi_vs_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
-  val multi_vs_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.S), ALERT)
-  val multi_vs_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
-  val multi_vs_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.S), ALERT)
+  val multi_vs_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.S), SPEC_ERROR)
+  val multi_vs_open_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.S), SPEC_ERROR)
+  val multi_vs_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.S), SPEC_ERROR)
+  val multi_vs_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.MultiVSForPrimitive, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.S), SPEC_ERROR)
 
   //--VSNotFound
-  val vs_not_found_required: MatchResult[String] = expectationNoVs(DetectionCodes.VSNotFound, Some(BindingStrength.R), ALERT)
-  val vs_not_found_suggested: MatchResult[String] = expectationNoVs(DetectionCodes.VSNotFound, Some(BindingStrength.S), ALERT)
+  val vs_not_found_required: MatchResult[String] = expectationNoVs(DetectionCodes.VSNotFound, Some(BindingStrength.R), SPEC_ERROR)
+  val vs_not_found_suggested: MatchResult[String] = expectationNoVs(DetectionCodes.VSNotFound, Some(BindingStrength.S), SPEC_ERROR)
 
   //--EmptyVS
   val empty_vs_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.EmptyVS, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)

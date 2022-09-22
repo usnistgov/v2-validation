@@ -58,6 +58,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
 
   private def collectNoteAboutSelectedDynamicMapping(segInstance: Segment)(implicit s: Separators, Detections : ConfigurableDetections): List[Entry] = {
     segInstance.model.ref.mappings match {
+      case Nil => Nil
       case mappings => mappings.foldRight(List[Entry]()) {
         (mapping, acc) => {
           val path = s"""${mapping.position}[*]"""
@@ -86,8 +87,6 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
           }
         }
       }
-
-      case _ => Nil
     }
   }
 
