@@ -15,6 +15,7 @@ object XMLSerializer {
     <ConformanceProfile ID={p.id}
         Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
     >
+      <MetaData Name="Test" OrgName="Test" Version="Test" Date="Test"></MetaData>
       {
         <Messages>{  p.messages.values  map message  }</Messages>
         <Segments>{  p.segments.values  map segment  }</Segments>
@@ -62,7 +63,7 @@ object XMLSerializer {
     />
 
   def segment( s: Segment ) =
-    <Segment ID={s.id} Name={s.name} Description={s.desc}>
+    <Segment Label={s.name} ID={s.id} Name={s.name} Description={s.desc}>
       { s.mappings map dynamicMapping }
       { s.fields map field }
     </Segment>
@@ -71,9 +72,8 @@ object XMLSerializer {
     <DynamicMapping>
       <Mapping
           Position={dm.position.toString}
-          Reference={dm.reference.toString}
+          Reference={dm.reference.get}
       >
-<!--        { dm.map map ( t => <Case Value={t._1._1} SecondValue={t._1._2} Datatype={t._2.name}/> ) } -->
       </Mapping>
     </DynamicMapping>
 
@@ -93,7 +93,7 @@ object XMLSerializer {
       />
 
   def datatype(d: Datatype) =
-    <Datatype ID={d.id}  Name={d.name} Description={d.desc}>
+    <Datatype Label={d.name} ID={d.id}  Name={d.name} Description={d.desc}>
       {
         d match {
           case Primitive(_, _, _, _)     =>

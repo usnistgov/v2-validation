@@ -9,8 +9,8 @@ object Dependencies {
 
   val xom = "xom" % "xom" % "1.3.7"
   val stringUtils = "org.apache.commons" % "commons-lang3" % "3.12.0"
-  val typesafe_config = "com.typesafe"                  % "config"                  % "1.4.2"
-  val xmlUtil    = "gov.nist"                      %  "xml-util"               % "1.0.1-SNAPSHOT"
+  val typesafe_config = "com.typesafe"                  % "config"                % "1.4.2"
+  val xmlUtil       = "gov.nist"                      %  "xml-util"               % "2.0.0"
   val spec2         = "org.specs2"                    %%  "specs2"                %  "2.5"
   val vreport       = "com.github.hl7-tools"          %   "validation-report"     %  "1.1.0"
   val scala_xml     = "org.scala-lang.modules"        %%   "scala-xml"        %  "1.2.0"
