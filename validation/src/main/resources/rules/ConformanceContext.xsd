@@ -388,7 +388,8 @@
 			<xs:element name="OrderIndifferent" type="OrderIndifferentType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="CoConstraints" type="CoConstraintsType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
-		<xs:attribute name="UUID" type="NonEmptyString" use="required"/>
+		<xs:attribute name="UUID" type="NonEmptyString" use="optional"/>
+		<xs:attribute name="ID" type="xs:string" use="optional"/>
 	</xs:complexType>
 	
 	<xs:element name="ConformanceContext" type="ConformanceContextType">
