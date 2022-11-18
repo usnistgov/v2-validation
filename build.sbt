@@ -3,7 +3,7 @@ import sbt._
 import Keys._
 
 ThisBuild / organization  := "gov.nist"
-ThisBuild / version       := "1.6.2-SNAPSHOT"
+ThisBuild / version       := "1.6.3-SNAPSHOT"
 ThisBuild / scalaVersion  := "2.12.10"
 ThisBuild / resolvers    ++= Dependencies.resolutionRepos
 ThisBuild / scalacOptions := Seq(
@@ -83,8 +83,9 @@ lazy val playground = Project("hl7-v2-validation-playground", file("playground/s
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
       guice,
-      json4s
-    ),
+      json4s,
+
+    ) ++ jacksonDatabindOverrides ++ jacksonOverrides ++ akkaSerializationJacksonOverrides,
     scalacOptions ++= Seq(
       "-feature",
       "-deprecation",
