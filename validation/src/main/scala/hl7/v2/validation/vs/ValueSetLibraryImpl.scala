@@ -30,7 +30,7 @@ object ValueSetLibraryImpl {
    * Builds and returns the value set map from the XML file
    */
   def apply(vsXML: InputStream): Try[ValueSetLibrary] = {
-    XOMDocumentBuilder.build( vsXML, getClass.getResourceAsStream("/vs/ValueSets.xsd") ) map { doc =>
+    XOMDocumentBuilder.build( vsXML, getClass.getResourceAsStream("/rules/ValueSets.xsd") ) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
       //val tblSet   = root.getFirstChildElement("ValueSetDefinitions")

@@ -88,7 +88,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
   val VSPEC_XSD = "/rules/ValueSetBindings.xsd"
   val SLICING_XSD = "/rules/ProfileSlicing.xsd"
 
-  def index() = Action {
+  def index(ignored: String) = Action {
     Ok.sendResource("public/index.html", this.getClass.getClassLoader)
   }
 
