@@ -32,7 +32,7 @@
 				alphanumeric</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[0-9a-zA-Z\-_]+(( *),( *)[0-9a-zA-Z\-_]+)*" />
+			<xs:pattern value="[0-9a-zA-Z\-_.\\]+(( *),( *)[0-9a-zA-Z\-_.\\]+)*" />
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -202,8 +202,7 @@
 	
 	<xs:complexType name="NumberListType">
 		<xs:attribute name="Path" type="PathType" use="required" />
-		<xs:attribute name="CSV" type="CommaSeparatedNumberType"
-			use="required" />
+		<xs:attribute name="CSV" type="CommaSeparatedNumberType" use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
 		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 		<xs:attribute name="Min" type="PositiveInteger" use="optional"/>
@@ -236,10 +235,8 @@
 	<xs:complexType name="ValueSetType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="ValueSetID" type="xs:string" use="required" />
-		<xs:attribute name="BindingStrength" type="BindingStrengthType"
-			use="required" />
-		<xs:attribute name="BindingLocation" type="BindingLocationType"
-			use="required" />
+		<xs:attribute name="BindingStrength" type="BindingStrengthType" use="required" />
+		<xs:attribute name="BindingLocation" type="BindingLocationType" use="required" />
 		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
