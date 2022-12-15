@@ -42,7 +42,6 @@ object Value {
   def apply(datatype: Primitive, raw: String): Value =
     datatype.name match {
       case "NM" => Number(raw)
-      case "SI" => Number(raw)
       case "DT" => Date(raw)
       case "TM" => Time(raw)
       case "SI" => Number(raw)
