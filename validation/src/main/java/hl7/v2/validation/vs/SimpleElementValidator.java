@@ -84,14 +84,29 @@ public class SimpleElementValidator extends ConfigurableValidation {
         java.util.List<Code> codes = vs.getCodes(value);
         int nbOfCodes = codes.size();
 
-        if( nbOfCodes == 0 )
-            return Detections.codeNotFound(location, value, vs, spec);
+        if( nbOfCodes == 0 ) {
+            if(isOpen(vs)) {
+                return Detections.codeNotFoundInOpen(location, value, vs, spec);
+            } else {
+                return Detections.codeNotFound(location, value, vs, spec);
+            }
+        }
 
         if( nbOfCodes == 1)
             return checkCodeUsage(location, value, codes.get(0), vs, spec);
 
         String msg = "Multiple occurrences of the code '"+value+"' found.";
         return Detections.vsError(location, msg, vs, spec);
+    }
+
+    public boolean isOpen(ValueSet vs){
+        try {
+            Extensibility ex = vs.extensibility().get();
+
+            return (ex instanceof Extensibility.Open$);
+        } catch (Exception exp) {
+            return false;
+        }
     }
 
     /**

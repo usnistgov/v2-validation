@@ -83,19 +83,22 @@ public class CodedElementValidatorM extends CodedElementValidator {
 			String codeSys = s2.value().raw();
 			if(bindings.containsKey(codeSys)){
 				ArrayList<String> bds = bindings.get(codeSys);
-				String id = "";
-				String delim = "";
+				List<String> openVs = new ArrayList<>();
 				for(String binding : bds){
-					id += delim + binding;
-					delim = " or ";
 					ValueSet vs = library.get(binding);
 					Entry e = simpleElementValidator.checkValueSet(s1.location(), s1.value().raw(), vs, spec);
 					if(pass(e)){
 						return e;
+					} else if(simpleElementValidator.isOpen(vs)) {
+						openVs.add(binding);
 					}
 				}
-				return Detections.codeNotFound(s1.location(), s1.value().raw(), id, spec);
-				
+
+				if(openVs.size() > 0) {
+					return Detections.codeNotFoundInOpen(s1.location(), s1.value().raw(), String.join( " or ", bds), String.join( " or ", openVs), spec);
+				} else {
+					return Detections.codeNotFound(s1.location(), s1.value().raw(), String.join( " or ", bds), spec);
+				}
 			}
 			else {
 				String msg = "Code System : "+codeSys+", not found in any of the Value Sets bindings";

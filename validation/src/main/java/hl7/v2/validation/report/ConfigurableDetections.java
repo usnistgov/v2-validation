@@ -451,6 +451,17 @@ public class ConfigurableDetections {
 		return vsEntry("code-not-found", desc, l, null, spec);
 	}
 
+	public  Entry codeNotFoundInOpen(Location l, String value, ValueSet vs,
+							   ValueSetSpec spec) {
+		String desc = vsTemplateOpenVS("code-not-found-open", value, l.prettyString(), vs.id(), vs.id());
+		return vsEntry("code-not-found-open", desc, l, vs, spec);
+	}
+
+	public  Entry codeNotFoundInOpen(Location l, String value, String bindings, String open, ValueSetSpec spec) {
+		String desc = vsTemplateOpenVS("code-not-found-open", value, l.prettyString(), bindings, open);
+		return vsEntry("code-not-found-open", desc, l, null, spec);
+	}
+
 	/**
 	 * @return A report entry for a VS not found detection
 	 */
@@ -659,6 +670,11 @@ public class ConfigurableDetections {
 			String s3) {
 		String template = conf.getString("report." + configKey + ".template");
 		return String.format(template, s1, s2, s3);
+	}
+
+	private  String vsTemplateOpenVS(String configKey, String s1, String s2, String s3, String s4) {
+		String template = conf.getString("report." + configKey + ".template");
+		return String.format(template, s1, s2, s3, s4);
 	}
 
 	 class ValueSetDetails {
