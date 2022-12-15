@@ -123,14 +123,6 @@ public class ConfigurableDetections {
 				r.max(), value);
 		return entry(l, desc, category, classification);
 	}
-
-	public  Entry confLength(Location l, Range r, String value) {
-		String category = conf.getString("report.conf-length.category");
-		String classification = conf.getString("report.conf-length.classification");
-		String template = conf.getString("report.conf-length.template");
-		String desc = String.format(template, l.prettyString(), r.min(), r.max(), value);
-		return entry(l, desc, category, classification);
-	}
 	
 	public  Entry lengthSpecErrorNF(Location l) {
 		String category = conf.getString("report.length-spec-error-no-valid.category");
