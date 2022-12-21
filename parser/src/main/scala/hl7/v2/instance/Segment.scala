@@ -12,8 +12,7 @@ case class Segment (
     location: Location,
     instance: Int,
     children: List[Field],
-    hasExtra: Boolean,
-    rawMessageValue: String
+    hasExtra: Boolean
 ) extends SegOrGroup
 
 /**
@@ -44,7 +43,7 @@ object Segment extends EscapeSeqHandler {
     val (hasExtra, lfs) =
       if( v startsWith "MSH" ) (vs.size > fml.size - 1) -> mshFields(fml, vs, loc)
       else (vs.size > fml.size) -> fields( fml, vs, loc )
-    Segment(m, loc, i, lfs.flatten, hasExtra, v)
+    Segment(m, loc, i, lfs.flatten, hasExtra)
   }
 
   /**

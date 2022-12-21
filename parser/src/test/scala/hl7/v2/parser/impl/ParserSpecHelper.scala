@@ -1,7 +1,7 @@
 package hl7.v2.parser.impl
 
-import hl7.v2.instance.{Counter, SegOrGroup, Separators}
-import hl7.v2.profile.{Req => Requeriement, SegRefOrGroup, Usage, Range, ValueSetSpec}
+import hl7.v2.instance.{Counter, SegOrGroup, Separators, Segment, Location, Field}
+import hl7.v2.profile.{Req => Requirement, SegRefOrGroup, Usage, Range, ValueSetSpec, SegmentRef => SM}
 import org.specs2.{ScalaCheck, Specification}
 
 trait ParserSpecHelper extends Specification with ScalaCheck with DefaultParser {
@@ -24,6 +24,15 @@ trait ParserSpecHelper extends Specification with ScalaCheck with DefaultParser 
      vsSpec: List[ValueSetSpec],
      confRange: Option[Range],
      hide: Boolean,
-     csValueBackwardsCompatible: Option[String]): Requeriement = Requeriement(position, description, usage, cardinality, length, confLength, vsSpec, confRange, hide)
+     csValueBackwardsCompatible: Option[String]): Requirement = Requirement(position, description, usage, cardinality, length, confLength, vsSpec, confRange, hide)
+
+  def SegmentInstance(
+   model: SM,
+   location: Location,
+   instance: Int,
+   children: List[Field],
+   hasExtra: Boolean,
+   rawMessageValue: String
+  ): Segment = Segment(model, location, instance, children, hasExtra)
 
 }
