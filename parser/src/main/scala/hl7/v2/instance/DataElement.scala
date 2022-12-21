@@ -51,6 +51,7 @@ object DataElement {
             val (hasExtra, x) = children(l, c.components, v, s.ss)
             val components = x.asInstanceOf[List[SimpleComponent]]
             ComplexComponent(c, r, l, components, hasExtra)
+          case _ => throw new Error("Invalid datatype " + d.name)
         }
       }
     }

@@ -5,10 +5,10 @@ object BuildSettings {
 
   lazy val basicSettings = Seq(
 
-    version              := "1.5.3",
+    version              := "1.5.4",
     //FIXME homepage             := Some(new URL("xxx")),
     organization         := "gov.nist",
-    organizationHomepage := Some(new URL("http://nist.gov")),
+    organizationHomepage := Some(new URL("https://nist.gov")),
     description          := "A suite of libraries for parsing and validating " +
                             "HL7 v2xx messages and conformance profile",
     startYear            := Some(2013),

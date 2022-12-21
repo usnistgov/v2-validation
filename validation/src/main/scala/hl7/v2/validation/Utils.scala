@@ -22,12 +22,14 @@ object Utils {
         val (et, pp)  = m.model.structure.filter( _.req == r ) match {
           case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
+          case Nil => throw new Error("Default Location not found for " + e.location.prettyString)
         }
         e.location.copy(et, desc=r.description, path=pp, uidPath=s"$pp[1]")
       case g: Group   =>
         val (et, pp)  = g.model.structure.filter( _.req == r ) match {
           case profile.Group(_, name, _, _)  :: xs => (EType.Group, name)
           case profile.SegmentRef(_, ref) :: xs => (EType.Segment, ref.name)
+          case Nil => throw new Error("Default Location not found for " + e.location.prettyString)
         }
         e.location.copy(et, desc=r.description, path=pp, uidPath=s"$pp[1]")
       case s: Segment =>

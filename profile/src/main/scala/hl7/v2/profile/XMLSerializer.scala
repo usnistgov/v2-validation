@@ -98,6 +98,7 @@ object XMLSerializer {
         d match {
           case Primitive(_, _, _, _)     =>
           case Composite(_, _, _, _, xs) => xs map component
+          case _ =>
         }
       }
     </Datatype>
