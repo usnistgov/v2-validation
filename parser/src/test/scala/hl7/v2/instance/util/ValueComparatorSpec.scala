@@ -1,7 +1,6 @@
 package hl7.v2.instance.util
 
 import org.specs2.{ScalaCheck, Specification}
-
 import ValueComparator._
 import hl7.v2.instance._
 

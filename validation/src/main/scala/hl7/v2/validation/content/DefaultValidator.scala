@@ -8,14 +8,12 @@ import gov.nist.validation.report.{ Entry, Trace => GTrace }
 import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{ R, X }
 import hl7.v2.profile.{ Message => MM }
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.jdk.CollectionConverters.SeqHasAsJava
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
 import hl7.v2.validation.report.ConfigurableDetections
 import expression.EvalResult.FailPlugin
-import expression.EvalResult.Failure
-import expression.EvalResult.Failure
 
 trait DefaultValidator extends Validator with expression.Evaluator with PatternFinder {
 
@@ -221,13 +219,13 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
     }
 
   private def stackTrace(context: Element, stack: List[Trace]): JList[GTrace] =
-    seqAsJavaList(stack map { t =>
+    (stack map { t =>
       val assertion = expression.AsString.expression(t.expression, context)
       val reasons = t.reasons map { r =>
         s"[${r.location.line}, ${r.location.column}] ${r.message}"
       }
-      new GTrace(assertion, reasons)
-    })
+      new GTrace(assertion, reasons.asJava)
+    }).asJava
 
   private def approximativeErrorLocation(context: Element, stack: List[Trace]) =
     stack match {

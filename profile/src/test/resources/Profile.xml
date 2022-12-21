@@ -8,18 +8,16 @@ Changes:
  -->
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/v2-validation-legacy/profile/src/main/resources/Profile.xsd"
-	>
-	
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<MetaData Name="Test" OrgName="Test" Version="Test" Date="Test" />
 	<Encodings>
 		<Encoding>ER7</Encoding>
 		<Encoding>XML</Encoding>
 	</Encodings>
-	
+
 	<Messages>
 		<Message ID="ORU_R01" Type="ORU" Event="R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
-			<Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
+			<Segment Ref="MSH" Usage="R" Min="1" Max="1"/>
 			<Segment Ref="SFT" Usage="W" Min="0" Max="*" />
 			<Segment Ref="UAC" Usage="O" Min="0" Max="1"/>
 			<Group ID="1" Name="PATIENT_RESULT" Usage="R" Min="1" Max="*">
@@ -67,10 +65,10 @@ Changes:
 			</Group>
 			<Segment Ref="DSC" Usage="O" Min="0" Max="1"/>
 		</Message>
-	</Messages> 
-	
+	</Messages>
+
 	<Segments>
-		<Segment ID="MSH" Name="MSH" Description="Message Header">
+		<Segment Label="MSH" ID="MSH" Name="MSH" Description="Message Header">
 			<Field Name="Field Separator" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="1" ItemNo="00001"/>
 			<Field Name="Encoding Characters" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="4" MaxLength="5" ItemNo="00002"/>
 			<Field Name="Sending Application" Datatype="HD" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00003"/>
@@ -97,7 +95,7 @@ Changes:
 			<Field Name="Sending Network Address" Datatype="HD" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01825"/>
 			<Field Name="Receiving Network Address" Datatype="HD" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01826"/>
 		</Segment>
-		<Segment ID="SFT" Name="SFT" Description="Software Segment">
+		<Segment Label="SFT" ID="SFT" Name="SFT" Description="Software Segment">
 			<Field Name="Software Vendor Organization" Datatype="XON" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01834"/>
 			<Field Name="Software Certified Version or Release Number" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ConfLength="15" ItemNo="01835"/>
 			<Field Name="Software Product Name" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ConfLength="20" ItemNo="01836"/>
@@ -105,11 +103,11 @@ Changes:
 			<Field Name="Software Product Information" Datatype="TX" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01838"/>
 			<Field Name="Software Install Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01839"/>
 		</Segment>
-		<Segment ID="UAC" Name="UAC" Description="User Authentication Credential Segment">
+		<Segment Label="UAC" ID="UAC" Name="UAC" Description="User Authentication Credential Segment">
 			<Field Name="User Authentication Credential Type Code" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02267"/>
 			<Field Name="User Authentication Credential" Datatype="ED" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02268"/>
 		</Segment>
-		<Segment ID="PID" Name="PID" Description="Patient Identification">
+		<Segment Label="PID" ID="PID" Name="PID" Description="Patient Identification">
 			<Field Name="Set ID - PID" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00104" Binding="VS1" BindingStrength="R"/>
 			<Field Name="Patient ID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00105"/>
 			<Field Name="Patient Identifier List" Datatype="CX" Usage="R" Min="1" Max="*" MinLength="1" MaxLength="*" ItemNo="00106"/>
@@ -151,7 +149,7 @@ Changes:
 			<Field Name="Tribal Citizenship" Datatype="CWE" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01840"/>
 			<Field Name="Patient Telecommunication Information" Datatype="XTN" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="02289"/>
 		</Segment>
-		<Segment ID="PD1" Name="PD1" Description="Patient Additional Demographic">
+		<Segment Label="PD1" ID="PD1" Name="PD1" Description="Patient Additional Demographic">
 			<Field Name="Living Dependency" Datatype="CWE" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00755"/>
 			<Field Name="Living Arrangement" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00742"/>
 			<Field Name="Patient Primary Facility" Datatype="XON" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00756"/>
@@ -175,7 +173,7 @@ Changes:
 			<Field Name="Military Status" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01573"/>
 			<Field Name="Advance Directive Last Verified Date" Datatype="DT" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02141"/>
 		</Segment>
-		<Segment ID="PRT" Name="PRT" Description="Participation Information">
+		<Segment Label="PRT" ID="PRT" Name="PRT" Description="Participation Information">
 			<Field Name="Participation Instance ID" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="02379"/>
 			<Field Name="Action Code" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00816"/>
 			<Field Name="Action Reason" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02380"/>
@@ -192,17 +190,7 @@ Changes:
 			<Field Name="Participation Address" Datatype="XAD" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="02390"/>
 			<Field Name="Participant Telecommunication Address" Datatype="XTN" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="02391"/>
 		</Segment>
-        <Segment ID="NTE_1" Name="NTE" Description="Notes and Comments">
-            <Field Name="Set ID - NTE" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00096"/>
-            <Field Name="Source of Comment" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="00097"/>
-            <Field Name="Comment" Datatype="FT" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00098"/>
-            <Field Name="Comment Type" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01318"/>
-            <Field Name="Entered By" Datatype="XCN" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00224"/>
-            <Field Name="Entered Date/Time" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00661"/>
-            <Field Name="Effective Start Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01004"/>
-            <Field Name="Expiration Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02185"/>
-        </Segment>
-        <Segment ID="NTE" Name="NTE" Description="Notes and Comments">
+		<Segment Label="NTE_1" ID="NTE_1" Name="NTE" Description="Notes and Comments">
 			<Field Name="Set ID - NTE" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00096"/>
 			<Field Name="Source of Comment" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="00097"/>
 			<Field Name="Comment" Datatype="FT" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00098"/>
@@ -212,7 +200,17 @@ Changes:
 			<Field Name="Effective Start Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01004"/>
 			<Field Name="Expiration Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02185"/>
 		</Segment>
-		<Segment ID="NK1" Name="NK1" Description="Next of Kin / Associated Parties">
+		<Segment Label="NTE" ID="NTE" Name="NTE" Description="Notes and Comments">
+			<Field Name="Set ID - NTE" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00096"/>
+			<Field Name="Source of Comment" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="00097"/>
+			<Field Name="Comment" Datatype="FT" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00098"/>
+			<Field Name="Comment Type" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01318"/>
+			<Field Name="Entered By" Datatype="XCN" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00224"/>
+			<Field Name="Entered Date/Time" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00661"/>
+			<Field Name="Effective Start Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01004"/>
+			<Field Name="Expiration Date" Datatype="DTM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02185"/>
+		</Segment>
+		<Segment Label="NK1" ID="NK1" Name="NK1" Description="Next of Kin / Associated Parties">
 			<Field Name="Set ID - NK1" Datatype="SI" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="4" ItemNo="00190"/>
 			<Field Name="Name" Datatype="XPN" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00191"/>
 			<Field Name="Relationship" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00192"/>
@@ -255,7 +253,7 @@ Changes:
 			<Field Name="Next of Kin Telecommunication Information" Datatype="XTN" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02292"/>
 			<Field Name="Contact Person's Telecommunication Information" Datatype="XTN" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02293"/>
 		</Segment>
-		<Segment ID="OBX" Name="OBX" Description="Observation/Result">
+		<Segment Label="OBX" ID="OBX" Name="OBX" Description="Observation/Result">
 			<DynamicMapping>
 				<Mapping Position="5" Reference="2">
 					<Case Value="NM" Datatype="NM"/>
@@ -266,7 +264,7 @@ Changes:
 			<Field Name="Set ID - OBX" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00569"/>
 			<Field Name="Value Type" Datatype="ID" Usage="C" Min="0" Max="1" MinLength="2" MaxLength="3" ItemNo="00570"/>
 			<Field Name="Observation Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00571"
-				Binding="VS1" BindingStrength="R" BindingLocation="1:4"/>
+				   Binding="VS1" BindingStrength="R" BindingLocation="1:4"/>
 			<Field Name="Observation Sub-ID" Datatype="ST" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="20" ItemNo="00572"/>
 			<Field Name="Observation Value" Datatype="varies" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="00573"/>
 			<Field Name="Units" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00574"/>
@@ -291,7 +289,7 @@ Changes:
 			<Field Name="Performing Organization Medical Director" Datatype="XCN" Usage="B" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02285"/>
 			<Field Name="Patient Results Release Category" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="10" ItemNo="02313"/>
 		</Segment>
-		<Segment ID="PV1" Name="PV1" Description="Patient Visit">
+		<Segment Label="PV1" ID="PV1" Name="PV1" Description="Patient Visit">
 			<Field Name="Set ID - PV1" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00131"/>
 			<Field Name="Patient Class" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00132"/>
 			<Field Name="Assigned Patient Location" Datatype="PL" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00133"/>
@@ -347,7 +345,7 @@ Changes:
 			<Field Name="Service Episode Description" Datatype="ST" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="50" ItemNo="02290"/>
 			<Field Name="Service Episode Identifier" Datatype="CX" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02291"/>
 		</Segment>
-		<Segment ID="PV2" Name="PV2" Description="Patient Visit - Additional Information">
+		<Segment Label="PV2" ID="PV2" Name="PV2" Description="Patient Visit - Additional Information">
 			<Field Name="Prior Pending Location" Datatype="PL" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00181"/>
 			<Field Name="Accommodation Code" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00182"/>
 			<Field Name="Admit Reason" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00183"/>
@@ -399,9 +397,9 @@ Changes:
 			<Field Name="Notify Clergy Code" Datatype="CWE" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01842"/>
 			<Field Name="Advance Directive Last Verified Date" Datatype="DT" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02141"/>
 		</Segment>
-		<Segment ID="ORC" Name="ORC" Description="Common Order">
-			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215" 
-				Binding="BadVS" BindingStrength="R"/>
+		<Segment Label="ORC" ID="ORC" Name="ORC" Description="Common Order">
+			<Field Name="Order Control" Datatype="ID" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="2" ItemNo="00215"
+				   Binding="BadVS" BindingStrength="R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Placer Group Number" Datatype="EI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00218"/>
@@ -435,9 +433,9 @@ Changes:
 			<Field Name="Advanced Beneficiary Notice Date" Datatype="DT" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02301"/>
 			<Field Name="Alternate Placer Order Number" Datatype="CX" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="03300"/>
 		</Segment>
-		<Segment ID="OBR" Name="OBR" Description="Observation Request">
-			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237" 
-				Binding="EmptyVS" BindingStrength="R"/>
+		<Segment Label="OBR" ID="OBR" Name="OBR" Description="Observation Request">
+			<Field Name="Set ID - OBR" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00237"
+				   Binding="EmptyVS" BindingStrength="R"/>
 			<Field Name="Placer Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00216"/>
 			<Field Name="Filler Order Number" Datatype="EI" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00217"/>
 			<Field Name="Universal Service Identifier" Datatype="CWE" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="00238"/>
@@ -491,7 +489,7 @@ Changes:
 			<Field Name="Parent Observation Group ID" Datatype="EI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02308"/>
 			<Field Name="Alternate Placer Order Number" Datatype="CX" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="03303"/>
 		</Segment>
-		<Segment ID="TQ1" Name="TQ1" Description="Timing/Quantity">
+		<Segment Label="TQ1" ID="TQ1" Name="TQ1" Description="Timing/Quantity">
 			<Field Name="Set ID - TQ1" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="01627"/>
 			<Field Name="Quantity" Datatype="CQ" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01628"/>
 			<Field Name="Repeat Pattern" Datatype="RPT" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01629"/>
@@ -507,7 +505,7 @@ Changes:
 			<Field Name="Occurrence duration" Datatype="CQ" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01639"/>
 			<Field Name="Total occurrences" Datatype="NM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="10" ItemNo="01640"/>
 		</Segment>
-		<Segment ID="TQ2" Name="TQ2" Description="Timing/Quantity Relationship">
+		<Segment Label="TQ2" ID="TQ2" Name="TQ2" Description="Timing/Quantity Relationship">
 			<Field Name="Set ID - TQ2" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="01648"/>
 			<Field Name="Sequence/Results Flag" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="01649"/>
 			<Field Name="Related Placer Number" Datatype="EI" Usage="C" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01650"/>
@@ -519,7 +517,7 @@ Changes:
 			<Field Name="Cyclic Group Maximum Number of Repeats" Datatype="NM" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="10" ItemNo="01656"/>
 			<Field Name="Special Service Request Relationship" Datatype="ID" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="01657"/>
 		</Segment>
-		<Segment ID="CTD" Name="CTD" Description="Contact Data">
+		<Segment Label="CTD" ID="CTD" Name="CTD" Description="Contact Data">
 			<Field Name="Contact Role" Datatype="CWE" Usage="R" Min="1" Max="*" MinLength="1" MaxLength="*" ItemNo="00196"/>
 			<Field Name="Contact Name" Datatype="XPN" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01165"/>
 			<Field Name="Contact Address" Datatype="XAD" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01166"/>
@@ -528,7 +526,7 @@ Changes:
 			<Field Name="Preferred Method of Contact" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00684"/>
 			<Field Name="Contact Identifiers" Datatype="PLN" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01171"/>
 		</Segment>
-		<Segment ID="FT1" Name="FT1" Description="Financial Transaction">
+		<Segment Label="FT1" ID="FT1" Name="FT1" Description="Financial Transaction">
 			<Field Name="Set ID - FT1" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="00355"/>
 			<Field Name="Transaction ID" Datatype="ST" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="12" ItemNo="00356"/>
 			<Field Name="Transaction Batch ID" Datatype="ST" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="10" ItemNo="00357"/>
@@ -573,12 +571,12 @@ Changes:
 			<Field Name="Prescription Number" Datatype="ST" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="20" ItemNo="00325"/>
 			<Field Name="NDC Qty and UOM" Datatype="CQ" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02370"/>
 		</Segment>
-		<Segment ID="CTI" Name="CTI" Description="Clinical Trial Identification">
+		<Segment Label="CTI" ID="CTI" Name="CTI" Description="Clinical Trial Identification">
 			<Field Name="Sponsor Study ID" Datatype="EI" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01011"/>
 			<Field Name="Study Phase Identifier" Datatype="CWE" Usage="C" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01022"/>
 			<Field Name="Study Scheduled Time Point" Datatype="CWE" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01055"/>
 		</Segment>
-		<Segment ID="SPM" Name="SPM" Description="Specimen">
+		<Segment Label="SPM" ID="SPM" Name="SPM" Description="Specimen">
 			<Field Name="Set ID - SPM" Datatype="SI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="4" ItemNo="01754"/>
 			<Field Name="Specimen ID" Datatype="EIP" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="01755"/>
 			<Field Name="Specimen Parent IDs" Datatype="EIP" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="01756"/>
@@ -612,23 +610,23 @@ Changes:
 			<Field Name="Other Specimen ID" Datatype="CX" Usage="O" Min="0" Max="*" MinLength="1" MaxLength="*" ItemNo="02315"/>
 			<Field Name="Shipment ID" Datatype="EI" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="02316"/>
 		</Segment>
-		<Segment ID="DSC" Name="DSC" Description="Continuation Pointer">
+		<Segment Label="DSC" ID="DSC" Name="DSC" Description="Continuation Pointer">
 			<Field Name="Continuation Pointer" Datatype="ST" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="*" ConfLength="180" ItemNo="00014"/>
 			<Field Name="Continuation Style" Datatype="ID" Usage="O" Min="0" Max="1" MinLength="1" MaxLength="1" ItemNo="01354"/>
 		</Segment>
 	</Segments>
-	
+
 	<Datatypes>
-		<Datatype ID="FC"  Name="FC" Description="Financial Class">
+		<Datatype Label="FC" ID="FC"  Name="FC" Description="Financial Class">
 			<Component Name="Financial Class Code" Datatype="CWE" Usage="R" MinLength="1" MaxLength="*"/>
 			<Component Name="Effective Date" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="JCC" Name="JCC" Description="Job Code/Class">
+		<Datatype Label="JCC" ID="JCC" Name="JCC" Description="Job Code/Class">
 			<Component Name="Job Code" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Job Class" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Job Description Text" Datatype="TX" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID ="XAD" Name="XAD" Description="Extended Address">
+		<Datatype Label ="XA" ID ="XAD" Name="XAD" Description="Extended Address">
 			<Component Name="Street Address" Datatype="SAD" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Other Designation" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="120" />
 			<Component Name="City" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="50" />
@@ -653,7 +651,7 @@ Changes:
 			<Component Name="Protection Code" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Address Identifier" Datatype="EI" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="RPT" Name="RPT" Description="Repeat Pattern">
+		<Datatype Label="RPT" ID="RPT" Name="RPT" Description="Repeat Pattern">
 			<Component Name="Repeat Pattern Code" Datatype="CWE" Usage="R" MinLength="1" MaxLength="*"/>
 			<Component Name="Calendar Alignment" Datatype="ID" Usage="O" MinLength="2" MaxLength="2"/>
 			<Component Name="Phase Range Begin Value" Datatype="NM" Usage="O" MinLength="1" MaxLength="*" ConfLength="10" />
@@ -666,8 +664,8 @@ Changes:
 			<Component Name="Event Offset Units" Datatype="CWE" Usage="C" MinLength="1" MaxLength="*"/>
 			<Component Name="General Timing Specification" Datatype="GTS" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="DTM" Name="DTM" Description="Date/Time"/>
-		<Datatype ID="XTN" Name="XTN" Description="Extended Telecommunication Number">
+		<Datatype Label="DTM" ID="DTM" Name="DTM" Description="Date/Time"/>
+		<Datatype Label="XTN" ID="XTN" Name="XTN" Description="Extended Telecommunication Number">
 			<Component Name="Telephone Number" Datatype="-" Usage="W" MinLength="1" MaxLength="*"/>
 			<Component Name="Telecommunication Use Code" Datatype="ID" Usage="O" MinLength="3" MaxLength="3"/>
 			<Component Name="Telecommunication Equipment Type" Datatype="ID" Usage="R" MinLength="2" MaxLength="8"/>
@@ -687,18 +685,18 @@ Changes:
 			<Component Name="Shared Telecommunication Identifier" Datatype="EI" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Preference Order" Datatype="NM" Usage="O" MinLength="1" MaxLength="*" ConfLength="2" />
 		</Datatype>
-		<Datatype ID="SAD" Name="SAD" Description="Street Address">
+		<Datatype Label="SAD" ID="SAD" Name="SAD" Description="Street Address">
 			<Component Name="Street or Mailing Address" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="120" />
 			<Component Name="Street Name" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="50" />
 			<Component Name="Dwelling Number" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="12" />
 		</Datatype>
-		<Datatype ID="EIP" Name="EIP" Description="Entity Identifier Pair">
+		<Datatype Label="EIP" ID="EIP" Name="EIP" Description="Entity Identifier Pair">
 			<Component Name="Placer Assigned Identifier" Datatype="EI" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Filler Assigned Identifier" Datatype="EI" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="SI" Name="SI" Description="Sequence ID"/>
-		<Datatype ID="-" Name="-" Description="withdrawn"/>
-		<Datatype ID="CWE" Name="CWE" Description="Coded with Exceptions">
+		<Datatype Label="SI" ID="SI" Name="SI" Description="Sequence ID"/>
+		<Datatype Label="-" ID="-" Name="-" Description="withdrawn"/>
+		<Datatype Label="CWE" ID="CWE" Name="CWE" Description="Coded with Exceptions">
 			<Component Name="Identifier" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Text" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Name of Coding System" Datatype="ID" Usage="C" MinLength="1" MaxLength="12" Binding="0396"/>
@@ -722,7 +720,7 @@ Changes:
 			<Component Name="Second Alternate Value Set OID" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Second Alternate Value Set Version ID" Datatype="DTM" Usage="C" MinLength="1" MaxLength="*" ConfLength="8" />
 		</Datatype>
-		<Datatype ID="CX" Name="CX" Description="Extended Composite ID with Check Digit">
+		<Datatype Label="CX" ID="CX" Name="CX" Description="Extended Composite ID with Check Digit">
 			<Component Name="ID Number" Datatype="ST" Usage="R" MinLength="1" MaxLength="*" ConfLength="15" />
 			<Component Name="Identifier Check Digit" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="4" />
 			<Component Name="Check Digit Scheme" Datatype="ID" Usage="O" MinLength="3" MaxLength="3"/>
@@ -736,12 +734,12 @@ Changes:
 			<Component Name="Security Check" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="4" />
 			<Component Name="Security Check Scheme" Datatype="ID" Usage="O" MinLength="3" MaxLength="3"/>
 		</Datatype>
-		<Datatype ID="GTS" Name="GTS" Description="General Timing Specification"/>
-		<Datatype ID="MO" Name="MO" Description="Money">
+		<Datatype Label="GTS" ID="GTS" Name="GTS" Description="General Timing Specification"/>
+		<Datatype Label="MO" ID="MO" Name="MO" Description="Money">
 			<Component Name="Quantity" Datatype="NM" Usage="O" MinLength="1" MaxLength="*" />
 			<Component Name="Denomination" Datatype="ID" Usage="O" MinLength="3" MaxLength="3"/>
 		</Datatype>
-		<Datatype ID="XPN" Name="XPN" Description="Extended Person Name">
+		<Datatype Label="XPN" ID="XPN" Name="XPN" Description="Extended Person Name">
 			<Component Name="Family Name" Datatype="FN" Usage="RE" MinLength="1" MaxLength="*"/>
 			<Component Name="Given Name" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="30" />
 			<Component Name="Second and Further Given Names or Initials Thereof" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="30" />
@@ -758,14 +756,14 @@ Changes:
 			<Component Name="Professional Suffix" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Called By" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="30" />
 		</Datatype>
-		<Datatype ID="IS" Name="IS" Description="Coded Value for User-Defined Tables"/>
-		<Datatype ID="NM" Name="NM" Description="Numeric"/>
-		<Datatype ID="varies" Name="varies" Description="varies"/>
-		<Datatype ID="CQ" Name="CQ" Description="Composite Quantity with Units">
+		<Datatype Label="IS" ID="IS" Name="IS" Description="Coded Value for User-Defined Tables"/>
+		<Datatype Label="NM" ID="NM" Name="NM" Description="Numeric"/>
+		<Datatype Label="varies" ID="varies" Name="varies" Description="varies"/>
+		<Datatype Label="CQ" ID="CQ" Name="CQ" Description="Composite Quantity with Units">
 			<Component Name="Quantity" Datatype="NM" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Units" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="CP" Name="CP" Description="Composite Price">
+		<Datatype Label="CP" ID="CP" Name="CP" Description="Composite Price">
 			<Component Name="Price" Datatype="MO" Usage="R" MinLength="1" MaxLength="*"/>
 			<Component Name="Price Type" Datatype="ID" Usage="O" MinLength="1" MaxLength="2"/>
 			<Component Name="From Value" Datatype="NM" Usage="O" MinLength="1" MaxLength="*" />
@@ -773,21 +771,21 @@ Changes:
 			<Component Name="Range Units" Datatype="CWE" Usage="C" MinLength="1" MaxLength="*"/>
 			<Component Name="Range Type" Datatype="ID" Usage="O" MinLength="1" MaxLength="1"/>
 		</Datatype>
-		<Datatype ID="PT" Name="PT" Description="Processing Type">
+		<Datatype Label="PT" ID="PT" Name="PT" Description="Processing Type">
 			<Component Name="Processing ID" Datatype="ID" Usage="R" MinLength="1" MaxLength="1"/>
 			<Component Name="Processing Mode" Datatype="ID" Usage="O" MinLength="1" MaxLength="1"/>
 		</Datatype>
-		<Datatype ID="DLD" Name="DLD" Description="Discharge to Location and Date">
+		<Datatype Label="DLD" ID="DLD" Name="DLD" Description="Discharge to Location and Date">
 			<Component Name="Discharge to Location" Datatype="CWE" Usage="R" MinLength="1" MaxLength="*"/>
 			<Component Name="Effective Date" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="PLN" Name="PLN" Description="Practitioner License or Other ID Number">
+		<Datatype Label="PLN" ID="PLN" Name="PLN" Description="Practitioner License or Other ID Number">
 			<Component Name="ID Number" Datatype="ST" Usage="R" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Type of ID Number" Datatype="CWE" Usage="R" MinLength="1" MaxLength="*"/>
 			<Component Name="State/other Qualifying Information" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="62" />
 			<Component Name="Expiration Date" Datatype="DT" Usage="O" MinLength="1" MaxLength="*" ConfLength="8" />
 		</Datatype>
-		<Datatype ID="CNE" Name="CNE" Description="Coded with No Exceptions">
+		<Datatype Label="CNE" ID="CNE" Name="CNE" Description="Coded with No Exceptions">
 			<Component Name="Identifier" Datatype="ST" Usage="R" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Text" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Name of Coding System" Datatype="ID" Usage="O" MinLength="1" MaxLength="12"/>
@@ -811,32 +809,32 @@ Changes:
 			<Component Name="Second Alternate Value Set OID" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Second Alternate Value Set Version ID" Datatype="DTM" Usage="C" MinLength="1" MaxLength="*" ConfLength="8" />
 		</Datatype>
-		<Datatype ID="HD" Name="HD" Description="Hierarchic Designator">
+		<Datatype Label="HD" ID="HD" Name="HD" Description="Hierarchic Designator">
 			<Component Name="Namespace ID" Datatype="IS" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Universal ID" Datatype="ST" Usage="C" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Universal ID Type" Datatype="ID" Usage="C" MinLength="1" MaxLength="6"/>
 		</Datatype>
-		<Datatype ID="VID" Name="VID" Description="Version Identifier">
+		<Datatype Label="VID" ID="VID" Name="VID" Description="Version Identifier">
 			<Component Name="Version ID" Datatype="ID" Usage="R" MinLength="3" MaxLength="5"/>
 			<Component Name="Internationalization Code" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="International Version ID" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="TX" Name="TX" Description="Text Data"/>
-		<Datatype ID="EI" Name="EI" Description="Entity Identifier">
+		<Datatype Label="TX" ID="TX" Name="TX" Description="Text Data"/>
+		<Datatype Label="EI" ID="EI" Name="EI" Description="Entity Identifier">
 			<Component Name="Entity Identifier" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Namespace ID" Datatype="IS" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Universal ID" Datatype="ST" Usage="C" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Universal ID Type" Datatype="ID" Usage="C" MinLength="1" MaxLength="6"/>
 		</Datatype>
-		<Datatype ID="TM" Name="TM" Description="Time"/>
-		<Datatype ID="ED" Name="ED" Description="Encapsulated Data">
+		<Datatype Label="TM" ID="TM" Name="TM" Description="Time"/>
+		<Datatype Label="ED" ID="ED" Name="ED" Description="Encapsulated Data">
 			<Component Name="Source Application" Datatype="HD" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Type of Data" Datatype="ID" Usage="R" MinLength="4" MaxLength="11"/>
 			<Component Name="Data Subtype" Datatype="ID" Usage="O" MinLength="1" MaxLength="*" ConfLength="32" />
 			<Component Name="Encoding" Datatype="ID" Usage="R" MinLength="1" MaxLength="6"/>
 			<Component Name="Data" Datatype="TX" Usage="R" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="NDL" Name="NDL" Description="Name with Date and Location">
+		<Datatype Label="NDL" ID="NDL" Name="NDL" Description="Name with Date and Location">
 			<Component Name="Name" Datatype="CNN" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Start Date/time" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="End Date/time" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
@@ -849,7 +847,7 @@ Changes:
 			<Component Name="Building" Datatype="IS" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Floor" Datatype="IS" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 		</Datatype>
-		<Datatype ID="PL" Name="PL" Description="Person Location">
+		<Datatype Label="PL" ID="PL" Name="PL" Description="Person Location">
 			<Component Name="Point of Care" Datatype="HD" Usage="C" MinLength="1" MaxLength="*"/>
 			<Component Name="Room" Datatype="HD" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Bed" Datatype="HD" Usage="O" MinLength="1" MaxLength="*"/>
@@ -862,7 +860,7 @@ Changes:
 			<Component Name="Comprehensive Location Identifier" Datatype="EI" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Assigning Authority for Location" Datatype="HD" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="CNN" Name="CNN" Description="Composite ID Number and Name Simplified">
+		<Datatype Label="CNN" ID="CNN" Name="CNN" Description="Composite ID Number and Name Simplified">
 			<Component Name="ID Number" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="15" />
 			<Component Name="Family Name" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="50" />
 			<Component Name="Given Name" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="30" />
@@ -875,7 +873,7 @@ Changes:
 			<Component Name="Assigning Authority - Universal ID" Datatype="ST" Usage="C" MinLength="1" MaxLength="*" ConfLength="199" />
 			<Component Name="Assigning Authority - Universal ID Type" Datatype="ID" Usage="C" MinLength="1" MaxLength="6"/>
 		</Datatype>
-		<Datatype ID="XON" Name="XON" Description="Extended Composite Name and Identification Number for Organizations">
+		<Datatype Label="XON" ID="XON" Name="XON" Description="Extended Composite Name and Identification Number for Organizations">
 			<Component Name="Organization Name" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="50" />
 			<Component Name="Organization Name Type Code" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="ID Number" Datatype="-" Usage="W" MinLength="1" MaxLength="*"/>
@@ -887,37 +885,37 @@ Changes:
 			<Component Name="Name Representation Code" Datatype="ID" Usage="O" MinLength="1" MaxLength="1"/>
 			<Component Name="Organization Identifier" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 		</Datatype>
-		<Datatype ID="SNM" Name="SNM" Description="String of Telephone Number Digits"/>
-		<Datatype ID="FT" Name="FT" Description="Formatted Text Data"/>
-		<Datatype ID="DT" Name="DT" Description="Date"/>
-		<Datatype ID="MOC" Name="MOC" Description="Money and Code">
+		<Datatype Label="SNM" ID="SNM" Name="SNM" Description="String of Telephone Number Digits"/>
+		<Datatype Label="FT" ID="FT" Name="FT" Description="Formatted Text Data"/>
+		<Datatype Label="DT" ID="DT" Name="DT" Description="Date"/>
+		<Datatype Label="MOC" ID="MOC" Name="MOC" Description="Money and Code">
 			<Component Name="Monetary Amount" Datatype="MO" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Charge Code" Datatype="CWE" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="DR" Name="DR" Description="Date/Time Range">
+		<Datatype Label="DR" ID="DR" Name="DR" Description="Date/Time Range">
 			<Component Name="Range Start Date/Time" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
 			<Component Name="Range End Date/Time" Datatype="DTM" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="FN" Name="FN" Description="Family Name">
+		<Datatype Label="FN" ID="FN" Name="FN" Description="Family Name">
 			<Component Name="Surname" Datatype="ST" Usage="R" MinLength="1" MaxLength="*" ConfLength="50" />
 			<Component Name="Own Surname Prefix" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Own Surname" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="50" />
 			<Component Name="Surname Prefix from Partner/Spouse" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Surname from Partner/Spouse" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="50" />
 		</Datatype>
-		<Datatype ID="ID" Name="ID" Description="Coded Value for HL7 Defined Tables"/>
-		<Datatype ID="PRL" Name="PRL" Description="Parent Result Link">
+		<Datatype Label="ID" ID="ID" Name="ID" Description="Coded Value for HL7 Defined Tables"/>
+		<Datatype Label="PRL" ID="PRL" Name="PRL" Description="Parent Result Link">
 			<Component Name="Parent Observation Identifier" Datatype="CWE" Usage="R" MinLength="1" MaxLength="*"/>
 			<Component Name="Parent Observation Sub-identifier" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="20" />
 			<Component Name="Parent Observation Value Descriptor" Datatype="TX" Usage="O" MinLength="1" MaxLength="*"/>
 		</Datatype>
-		<Datatype ID="MSG" Name="MSG" Description="Message Type">
+		<Datatype Label="MSG" ID="MSG" Name="MSG" Description="Message Type">
 			<Component Name="Message Code" Datatype="ID" Usage="R" MinLength="3" MaxLength="3"/>
 			<Component Name="Trigger Event" Datatype="ID" Usage="R" MinLength="3" MaxLength="3"/>
 			<Component Name="Message Structure" Datatype="ID" Usage="R" MinLength="3" MaxLength="7"/>
 		</Datatype>
-		<Datatype ID="ST" Name="ST" Description="String Data"/>
-		<Datatype ID="XCN" Name="XCN" Description="Extended Composite ID Number and Name for Persons">
+		<Datatype Label="ST" ID="ST" Name="ST" Description="String Data"/>
+		<Datatype Label="XCN" ID="XCN" Name="XCN" Description="Extended Composite ID Number and Name for Persons">
 			<Component Name="Person Identifier" Datatype="ST" Usage="C" MinLength="1" MaxLength="*" ConfLength="15" />
 			<Component Name="Family Name" Datatype="FN" Usage="C" MinLength="1" MaxLength="*"/>
 			<Component Name="Given Name" Datatype="ST" Usage="O" MinLength="1" MaxLength="*" ConfLength="30" />
@@ -945,5 +943,5 @@ Changes:
 			<Component Name="Security Check Scheme" Datatype="ID" Usage="O" MinLength="3" MaxLength="3"/>
 		</Datatype>
 	</Datatypes>
-	
+
 </ConformanceProfile>

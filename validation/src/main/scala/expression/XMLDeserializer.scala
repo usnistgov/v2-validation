@@ -202,5 +202,5 @@ object XMLDeserializer extends EscapeSeqHandler {
     ( 0 until childElements.size ) map ( i => expression( childElements.get( i ) ) )
   }*/
 
-  private def combinationn( e: Element ) = e.getChildElements map expression
+  private def combinationn( e: Element ) = e.getChildElements.map(c => expression(c))
 }

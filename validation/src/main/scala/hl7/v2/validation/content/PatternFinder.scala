@@ -1,18 +1,14 @@
 package hl7.v2.validation.content
 
-import expression.EvalResult.{ Fail, Inconclusive, Pass, Trace, EvalData }
-import gov.nist.validation.report.{ Entry, Trace => GTrace }
+import expression.EvalResult.{ Pass }
+import gov.nist.validation.report.{ Entry }
 import hl7.v2.instance._
 import hl7.v2.instance.Query._
-import hl7.v2.validation.content.PredicateUsage.{ R, X }
 import hl7.v2.profile.{ Message => MM }
-import scala.collection.JavaConversions.seqAsJavaList
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.jdk.CollectionConverters.SeqHasAsJava
 import expression._
 import hl7.v2.validation.vs.ValueSetLibrary
-import scala.util.{ Failure, Success, Try }
-import scala.util.control.Breaks._
+import scala.util.{ Failure, Success }
 import hl7.v2.validation.report.ConfigurableDetections
 
 
@@ -33,7 +29,7 @@ trait PatternFinder extends expression.Evaluator {
      query(e, c.contextPath) match {
       case Success(Nil) => missingContext(c,e)
       case Success(x)   => checkPatterns(x, c.Patterns,e, validator)
-      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,None,err.getMessage,Presence(c.contextPath)), err.getMessage,  Nil))
+      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,None,err.getMessage,Presence(c.contextPath)), err.getMessage,  Nil.asJava))
     }
   }
   
