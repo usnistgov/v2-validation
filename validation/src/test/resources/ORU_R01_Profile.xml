@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="file:///home/malick/projects/nist/v2-validation-legacy/profile/src/main/resources/Profile.xsd"
-  >
-  
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:noNamespaceSchemaLocation="Profile.xsd">
+
+  <MetaData Name="Test" OrgName="Test" Version="Test" Date="Test"></MetaData>
+
   <Encodings>
     <Encoding>ER7</Encoding>
     <Encoding>XML</Encoding>
@@ -26,17 +27,17 @@
   </Messages> 
   
   <Segments>
-    <Segment ID="MSH" Name="MSH" Description="Message Header">
+    <Segment ID="MSH" Label="MSH" Name="MSH" Description="Message Header">
       <Field Name="Field Separator" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="1" ItemNo="00001"/>
       <Field Name="Encoding Characters" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="4" MaxLength="5" ItemNo="00002"/>
     </Segment>
-    <Segment ID="SFT" Name="SFT" Description="Software Segment">
+    <Segment ID="SFT" Label="SFT" Name="SFT" Description="Software Segment">
       <Field Name="Software Vendor Organization" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01834"/>
     </Segment>
-    <Segment ID="UAC" Name="UAC" Description="User Authentication Credential Segment">
+    <Segment ID="UAC" Label="UAC" Name="UAC" Description="User Authentication Credential Segment">
       <Field Name="User Authentication Credential Type Code" Datatype="HD" Usage="X" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02267"/>
     </Segment>
-    <Segment ID="PID" Name="PID" Description="Patient Identification">
+    <Segment ID="PID" Label="PID" Name="PID" Description="Patient Identification">
       <Field Name="Set ID - PID" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="3" ItemNo="00104"/>
       <Field Name="Patient ID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00105"/>
       <Field Name="Patient Identifier List" Datatype="CX" Usage="R" Min="2" Max="3" MinLength="1" MaxLength="*" ItemNo="00106"/>

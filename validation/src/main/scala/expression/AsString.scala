@@ -188,7 +188,7 @@ object AsString {
     case x: EXIST => x.list.map(toNOT(_, c)).mkString(" AND ")
     case x: FORALL => x.list.map(toNOT(_, c)).mkString(" OR ")
     case x: SetId => s"NOT ${expression(x, c)}"
-    case x => expression(x, c).replaceAllLiterally("SHALL", "SHALL not")
+    case x => expression(x, c).replace("SHALL", "SHALL not")
   }
 
   private def negateC(e: Expression, c: Element): String = e match {
@@ -201,7 +201,7 @@ object AsString {
     case x: EXIST => x.list.map(toNOTC(_, c)).mkString(" AND ")
     case x: FORALL => x.list.map(toNOTC(_, c)).mkString(" OR ")
     case x: SetId => s"NOT ${condition(x, c)}"
-    case x => condition(x, c).replaceAllLiterally("is", "is not")
+    case x => condition(x, c).replace("is", "is not")
   }
 
   private def toNOT(e: Expression, c: Element) = {

@@ -25,10 +25,10 @@ trait DefaultParser extends Parser {
       val PPR(valid, invalid, preUnexpected, separators) = t
       implicit val s = separators
       implicit val ctr = Counter(scala.collection.mutable.Map[String, Int]())
-      val (children, unexpected) = processChildren(model.structure, valid)
+      val (children, unexpected) = processChildren(model.structure, valid.map(x => Line(x._1, x._2)))
       val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
       val ils = invalid map (x => Line(x._1, x._2)) //FIXME Update PreProcessor to use Line
-      val uls = (preUnexpected ::: unexpected) map (x => Line(x._1, x._2)) //FIXME Update PreProcessor to use Line
+      val uls = (preUnexpected.map(x => Line(x._1, x._2)) ::: unexpected) //FIXME Update PreProcessor to use Line
       Message(model, children.reverse, ils, uls, tz, s)
     }
 
@@ -61,7 +61,7 @@ trait DefaultParser extends Parser {
 
   private def processGroup(gm: GM, stack: Stack)(implicit separators: Separators, ctr: Counter): (List[Group], Stack) = {
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = {
-      if (s isEmpty) (acc, s)
+      if (s.isEmpty) (acc, s)
       else if (!isExpected(s.head, gm)) (acc, s)
       else
         lookFor(gm, s.head) match {
@@ -78,7 +78,7 @@ trait DefaultParser extends Parser {
   }
 
   private def lookFor(gm: GM, l: Line)(implicit separators: Separators, ctr: Counter) =
-    (gm.structure zipWithIndex) find
+    gm.structure.zipWithIndex find
       { x => isExpected(l, x._1) } match {
         case Some((m, i)) => Some(i)
         case None => None
@@ -101,19 +101,19 @@ trait DefaultParser extends Parser {
    * @return A segment instance
    */
   private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr: Counter) =
-    Segment(m, l._2, i, l._1)
+    Segment(m, l.content, i, l.number)
 
   private def isExpected(l: Line, m: GM): Boolean = m.structure.span(_.isInstanceOf[SM]) match {
     case (Nil, grpAndOthers) => grpAndOthers.exists(isExpected(l, _))
     case (headSegments, _) => headSegments.exists(isExpected(l, _))
   }
-  private def isExpected(l: Line, m: SM ) = l._2 startsWith m.ref.name
+  private def isExpected(l: Line, m: SM ) = l.content startsWith m.ref.name
   private def isExpected(l: Line, m: SGM): Boolean = m match {
     case s : SM => isExpected(l, s)
     case g : GM => isExpected(l, g)
   }
 
-  private def isHead(l : Line, m : GM) = l._2 startsWith headName(m)
+  private def isHead(l : Line, m : GM) = l.content startsWith headName(m)
 
   /**
    * Returns the group head name

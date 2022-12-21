@@ -13,6 +13,8 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     Deserialization of length should work as expected           $len
 """
 
+  implicit val dtMap: Map[String, Datatype] = Map( "Y" -> Primitive("Y", "Y", "Y desc", "") )
+
   def field = XMLDeserializerHelper.field( 1,
       <Field
       Name="X"
@@ -116,7 +118,4 @@ class XMLDeserializerHelperSpec extends Specification  { def is =s2"""
     e.child foreach{ c => r.appendChild( toXOM( c ) ) }
     r
   }
-
-  implicit val dtMap = Map( "Y" -> Primitive("Y", "Y", "Y desc", "") )
-
 }

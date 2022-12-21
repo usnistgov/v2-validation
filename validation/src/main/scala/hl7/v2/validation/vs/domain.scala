@@ -2,7 +2,7 @@ package hl7.v2.validation.vs
 
 import java.util.{List => JList}
 
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 /**
   * Trait representing a code usage
@@ -50,12 +50,12 @@ case class ValueSet(
   def isEmpty: Boolean = codes.isEmpty
 
   def getCodes(value: String): JList[Code] =
-    seqAsJavaList( codes filter(c => c.value == value) )
+    codes.filter(c => c.value == value).asJava
 
   def contains(value: String) = codes.exists( c => c.value == value )
   
   def codesList() = {
-    seqAsJavaList(codes)
+    codes.asJava
   }
 
 }

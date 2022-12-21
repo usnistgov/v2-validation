@@ -24,8 +24,8 @@ package object instance {
     s.split( sep ) map { ss => val r = column -> ss; column += ss.length + 1; r }
   }
 
-  def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )
-
+//  def pad[T]( a: Array[T], x: T, len: Int ) = a.padTo( len, x )
+//
   sealed trait EType
   object EType{
     //case object Message extends EType { override  def toString = "Message" }

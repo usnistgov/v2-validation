@@ -1,7 +1,7 @@
 package hl7.v2.parser.impl
 
-import hl7.v2.instance.{Counter, SegOrGroup, Separators, Segment, Location, Field}
-import hl7.v2.profile.{Req => Requirement, SegRefOrGroup, Usage, Range, ValueSetSpec, SegmentRef => SM}
+import hl7.v2.instance.{Counter, Field, Line, Location, SegOrGroup, Segment, Separators}
+import hl7.v2.profile.{Range, SegRefOrGroup, Usage, ValueSetSpec, Req => Requirement, SegmentRef => SM}
 import org.specs2.{ScalaCheck, Specification}
 
 trait ParserSpecHelper extends Specification with ScalaCheck with DefaultParser {
@@ -10,7 +10,7 @@ trait ParserSpecHelper extends Specification with ScalaCheck with DefaultParser 
     val stack = PreProcessor.splitOnMSH(tc._1)._2
     implicit val s = Separators( '|', '^', '~', '\\', '&', '#')
     implicit val ctr = Counter(scala.collection.mutable.Map[String, Int]())
-    val result = processChildren(profile, stack)._1.reverse
+    val result = processChildren(profile, stack.map(x => Line(x._1, x._2)))._1.reverse
     result must containTheSameElementsAs(tc._2)
   }
 

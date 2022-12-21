@@ -5,9 +5,9 @@ import hl7.v2.instance.Query._
 import hl7.v2.instance._
 import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
 import gov.nist.validation.report.Entry
-import collection.JavaConverters._
 import scala.util.{ Failure, Success, Try }
 import java.lang.reflect.Method
+import scala.jdk.CollectionConverters.ListHasAsScala
 
 trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
 
@@ -315,7 +315,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         case Nil => Inconclusive(Trace(e, Reason(null, "No assertion to test") :: Nil))
       }
     }
-    loop(e.list toList) match {
+    loop(e.list.toList) match {
       case Fail(tr) => Failures.exist(e, context, Fail(tr))
       case Pass     => Pass
       case x        => x
@@ -336,7 +336,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         case Nil => Inconclusive(Trace(e, Reason(null, "No assertion to test") :: Nil))
       }
     }
-    loop(e.list toList) match {
+    loop(e.list.toList) match {
       case Fail(tr) => Failures.forall(e, context, Fail(tr))
       case Pass     => Pass
       case x        => x
@@ -365,8 +365,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Success(ys) => {
             
             val L = ys.foldLeft(List[(Simple, Int)]())({ (acc, l) =>
-              acc ++ (l zip (Stream from 1))
-            }) zip (Stream from 1)
+              acc ++ (l zip (LazyList from 1))
+            }) zip (LazyList from 1)
             
             
             val a = L.foldLeft(List[(Simple, Int)]()) { (acc, x) =>
