@@ -18,9 +18,11 @@ import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.Classification;
 import hl7.v2.validation.content.Constraint;
+import hl7.v2.validation.content.ConstraintStrength;
 import hl7.v2.validation.content.Predicate;
 import hl7.v2.validation.vs.TripletEntry;
 import hl7.v2.validation.vs.ValueSet;
+import scala.Option;
 
 public class ConfigurableDetections {
 	
@@ -226,29 +228,48 @@ public class ConfigurableDetections {
 		return csEntry("content-failure", errLoc, context, c, message, stack);
 	}
 
-	public  String constraintClassification(Classification c,String orElse){
-			if(c instanceof Classification.W){
-				return conf.getString("report.classification.warning");
+	public  String constraintClassification(
+			Option<Classification> classificationOption,
+			Option<ConstraintStrength> strengthOption,
+			String key){
+		String root = conf.getString(key + ".classification");
+
+		try {
+			if(classificationOption.isDefined()) {
+				Classification classification = classificationOption.get();
+				if(classification instanceof Classification.W){
+					return conf.getString("report.classification.warning");
+				}
+				else if(classification instanceof Classification.A){
+					return conf.getString("report.classification.alert");
+				}
+				else
+					return root;
 			}
-			else if(c instanceof Classification.A){
-				return conf.getString("report.classification.alert");
+
+			if(strengthOption.isDefined()) {
+				ConstraintStrength strength = strengthOption.get();
+				if(strength instanceof ConstraintStrength.SHALL){
+					return conf.getString(key + ".strength.shall");
+				}
+				else if(strength instanceof ConstraintStrength.SHOULD){
+					return conf.getString(key + ".strength.should");
+				}
+				else
+					return root;
 			}
-			else
-				return orElse;
+
+			return root;
+		} catch (Exception e) {
+			return root;
+		}
 	}
 	
 	public  Entry cntFailureCustom(Location errLoc, Element context,
 			Constraint c, List<Trace> stack, String config, String val,
 			String expected) {
 		String category = conf.getString("report.content-failure.category");
-		String classification = "";
-		String orElse = conf.getString("report.content-failure.classification");
-		if(c.classification().isDefined()){
-			classification = constraintClassification(c.classification().get(),orElse);
-		}
-		else {
-			classification = orElse;
-		}
+		String classification = constraintClassification(c.classification(), c.strength(), "report.content-failure");
 		String template = conf.getString("report.content-failure.template");
 		Map<String, Object> metaData = new HashMap<String, Object>();
 		if (c.reference().isDefined())
@@ -317,31 +338,13 @@ public class ConfigurableDetections {
 	}
 
 	public  Entry coConstraintSuccess(Element e, String descr, Expression cond, Expression exp) {
-		String category = conf.getString("report.coconstraint-success.category"); 
+		String category = conf.getString("report.coconstraint-success.category");
 		String classification = conf.getString("report.coconstraint-success.classification");
 		String template = conf.getString("report.coconstraint-success.template");
 		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
 		return entry(e.location(), desc, category, classification);
 	}
-	
-	public  Entry coConstraintFailure(Element e, String descr, Expression cond, Expression exp, Classification c) {
-		String category = conf.getString("report.coconstraint-failure.category");
-		String orElse = conf.getString("report.coconstraint-failure.classification");
-		String classification = constraintClassification(c, orElse);
-		String template = conf.getString("report.coconstraint-failure.template");
-		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e), "");
-		return entry(e.location(), desc, category, classification);
-	}
-	
-	public  Entry coConstraintFailure(Element e, String descr, Expression cond, Expression exp, Classification c, String reason) {
-		String category = conf.getString("report.coconstraint-failure.category");
-		String orElse = conf.getString("report.coconstraint-failure.classification");
-		String classification = constraintClassification(c, orElse);
-		String template = conf.getString("report.coconstraint-failure.template");
-		String desc = String.format(template, AsString.condition(cond, e), AsString.expression(exp, e),"\n. Failure reason : "+reason);
-		return entry(e.location(), desc, category, classification);
-	}
-	
+
 	public  Entry coConstraintFailure(Element e, String descr, Expression cond, Expression exp) {
 		String category = conf.getString("report.coconstraint-failure.category");
 		String classification = conf.getString("report.coconstraint-failure.classification");
@@ -576,37 +579,11 @@ public class ConfigurableDetections {
 			metaData.put("reference", c.reference().get());
 		return entry(errLoc, desc, category, classification, stack, metaData);
 	}
-	
-//	private  Entry csEntry(String configKey, Location errLoc,
-//			Element context, Constraint c, List<Trace> stack) {
-//		String category = conf.getString("report." + configKey + ".category");
-//		String classification = "";
-//		String orElse = conf.getString("report." + configKey + ".classification");
-//		if(c.classification().isDefined()){
-//			classification = constraintClassification(c.classification().get(),orElse);
-//		}
-//		else {
-//			classification = orElse;
-//		}
-//		String template = conf.getString("report." + configKey + ".template");
-//		String desc = String.format(template, c.id(), c.description());
-//		Map<String, Object> metaData = new HashMap<String, Object>();
-//		if (c.reference().isDefined())
-//			metaData.put("reference", c.reference().get());
-//		return entry(errLoc, desc, category, classification, stack, metaData);
-//	}
-	
+
 	private  Entry csEntry(String configKey, Location errLoc,
-			Element context, Constraint c, String message, List<Trace> stack) {
+						   Element context, Constraint c, String message, List<Trace> stack) {
 		String category = conf.getString("report." + configKey + ".category");
-		String classification = "";
-		String orElse = conf.getString("report." + configKey + ".classification");
-		if(c.classification().isDefined()){
-			classification = constraintClassification(c.classification().get(),orElse);
-		}
-		else {
-			classification = orElse;
-		}
+		String classification = constraintClassification(c.classification(), c.strength(), "report." + configKey);
 		String template = conf.getString("report." + configKey + ".template");
 		String desc = String.format(template, c.id(), message);
 		Map<String, Object> metaData = new HashMap<String, Object>();

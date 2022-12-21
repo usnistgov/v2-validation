@@ -250,7 +250,8 @@ object DefaultConformanceContext {
     val ref = reference(e.getFirstChildElement("Reference"))
     val desc = description(e.getFirstChildElement("Description"))
     val clas = classification(e.attribute("Classification"))
-    Constraint(id, ref, clas, desc, assertion(e))
+    val st = strength(e.attribute("Strength"))
+    Constraint(id, ref, clas, st, desc, assertion(e))
   }
   /**
    * Creates a constraint from a nu.xom.Element
@@ -319,6 +320,14 @@ object DefaultConformanceContext {
     }
     PlainCoConstraint(key, constraints)
   }
+
+  private def strength(e: String): Option[ConstraintStrength] =
+    e match {
+      case "SHALL" => Some(ConstraintStrength.SHALL())
+      case "SHOULD" => Some(ConstraintStrength.SHOULD())
+      case _ => None
+    }
+
 
   /**
    * Create an expression from a nu.xom.Element representing a Condition

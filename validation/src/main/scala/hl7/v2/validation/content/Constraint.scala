@@ -38,9 +38,17 @@ case class Constraint(
     id: String,
     reference: Option[Reference],
     classification : Option[Classification],
+    strength: Option[ConstraintStrength],
     description: String,
     assertion: Expression
 )
+
+sealed trait ConstraintStrength
+object ConstraintStrength {
+  case class SHALL() extends ConstraintStrength
+  case class SHOULD() extends ConstraintStrength
+}
+
 
 /**
   * Class representing a predicate.
