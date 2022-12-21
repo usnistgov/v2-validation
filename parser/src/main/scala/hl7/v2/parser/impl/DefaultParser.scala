@@ -22,10 +22,9 @@ trait DefaultParser extends Parser {
    */
   def parse(message: String, model: MM): Try[Message] =
     PreProcessor.process(message, model) map { t =>
-      val PPR(valid, invalid, preUnexpected, separators, ambiguous) = t
+      val PPR(valid, invalid, preUnexpected, separators) = t
       implicit val s = separators
       implicit val ctr = Counter(scala.collection.mutable.Map[String, Int]())
-      implicit val a = ambiguous
       val (children, unexpected) = processChildren(model.structure, valid)
       val tz: Option[TimeZone] = None //FIXME Get TZ from MSH.7
       val ils = invalid map (x => Line(x._1, x._2)) //FIXME Update PreProcessor to use Line
@@ -43,8 +42,9 @@ trait DefaultParser extends Parser {
    * Creates the children of a message or a group. Returns a pair consisting
    * of the list of children elements and the remaining stack.
    */
-  private def processChildren(models: List[SGM], stack: Stack)(implicit separators: Separators, ctr: Counter, ambiguous : Boolean): (LSG, Stack) = {
-    var isHead = true
+
+  protected def processChildren(models: List[SGM], stack: Stack, head: Boolean = true)(implicit separators: Separators, ctr: Counter): (LSG, Stack) = {
+    var isHead = head
     models.foldLeft((List[SegOrGroup](), stack)) { (acc, x) =>
       x match {
         case sm: SM =>
@@ -59,13 +59,14 @@ trait DefaultParser extends Parser {
     }
   }
 
-  private def processGroup(gm: GM, stack: Stack)(implicit separators: Separators, ctr: Counter, ambiguous : Boolean): (List[Group], Stack) = {
-
+  private def processGroup(gm: GM, stack: Stack)(implicit separators: Separators, ctr: Counter): (List[Group], Stack) = {
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = {
-      if (s isEmpty) (acc, s) else
-        lookFor(gm, s.head, ambiguous) match {
+      if (s isEmpty) (acc, s)
+      else if (!isExpected(s.head, gm)) (acc, s)
+      else
+        lookFor(gm, s.head) match {
           case Some(index) => {
-            val (children, ss) = processChildren(gm.structure.takeRight(gm.structure.size - index), s)
+            val (children, ss) = processChildren(gm.structure.takeRight(gm.structure.size - index), s, index == 0)
             val g = Group(gm, i, children.reverse)
             loop(g :: acc, ss, i + 1)
           }
@@ -76,19 +77,12 @@ trait DefaultParser extends Parser {
     loop(Nil, stack, 1)
   }
 
-  private def forwardLooking(gm: GM, l: Line)(implicit separators: Separators, ctr: Counter) =
+  private def lookFor(gm: GM, l: Line)(implicit separators: Separators, ctr: Counter) =
     (gm.structure zipWithIndex) find
       { x => isExpected(l, x._1) } match {
         case Some((m, i)) => Some(i)
         case None => None
       }
-
-  private def lookFor(gm: GM, l: Line, ambiguous: Boolean)(implicit separators: Separators, ctr: Counter): Option[Int] = {
-    if (!ambiguous)
-      if (isHead(l, gm)) Some(0)
-      else None
-    else forwardLooking(gm, l)
-  }
 
   private def processSegment(sm: SM, stack: Stack, isHead: Boolean)(implicit s: Separators, ctr: Counter): (List[Segment], Stack) =
     if (isHead) (segment(sm, stack.head, 1) :: Nil, stack.tail)
@@ -109,12 +103,16 @@ trait DefaultParser extends Parser {
   private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr: Counter) =
     Segment(m, l._2, i, l._1)
 
-  private def isExpected(l: Line, m: GM): Boolean = !(m.structure find(isExpected(l,_))).isEmpty
-  private def isExpected( l: Line, m: SM ) = l._2 startsWith m.ref.name
-  private def isExpected( l: Line, m: SGM): Boolean = m match {
+  private def isExpected(l: Line, m: GM): Boolean = m.structure.span(_.isInstanceOf[SM]) match {
+    case (Nil, grpAndOthers) => grpAndOthers.exists(isExpected(l, _))
+    case (headSegments, _) => headSegments.exists(isExpected(l, _))
+  }
+  private def isExpected(l: Line, m: SM ) = l._2 startsWith m.ref.name
+  private def isExpected(l: Line, m: SGM): Boolean = m match {
     case s : SM => isExpected(l, s)
     case g : GM => isExpected(l, g)
   }
+
   private def isHead(l : Line, m : GM) = l._2 startsWith headName(m)
 
   /**

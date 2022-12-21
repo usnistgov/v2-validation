@@ -11,7 +11,7 @@ import hl7.v2.profile.Usage
   * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
   */
 
-case class PPR( valid: List[Line], invalid: List[Line], unexpected : List[Line], separators: Separators, ambiguous : Boolean )
+case class PPR( valid: List[Line], invalid: List[Line], unexpected : List[Line], separators: Separators)
 
 object PreProcessor {
 
@@ -38,7 +38,7 @@ object PreProcessor {
           val (unexpected, valid) = correct partition {
             seg => segNames.filter (seg._2 startsWith _) isEmpty
           }
-          PPR(valid, beforeMSH:::invalid, unexpected, separators, ambiguous(model.structure))
+          PPR(valid, beforeMSH:::invalid, unexpected, separators)
         }
     }
  
@@ -54,28 +54,12 @@ object PreProcessor {
     }
     loop(models, Nil)
   }
-  
-  
-  def ambiguous(models: List[SGM]) : Boolean = {
-    def ambiguous = false;
-    def loop(l : List[SGM], b : Boolean) : Boolean = {
-      l match {
-        case head::list => head match { 
-          case s : SM => loop(list, b)
-          case g : GM => loop(list, b || (g.structure.head.req.usage != Usage.R) || loop(g.structure, b))
-        }
-        case Nil => b
-      }
-    }
-    loop(models, ambiguous)
-  }
-  
 
   /**
     * Splits the message into lines and returns a pair of list of lines.
     * The first list will contain all lines before the MSH segment
     */
-  private def splitOnMSH( message: String ): (List[Line], List[Line]) =
+  def splitOnMSH( message: String ): (List[Line], List[Line]) =
     ( (Stream from 1) zip lineBreak.split( message ) ).toList span { l =>
       !(l._2 startsWith "MSH")
     }

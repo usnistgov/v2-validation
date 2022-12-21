@@ -59,10 +59,10 @@ object Segment extends EscapeSeqHandler {
 
   private def mshFields( fml: List[FM], vs: Array[(Int, String)], l: Location )
                        (implicit s: Separators) = {
-    val `MSH.1` = field(l, fml.head, s"${s.fs}", 1, 4) //FIXME: Do we have to escape here ?
-    val `MSH.2` = field(l, fml.tail.head, vs(0)._2, 1, 5) //FIXME: Do we have to escape here ?
-    val _fields = fields(fml.tail.tail, vs drop 1 , l)
-    `MSH.1`.toList  :: `MSH.2`.toList :: _fields
+    val `MSH.1` = if(fml.nonEmpty) field(l, fml.head, s"${s.fs}", 1, 4).toList else Nil //FIXME: Do we have to escape here ?
+    val `MSH.2` = if(fml.nonEmpty) field(l, fml.tail.head, vs(0)._2, 1, 5).toList else Nil //FIXME: Do we have to escape here ?
+    val _fields = if(fml.nonEmpty) fields(fml.tail.tail, vs drop 1 , l).toList else Nil
+    `MSH.1`  :: `MSH.2` :: _fields
   }
 
   /**

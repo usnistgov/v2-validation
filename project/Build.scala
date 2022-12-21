@@ -31,7 +31,6 @@ object Build extends Build {
     .settings(libraryDependencies ++=
       compile(`xml-util`) ++
       compile(scala_xml) ++
-      compile(sext) ++
       test(spec2))
 
   lazy val parser = Project("hl7-v2-parser", file("parser"))
