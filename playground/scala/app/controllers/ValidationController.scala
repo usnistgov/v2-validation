@@ -2,21 +2,23 @@ package controllers
 
 import java.io.{ByteArrayInputStream, StringReader}
 import java.util.stream.Collectors
-
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import hl7.v2.profile.XMLDeserializer
 import hl7.v2.validation.{HL7Validator, ValidationContext, content}
-import hl7.v2.validation.vs.ValueSetLibraryImpl
+import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
+
 import javax.inject._
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
 import org.xml.sax.ErrorHandler
 import play.api.mvc._
 import play.api.libs.json.{Json, Reads, Writes}
-import java.net.URL
 
+import java.net.URL
 import controllers.ResourceType.{Constraints, Profile, VsLib}
 import hl7.v2.parser.impl.DefaultParser
+import hl7.v2.validation.coconstraints.EmptyCoConstraintValidationContext
+import hl7.v2.validation.slicing.EmptyProfileSlicingContext
 import service.{FormatParsedMessage, MessageNode}
 
 import scala.util.{Failure, Success, Try}
@@ -219,13 +221,13 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     }
     val vsLib = ValueSetLibraryImpl(new ByteArrayInputStream(query.vsLib.getBytes)).get
     val constraints = content.DefaultConformanceContext(new ByteArrayInputStream(query.constraints.getBytes)).get
-    val vsSpec = hl7.v2.validation.vs.DefaultValueSetSpecification(new ByteArrayInputStream(query.vsSpec.getBytes)).get
-    val coConstraints = hl7.v2.validation.coconstraints.DefaultCoConstraintValidationContext(
+    val vsSpec = if(query.vsSpec.isEmpty) EmptyValueSetSpecification else hl7.v2.validation.vs.DefaultValueSetSpecification(new ByteArrayInputStream(query.vsSpec.getBytes)).get
+    val coConstraints = if(query.coConstraints.isEmpty) EmptyCoConstraintValidationContext else hl7.v2.validation.coconstraints.DefaultCoConstraintValidationContext(
       new ByteArrayInputStream(
         query.coConstraints.getBytes
       )
     ).get
-    val slicing = hl7.v2.validation.slicing.DefaultProfileSlicingContext(
+    val slicing = if(query.slicing.isEmpty) EmptyProfileSlicingContext else hl7.v2.validation.slicing.DefaultProfileSlicingContext(
       new ByteArrayInputStream(
         query.slicing.getBytes
       ),
