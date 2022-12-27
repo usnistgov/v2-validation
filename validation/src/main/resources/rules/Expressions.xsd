@@ -32,7 +32,7 @@
 				alphanumeric</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[0-9a-zA-Z\-_]+(( *),( *)[0-9a-zA-Z\-_]+)*" />
+			<xs:pattern value="[0-9a-zA-Z\-_.\\]+(( *),( *)[0-9a-zA-Z\-_.\\]+)*" />
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -152,12 +152,14 @@
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Format" type="NonEmptyString" use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
 	<xs:complexType name="FormatType">
 		<xs:attribute name="Path" type="PathType" use="required" />
 		<xs:attribute name="Regex" type="NonEmptyString" use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
 	<xs:complexType name="NumberListType">
@@ -165,6 +167,7 @@
 		<xs:attribute name="CSV" type="CommaSeparatedNumberType"
 			use="required" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
 	<xs:complexType name="StringListType">
@@ -172,6 +175,7 @@
 		<xs:attribute name="CSV" type="CommaSeparatedStringType" use="required" />
 		<xs:attribute name="IgnoreCase" type="xs:boolean" use="optional" />
 		<xs:attribute name="AtLeastOnce" type="xs:boolean" use="optional" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
 	<xs:complexType name="SimpleValueType">
@@ -179,6 +183,7 @@
 		<xs:attribute name="Operator" type="OperatorType" use="required" />
 		<xs:attribute name="Value" type="NonEmptyString" use="required" />
 		<xs:attribute name="Type" type="ValueType" default="String" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
 	<xs:complexType name="ValueSetType">
@@ -188,6 +193,7 @@
 			use="required" />
 		<xs:attribute name="BindingLocation" type="BindingLocationType"
 			use="required" />
+		<xs:attribute name="NotPresentBehavior" type="BehaviorType" use="optional" />
 	</xs:complexType>
 	
 	<!-- ============================================================================================================= 

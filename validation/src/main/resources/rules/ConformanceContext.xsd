@@ -129,7 +129,7 @@
 	<xs:complexType name="PredicateType">
 		<xs:sequence>
 			<xs:element name="Reference" type="ReferenceType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="Description" type="NonEmptyString" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Description" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="Condition" type="AssertionType" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="optional"/>
