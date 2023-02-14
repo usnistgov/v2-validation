@@ -66,7 +66,7 @@ trait DefaultParser extends Parser {
       else
         lookFor(gm, s.head) match {
           case Some(index) => {
-            val (children, ss) = processChildren(gm.structure.takeRight(gm.structure.size - index), s, index == 0)
+            val (children, ss) = processChildren(gm.structure.takeRight(gm.structure.size - index), s, true)
             val g = Group(gm, i, children.reverse)
             loop(g :: acc, ss, i + 1)
           }

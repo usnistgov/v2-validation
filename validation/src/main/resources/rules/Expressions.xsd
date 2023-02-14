@@ -32,7 +32,7 @@
 				alphanumeric</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[0-9a-zA-Z\-_.\\]+(( *),( *)[0-9a-zA-Z\-_.\\]+)*" />
+			<xs:pattern value="[0-9a-zA-Z\-_.\\]+( +[0-9a-zA-Z\-_.\\]+)*(,[0-9a-zA-Z\-_.\\]+( +[0-9a-zA-Z\-_.\\]+)*)*" />
 		</xs:restriction>
 	</xs:simpleType>
 	
