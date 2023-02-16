@@ -53,8 +53,8 @@ object DefaultValueSetSpecification {
   }
 
   def extractFromProfile(profile: Profile): DefaultValueSetSpecification = {
-    val datatypes = profile.datatypes.mapValues(extractFromDatatype)
-    val segments = profile.segments.mapValues(extractFromSegment)
+    val datatypes = profile.datatypes.view.mapValues(extractFromDatatype).toMap
+    val segments = profile.segments.view.mapValues(extractFromSegment).toMap
     new DefaultValueSetSpecification(
       datatypes,
       segments,

@@ -14,14 +14,14 @@ trait EscapeSeqHandler {
 
     val( fs, cs, rs, ec, ss, otc) = Separators.unapply( separators ).get
 
-    val r = s.replaceAllLiterally( ec.toString, s"${ec}E$ec" )
-             .replaceAllLiterally( fs.toString, s"${ec}F$ec" )
-             .replaceAllLiterally( cs.toString, s"${ec}S$ec" )
-             .replaceAllLiterally( ss.toString, s"${ec}T$ec" )
-             .replaceAllLiterally( rs.toString, s"${ec}R$ec" )
+    val r = s.replace( ec.toString, s"${ec}E$ec" )
+             .replace( fs.toString, s"${ec}F$ec" )
+             .replace( cs.toString, s"${ec}S$ec" )
+             .replace( ss.toString, s"${ec}T$ec" )
+             .replace( rs.toString, s"${ec}R$ec" )
 
     otc match {
-      case Some(x) => r.replaceAllLiterally( x.toString, s"${ec}P$ec" )
+      case Some(x) => r.replace( x.toString, s"${ec}P$ec" )
       case None    => r
     }
   }

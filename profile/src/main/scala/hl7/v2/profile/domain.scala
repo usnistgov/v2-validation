@@ -1,7 +1,7 @@
 package hl7.v2.profile
 
 import java.util.{ Arrays => JArrays, List => JList }
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 /**
   * Trait representing a data type
@@ -55,7 +55,7 @@ case class Field( name: String, datatype: Datatype, req: Req )
   */
 case class DynMapping( position: Int, reference: Option[String], secondReference: Option[String], map: Map[(Option[String], Option[String]), Datatype] ) {
   def getDatatypes() : JList[Datatype] = {
-    seqAsJavaList( map.values.toSeq )
+    map.values.toSeq.asJava
   }
 }
 

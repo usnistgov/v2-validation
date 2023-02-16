@@ -7,8 +7,7 @@ import expression.Expression
 import hl7.v2.instance._
 import hl7.v2.profile.{ Group => GM, Segment => SM, Datatype }
 import nist.xml.util.{ XOMDocumentBuilder, ClassPathResourceResolver }
-
-import scala.collection.JavaConverters
+import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.util.{ Success, Failure, Try }
 
 class VMap[T](
@@ -127,7 +126,6 @@ object DefaultConformanceContext {
   private def xsd = getClass.getResourceAsStream("/rules/ConformanceContext.xsd")
 
   def apply(contexts: JList[InputStream]): Try[ConformanceContext] = {
-    import JavaConverters._
     val params = contexts.asScala.toList
     apply(params: _*)
   }

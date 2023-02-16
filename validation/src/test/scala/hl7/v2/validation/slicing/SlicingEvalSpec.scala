@@ -5,7 +5,7 @@ import expression.{EvalResult, PlainText}
 import hl7.v2.instance.Query.query
 import hl7.v2.validation.structure.Helpers
 import org.specs2.Specification
-import hl7.v2.instance.{ComplexField, Counter, Element, Field, Group, NULLComplexField, SegOrGroup, Segment, SimpleField, Message => MI}
+import hl7.v2.instance.{ComplexField, Counter, Element, Field, Group, Line, NULLComplexField, SegOrGroup, Segment, SimpleField, Message => MI}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{Composite, Datatype, Message, Req, Segment => SM}
 import org.specs2.matcher.MatchResult
@@ -535,7 +535,7 @@ trait SlicingEvalSpec extends Specification
     val (segOrGroups, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
-    val TARGET_SEGMENT = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).mapValues(_.head)
+    val TARGET_SEGMENT = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).view.mapValues(_.head).toMap
     expected(segOrGroups.map(_.asInstanceOf[Segment]), TARGET_SEGMENT, codes)
   }
 
@@ -988,7 +988,7 @@ trait SlicingEvalSpec extends Specification
     val (_, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
-    val TARGET = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).mapValues(_.head)
+    val TARGET = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).view.mapValues(_.head).toMap
 
     codes must containTheSameElementsAs(
       List(
@@ -1010,7 +1010,7 @@ trait SlicingEvalSpec extends Specification
     val (_, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
-    val TARGET = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).mapValues(_.head)
+    val TARGET = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).view.mapValues(_.head).toMap
 
     codes must containTheSameElementsAs(
       List(
@@ -1159,13 +1159,13 @@ trait SlicingEvalSpec extends Specification
   def mkMessage(value: String, profile: Message): LSG = {
     implicit val ambiguous: Boolean = false
     implicit val counter: Counter = Counter(scala.collection.mutable.Map())
-    processChildren(profile.structure, value.split("\n").zipWithIndex.map(x => (x._2, x._1)).toList, false)._1
+    processChildren(profile.structure, value.split("\n").zipWithIndex.map(x => Line(x._2, x._1)).toList, false)._1
   }
 
   def mkMessage(value: List[String], profile: Message): LSG = {
     implicit val ambiguous: Boolean = false
     implicit val counter: Counter = Counter(scala.collection.mutable.Map())
-    processChildren(profile.structure, value.zipWithIndex.map(x => (x._2, x._1)), false)._1
+    processChildren(profile.structure, value.zipWithIndex.map(x => Line(x._2, x._1)), false)._1
   }
 
   def assertGet(e: Element, path: String): Element = {
@@ -1175,7 +1175,7 @@ trait SlicingEvalSpec extends Specification
   }
 
   def assertGetList(e: Element, path: String): Map[Int, Element] = {
-    val element = query(e, path).get.groupBy(_.instance).mapValues(_.head)
+    val element = query(e, path).get.groupBy(_.instance).view.mapValues(_.head).toMap
     assert(element != null && element.nonEmpty)
     element
   }

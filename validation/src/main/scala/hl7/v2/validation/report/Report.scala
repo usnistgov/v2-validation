@@ -4,7 +4,7 @@ import java.util.{HashMap => JHMap, List => JList, Map => JMap}
 
 import gov.nist.validation.report.Entry
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 case class Report(
     structure: Seq[Entry],
@@ -14,9 +14,9 @@ case class Report(
 
   override def getEntries: JMap[String, JList[Entry]] = {
     val map = new JHMap[String, JList[Entry]]()
-    map.put("structure", seqAsJavaList(structure))
-    map.put("content", seqAsJavaList(content))
-    map.put("value-set", seqAsJavaList(vs))
+    map.put("structure", structure.asJava)
+    map.put("content", content.asJava)
+    map.put("value-set", vs.asJava)
     map
   }
 

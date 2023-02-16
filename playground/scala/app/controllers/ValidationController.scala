@@ -1,7 +1,6 @@
 package controllers
 
 import java.io.{ByteArrayInputStream, StringReader}
-import java.util.stream.Collectors
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import hl7.v2.profile.XMLDeserializer
 import hl7.v2.validation.{HL7Validator, ValidationContext, content}
@@ -14,19 +13,19 @@ import org.xml.sax.ErrorHandler
 import play.api.mvc._
 import play.api.libs.json.{Json, Reads, Writes}
 
-import java.net.URL
 import controllers.ResourceType.{Constraints, Profile, VsLib}
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.validation.coconstraints.EmptyCoConstraintValidationContext
 import hl7.v2.validation.slicing.EmptyProfileSlicingContext
-import service.{FormatParsedMessage, MessageNode}
+import service.FormatParsedMessage
 
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import collection.JavaConverters._
 import scala.collection.mutable
 import scala.xml.SAXParseException
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+
 
 object ResourceType extends Enumeration {
   type ResourceType = Value
@@ -118,7 +117,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     val stream = this.getClass.getResource(xsdUrl)
     val schema = factory.newSchema(stream)
     val validator = schema.newValidator()
-    val issues: mutable.ArrayStack[Entry] = mutable.ArrayStack()
+    val issues: mutable.Stack[Entry] = mutable.Stack()
     validator.setErrorHandler(
       new ErrorHandler {
         override def warning(e: SAXParseException): Unit = {
@@ -253,18 +252,17 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     validator.validate(query.message, query.id, new StringReader(query.configuration)) map {
       (result) =>
         result.getEntries.values()
-          .stream()
-          .flatMap(_.stream())
-          .collect(Collectors.toList())
-          .asScala.toList
+          .asScala
+          .toList
+          .flatMap(_.asScala)
           .map(
             v => Entry(
-              v.getCategory(),
-              v.getClassification(),
-              v.getDescription(),
-              v.getPath(),
-              v.getLine(),
-              v.getColumn()
+              v.getCategory,
+              v.getClassification,
+              v.getDescription,
+              v.getPath,
+              v.getLine,
+              v.getColumn
             )
           )
     } recover {

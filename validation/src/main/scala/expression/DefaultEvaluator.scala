@@ -7,7 +7,7 @@ import hl7.v2.profile.Range
 import hl7.v2.validation.vs.{Validator, ValueSetLibrary}
 import gov.nist.validation.report.Entry
 
-import collection.JavaConverters._
+import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.util.{Failure, Success, Try}
 import java.lang.reflect.Method
 
@@ -547,8 +547,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
           case Success(ys) => {
             
             val L = ys.foldLeft(List[(Simple, Int)]())({ (acc, l) =>
-              acc ++ (l zip (Stream from 1))
-            }) zip (Stream from 1)
+              acc ++ (l zip (LazyList from 1))
+            }) zip (LazyList from 1)
             
             
             val a = L.foldLeft(List[(Simple, Int)]()) { (acc, x) =>
@@ -654,7 +654,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
         else {
           methods.head._2.invoke(clazz.newInstance(), context).asInstanceOf[java.util.List[String]] match {
             case null => Pass
-            case str : java.util.List[String] => if(str != null && !str.isEmpty()) FailPlugin(Nil, str.asScala.toList) else Pass
+            case str : java.util.List[String] => if(str != null && !str.isEmpty) FailPlugin(Nil, str.asScala.toList) else Pass
           }
         }
       }

@@ -58,101 +58,101 @@ class OperatorSpec extends Specification { def is = s2"""
                                                        
   Text
     Equivalent
-      "ABC" EQ "AbC" should be true $te1
-      "ABC" EQ "ABC" should be true $te2
+      "ABC" EQ "AbC" should be true ${te1()}
+      "ABC" EQ "ABC" should be true ${te2()}
     Identical
-      "ABC" EQ "AbC" should be false $ti1
-      "ABC" EQ "ABC" should be true  $ti2
+      "ABC" EQ "AbC" should be false ${ti1()}
+      "ABC" EQ "ABC" should be true  ${ti2()}
     Truncated
-      "ABCD" EQ "ABC" should be true $tt1
+      "ABCD" EQ "ABC" should be true ${tt1()}
 
   Number
     Equivalent
-      "1.0" EQ "+001" should be true $ne1
-      "1.0" EQ "1.01" should be false $ne2
+      "1.0" EQ "+001" should be true ${ne1()}
+      "1.0" EQ "1.01" should be false ${ne2()}
     Identical
-      "1.0" EQ "+001" should be false $ni1
-      "1.0" EQ "1.01" should be false $ni2
-      "1.0" EQ "1.0" should be true $ni3
+      "1.0" EQ "+001" should be false ${ni1()}
+      "1.0" EQ "1.01" should be false ${ni2()}
+      "1.0" EQ "1.0" should be true ${ni3()}
     Truncated
-      "1.0" EQ "+001" should be true $nt1
-      "1.0" EQ "1.01" should be true $nt2
-      "1.0" EQ "1.0" should be true $nt3
+      "1.0" EQ "+001" should be true ${nt1()}
+      "1.0" EQ "1.01" should be true ${nt2()}
+      "1.0" EQ "1.0" should be true ${nt3()}
   Date
     Equivalent
-      "20200125" EQ "20200125" should be true $de1
-      "20200125" EQ "20200126" should be false $de2
+      "20200125" EQ "20200125" should be true ${de1()}
+      "20200125" EQ "20200126" should be false ${de2()}
     Identical
-      "20200125" EQ "20200125" should be true $di1
-      "20200125" EQ "20200126" should be false $di2
+      "20200125" EQ "20200125" should be true ${di1()}
+      "20200125" EQ "20200126" should be false ${di2()}
     Truncated
-      "202001" EQ "20200125" should be true $dt1
-      "2020" EQ "20200126" should be true $dt2
+      "202001" EQ "20200125" should be true ${dt1()}
+      "2020" EQ "20200126" should be true ${dt2()}
 
   DateTime
     Equivalent
-      "20200125102412+0000" EQ "20200125062412-0400" should be true $dte1
-      "20200125102412+0000" EQ "20200125062412+0000" should be false $dte2
-      "20200125102412" EQ "20200125062412-0400" should be true (default TZ +0000) $dte3
-      "20200125+0000" EQ "20200125-0400" should be true $dte4
-      "20200125102412" EQ "20200125102412" should be true (no default TZ) $dte5
-      "20200125102412" EQ "20200125102413" should be false (no default TZ) $dte6
-      "20200125102412" EQ "20200125102412+0000" should fail stating No TimeZone defined (no default TZ) $dte7
-      "20200127130000-0600" EQ "20200127140000-0500" should be true $dte8
+      "20200125102412+0000" EQ "20200125062412-0400" should be true ${dte1()}
+      "20200125102412+0000" EQ "20200125062412+0000" should be false ${dte2()}
+      "20200125102412" EQ "20200125062412-0400" should be true (default TZ +0000) ${dte3()}
+      "20200125+0000" EQ "20200125-0400" should be true ${dte4()}
+      "20200125102412" EQ "20200125102412" should be true (no default TZ) ${dte5()}
+      "20200125102412" EQ "20200125102413" should be false (no default TZ) ${dte6()}
+      "20200125102412" EQ "20200125102412+0000" should fail stating No TimeZone defined (no default TZ) ${dte7()}
+      "20200127130000-0600" EQ "20200127140000-0500" should be true ${dte8()}
     Identical
-      "20200125102412+0000" EQ "20200125102412+0000" should be true $dti1
-      "20200125102412+0000" EQ "20200125062412-0400" should be false $dti2
-      "20200125102412" EQ "20200125062412-0400" should be false (default TZ +0000) $dti3
-      "20200125+0000" EQ "20200125-0400" should be false $dti4
-      "20200125102412" EQ "20200125102412" should be true (no default TZ) $dti5
-      "20200125102412" EQ "20200125102413" should be false (no default TZ) $dti6
-      "20200125102412" EQ "20200125102412+0000" should fail stating No TimeZone defined (no default TZ) $dti7
+      "20200125102412+0000" EQ "20200125102412+0000" should be true ${dti1()}
+      "20200125102412+0000" EQ "20200125062412-0400" should be false ${dti2()}
+      "20200125102412" EQ "20200125062412-0400" should be false (default TZ +0000) ${dti3()}
+      "20200125+0000" EQ "20200125-0400" should be false ${dti4()}
+      "20200125102412" EQ "20200125102412" should be true (no default TZ) ${dti5()}
+      "20200125102412" EQ "20200125102413" should be false (no default TZ) ${dti6()}
+      "20200125102412" EQ "20200125102412+0000" should fail stating No TimeZone defined (no default TZ) ${dti7()}
     Truncated
-      "20200125062412+0000" EQ "20200125062412+0000" should be true $dtt1
-      "20200125062412-0400" EQ "20200125062412+0000" should be false $dtt2
-      "20200125062412" EQ "20200125062412+0000" should be true $dtt3
-      "202001250624" EQ "20200125062412+0000" should be true $dtt4
-      "2020012506" EQ "20200125062412+0000" should be true $dtt5
-      "20200125" EQ "20200125062412+0000" should be true $dtt6
-      "202001" EQ "20200125062412+0000" should be true $dtt7
-      "2020" EQ "20200125062412+0000" should be true $dtt8
-      "20200125102412+0000" EQ "202001250624-0400" should be true $dtt9
-      "20200125102412" EQ "202001250624-0400" should be true (default TZ +0000) $dtt10
-      "20200125+0000" EQ "20200125-0400" should be true $dtt11
-      "20200125+0000" EQ "20200125062412-0400" should be true $dtt12
-      "20200125102412" EQ "20200125102412" should be true (no default TZ) $dtt13
-      "2020012510" EQ "20200125102412" should be true (no default TZ) $dtt14
-      "20200125102412" EQ "20200125102413" should be false (no default TZ) $dtt15
-      "20200125102412" EQ "20200125102412+0000" should be true (no default TZ) $dtt16
+      "20200125062412+0000" EQ "20200125062412+0000" should be true ${dtt1()}
+      "20200125062412-0400" EQ "20200125062412+0000" should be false ${dtt2()}
+      "20200125062412" EQ "20200125062412+0000" should be true ${dtt3()}
+      "202001250624" EQ "20200125062412+0000" should be true ${dtt4()}
+      "2020012506" EQ "20200125062412+0000" should be true ${dtt5()}
+      "20200125" EQ "20200125062412+0000" should be true ${dtt6()}
+      "202001" EQ "20200125062412+0000" should be true ${dtt7()}
+      "2020" EQ "20200125062412+0000" should be true ${dtt8()}
+      "20200125102412+0000" EQ "202001250624-0400" should be true ${dtt9()}
+      "20200125102412" EQ "202001250624-0400" should be true (default TZ +0000) ${dtt10()}
+      "20200125+0000" EQ "20200125-0400" should be true ${dtt11()}
+      "20200125+0000" EQ "20200125062412-0400" should be true ${dtt12()}
+      "20200125102412" EQ "20200125102412" should be true (no default TZ) ${dtt13()}
+      "2020012510" EQ "20200125102412" should be true (no default TZ) ${dtt14()}
+      "20200125102412" EQ "20200125102413" should be false (no default TZ) ${dtt15()}
+      "20200125102412" EQ "20200125102412+0000" should be true (no default TZ) ${dtt16()}
                                                        
   Time
     Equivalent
-      "102412+0000" EQ "062412-0400" should be true $tte1
-      "102412+0000" EQ "062412+0000" should be false $tte2
-      "102412" EQ "062412-0400" should be true (default TZ +0000) $tte3
-      "102412" EQ "102412" should be true (no default TZ) $tte5
-      "102412" EQ "102413" should be false (no default TZ) $tte6
-      "102412" EQ "102412+0000" should fail stating No TimeZone defined (no default TZ) $tte7
-      "130000-0600" EQ "140000-0500" should be true $tte8
+      "102412+0000" EQ "062412-0400" should be true ${tte1()}
+      "102412+0000" EQ "062412+0000" should be false ${tte2()}
+      "102412" EQ "062412-0400" should be true (default TZ +0000) ${tte3()}
+      "102412" EQ "102412" should be true (no default TZ) ${tte5()}
+      "102412" EQ "102413" should be false (no default TZ) ${tte6()}
+      "102412" EQ "102412+0000" should fail stating No TimeZone defined (no default TZ) ${tte7()}
+      "130000-0600" EQ "140000-0500" should be true ${tte8()}
     Identical
-      "102412+0000" EQ "102412+0000" should be true $tti1
-      "102412+0000" EQ "062412-0400" should be false $tti2
-      "102412" EQ "062412-0400" should be false (default TZ +0000) $tti3
-      "102412" EQ "102412" should be true (no default TZ) $tti5
-      "102412" EQ "102413" should be false (no default TZ) $tti6
-      "102412" EQ "102412+0000" should fail stating No TimeZone defined (no default TZ) $tti7
+      "102412+0000" EQ "102412+0000" should be true ${{tti1()}}
+      "102412+0000" EQ "062412-0400" should be false ${tti2()}
+      "102412" EQ "062412-0400" should be false (default TZ +0000) ${tti3()}
+      "102412" EQ "102412" should be true (no default TZ) ${tti5()}
+      "102412" EQ "102413" should be false (no default TZ) ${tti6()}
+      "102412" EQ "102412+0000" should fail stating No TimeZone defined (no default TZ) ${tti7()}
     Truncated
-      "062412+0000" EQ "062412+0000" should be true $ttt1
-      "062412-0400" EQ "062412+0000" should be false $ttt2
-      "062412" EQ "062412+0000" should be true $ttt3
-      "0624" EQ "062412+0000" should be true $ttt4
-      "06" EQ "062412+0000" should be true $ttt5
-      "102412+0000" EQ "0624-0400" should be true $ttt9
-      "102412" EQ "0624-0400" should be true (default TZ +0000) $ttt10
-      "102412" EQ "102412" should be true (no default TZ) $ttt13
-      "10" EQ "102412" should be true (no default TZ) $ttt14
-      "102412" EQ "102413" should be false (no default TZ) $ttt15
-      "102412" EQ "102412+0000" should be true (no default TZ) $ttt16                                                     
+      "062412+0000" EQ "062412+0000" should be true ${ttt1()}
+      "062412-0400" EQ "062412+0000" should be false ${ttt2()}
+      "062412" EQ "062412+0000" should be true ${ttt3()}
+      "0624" EQ "062412+0000" should be true ${ttt4()}
+      "06" EQ "062412+0000" should be true ${ttt5()}
+      "102412+0000" EQ "0624-0400" should be true ${ttt9()}
+      "102412" EQ "0624-0400" should be true (default TZ +0000) ${ttt10()}
+      "102412" EQ "102412" should be true (no default TZ) ${ttt13()}
+      "10" EQ "102412" should be true (no default TZ) ${ttt14()}
+      "102412" EQ "102413" should be false (no default TZ) ${ttt15()}
+      "102412" EQ "102412+0000" should be true (no default TZ) ${ttt16()}
   """
 
   implicit val dtz: Option[TimeZone] = Some(TimeZone("+0000"))

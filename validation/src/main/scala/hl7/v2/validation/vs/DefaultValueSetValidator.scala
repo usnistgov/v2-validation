@@ -4,13 +4,14 @@ import hl7.v2.validation.report.ConfigurableDetections
 
 import scala.concurrent.Future
 import gov.nist.validation.report.Entry
-import scala.collection.JavaConverters.seqAsJavaList
+import scala.jdk.CollectionConverters.ListHasAsScala
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import hl7.v2.instance._
 import hl7.v2.profile
 
-import collection.JavaConverters._
+
 import scala.util.{Failure, Success}
 import hl7.v2.profile.{BindingStrength, Usage}
 
@@ -512,7 +513,7 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
         else Detections.bindingLocation(element.location, s"Unresolvable Code System's path ${location} from target element ${element.location.prettyString}")
       case VSValidationCode.UsageAndExtensibilityNotCompatible(code, vs) => Detections.incompatibleUsageAndExtensibility(element.location, code.value, vs.id)
       case VSValidationCode.DynamicValueSet(vs) => Detections.dynamicVs(element.location, vs.id)
-      case VSValidationCode.SingleCodeMultiLocationXOR(context, elms, sg) => Detections.singleCodeMultiLocationXOR(sg.code, sg.codeSystem, seqAsJavaList(elms), context)
+      case VSValidationCode.SingleCodeMultiLocationXOR(context, elms, sg) => Detections.singleCodeMultiLocationXOR(sg.code, sg.codeSystem, elms.asJava, context)
       case VSValidationCode.SingleCodeInvalidCodeSystem(target, code, codeSystem, sg) => Detections.singleCodeInvalidCodeSystem(sg.code, sg.codeSystem, code, codeSystem, target)
       case VSValidationCode.SingleCodeCodeSystemNotFound(context, code, location, sg) => Detections.singleCodeCSNotFound(sg.code, sg.codeSystem, code, s"""'$location'""", context)
       case VSValidationCode.SingleCodeNotFound(e, code, sg) => Detections.singleCodeCodeNotFound(sg.code, sg.codeSystem, e, e)

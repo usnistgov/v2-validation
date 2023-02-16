@@ -4,14 +4,13 @@ import Keys._
 
 ThisBuild / organization  := "gov.nist"
 ThisBuild / version       := "1.6.5-SNAPSHOT"
-ThisBuild / scalaVersion  := "2.12.10"
+ThisBuild / scalaVersion  := "2.13.10"
 ThisBuild / resolvers    ++= Dependencies.resolutionRepos
 ThisBuild / scalacOptions := Seq(
   "-encoding", "utf8",
   "-feature",
   "-unchecked",
   "-deprecation",
-  "-target:jvm-1.8",
   "-language:_",
   "-Dconfig.trace=loads",
   "-J-Xmx2g"
@@ -23,7 +22,7 @@ lazy val moduleSettings =
       publishMavenStyle := true,
       credentials += Credentials(Path.userHome / ".nexusCredentials"),
       publishTo := {
-        val nexus = "http://hit-dev-admin.nist.gov:9001/"
+        val nexus = "https://hit-nexus.nist.gov/"
         if (version.value.trim.endsWith("SNAPSHOT"))
           Some(("snapshots" at nexus + "repository/snapshots").withAllowInsecureProtocol(true))
         else
@@ -47,7 +46,9 @@ lazy val profile = Project("hl7-v2-profile", file("profile"))
     xom,
     xmlUtil,
     scala_xml,
-    spec2)
+    spec2 % "test",
+    scalaCheck % "test",
+    spec2sc % "test")
   )
 
 // ============================ PARSER MODULE ============================
@@ -84,7 +85,6 @@ lazy val playground = Project("hl7-v2-validation-playground", file("playground/s
     libraryDependencies ++= Seq(
       guice,
       json4s,
-
     ) ++ jacksonDatabindOverrides ++ jacksonOverrides ++ akkaSerializationJacksonOverrides,
     scalacOptions ++= Seq(
       "-feature",

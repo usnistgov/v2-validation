@@ -60,7 +60,7 @@ object PreProcessor {
     * The first list will contain all lines before the MSH segment
     */
   def splitOnMSH( message: String ): (List[Line], List[Line]) =
-    ( (Stream from 1) zip lineBreak.split( message ) ).toList span { l =>
+    ( (LazyList from 1) zip lineBreak.split( message ) ).toList span { l =>
       !(l._2 startsWith "MSH")
     }
 

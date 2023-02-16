@@ -11,10 +11,9 @@ import java.util.{List => JList}
 
 import com.typesafe.config.ConfigFactory
 import gov.nist.validation.report.{Entry, Trace => GTrace}
-
+import scala.jdk.CollectionConverters.SeqHasAsJava
 import scala.concurrent._
 import ExecutionContext.Implicits.global
-import scala.collection.JavaConverters.seqAsJavaList
 import scala.util.{Failure, Success}
 
 sealed trait CoConstraintValidationCode
@@ -434,14 +433,13 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   }
 
   private def stackTrace(context: Element, stack: List[Trace]): JList[GTrace] =
-    seqAsJavaList(
-      stack map { t =>
+    (stack map { t =>
         val assertion = expression.AsString.expression(t.expression, context)
         val reasons = t.reasons map { r =>
           s"[${r.location.line}, ${r.location.column}] ${r.message}"
         }
-        new GTrace(assertion, seqAsJavaList(reasons))
-    })
+        new GTrace(assertion, reasons.asJava)
+    }).asJava
 
   def describeCoConstraint(segment: String, cc: CoConstraint): String = {
     val selectors = cc.selectors.map {

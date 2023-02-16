@@ -160,7 +160,7 @@ object FormatParsedMessage {
       case gm: GM =>
         val instances = children.filter(_.position == gm.req.position).map(_.asInstanceOf[Group])
         (gm.req.position, formatGroupNode(gm, instances, full))
-    }.groupBy(_._1).mapValues(_.map(_._2).head)
+    }.groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
   }
 
   def formatSegRefOrGroupNode(grp: GM, children: List[SGM], full: Boolean): SegRefOrGroupChildren = {
@@ -171,7 +171,7 @@ object FormatParsedMessage {
       case gm: GM =>
         val instances = children.filter(_.position == gm.req.position).map(_.asInstanceOf[Group])
         (gm.req.position, formatGroupNode(gm, instances, full))
-    }.groupBy(_._1).mapValues(_.map(_._2).head)
+    }.groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
     SegRefOrGroupChildren(parsed)
   }
 
@@ -179,7 +179,7 @@ object FormatParsedMessage {
   def formatGroupNode(gm: GM, instances: List[Group], full: Boolean): GroupNode = {
     val instanceMap: Map[Int, SegRefOrGroupChildren] = instances.map(grp => {
       (grp.instance, formatSegRefOrGroupNode(gm, grp.children, full))
-    }).groupBy(_._1).mapValues(_.map(_._2).head)
+    }).groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
 
 
     GroupNode(
@@ -196,7 +196,7 @@ object FormatParsedMessage {
   def formatSegRefNode(srf: SegmentRef, instances: List[Segment], full: Boolean): SegRefNode = {
     val instanceMap: Map[Int, SegmentInstance] = instances.map(seg => {
       (seg.instance, formatSegmentInstance(srf.ref, seg.model.ref, seg, seg.children, full))
-    }).groupBy(_._1).mapValues(_.map(_._2).head)
+    }).groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
 
     SegRefNode(
       srf.req,
@@ -224,7 +224,7 @@ object FormatParsedMessage {
           (f) =>
             val instances = fields.filter(_.position == f.req.position)
             (f.req.position, formatFieldNode(f, instances))
-        }.groupBy(_._1).mapValues(_.map(_._2).head)
+        }.groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
       else
         null
     )
@@ -238,7 +238,7 @@ object FormatParsedMessage {
         case cf: ComplexField => formatComplexFieldInstance(cf)
         case nf: NULLComplexField => formatNULLComplexFieldInstance(nf)
       })
-    }).groupBy(_._1).mapValues(_.map(_._2).head)
+    }).groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
 
     FieldNode(
       fm.req,
@@ -306,7 +306,7 @@ object FormatParsedMessage {
         if(instances.size > 1) throw new Exception("Multiple instances of a component")
 
         (c.req.position, formatComponentNode(c, instances.headOption))
-    }.groupBy(_._1).mapValues(_.map(_._2).head)
+    }.groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
 
     FieldInstance(
       Ref(
@@ -371,7 +371,7 @@ object FormatParsedMessage {
             val instances = complex.children.filter(_.position == scm.req.position)
             if(instances.size > 1) throw new Exception("Multiple instances of a component")
             (scm.req.position, formatSimpleComponentNode(scm, scm.datatype.asInstanceOf[Primitive], instances.headOption))
-        }.groupBy(_._1).mapValues(_.map(_._2).head)
+        }.groupBy(_._1).view.mapValues(_.map(_._2).head).toMap
 
         ComplexComponentNode(
           cm.req,
@@ -397,96 +397,3 @@ object FormatParsedMessage {
   }
 
 }
-
-/*
-
-Complex[T] {
-  children: Map[Int, T]
-}
-
-Simple {
-  value: String
-}
-
-Repeatable[T] {
-  count: number
-  instances: Map[Int, T]
-}
-
-NonRepeatable[T] {
-  instance: T
-}
-
-Message {
-  id: String,
-  nodeType: String,
-  children: Map[Int, SegRefOrGroup]
-} extends Complex[SegRefOrGroup]
-
-SegRef {
-  name: String,
-  nodeType: String,
-  count: number,
-  instances: Map[Int, Field]
-} extends Repeatable[Field]
-
-Group {
-  name: String,
-  nodeType: String,
-  count: number,
-  instances: Map[Int, SegRefOrGroup]
-} extends Repeatable[SegRefOrGroup]
-
-ComplexField {
-  name: String,
-  nodeType: String,
-  children: Map[Int, Component]
-} extends Field with Complex[Component]
-
-SimpleField {
-  name: String,
-  nodeType: String,
-  value: String,
-} extends Field with Simple
-
-message = {
-  id: "VXU",
-  children: {
-    "1" : {
-      nodeType: "SEGMENTREF",
-      name: "MSH",
-      instances: [
-
-
-      ]
-    }
-    "2" : {
-      nodeType: "GROUP",
-      name: "ORDER",
-      populated: true,
-      count: 1,
-      instances: {
-        "1" : {
-          children : {
-            "1" : {
-              nodeType: "SEGMENTREF",
-              name: "OBX"
-            }
-          }
-        }
-      }
-    },
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
- */

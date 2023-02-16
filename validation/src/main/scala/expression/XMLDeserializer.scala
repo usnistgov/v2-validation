@@ -270,7 +270,7 @@ object XMLDeserializer extends EscapeSeqHandler {
 
   private def atLeastOnceAndRangeCheck(e: Element, range: Option[Range]): Unit = {
     range match {
-      case None => Unit
+      case None => ()
       case Some(_) =>
         if (e.attribute("AtLeastOnce") != "")
           throw new Error("AtLeastOnce and Min Max were defined, only one occurrences specification permitted, use eiter AtLeastOnce or (Min & Max)")
