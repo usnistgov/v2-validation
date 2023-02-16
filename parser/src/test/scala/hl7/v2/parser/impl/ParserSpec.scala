@@ -4,6 +4,7 @@ trait ParserSpec extends org.specs2.Specification
   with LOISpec
   with LOIv1Spec
   with VXUSpec
+  with ORUR01CNSpec
   with ORUSpec {
   def is = s2"""
      Segment & Group Parsing
@@ -26,12 +27,9 @@ trait ParserSpec extends org.specs2.Specification
 
         Test Cases
           LOI
-
                   JAIMIE_VALID_MESSAGE_LOI $JAIMIE_VALID_MESSAGE_LOI_TEST
                   JAIMIE_VALID_MESSAGE_WITH_ORDER_PRIOR_LOI $JAIMIE_VALID_MESSAGE_WITH_ORDER_PRIOR_LOI_TEST
-
           LOIv1
-
                   PT_LOIV1 $PT_LOIV1_TEST
                   SED_RATE_LOIV1 $SED_RATE_LOIV1_TEST
                   CBC_LOIV1 $CBC_LOIV1_TEST
@@ -49,9 +47,7 @@ trait ParserSpec extends org.specs2.Specification
                   ONE_ORDER_GROUP_WITH_PRIOR_RESULTS_LOIV1 $ONE_ORDER_GROUP_WITH_PRIOR_RESULTS_LOIV1_TEST
                   ONE_ORDER_GROUP_WITH_MULTIPLE_PRIOR_RESULTS_LOIV1 $ONE_ORDER_GROUP_WITH_MULTIPLE_PRIOR_RESULTS_LOIV1_TEST
                   ONE_ORDER__ONE_PRIOR_RESULT__MULTIPLE_ORDER_PRIOR_LOIV1 $ONE_ORDER__ONE_PRIOR_RESULT__MULTIPLE_ORDER_PRIOR_LOIV1_TEST
-
           ORU
-
                   SED_RATE_1_ORU $SED_RATE_1_ORU_TEST
                   SED_RATE_1__NO_ORC_ORU $SED_RATE_1__NO_ORC_ORU_TEST
                   SED_RATE_2_ORU $SED_RATE_2_ORU_TEST
@@ -63,10 +59,10 @@ trait ParserSpec extends org.specs2.Specification
                   REFLEX_1__THE_FIRST_ORC_ORU $REFLEX_1__THE_FIRST_ORC_ORU_TEST
                   REFLEX_1__THE_SECOND_ORC_PRESENT_ORU $REFLEX_1__THE_SECOND_ORC_PRESENT_ORU_TEST
                   CCHD_EXAMPLE_MESSAGE_ORU $CCHD_EXAMPLE_MESSAGE_ORU_TEST
-
           VXU
-
                   CONTEXT_FREE_EXAMPLE_VXU $CONTEXT_FREE_EXAMPLE_VXU_TEST
+          ORU
+                  CASE_NOTIFICATION $ORUR01_CN
   """
 }
 
