@@ -440,7 +440,7 @@ trait CoConstraintTableSpec  extends Specification
         createEntry(CoConstraintPlainTextFailure(None, sBinding.segments.head.bindings.head.coConstraints.head, assertGet(grp, "1[1].3[1]"), cell, "B"))
       )
     }
-    success and failure
+    success() and failure()
   }
 
   def ccMatchFailCode() = {
@@ -481,7 +481,7 @@ trait CoConstraintTableSpec  extends Specification
       )
     }
 
-    success and failureCode and failureCodeSys and failureCodeSysNf
+    success() and failureCode() and failureCodeSys() and failureCodeSysNf()
   }
 
   def ccMatchFailVs() = {
@@ -518,7 +518,7 @@ trait CoConstraintTableSpec  extends Specification
       )
     }
 
-    success and failure
+    success() and failure()
   }
 
   def requiredGrp() = {

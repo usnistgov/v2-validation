@@ -189,12 +189,12 @@ trait EvaluatorSpec
         AtLeastOnce
           AtLeastOnce
             Pass
-              ([A, "B", C], [D, "B", E, ....]) $aloTalo1
-              (["A", "B", C], ["A", "B", ....]) $aloTalo2
-              ([A, "B", C], [D, "B", "B", ....]) $aloTalo3
-              (["B", "B", "B"], ["B", "B", "B"]) $aloTalo4
+              ([A, "B", C], [D, "B", E, ....]) ${aloTalo1()}
+              (["A", "B", C], ["A", "B", ....]) ${aloTalo2()}
+              ([A, "B", C], [D, "B", "B", ....]) ${aloTalo3()}
+              (["B", "B", "B"], ["B", "B", "B"]) ${aloTalo4()}
             Fail
-              ([A, B, C], [D, E, F]) $faloTalo1
+              ([A, B, C], [D, E, F]) ${faloTalo1()}
           All
             Pass
               (["A", B, C], ["A", "A", "A", As....]) $aloTall1

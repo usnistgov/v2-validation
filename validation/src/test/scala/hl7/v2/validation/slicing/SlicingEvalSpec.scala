@@ -25,7 +25,7 @@ trait SlicingEvalSpec extends Specification
     val (fields, codes) = SEGMENT_A.children.map((child) => applyFieldSlices(SLICING, child)).foldLeft(List[Field](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
-    val TARGET_FIELD = assertGet(SEGMENT_A, SLICING.position + "[*]")
+    val TARGET_FIELD = assertGet(SEGMENT_A, s"${SLICING.position}[*]")
     expected(fields, TARGET_FIELD, codes)
   }
 
@@ -253,7 +253,7 @@ trait SlicingEvalSpec extends Specification
     val (fields, codes) = SEGMENT_A.children.map((child) => applyFieldSlices(SLICING, child)).foldLeft(List[Field](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
-    val TARGET_FIELD = assertGetList(SEGMENT_A, SLICING.position + "[*]")
+    val TARGET_FIELD = assertGetList(SEGMENT_A, s"${SLICING.position}[*]")
     expected(fields, TARGET_FIELD, codes)
   }
 

@@ -8,7 +8,7 @@ import hl7.v2.validation.vs.{CodeUsage, EmptyValueSetSpecification, InternalValu
 import java.util.{List => JList}
 import gov.nist.validation.report.{Trace => GTrace}
 
-import scala.collection.JavaConverters.seqAsJavaList
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 trait CoConstraintSpecMocks {
 
@@ -118,12 +118,11 @@ trait CoConstraintSpecMocks {
   }
 
   def stackTrace(context: Element, stack: List[Trace]): JList[GTrace] =
-    seqAsJavaList(
-      stack map { t =>
+    (stack map { t =>
         val assertion = expression.AsString.expression(t.expression, context)
         val reasons = t.reasons map { r =>
           s"[${r.location.line}, ${r.location.column}] ${r.message}"
         }
-        new GTrace(assertion, seqAsJavaList(reasons))
-      })
+        new GTrace(assertion, reasons.asJava)
+      }).asJava
 }
