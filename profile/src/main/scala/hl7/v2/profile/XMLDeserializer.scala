@@ -1,7 +1,8 @@
 package hl7.v2.profile
 
-import java.io.InputStream
+import gov.nist.hit.hl7.v2.schemas.utils.{HL7v2Schema, HL7v2SchemaResourceResolver}
 
+import java.io.InputStream
 import hl7.v2.profile.XMLDeserializerHelper.profile
 import nist.xml.util.XOMDocumentBuilder
 
@@ -16,18 +17,12 @@ import scala.util.Try
 object XMLDeserializer {
 
   /**
-    * Returns the profile XSD schema as InputStream
-    */
-//  def xsd: InputStream = getClass.getResourceAsStream("/Profile.xsd")
-  def xsd_name = "/Profile.xsd"
-
-  /**
     * Create a profile from XML
     * @param xml - The XML file
     * @return A future containing the profile object or a failure
     */
   def deserialize( xml: InputStream ): Try[Profile] = {
-    XOMDocumentBuilder.build(xml, getClass.getResourceAsStream("/Profile.xsd")) map { doc => profile( doc.getRootElement ) }
+    XOMDocumentBuilder.build(xml, HL7v2Schema.getProfile) map { doc => profile( doc.getRootElement ) }
   }
     
 }

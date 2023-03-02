@@ -1,7 +1,8 @@
 package hl7.v2.validation.coconstraints
 
-import java.io.InputStream
+import gov.nist.hit.hl7.v2.schemas.utils.{HL7v2Schema, HL7v2SchemaResourceResolver}
 
+import java.io.InputStream
 import hl7.v2.instance.Message
 import hl7.v2.profile.Range
 import hl7.v2.validation.vs.DefaultValueSetSpecification
@@ -24,12 +25,11 @@ object DefaultCoConstraintValidationContext {
   /**
     * The resource resolver
     */
-  private val resourceResolver = Some(new ClassPathResourceResolver("/rules"))
-
+  private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
   /**
     * The XSD schema
     */
-  private def xsd = getClass.getResourceAsStream("/rules/CoConstraintContext.xsd")
+  private val xsd = HL7v2Schema.getCoConstraints
 
   def apply(context: InputStream): Try[CoConstraintValidationContext] = {
     Failure(new Exception())

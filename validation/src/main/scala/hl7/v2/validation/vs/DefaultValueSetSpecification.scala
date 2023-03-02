@@ -1,9 +1,10 @@
 package hl7.v2.validation.vs
 
-import java.io.InputStream
+import gov.nist.hit.hl7.v2.schemas.utils.{HL7v2Schema, HL7v2SchemaResourceResolver}
 
+import java.io.InputStream
 import hl7.v2.instance.{Component, Element, Field, Group, Path, Segment}
-import hl7.v2.profile.{BindingLocation => BL, BindingStrength, Composite, Datatype, Segment => SM, Profile, ValueSetSpec}
+import hl7.v2.profile.{BindingStrength, Composite, Datatype, Profile, ValueSetSpec, BindingLocation => BL, Segment => SM}
 import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
 import nist.xml.util.XOMExtensions._
 
@@ -35,10 +36,18 @@ class DefaultValueSetSpecification(
 
 object DefaultValueSetSpecification {
 
-  private val resourceResolver = Some(new ClassPathResourceResolver("/rules"))
+  /**
+   * The resource resolver
+   */
+  private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
+
+  /**
+   * The XSD schema
+   */
+  private val xsd = HL7v2Schema.getValueSetBindings
 
   def apply(context: InputStream): Try[ValueSetSpecification] = {
-    XOMDocumentBuilder.build(context, getClass.getResourceAsStream("/rules/ValueSetBindings.xsd"), resourceResolver) map { doc =>
+    XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
       val vsBindingsRoot = doc.getRootElement.getFirstChildElement("ValueSetBindings")
       val sgBindingsRoot = doc.getRootElement.getFirstChildElement("SingleCodeBindings")
 

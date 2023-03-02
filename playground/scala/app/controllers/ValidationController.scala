@@ -8,12 +8,12 @@ import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
 
 import javax.inject._
 import javax.xml.transform.stream.StreamSource
-import javax.xml.validation.SchemaFactory
+import javax.xml.validation.{Schema, SchemaFactory}
 import org.xml.sax.ErrorHandler
 import play.api.mvc._
 import play.api.libs.json.{Json, Reads, Writes}
-
 import controllers.ResourceType.{Constraints, Profile, VsLib}
+import gov.nist.hit.hl7.v2.schemas.utils.HL7v2Schema
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.validation.coconstraints.EmptyCoConstraintValidationContext
 import hl7.v2.validation.slicing.EmptyProfileSlicingContext
@@ -82,13 +82,6 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
   implicit val parseReads: Reads[ParseQuery] = Json.reads[ParseQuery]
   implicit val parseWrites: Writes[ParseQuery] = Json.writes[ParseQuery]
 
-  val PROFIL_XSD = "/Profile.xsd"
-  val VSLIB_XSD = "/rules/ValueSets.xsd"
-  val CONSTRAINTS_XSD = "/rules/ConformanceContext.xsd"
-  val COCONSTRAINT_XSD = "/rules/CoConstraintContext.xsd"
-  val VSPEC_XSD = "/rules/ValueSetBindings.xsd"
-  val SLICING_XSD = "/rules/ProfileSlicing.xsd"
-
   def index(ignored: String) = Action {
     Ok.sendResource("public/index.html", this.getClass.getClassLoader)
   }
@@ -111,11 +104,8 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     )
   }
 
-  def validateXML(xmlFile: String, xsdUrl: String, category: String): ResourceCheckResult = {
+  def validateXML(xmlFile: String, schema: Schema, category: String): ResourceCheckResult = {
     val schemaLang = "http://www.w3.org/2001/XMLSchema"
-    val factory = SchemaFactory.newInstance(schemaLang)
-    val stream = this.getClass.getResource(xsdUrl)
-    val schema = factory.newSchema(stream)
     val validator = schema.newValidator()
     val issues: mutable.Stack[Entry] = mutable.Stack()
     validator.setErrorHandler(
@@ -179,12 +169,12 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
 
   def check(content: String, rType: ResourceType): ResourceCheckResult = {
     rType match {
-      case Profile => validateXML(content, PROFIL_XSD, "Profile")
-      case Constraints => validateXML(content, CONSTRAINTS_XSD, "Constraints")
-      case VsLib => validateXML(content, VSLIB_XSD, "Value Set Library")
-      case ValueSetSpec => validateXML(content, VSPEC_XSD, "Value Set Bindings")
-      case CoConstraints => validateXML(content, COCONSTRAINT_XSD, "Co-Constraints")
-      case Slicing => validateXML(content, SLICING_XSD, "Slicing")
+      case Profile => validateXML(content, HL7v2Schema.getProfileSchema, "Profile")
+      case Constraints => validateXML(content, HL7v2Schema.getConformanceContextSchema, "Constraints")
+      case VsLib => validateXML(content, HL7v2Schema.getValueSetLibrarySchema, "Value Set Library")
+      case ValueSetSpec => validateXML(content, HL7v2Schema.getValueSetBindingsSchema, "Value Set Bindings")
+      case CoConstraints => validateXML(content, HL7v2Schema.getCoConstraintsSchema, "Co-Constraints")
+      case Slicing => validateXML(content, HL7v2Schema.getSlicingSchema, "Slicing")
       case Configuration => Try {
         ConfigFactory.parseReader(new StringReader(content)).resolve()
       } match {

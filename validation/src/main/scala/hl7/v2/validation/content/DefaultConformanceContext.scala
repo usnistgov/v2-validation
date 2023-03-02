@@ -1,14 +1,15 @@
 package hl7.v2.validation.content
 
 import java.io.InputStream
-import java.util.{ List => JList }
-
+import java.util.{List => JList}
 import expression.Expression
+import gov.nist.hit.hl7.v2.schemas.utils.{HL7v2Schema, HL7v2SchemaResourceResolver}
 import hl7.v2.instance._
-import hl7.v2.profile.{ Group => GM, Segment => SM, Datatype }
-import nist.xml.util.{ XOMDocumentBuilder, ClassPathResourceResolver }
+import hl7.v2.profile.{Datatype, Group => GM, Segment => SM}
+import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
+
 import scala.jdk.CollectionConverters.ListHasAsScala
-import scala.util.{ Success, Failure, Try }
+import scala.util.{Failure, Success, Try}
 
 class VMap[T](
     val groupByID: Map[String, List[T]],
@@ -118,12 +119,12 @@ object DefaultConformanceContext {
   /**
    * The resource resolver
    */
-  private val resourceResolver = Some(new ClassPathResourceResolver("/rules"))
+  private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
 
   /**
    * The XSD schema
    */
-  private def xsd = getClass.getResourceAsStream("/rules/ConformanceContext.xsd")
+  private val xsd = HL7v2Schema.getConformanceContext
 
   def apply(contexts: JList[InputStream]): Try[ConformanceContext] = {
     val params = contexts.asScala.toList
@@ -147,7 +148,7 @@ object DefaultConformanceContext {
     } catch { case e: Throwable => Failure(e) }
 
   private def vMaps(confContext: InputStream): Try[(VMap[Constraint], VMap[Predicate], List[Context], VMap[CoConstraint])] =
-    XOMDocumentBuilder.build(confContext, getClass.getResourceAsStream("/rules/ConformanceContext.xsd"), resourceResolver) map { doc =>
+    XOMDocumentBuilder.build(confContext, xsd, resourceResolver) map { doc =>
       (constraints(doc), predicates(doc), orderIndifferent(doc), coConstraints(doc))
     }
 

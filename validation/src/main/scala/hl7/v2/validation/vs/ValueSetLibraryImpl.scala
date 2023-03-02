@@ -1,5 +1,7 @@
 package hl7.v2.validation.vs
 
+import gov.nist.hit.hl7.v2.schemas.utils.HL7v2Schema
+
 import java.io.InputStream
 import nist.xml.util.XOMDocumentBuilder
 
@@ -24,13 +26,13 @@ object ValueSetLibraryImpl {
 
   import nist.xml.util.XOMExtensions._
 
-  private val xsd = getClass.getResourceAsStream("/vs/ValueSets.xsd")
+  private val xsd = HL7v2Schema.getValueSetLibrary
 
   /**
    * Builds and returns the value set map from the XML file
    */
   def apply(vsXML: InputStream): Try[ValueSetLibrary] = {
-    XOMDocumentBuilder.build( vsXML, getClass.getResourceAsStream("/rules/ValueSets.xsd") ) map { doc =>
+    XOMDocumentBuilder.build( vsXML, xsd ) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
       //val tblSet   = root.getFirstChildElement("ValueSetDefinitions")

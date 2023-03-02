@@ -1,11 +1,13 @@
 package hl7.v2.validation.slicing
 
-import java.io.InputStream
+import gov.nist.hit.hl7.v2.schemas.utils.{HL7v2Schema, HL7v2SchemaResourceResolver}
 
+import java.io.InputStream
 import hl7.v2.instance
 import hl7.v2.instance.Group
 import hl7.v2.profile.{Datatype, Profile, Segment}
 import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
+
 import scala.util.{Failure, Try}
 
 class DefaultProfileSlicingContext(
@@ -37,11 +39,19 @@ class DefaultProfileSlicingContext(
 }
 
 object DefaultProfileSlicingContext {
-  private val resourceResolver = Some(new ClassPathResourceResolver("/rules"))
+  /**
+   * The resource resolver
+   */
+  private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
+
+  /**
+   * The XSD schema
+   */
+  private val xsd = HL7v2Schema.getSlicing
 
   def apply(context: InputStream, profile: Profile): Try[DefaultProfileSlicingContext] = {
     try {
-      XOMDocumentBuilder.build(context, getClass.getResourceAsStream("/rules/ProfileSlicing.xsd"), resourceResolver) map { doc =>
+      XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
         implicit val p: Profile = profile;
         val (segments, fields) = SlicingXMLDeserializer.deserialize(doc)
         new DefaultProfileSlicingContext(

@@ -46,6 +46,7 @@ lazy val profile = Project("hl7-v2-profile", file("profile"))
     xom,
     xmlUtil,
     scala_xml,
+    schemas,
     spec2 % "test",
     scalaCheck % "test",
     spec2sc % "test")
