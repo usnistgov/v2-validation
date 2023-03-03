@@ -1,30 +1,25 @@
-#HL7 Validation Library
+# HL7 Validation Library
 
-##Dependencies : 
+### Dependencies
 
-The project has two external dependencies : 
+#### xml-util
 
-__xml-util__
+* __GitHub Repository__ : https://github.com/usnistgov/xml-util
+* __Version__ : 2.1.0
 
--*repo* : https://github.com/usnistgov/xml-util
+#### validation-report
 
--*jar location* : /xml-util-1.0.1-SNAPSHOT.jar
+* __GitHub Repository__ : https://github.com/usnistgov/validation-report
+* __Version__ : 1.1.0
 
-__validation-report__
+#### hl7-v2-schemas
 
--*repo* : https://github.com/usnistgov/validation-report
+* __GitHub Repository__ : https://github.com/usnistgov/hl7-v2-schemas
+* __Version__ : 1.6.0
 
--*jar location* : /validation-report-1.0.0.jar
-
-##Build : 
+### Build
 
 1) First install Scala Build Tool (sbt) : http://www.scala-sbt.org/
-
-
 2) Run "sbt" command on project root directory
-
-
 3) To run tests you can use "test" command
-
-
 4) To build the tool you can use "compile" command

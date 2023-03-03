@@ -3,7 +3,8 @@ import sbt._
 object Dependencies {
 
   val resolutionRepos = Seq(
-    "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
+    "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
+    "HIT Nexus" at "https://hit-nexus.nist.gov/repository/releases"
   )
 
   val jacksonVersion = "2.13.4" // or 2.12.7
