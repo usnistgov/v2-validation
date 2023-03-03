@@ -11,6 +11,7 @@ object Usage {
   case object O  extends Usage { override def toString = "O"  }
   case object B  extends Usage { override def toString = "B"  }
   case object W  extends Usage { override def toString = "W"  }
+  case object IX  extends Usage { override def toString = "IX"  }
 
   def fromString( s: String ): Usage = s match {
     case "O"  => O
@@ -20,6 +21,7 @@ object Usage {
     case "W"  => W
     case "X"  => X
     case "RE" => RE
+    case "IX" => IX
     case  _   => throw new Error(s"Invalid usage '${s}'")
   }
 }
