@@ -121,11 +121,6 @@ object DefaultConformanceContext {
    */
   private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
 
-  /**
-   * The XSD schema
-   */
-  private val xsd = HL7v2Schema.getConformanceContext
-
   def apply(contexts: JList[InputStream]): Try[ConformanceContext] = {
     val params = contexts.asScala.toList
     apply(params: _*)
@@ -148,7 +143,7 @@ object DefaultConformanceContext {
     } catch { case e: Throwable => Failure(e) }
 
   private def vMaps(confContext: InputStream): Try[(VMap[Constraint], VMap[Predicate], List[Context], VMap[CoConstraint])] =
-    XOMDocumentBuilder.build(confContext, xsd, resourceResolver) map { doc =>
+    XOMDocumentBuilder.build(confContext, HL7v2Schema.getConformanceContext, resourceResolver) map { doc =>
       (constraints(doc), predicates(doc), orderIndifferent(doc), coConstraints(doc))
     }
 

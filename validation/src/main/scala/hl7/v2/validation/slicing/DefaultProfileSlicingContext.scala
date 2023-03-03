@@ -44,14 +44,9 @@ object DefaultProfileSlicingContext {
    */
   private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
 
-  /**
-   * The XSD schema
-   */
-  private val xsd = HL7v2Schema.getSlicing
-
   def apply(context: InputStream, profile: Profile): Try[DefaultProfileSlicingContext] = {
     try {
-      XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
+      XOMDocumentBuilder.build(context, HL7v2Schema.getSlicing, resourceResolver) map { doc =>
         implicit val p: Profile = profile;
         val (segments, fields) = SlicingXMLDeserializer.deserialize(doc)
         new DefaultProfileSlicingContext(

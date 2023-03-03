@@ -41,13 +41,8 @@ object DefaultValueSetSpecification {
    */
   private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
 
-  /**
-   * The XSD schema
-   */
-  private val xsd = HL7v2Schema.getValueSetBindings
-
   def apply(context: InputStream): Try[ValueSetSpecification] = {
-    XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
+    XOMDocumentBuilder.build(context, HL7v2Schema.getValueSetBindings, resourceResolver) map { doc =>
       val vsBindingsRoot = doc.getRootElement.getFirstChildElement("ValueSetBindings")
       val sgBindingsRoot = doc.getRootElement.getFirstChildElement("SingleCodeBindings")
 

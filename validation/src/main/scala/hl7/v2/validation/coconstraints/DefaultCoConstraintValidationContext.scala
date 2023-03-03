@@ -26,14 +26,10 @@ object DefaultCoConstraintValidationContext {
     * The resource resolver
     */
   private val resourceResolver = Some(new HL7v2SchemaResourceResolver())
-  /**
-    * The XSD schema
-    */
-  private val xsd = HL7v2Schema.getCoConstraints
 
   def apply(context: InputStream): Try[CoConstraintValidationContext] = {
     Failure(new Exception())
-    XOMDocumentBuilder.build(context, xsd, resourceResolver) map { doc =>
+    XOMDocumentBuilder.build(context, HL7v2Schema.getCoConstraints, resourceResolver) map { doc =>
       new DefaultCoConstraintValidationContext(parse(doc))
     }
   }

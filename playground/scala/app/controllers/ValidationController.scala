@@ -256,8 +256,11 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
             )
           )
     } recover {
-      case e => List {
-        Entry("Message Validation Failure", "Error", e.getMessage, "", 0, 0)
+      case e => {
+        e.printStackTrace();
+        List {
+          Entry("Message Validation Failure", "Error", e.getMessage, "", 0, 0)
+        }
       }
     }
   }

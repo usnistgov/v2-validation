@@ -78,9 +78,12 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
             case Failure(_) => acc
             case Success(dynElems) =>
 
-              val entries = dynElems.map {
-                case sf: SimpleField => Detections.dynMappingNote(sf.location, sf.datatype.id, referenceValues)
-                case cf: ComplexField => Detections.dynMappingNote(cf.location, cf.datatype.id, referenceValues)
+              val entries = dynElems.foldLeft(List[Entry]()) {
+                (acc, elm) => elm match {
+                  case sf: SimpleField => Detections.dynMappingNote(sf.location, sf.datatype.id, referenceValues) :: acc
+                  case cf: ComplexField => Detections.dynMappingNote(cf.location, cf.datatype.id, referenceValues) :: acc
+                  case _ => Nil
+                }
               }
 
               entries ::: acc

@@ -3,7 +3,7 @@ import sbt._
 import Keys._
 
 ThisBuild / organization  := "gov.nist"
-ThisBuild / version       := "1.6.0"
+ThisBuild / version       := "1.6.2"
 ThisBuild / scalaVersion  := "2.13.10"
 ThisBuild / resolvers    ++= Dependencies.resolutionRepos
 ThisBuild / scalacOptions := Seq(
