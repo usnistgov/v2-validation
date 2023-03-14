@@ -1,0 +1,8 @@
+# Routes
+POST    /api/validate                           controllers.ValidationController.validation()
+POST    /api/parse                              controllers.ValidationController.parseMessage()
+POST    /api/checkResource                      controllers.ValidationController.checkResource()
+GET     /api/loadVxuExample                     controllers.ValidationController.loadVxuExample()
+GET     /public/*file                           controllers.Assets.at(path="/public", file)
+GET     /                                       controllers.ValidationController.index(ignored="")
+GET     /*ignored                               controllers.ValidationController.index(ignored)

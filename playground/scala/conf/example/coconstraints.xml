@@ -1,0 +1,146 @@
+<CoConstraintContext>
+    <ByMessage ID="aa72383a-7b48-46e5-a74a-82e019591fe7">
+        <Context Name="ORDER" Path="9[*]">
+            <Segment Name="OBX" Path="5[*].1[*]">
+                <SimpleTable>
+                    <!-- Individual Co-Constraints -->
+                    <CoConstraint Usage="O" Min="0" Max="*">
+                        <Selectors>
+                            <Code Path="3[1]" Name="OBX-3" Code="31044-1" CodeSystem="LN">
+                                <BindingLocation Position="1" CodePath="1[1]" CodeSystemPath="3[1]" />
+                                <BindingLocation Position="4" CodePath="4[1]" CodeSystemPath="6[1]" />
+                                <BindingLocation Position="10" CodePath="10[1]" CodeSystemPath="12[1]" />
+                            </Code>
+                        </Selectors>
+                        <Constraints>
+                            <PlainText Path="2[1]" Name="OBX-2" Value="CE" />
+                            <ValueSet Path="5[1]" Name="OBX-5">
+                                <ValueSetBinding Target="." BindingStrength="R">
+                                    <BindingLocations>
+                                        <ComplexBindingLocation CodeLocation="1[1]" CodeSystemLocation="3[1]" />
+                                        <ComplexBindingLocation CodeLocation="4[1]" CodeSystemLocation="6[1]" />
+                                        <ComplexBindingLocation CodeLocation="10[1]" CodeSystemLocation="12[1]" />
+                                    </BindingLocations>
+                                    <Bindings>
+                                        <Binding BindingIdentifier="PHVS_VaccinationReaction_IIS" />
+                                    </Bindings>
+                                </ValueSetBinding>
+                            </ValueSet>
+                        </Constraints>
+                    </CoConstraint>
+                    <CoConstraint Usage="O" Min="0" Max="*">
+                        <Selectors>
+                            <Code Path="3[1]" Name="OBX-3" Code="48767-8" CodeSystem="LN">
+                                <BindingLocation Position="1" CodePath="1[1]" CodeSystemPath="3[1]" />
+                                <BindingLocation Position="4" CodePath="4[1]" CodeSystemPath="6[1]" />
+                                <BindingLocation Position="10" CodePath="10[1]" CodeSystemPath="12[1]" />
+                            </Code>
+                        </Selectors>
+                        <Constraints>
+                            <PlainText Path="2[1]" Name="OBX-2" Value="TX" />
+                        </Constraints>
+                    </CoConstraint>
+                </SimpleTable>
+                <ConditionalTable>
+                    <CoConstraintGroupId>
+                        <IdPath Priority="1" Path="4[1]" Name="OBX-4" />
+                    </CoConstraintGroupId>
+                    <Condition>
+                        <Description>If new immunization</Description>
+                        <Assertion>
+                            <PlainText Path="3[1].9[1].1[1]" Text="00" />
+                        </Assertion>
+                    </Condition>
+                    <CoConstraintGroup Name="Eligibility" Usage="R" Min="1" Max="1">
+                        <Primary Usage="R" Min="1" Max="1">
+                            <Selectors>
+                                <Code Path="3[1]" Name="OBX-3" Code="64994-7" CodeSystem="LN">
+                                    <BindingLocation Position="1" CodePath="1[1]" CodeSystemPath="3[1]" />
+                                    <BindingLocation Position="4" CodePath="4[1]" CodeSystemPath="6[1]" />
+                                    <BindingLocation Position="10" CodePath="10[1]" CodeSystemPath="12[1]" />
+                                </Code>
+                            </Selectors>
+                            <Constraints>
+                                <PlainText Path="2[1]" Name="OBX-2" Value="CE" />
+                                <ValueSet Path="5[1]" Name="OBX-5">
+                                    <ValueSetBinding Target="." BindingStrength="R">
+                                        <BindingLocations>
+                                            <ComplexBindingLocation CodeLocation="1[1]" CodeSystemLocation="3[1]" />
+                                            <ComplexBindingLocation CodeLocation="4[1]" CodeSystemLocation="6[1]" />
+                                            <ComplexBindingLocation CodeLocation="10[1]" CodeSystemLocation="12[1]" />
+                                        </BindingLocations>
+                                        <Bindings>
+                                            <Binding BindingIdentifier="HL70064_IZ" />
+                                        </Bindings>
+                                    </ValueSetBinding>
+                                </ValueSet>
+                            </Constraints>
+                        </Primary>
+                        <CoConstraint Usage="R" Min="1" Max="1">
+                            <Selectors>
+                                <Code Path="3[1]" Name="OBX-3" Code="30963-3" CodeSystem="LN">
+                                    <BindingLocation Position="1" CodePath="1[1]" CodeSystemPath="3[1]" />
+                                    <BindingLocation Position="4" CodePath="4[1]" CodeSystemPath="6[1]" />
+                                    <BindingLocation Position="10" CodePath="10[1]" CodeSystemPath="12[1]" />
+                                </Code>
+                            </Selectors>
+                            <Constraints>
+                                <PlainText Path="2[1]" Name="OBX-2" Value="CE" />
+                                <ValueSet Path="5[1]" Name="OBX-5">
+                                    <ValueSetBinding Target="." BindingStrength="R">
+                                        <BindingLocations>
+                                            <ComplexBindingLocation CodeLocation="1[1]" CodeSystemLocation="3[1]" />
+                                            <ComplexBindingLocation CodeLocation="4[1]" CodeSystemLocation="6[1]" />
+                                            <ComplexBindingLocation CodeLocation="10[1]" CodeSystemLocation="12[1]" />
+                                        </BindingLocations>
+                                        <Bindings>
+                                            <Binding BindingIdentifier="PHVS_ImmunizationFundingSource_IIS" />
+                                        </Bindings>
+                                    </ValueSetBinding>
+                                </ValueSet>
+                            </Constraints>
+                        </CoConstraint>
+                    </CoConstraintGroup>
+                    <CoConstraintGroup Name="VIS" Usage="R" Min="1" Max="*">
+                        <Primary Usage="R" Min="1" Max="1">
+                            <Selectors>
+                                <Code Path="3[1]" Name="OBX-3" Code="69764-9" CodeSystem="LN">
+                                    <BindingLocation Position="1" CodePath="1[1]" CodeSystemPath="3[1]" />
+                                    <BindingLocation Position="4" CodePath="4[1]" CodeSystemPath="6[1]" />
+                                    <BindingLocation Position="10" CodePath="10[1]" CodeSystemPath="12[1]" />
+                                </Code>
+                            </Selectors>
+                            <Constraints>
+                                <PlainText Path="2[1]" Name="OBX-2" Value="CE" />
+                                <ValueSet Path="5[1]" Name="OBX-5">
+                                    <ValueSetBinding Target="." BindingStrength="R">
+                                        <BindingLocations>
+                                            <ComplexBindingLocation CodeLocation="1[1]" CodeSystemLocation="3[1]" />
+                                            <ComplexBindingLocation CodeLocation="4[1]" CodeSystemLocation="6[1]" />
+                                            <ComplexBindingLocation CodeLocation="10[1]" CodeSystemLocation="12[1]" />
+                                        </BindingLocations>
+                                        <Bindings>
+                                            <Binding BindingIdentifier="PHVS_VISBarcodes_IIS" />
+                                        </Bindings>
+                                    </ValueSetBinding>
+                                </ValueSet>
+                            </Constraints>
+                        </Primary>
+                        <CoConstraint Usage="R" Min="1" Max="1">
+                            <Selectors>
+                                <Code Path="3[1]" Name="OBX-3" Code="29769-7" CodeSystem="LN">
+                                    <BindingLocation Position="1" CodePath="1[1]" CodeSystemPath="3[1]" />
+                                    <BindingLocation Position="4" CodePath="4[1]" CodeSystemPath="6[1]" />
+                                    <BindingLocation Position="10" CodePath="10[1]" CodeSystemPath="12[1]" />
+                                </Code>
+                            </Selectors>
+                            <Constraints>
+                                <PlainText Path="2[1]" Name="OBX-2" Value="DT" />
+                            </Constraints>
+                        </CoConstraint>
+                    </CoConstraintGroup>
+                </ConditionalTable>
+            </Segment>
+        </Context>
+    </ByMessage>
+</CoConstraintContext>

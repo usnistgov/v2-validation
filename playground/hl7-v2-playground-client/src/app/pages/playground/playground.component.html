@@ -1,0 +1,89 @@
+<block-ui>
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div style="height: 50px; display: flex; align-items: center; justify-content: center;">
+        <span style="color: #eeeeee;">
+          <i [class]="'fa fa-play'" aria-hidden="true" style="margin-right: 5px;" [ngStyle]="{ 'color' : 'red'}"></i> Playground
+        </span>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li
+        *ngFor="let item of tabList"
+        class="list-group-item dark cursor-pointer"
+        (click)="select(item.value)"
+        [ngClass]="{ 'active-dark': item.value === activeTab  }">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="status" [ngClass]="{
+              'status-valued' : content[item.value].status === status.VALUED,
+              'status-empty' : content[item.value].status === status.EMPTY,
+              'status-invalid' : content[item.value].status === status.INVALID,
+              'status-valid' : content[item.value].status === status.VALID
+            }" ></div>
+            <span style="width: 100%; text-align: center;">{{ item.text }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div style="margin-left: 5px;">
+          <button class="btn btn-primary btn-tool" (click)="loadExampleVXU()" > Load VXU Z22 2.5 Resources and Example Message </button>
+          <div style="display: inline;" class="btn-tool">
+            <label for="resource-file" class="custom-file-upload btn btn-info">
+              Load Resource From File ({{activeTab}})
+            </label>
+            <input id="resource-file" type="file" (change)="loadResourceFromFile($event, activeTab)"/>
+          </div>
+          <div style="display: inline;" class="btn-tool">
+            <label for="bundle" class="custom-file-upload btn btn-warning">
+              Load Bundle (ZIP)
+            </label>
+            <input id="bundle" type="file" (change)="loadZipBundle($event)"/>
+          </div>
+        </div>
+        <div>
+          <ng-container *ngIf="activeTab !== resourceType.MESSAGE">
+            <button class="btn btn-success btn-tool" (click)="checkResource(activeTab)"> Validate Resource </button>
+            <button class="btn btn-primary btn-tool" (click)="format(activeTab)"> Format </button>
+          </ng-container>
+          <ng-container *ngIf="activeTab === resourceType.MESSAGE">
+            <button class="btn btn-primary btn-tool" (click)="parseMessage()" > Parse Message </button>
+            <button class="btn btn-success btn-tool" (click)="validate()" > Validate </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- EDITOR AREA -->
+      <div class="editor">
+        <div class="resource-editor">
+
+          <div class="resource">
+            <ngx-codemirror
+              [(ngModel)]="content[activeTab].text"
+              (ngModelChange)="edit($event, activeTab)"
+              [options]="activeTab === resourceType.MESSAGE ? hl7EditorOptions : activeTab === resourceType.CONFIGURATION ? confEditorOptions : xmlEditorOptions"
+            ></ngx-codemirror>
+          </div>
+
+          <!-- DETECTIONS -->
+          <div class="detections-container" *ngIf="content[activeTab].issuesVisible">
+            <div class="detections-banner">
+              <strong class="detections-label">Detections</strong>
+              <button class="btn btn-sm btn-danger" (click)="hideIssues(activeTab)">Close</button>
+            </div>
+            <app-validation-result [detections]="content[activeTab].issues" ></app-validation-result>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</block-ui>
+

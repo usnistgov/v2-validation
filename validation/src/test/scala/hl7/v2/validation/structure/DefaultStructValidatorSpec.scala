@@ -1,0 +1,8 @@
+package hl7.v2.validation.structure
+
+object DefaultStructValidatorSpec extends StructValidationSpec with DefaultValidator
+object NullValidatorSpec extends NullValidationSpec with DefaultValidator
+object DefaultValueSetValidationSpec extends ValueSetValidationSpec
+object DefaultSingleCodeValidationSpec extends SingleCodeValidationSpec
+object VSValidationConfigurationSpec extends ValueSetValidationDefaultConfigurationSpec
+object VSValidationConfigurationSpec2 extends ValueSetValidationDefaultConfigurationSpec2

@@ -1,0 +1,33 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.singleQuote": true,
+  "prettier.bracketSpacing": true,
+  "editor.fontLigatures": true,
+  "editor.fontFamily": "Fira Code",
+  "editor.fontSize": 14,
+  "editor.defaultFormatter": "vscode.typescript-language-features",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.fontFamily": "Fira Code",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#c24493",
+    "activityBar.activeBorder": "#90c03f",
+    "activityBar.background": "#c24493",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#90c03f",
+    "activityBarBadge.foreground": "#15202b",
+    "statusBar.background": "#9f3477",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#c24493",
+    "titleBar.activeBackground": "#9f3477",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#9f347799",
+    "titleBar.inactiveForeground": "#e7e7e799",
+    "sash.hoverBorder": "#c24493",
+    "statusBarItem.remoteBackground": "#9f3477",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799"
+  },
+  "peacock.color": "#9f3477",
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

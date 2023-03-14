@@ -1,0 +1,40 @@
+:host {
+  height: 100%;
+}
+
+.ctn {
+  height: 100%;
+  width: 100%;
+  color: #eeeeee;
+  background-color: #2d2d2d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sub-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.links {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px;
+  width: 500px;
+}
+
+.link {
+  color: #2d2d2d;
+  background-color: #eeeeee;
+}
+
+.link:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}

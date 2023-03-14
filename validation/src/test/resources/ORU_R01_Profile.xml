@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ConformanceProfile ID="xxx" Type="Constrainable" HL7Version="2.5.1" SchemaVersion="2.5"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Profile.xsd"
+  >
+  <MetaData Name="Test" OrgName="Test" Version="Test" Date="Test"></MetaData>
+  <Encodings>
+    <Encoding>ER7</Encoding>
+    <Encoding>XML</Encoding>
+  </Encodings>
+  
+  <Messages>
+    <Message ID="ORU_R01" Type="ORU" Event="R01" StructID="ORU_R01" Description="ORU/ACK - Unsolicited transmission of an observation message">
+      <Segment Ref="MSH" Usage="R" Min="1" Max="1"/> 
+      <Segment Ref="SFT" Usage="W" Min="0" Max="*" />
+      <Segment Ref="OPT" Usage="O" Min="0" Max="1" />
+      <Segment Ref="UAC" Usage="X" Min="0" Max="1"/>
+      <Group ID="1" Name="PATIENT" Usage="R" Min="1" Max="2">
+        <Segment Ref="PID" Usage="R" Min="1" Max="1"/>
+        <Segment Ref="UAC" Usage="R" Min="2" Max="2"/>
+      </Group>
+      <Group ID="2" Name="ORDER" Usage="X" Min="1" Max="*">
+        <Segment Ref="SFT" Usage="R" Min="0" Max="1"/>
+      </Group>
+    </Message>
+  </Messages> 
+  
+  <Segments>
+    <Segment ID="MSH" Label="MSH" Name="MSH" Description="Message Header">
+      <Field Name="Field Separator" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="1" ItemNo="00001"/>
+      <Field Name="Encoding Characters" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="4" MaxLength="5" ItemNo="00002"/>
+    </Segment>
+    <Segment ID="SFT" Label="SFT" Name="SFT" Description="Software Segment">
+      <Field Name="Software Vendor Organization" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01834"/>
+    </Segment>
+    <Segment ID="OPT" Label="OPT" Name="OPT" Description="Optional Segment Test">
+      <Field Name="Complex Field Constant Value Test" Datatype="TES" Usage="O" Min="1" Max="1" MinLength="1" MaxLength="*" ConstantValue="this is a spec error" ItemNo="01834"/>
+      <Field Name="Optional Field" Datatype="ST" Usage="O" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="01834"/>
+    </Segment>
+    <Segment ID="UAC" Label="UAC" Name="UAC" Description="User Authentication Credential Segment">
+      <Field Name="User Authentication Credential Type Code" Datatype="HD" Usage="X" Min="1" Max="1" MinLength="1" MaxLength="*" ItemNo="02267"/>
+    </Segment>
+    <Segment ID="PID" Label="PID" Name="PID" Description="Patient Identification">
+      <Field Name="Set ID - PID" Datatype="ST" Usage="R" Min="1" Max="1" MinLength="2" MaxLength="3" ItemNo="00104"/>
+      <Field Name="Patient ID" Datatype="-" Usage="W" Min="0" Max="1" MinLength="1" MaxLength="*" ItemNo="00105"/>
+      <Field Name="Patient Identifier List" Datatype="CX" Usage="R" Min="2" Max="3" MinLength="1" MaxLength="*" ItemNo="00106"/>
+    </Segment>
+  </Segments>
+  
+  <Datatypes>
+    <Datatype Label="-"  ID="-" Name="-" Description="withdrawn"/>
+    <Datatype Label="ST" ID="ST" Name="ST" Description="String Data"/>
+    <Datatype Label="CX" ID="CX" Name="CX" Description="Extended Composite ID with Check Digit">
+      <Component Name="ID Number" Datatype="ST" Usage="X" MinLength="1" MaxLength="*" ConfLength="15" />
+      <Component Name="Identifier Check Digit" Datatype="ST" Usage="X" MinLength="1" MaxLength="*" ConfLength="4" />
+      <Component Name="Check Digit Scheme" Datatype="ST" Usage="C" MinLength="3" MaxLength="3"/>
+      <Component Name="Assigning Authority" Datatype="HD" Usage="C" MinLength="3" MaxLength="*"/>
+    </Datatype>
+    <Datatype Label="HD" ID="HD" Name="HD" Description="Hierarchic Designator">
+      <Component Name="Namespace ID" Datatype="ST" Usage="W" MinLength="1" MaxLength="*" ConfLength="20" />
+      <Component Name="Universal ID" Datatype="ST" Usage="R" MinLength="3" MaxLength="*"  />
+      <!-- ConfLength="199" -->
+      <Component Name="Universal ID Type" Datatype="ST" Usage="X" MinLength="1" MaxLength="6"/>
+    </Datatype>
+    <Datatype Label="TES" ID="TES" Name="TES" Description="Test Datatype">
+      <Component Name="Complex Component Test" Datatype="HD" Usage="O" MinLength="0" MaxLength="*" ConfLength="20" ConstantValue="this is a spec error" />
+    </Datatype>
+  </Datatypes>
+  
+</ConformanceProfile>

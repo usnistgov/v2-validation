@@ -1,0 +1,88 @@
+package hl7.v2.validation.content
+
+import expression.EvalResult.Pass
+import gov.nist.validation.report.Entry
+import hl7.v2.instance._
+import hl7.v2.instance.Query._
+import hl7.v2.profile.{ Message => MM }
+import expression._
+import hl7.v2.validation.vs.ValueSetLibrary
+import scala.util.{ Failure, Success }
+import hl7.v2.validation.report.ConfigurableDetections
+import scala.jdk.CollectionConverters.SeqHasAsJava
+
+trait PatternFinder extends expression.Evaluator {
+  
+  implicit def valueSetLibrary: ValueSetLibrary
+  
+  def checkContexts(e: Element, c: List[Context], validator: (Element, Constraint) => List[Entry])(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
+    c.foldLeft(List[Entry]())({ (acc, context) =>
+        checkContext(e,context,validator) ::: acc
+    })
+  }
+  
+  
+  def checkContext(e: Element, c: Context, validator: (Element, Constraint) => List[Entry])(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
+     query(e, c.contextPath) match {
+      case Success(Nil) => missingContext(c,e)
+      case Success(x)   => checkPatterns(x, c.Patterns,e, validator)
+      case Failure(err) => List[Entry](Detections.cntSpecError(e, Constraint("Content",None,None,None,err.getMessage,Presence(c.contextPath)), err.getMessage,  Nil.asJava))
+    }
+  }
+  
+  def missingContext(c : Context,e: Element)(implicit Detections : ConfigurableDetections): List[Entry] = {
+      c.Patterns.foldLeft(List[Entry]())({ (acc, p) =>
+        acc ::: List[Entry](Detections.HLcontentErr(p.trigger.errorMessage,e))
+      })
+  }
+  
+  def checkPatterns( el: List[Element], pl: List[Pattern], root: Element, validator: (Element, Constraint) => List[Entry]) (implicit s: Separators,
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
+    
+    def loop( el: List[Element], pl: List[Pattern]): List[Entry] = {
+      pl match {
+        case x::tail => val z = search(x,el,root, validator); z._1 ++ loop(z._2,tail)
+        case Nil  => Nil
+      }
+    }
+    
+    loop(el,pl)
+  }
+  
+  def search(p : Pattern, el: List[Element], root: Element, validator: (Element, Constraint) => List[Entry])
+  (implicit s: Separators, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator) : (List[Entry], List[Element]) = {
+    
+    def find(els: List[Element], exp: Expression): List[Element] = {
+      els match {
+        case x::tail => eval(exp, x) match {
+          case Pass => List[Element](x) ::: find(tail,exp)
+          case  _   => find(tail,exp)
+        }
+        case Nil  => List[Element]()
+      }
+    }
+
+    val _match = find(el,p.trigger.expression)
+    
+    if(_match.isEmpty) (List.fill(p.cardinality)(Detections.HLcontentErr(p.trigger.errorMessage, root)), el)
+    else {
+      val cstr_entries = _match map { checkConstraints(_,p.constraints,validator) }
+      val cntx_entries = _match map { checkContexts(_,p.contexts,validator) }
+      val missing      = List.fill(math.max(0, (p.cardinality - _match.size)))(Detections.HLcontentErr(p.trigger.errorMessage, root))
+      (cstr_entries.flatten ::: cntx_entries.flatten ::: missing, el diff _match)
+    }
+  }
+  
+  def checkConstraints(e: Element,constraints: List[Constraint], validator: (Element, Constraint) => List[Entry])(implicit s: Separators,
+    dtz: Option[TimeZone], model: MM): List[Entry] = {
+   
+    constraints.foldLeft(List[Entry]())({
+      (acc, c) => acc ::: validator(e,c)
+    });
+    
+  }
+  
+  
+}

@@ -1,0 +1,34 @@
+MSH|^~\&|NISTEHRAPP|NISTEHRFAC|NISTIISAPP|NISTIISFAC|20150624073733.994-0500||VXU^V04^VXU_V04|NIST-IZ-AD-1.1_Send_V04_Z22|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS|NISTEHRFAC|NISTIISFAC
+PID|1||3123^^^NIST-MPI-1^MR||Richardson^Russell^Clint^^^^L|Billington^^^^^^M|20150415|M||1002-5^American Indian or Alaska Native^CDCREC|543 Blount Drive^^Bozeman^MT^59715^USA^P||^PRN^PH^^^406^5557690|||||||||2186-5^Not Hispanic or Latino^CDCREC||N|1|||||N
+PD1|||||||||||02^Reminder/recall - any method^HL70215|N|20150624|||A|20150415|20150624
+NK1|1|Richardson^Maria^Elizabeth^^^^L|MTH^Mother^HL70063|543 Blount Drive^^Bozeman^MT^59715^USA^P|^PRN^PH^^^406^5557690
+NK1|2|Richardson^John^William^^^^L|FTH^Father^HL70063|543 Blount Drive^^Bozeman^MT^59715^USA^P|^PRN^CP^^^406^5558299
+ORC|RE|3140^NIST-AA-IZ-2|38766^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN||654^Thomas^Wilma^Elizabeth^^^^^NIST-PI-1^L^^^MD|||||NISTEHRFAC^NISTEHRFacility^HL70362|
+RXA|0|1|20150624||49281-0560-05^Pentacel^NDC|0.5|mL^mL^UCUM||00^New Record^NIP001|7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|^^^NIST-Clinic-1||||526434|20150722|PMC^Sanofi Pasteur^MVX|||CP|A
+RXR|C28161^Intramuscular^NCIT|RT^Right Thigh^HL70163
+OBX|1|CE|30963-3^Vaccine Funding Source^LN|1|VXC50^Public^CDCPHINVS||||||F|||20150624
+OBX|2|CE|64994-7^Vaccine Funding Program Eligibility^LN|2|V04^VFC Eligible - American Indian/Alaska Native^HL70064||||||F|||20150624|||VXC40^per immunization^CDCPHINVS
+OBX|3|CE|69764-9^Document Type^LN|3|253088698300017211191030^Polio Vaccine VIS^cdcgs1vis||||||F|||20150624
+OBX|4|DT|29769-7^Date Vis Presented^LN|3|20150624||||||F|||20150624
+OBX|5|CE|69764-9^Document Type^LN|4|253088698300006611191030^Hib Vaccine VIS^cdcgs1vis||||||F|||20150624
+OBX|6|DT|29769-7^Date Vis Presented^LN|4|20150624||||||F|||20150624
+OBX|7|CE|69764-9^Document Type^LN|5|253088698300003511200401^Diphtheria/Tetanus/Pertussis (DTaP) VIS^cdcgs1vis||||||F|||20150624
+OBX|8|DT|29769-7^Date Vis Presented^LN|5|20150624||||||F|||20150624
+ORC|RE|8681^NIST-AA-IZ-2|65138^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN||654^Thomas^Wilma^Elizabeth^^^^^NIST-PI-1^L^^^MD|||||NISTEHRFAC^NISTEHRFacility^HL70362|
+RXA|0|1|20150624||00006-4047-20^RotaTeq^NDC|2.0|mL^mL^UCUM||00^New Record^NIP001|7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|^^^NIST-Clinic-1||||297961|20150916|MSD^Merck and Co., Inc.^MVX|||CP|A
+RXR|C38288^Oral^NCIT|
+OBX|1|CE|30963-3^Vaccine Funding Source^LN|1|VXC50^Public^CDCPHINVS||||||F|||20150624
+OBX|2|CE|64994-7^Vaccine Funding Program Eligibility^LN|2|V04^VFC Eligible - American Indian/Alaska Native^HL70064||||||F|||20150624|||VXC40^per immunization^CDCPHINVS
+OBX|3|CE|69764-9^Document Type^LN|3|253088698300019611191030^Rotavirus Vaccine VIS^cdcgs1vis||||||F|||20150624
+OBX|4|DT|29769-7^Date Vis Presented^LN|3|20150624||||||F|||20150624
+ORC|RE|7491^NIST-AA-IZ-2|79539^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN||654^Thomas^Wilma^Elizabeth^^^^^NIST-PI-1^L^^^MD|||||NISTEHRFAC^NISTEHRFacility^HL70362|
+RXA|0|1|20150624||00005-1971-01^Prevnar 13^NDC|0.5|mL^mL^UCUM||00^New Record^NIP001|7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|^^^NIST-Clinic-1||||353480|20150729|PFR^Pfizer, Inc^MVX|||CP|A
+RXR|C28161^Intramuscular^NCIT|LT^Left Thigh^HL70163
+OBX|1|CE|30963-3^Vaccine Funding Source^LN|1|VXC50^Public^CDCPHINVS||||||F|||20150624
+OBX|2|CE|64994-7^Vaccine Funding Program Eligibility^LN|2|V04^VFC Eligible - American Indian/Alaska Native^HL70064||||||F|||20150624|||VXC40^per immunization^CDCPHINVS
+OBX|3|CE|69764-9^Document Type^LN|3|253088698300015811191030^PCV13 VIS^cdcgs1vis||||||F|||20150624
+OBX|4|DT|29769-7^Date Vis Presented^LN|3|20150624||||||F|||20150624
+ORC|RE||31528^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|||||||NISTEHRFAC^NISTEHRFacility^HL70362
+RXA|0|1|20150416||45^Hep B, unspecified formulation^CVX|999|||01^Historical Administration^NIP001|||||||||||CP|A
+ORC|RE||82668^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|||||||NISTEHRFAC^NISTEHRFacility^HL70362
+RXA|0|1|20150515||45^Hep B, unspecified formulation^CVX|999|||01^Historical Administration^NIP001|||||||||||CP|A

@@ -1,0 +1,107 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~codemirror/lib/codemirror';
+@import '~codemirror/theme/monokai';
+@import '~codemirror/theme/material';
+
+@import '~codemirror/addon/fold/foldgutter';
+@import '~codemirror/addon/dialog/dialog';
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}
+
+.CodeMirror {
+  height: 100%;
+  font-size: 16px;
+}
+
+span.cm-field-separator {color: lightblue;}
+span.cm-component-separator {color: #FF3300;}
+span.cm-subcomponent-separator {color: lightgreen;}
+span.cm-continuation-separator {color: #FF00FF;}
+span.cm-segment-name {font-weight:bold;color:#9797ff;}
+
+span.cm-config-open-b {color: orange;}
+span.cm-config-closed-b {color: orange;}
+span.cm-config-extrapolation-open-b {color: rgb(0, 132, 255);}
+span.cm-config-extrapolation-closed-b {color: rgb(0, 132, 255);}
+span.cm-config-extrapolation {color: rgb(0, 132, 255);}
+span.cm-config-extrapolation-close {color: #fca6ff;}
+span.cm-config-extrapolation-dot {color: lightblue;}
+span.cm-config-eq { font-weight:bold; color: lightgreen;}
+span.cm-config-comment {color: gray;}
+span.cm-config-dot {font-weight:bold;color:red;}
+span.cm-config-word {color:#fdfdfd;}
+span.cm-config-string {color:yellow;}
+
+// search #ff0, Black
+
+.cm-searching {
+  background-color: #ff0 !important;
+  color: black !important;
+}
+
+.cm-searching.cm-overlay {
+  background-color: green !important;
+}
+
+.nav .nav-link.active.classification {
+  background-color: #757575 !important;
+}
+
+.nav .nav-link.active.category {
+  background-color: #5a5a5a !important;
+}
+
+.nav-link {
+  background-color: white;
+  margin-right: 5px;
+}
+
+.b-error {
+  background-color: red !important;
+}
+
+.b-warning {
+  background-color: orange !important;
+}
+
+.b-alert {
+  background-color: blue !important;
+}
+
+.badge {
+  margin-left: 5px;
+}
+
+.b-affirmative {
+  background-color: green !important;
+}
+
+
+
+.btn-tool {
+  margin-right: 5px;
+}
+
+.dark {
+  background-color: #5a5a5a !important;
+  color: #fdfdfd !important;
+}
+
+.active-dark {
+  background-color: #ff9d0d !important;
+  color:black !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

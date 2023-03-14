@@ -1,0 +1,49 @@
+<ul class="nav nav-pills" style="padding: 5px;" *ngIf="list && list.length > 0">
+  <li class="nav-item" *ngFor="let item of list" (click)="selectClass(item)">
+    <a class="nav-link cursor-pointer classification" [ngClass]="{ 'active' : activeClass?.class === item.class }" >
+      {{ item.class }}
+      <span [class]="'badge badge-primary ' + getStyle(item)">{{ item.size }}</span>
+    </a>
+  </li>
+</ul>
+<ul class="nav nav-pills" style="padding-left: 5px; padding-bottom: 5px;" *ngIf="activeClass">
+  <li class="nav-item" *ngFor="let item of activeClass?.categories" (click)="selectCategory(item)">
+    <a class="nav-link cursor-pointer category" [ngClass]="{ 'active' : activeCategory?.category === item.category }" >
+      {{ item.category }}
+      <span [class]="'badge badge-primary ' + getStyle(activeClass)">{{ item.size }}</span>
+    </a>
+  </li>
+</ul>
+<div style="padding: 5px;">
+  <div class="form-group" style="margin-bottom: 5px;" >
+    <input type="text" class="form-control" placeholder="Search" />
+  </div>
+  <table *ngIf="activeCategory && activeCategory.entries" class="table table-sm table-striped tableFixHead" style="background-color: white;">
+    <thead>
+      <tr>
+        <th>Line</th>
+        <th>Column</th>
+        <th>Path</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of activeCategory?.entries">
+        <td>
+          {{ item.line }}
+        </td>
+        <td>
+          {{ item.column }}
+        </td>
+        <td>
+          {{item.path}}
+        </td>
+        <td>
+          {{item.description}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <span *ngIf="!activeCategory || activeCategory?.entries?.length === 0">No Detections.</span>
+</div>
+

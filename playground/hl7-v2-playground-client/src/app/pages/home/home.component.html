@@ -1,0 +1,12 @@
+<div class="ctn">
+  <div class="sub-container">
+    <h1>Welcome to NIST's HL7 v2 Messages Validation Engine Web Page</h1>
+    <div class="links">
+      <div *ngFor="let item of links; let i = index" class="card card-body link" [routerLink]="item.link" >
+        <span>
+          <i [class]="'fa ' + item.icon" aria-hidden="true" style="margin-right: 5px;" [ngStyle]="{ 'color' : item.color}"></i> {{item.label}}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
