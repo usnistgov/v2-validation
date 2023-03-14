@@ -3,7 +3,7 @@ package controllers
 import java.io.{ByteArrayInputStream, StringReader}
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.{HL7Validator, ValidationContext, content}
+import hl7.v2.validation.{FeatureFlags, HL7Validator, ValidationContext, content}
 import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
 
 import javax.inject._
@@ -222,7 +222,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       ),
       profile
     ).get
-    ValidationContext(profile, vsLib, constraints, vsSpec, coConstraints, slicing)
+    ValidationContext(profile, vsLib, constraints, vsSpec, coConstraints, slicing, FeatureFlags(vsLib.containsLegacy0396Codes()))
   }
 
   def getParsedTree(query: ParseQuery) = {

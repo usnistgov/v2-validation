@@ -6,13 +6,17 @@ import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.validation.vs.{BindingLocation, Code, CodeHolder, CodeUsage, DefaultValueSetSpecification, EmptyValueSetSpecification, Extensibility, Stability, VSValidationCode, ValueSetBinding, ValueSetLibraryImpl, ValueSetSpecification, InternalValueSet => ValueSet}
 import hl7.v2.profile.{BindingStrength, Composite, Primitive, Req, Usage}
 import hl7.v2.instance.{Complex, ComplexComponent, Element, Location, Simple, SimpleComponent, Text, Value}
+import hl7.v2.validation.FeatureFlags
 import org.specs2.matcher.MatchResult
+
+import scala.collection.immutable.List
 
 
 trait ValueSetValidationSpec extends Specification
        with hl7.v2.validation.vs.DefaultValueSetValidator
        with Helpers
-       with DefaultParser {def is = s2"""
+       with DefaultParser {def is =
+  s2"""
 
   ValueSet Specification
       Validation should detect an empty VS (Primitive/Single, Complex/Single, Complex/Multiple) $emptyVs
@@ -25,6 +29,42 @@ trait ValueSetValidationSpec extends Specification
       Validation should detect a dynamic value set in the case of a Code Not Found code (Primitive/Single, Complex/Single, Complex/Multiple) $NotFoundDynamic
       Complex element with unresolvable binding location should return a spec error $unresolvableBL
       Complex element with unresolvable code system binding location should return a spec error $unresolvableCsBL
+
+    Legacy 0396 Check
+
+      If ValueSet Library contains HL7nnnn in 0396 without a pattern containsLegacy0396Codes should be TRUE $vsLibHL7nnnnNoPattern
+      If ValueSet Library contains 99zzz in 0396 without a pattern containsLegacy0396Codes should be TRUE $vsLib99zzzNoPattern
+      If ValueSet Library contains HL7nnnn in 0396 with a pattern containsLegacy0396Codes should be FALSE $vsLibHL7nnnnPattern
+      If ValueSet Library contains 99zzz in 0396 with a pattern containsLegacy0396Codes should be FALSE $vsLib99zzzPattern
+      If ValueSet Library doesn't contain 0396 containsLegacy0396Codes should be FALSE $vsLibNo396
+      If ValueSet Library contains 0396 without HL7nnnn or 99zzz containsLegacy0396Codes should be FALSE $vsLib396NoCode
+
+      If Legacy0396 Feature Flag is ENABLED
+        If binding is 0396 and code is HL70125
+          If HL7nnnn is in 0396 with code usage R => RVS Detection $checkLegacy396EnabledHL7nnnnR
+          If HL7nnnn is in 0396 with code usage P => PVS Detection $checkLegacy396EnabledHL7nnnnP
+          If HL7nnnn is not in 0396 => Code not found Detection $checkLegacy396EnabledHL7nnnnNF
+          If HL7nnnn is in 0396 with usage R and HL70125 is in 0396 with usage P => Duplicate Code Detection and HL7nnnn RVS and HL70125 PVS $checkLegacy396EnabledHL7nnnnBoth
+        If binding is 0396 and code is 99001
+          If 99zzz is in 0396 with code usage R  => RVS Detection $checkLegacy396Enabled99zzzR
+          If 99zzz is in 0396 with code usage P => PVS Detection $checkLegacy396Enabled99zzzP
+          If 99zzz is not in 0396 => Code not found Detection $checkLegacy396Enabled99zzzNF
+          If 99zzz is in 0396 with code usage R and 99001 is in 0396 with usage P => Duplicate Code Detection and 99zzz RVS and 99001 PVS $checkLegacy396Enabled99zzzBoth
+        If binding is 0396 and code is HL7nnnn and HL7nnnn is in 0396 => Code not found Detection (Because it's considered as a pattern) $checkLegacy396EnabledHL7nnnnExactMatch
+        If binding is 0396 and code is 99zzz and 99zzz is in 0396 => RVS $checkLegacy396Enabled99zzzExactMatch
+      If Legacy0396 Feature Flag is DISABLED
+        If binding is 0396 and code is HL70125
+          If HL7nnnn is in 0396 with code usage R => Code not found Detection $checkLegacy396DisabledHL7nnnnR
+          If HL7nnnn is in 0396 with code usage P => Code not found Detection $checkLegacy396DisabledHL7nnnnP
+          If HL7nnnn is not in 0396 => Code not found Detection $checkLegacy396DisabledHL7nnnnNF
+          If HL7nnnn is in 0396 with usage R and HL70125 is in 0396 with usage P => HL70125 PVS Detection $checkLegacy396DisabledHL7nnnnBOTH
+        If binding is 0396 and code is 99001
+          If 99zzz is in 0396 with code usage R => Code not found Detection $checkLegacy396Disabled99zzzR
+          If 99zzz is in 0396 with code usage P => Code not found Detection $checkLegacy396Disabled99zzzP
+          If 99zzz is not in 0396 => Code not found Detection $checkLegacy396Disabled99zzzNF
+          If 99zzz is in 0396 with usage R and 99001 is in 0396 with usage P => 99001 PVS Detection $checkLegacy396Disabled99zzzBOTH
+        If binding is 0396 and code is HL7nnnn and HL7nnnn is in 0396 with usage R => RVS $checkLegacy396DisabledHL7nnnnExactMatch
+        If binding is 0396 and code is 99zzz and 99zzz is in 0396 with usage R => RVS $checkLegacy396Disabled99zzzExactMatch
 
     Only check relevant elements
       Skip checking Binding Targets when usage is X or W $skipTargets
@@ -105,6 +145,13 @@ trait ValueSetValidationSpec extends Specification
     S(3, 1, Text("PAT"))
   ))
 
+  val HD_0396: C = C(0, 1, List(
+    S(1, 1, Text("HL7nnnn")),
+    S(2, 1, Text("99zzz")),
+    S(3, 1, Text("HL70125")),
+    S(4, 1, Text("99abc"))
+  ))
+
   val CWE_2_7: C = C(0, 1, List(
     S(1, 1, Text("A")),
     S(3, 1, Text("SYS")),
@@ -180,8 +227,14 @@ trait ValueSetValidationSpec extends Specification
   val vs4: ValueSet = ValueSet("vs4", None, None, List(Code("M", "des", CodeUsage.R, "SYS"),Code("N", "des", CodeUsage.P, "SYS1")))
   val vs4_1: ValueSet = ValueSet("vs4_1", None, None, List(Code("M", "des", CodeUsage.P, "SYS1"),Code("N", "des", CodeUsage.R, "SYS")))
 
+  val vs396_R: ValueSet = ValueSet("0396_R", None, None, List(Code("HL7nnnn", "des", CodeUsage.R, "SYS"),Code("99zzz", "des", CodeUsage.R, "SYS")))
+  val vs396_P: ValueSet = ValueSet("0396_P", None, None, List(Code("HL7nnnn", "des", CodeUsage.P, "SYS"),Code("99zzz", "des", CodeUsage.P, "SYS")))
+  val vs396_NF: ValueSet = ValueSet("0396_NF", None, None, List(Code("A", "des", CodeUsage.R, "SYS"),Code("B", "des", CodeUsage.R, "SYS")))
+  val vs396_BOTH: ValueSet = ValueSet("0396_BOTH", None, None, List(Code("HL7nnnn", "des", CodeUsage.R, "SYS"),Code("HL70125", "des", CodeUsage.P, "SYS"),Code("99zzz", "des", CodeUsage.R, "SYS"),Code("99abc", "des", CodeUsage.P, "SYS")))
+
+
   val empty: ValueSet = ValueSet("empty", None, None, List())
-  val valueSetLibrary = new ValueSetLibraryImpl(List("excluded"), (vsCodePattern::vs1::vs2::vs3::vs1_1::vs2_2::vs1_cs::vs1_cs_1::vs1_1_cs::vs3_1::vs2_2_2::vs4::vs4_1::empty::vs1_no_usage::vs1_closed::vs1_dynamic::Nil).map(x => { (x.id, x) }).toMap)
+  val valueSetLibrary = new ValueSetLibraryImpl(List("excluded"), (vsCodePattern::vs1::vs2::vs3::vs1_1::vs2_2::vs1_cs::vs1_cs_1::vs1_1_cs::vs3_1::vs2_2_2::vs4::vs4_1::empty::vs1_no_usage::vs1_closed::vs1_dynamic::vs396_R::vs396_P::vs396_NF::vs396_BOTH::Nil).map(x => { (x.id, x) }).toMap)
 
   // ============================================ TEST CASES ===========================================
 
@@ -603,6 +656,211 @@ trait ValueSetValidationSpec extends Specification
       createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("M", "des", CodeUsage.R, "SYS"), "M", vs4), Some(BindingStrength.R)),
       createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("N", "des", CodeUsage.R, "SYS"), "N", vs4_1), Some(BindingStrength.R))
     ))
+  }
+
+  val checkLegacy396EnabledHL7nnnnR: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), "HL70125", vs396_R), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396EnabledHL7nnnnP: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.PVS(Code("HL7nnnn", "des", CodeUsage.P, "SYS"), "HL70125", vs396_P), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396EnabledHL7nnnnNF: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_NF)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396EnabledHL7nnnnBoth: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), "HL70125", vs396_BOTH), Some(BindingStrength.R)),
+      createEntry(HD_0396, VSValidationCode.PVS(Code("HL70125", "des", CodeUsage.P, "SYS"), "HL70125", vs396_BOTH), Some(BindingStrength.R)),
+      createEntry(HD_0396, VSValidationCode.MultipleCodesFoundInValueSet("HL70125", vs396_BOTH, List(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), Code("HL70125", "des", CodeUsage.P, "SYS"))), Some(BindingStrength.R))
+    ))
+  }
+
+  val checkLegacy396Enabled99zzzR: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99abc", vs396_R), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Enabled99zzzP: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.PVS(Code("99zzz", "des", CodeUsage.P, "SYS"), "99abc", vs396_P), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Enabled99zzzNF: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_NF)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Enabled99zzzBoth: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99abc", vs396_BOTH), Some(BindingStrength.R)),
+      createEntry(HD_0396, VSValidationCode.PVS(Code("99abc", "des", CodeUsage.P, "SYS"), "99abc", vs396_BOTH), Some(BindingStrength.R)),
+      createEntry(HD_0396, VSValidationCode.MultipleCodesFoundInValueSet("99abc", vs396_BOTH, List(Code("99zzz", "des", CodeUsage.R, "SYS"), Code("99abc", "des", CodeUsage.P, "SYS"))), Some(BindingStrength.R))
+    ))
+  }
+
+
+  val checkLegacy396DisabledHL7nnnnR: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_R)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396DisabledHL7nnnnP: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_P)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396DisabledHL7nnnnNF: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_NF)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396DisabledHL7nnnnBOTH: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.PVS(Code("HL70125", "des", CodeUsage.P, "SYS"), "HL70125", vs396_BOTH), Some(BindingStrength.R)),
+    ))
+  }
+
+
+  val checkLegacy396Disabled99zzzR: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_R)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Disabled99zzzP: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_P)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Disabled99zzzNF: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_NF)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Disabled99zzzBOTH: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.PVS(Code("99abc", "des", CodeUsage.P, "SYS"), "99abc", vs396_BOTH), Some(BindingStrength.R)),
+    ))
+  }
+
+
+  val checkLegacy396EnabledHL7nnnnExactMatch: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("1[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.CodeNotFound("HL7nnnn", None, List(vs396_R)), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Enabled99zzzExactMatch: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("2[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99zzz", vs396_R), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396DisabledHL7nnnnExactMatch: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("1[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), "HL7nnnn", vs396_R), Some(BindingStrength.R)),
+    ))
+  }
+
+  val checkLegacy396Disabled99zzzExactMatch: MatchResult[List[Entry]] = {
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("2[1]", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99zzz", vs396_R), Some(BindingStrength.R)),
+    ))
+  }
+
+  val vsLibHL7nnnnNoPattern: MatchResult[Any] = {
+    val lib = new ValueSetLibraryImpl(List(), (ValueSet("0396", None, None, List(
+      Code("HL7nnnn", "des", CodeUsage.P, "SYS", None),
+    )) :: Nil).map(x => { (x.id, x) }).toMap)
+
+    lib.containsLegacy0396Codes() mustEqual(true)
+  }
+
+  val vsLibHL7nnnnPattern: MatchResult[Any] = {
+    val lib = new ValueSetLibraryImpl(List(), (ValueSet("0396", None, None, List(
+      Code("HL7nnnn", "des", CodeUsage.P, "SYS", Some("HL7[0-9]{4}")),
+    )) :: Nil).map(x => {
+      (x.id, x)
+    }).toMap)
+
+    lib.containsLegacy0396Codes() mustEqual (false)
+  }
+
+  val vsLib99zzzNoPattern: MatchResult[Any] = {
+    val lib = new ValueSetLibraryImpl(List(), (ValueSet("0396", None, None, List(
+      Code("99zzz", "des", CodeUsage.P, "SYS", None),
+    )) :: Nil).map(x => {
+      (x.id, x)
+    }).toMap)
+
+    lib.containsLegacy0396Codes() mustEqual (true)
+  }
+
+  val vsLib99zzzPattern: MatchResult[Any] = {
+    val lib = new ValueSetLibraryImpl(List(), (ValueSet("0396", None, None, List(
+      Code("99zzz", "des", CodeUsage.P, "SYS", Some("99[0-9A-Za-z]{4}")),
+    )) :: Nil).map(x => {
+      (x.id, x)
+    }).toMap)
+
+    lib.containsLegacy0396Codes() mustEqual (false)
+  }
+
+  val vsLibNo396: MatchResult[Any] = {
+    val lib = new ValueSetLibraryImpl(List(), (ValueSet("0397", None, None, List(
+      Code("99zzz", "des", CodeUsage.P, "SYS", None),
+    )) :: Nil).map(x => {
+      (x.id, x)
+    }).toMap)
+
+    lib.containsLegacy0396Codes() mustEqual (false)
+  }
+
+  val vsLib396NoCode: MatchResult[Any] = {
+    val lib = new ValueSetLibraryImpl(List(), (ValueSet("0396", None, None, List(
+      Code("ABC", "des", CodeUsage.P, "SYS", None),
+    )) :: Nil).map(x => {
+      (x.id, x)
+    }).toMap)
+
+    lib.containsLegacy0396Codes() mustEqual (false)
   }
 
 

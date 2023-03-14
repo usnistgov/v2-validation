@@ -23,4 +23,6 @@ public interface ValueSetLibrary {
      */
     public ValueSet get(String id) throws ValueSetNotFoundException;
 
+    public boolean containsLegacy0396Codes();
+
 }

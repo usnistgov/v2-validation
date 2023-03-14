@@ -4,16 +4,16 @@ import hl7.v2.validation.report.ConfigurableDetections
 
 import scala.concurrent.Future
 import gov.nist.validation.report.Entry
+
 import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.jdk.CollectionConverters.SeqHasAsJava
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import hl7.v2.instance._
 import hl7.v2.profile
 
-
 import scala.util.{Failure, Success}
 import hl7.v2.profile.{BindingStrength, Usage}
+import hl7.v2.validation.FeatureFlags
 
 sealed trait VSValidationCode {
   val isSpecError: Boolean = false
@@ -110,7 +110,8 @@ object VSValidationCode {
 trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
 
 
-  def checkValueSets(m: Message, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): Future[Seq[Entry]] = Future {
+  def checkValueSets(m: Message, additionalVsBindings: Option[ValueSetSpecification])
+                    (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): Future[Seq[Entry]] = Future {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
     implicit val model: profile.Message = m.model
@@ -118,7 +119,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
   }
 
   // Only check bindings when element should not be skipped
-  def checkMsgElement(e: Element, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): List[Entry] = {
+  def checkMsgElement(e: Element, additionalVsBindings: Option[ValueSetSpecification])
+                     (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[Entry] = {
     skipElementCheck(e) match {
       case true => Nil
       case false => check(e, additionalVsBindings)
@@ -134,7 +136,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
   }
 
   // Checks if specification is available on element and checks it, then dives into complex elements
-  def check(e: Element, additionalVsBindings: Option[ValueSetSpecification])(implicit Detections: ConfigurableDetections): List[Entry] = {
+  def check(e: Element, additionalVsBindings: Option[ValueSetSpecification])
+           (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[Entry] = {
     val vsEntries = getValueSetBindingsForElement(e, additionalVsBindings) match {
       case Nil => Nil
       case ls => ls.foldRight(List[Entry]()) {
@@ -183,7 +186,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
   /* Resolve binding target from context.
      Validates binding if target is not skipped (skip on target Usage X or W)
    */
-  def check(e: Element, spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[Entry] = {
+  def check(e: Element, spec: ValueSetBinding)
+           (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[Entry] = {
     resolveTargetAndSkipAndDo(
       e,
       spec.target,
@@ -196,7 +200,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
   /* Resolve binding target from context.
    Validates binding if target is not skipped (skip on target Usage X or W)
  */
-  def check(e: Element, spec: SingleCodeBinding)(implicit Detections: ConfigurableDetections): List[Entry] = {
+  def check(e: Element, spec: SingleCodeBinding)
+           (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[Entry] = {
     resolveTargetAndSkipAndDo(
       e,
       spec.target,
@@ -206,7 +211,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     )
   }
 
-  def check(elements: List[Element], spec: SingleCodeBinding)(implicit Detections: ConfigurableDetections): List[VsEntry] = {
+  def check(elements: List[Element], spec: SingleCodeBinding)
+           (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[VsEntry] = {
     val detections = for (target <- elements) yield {
       val rCodeHolders = for (location <- spec.bindingLocations) yield {
         codeHolder(target, location)
@@ -221,7 +227,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
   }
 
 
-  def check(elements: List[Element], spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[VsEntry] = {
+  def check(elements: List[Element], spec: ValueSetBinding)
+           (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[VsEntry] = {
     val UBS = spec.strength.contains(BindingStrength.U)
     val MultipleVSForPrimitive = spec.bindings.size > 1 && elements.exists(_.isInstanceOf[Simple])
 
@@ -253,7 +260,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def resolveValidationPayload(targets: List[Element], spec: ValueSetBinding)(implicit Detections: ConfigurableDetections): List[ValueSetValidationPayload] = {
+  def resolveValidationPayload(targets: List[Element], spec: ValueSetBinding)
+                              (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[ValueSetValidationPayload] = {
     val rValueSets = resolveBindings(spec.bindings)
     val vsIssues = collectIssues(rValueSets)
     val valueSets = collectValues(rValueSets)
@@ -270,7 +278,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def codeHolder(context: Element, location: BindingLocation)(implicit Detections: ConfigurableDetections): Resolve[CodeHolder] = {
+  def codeHolder(context: Element, location: BindingLocation)
+                (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): Resolve[CodeHolder] = {
     getBindingLocationValue(context, location.codeLocation, VSValidationCode.InvalidCodeBindingLocation) match {
       case Empty() => Empty[CodeHolder]()
       case Detection(issue: VSValidationCode) => Detection[CodeHolder](issue)
@@ -296,7 +305,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def resolveBindings(bindings: List[String])(implicit Detections: ConfigurableDetections): List[Resolve[ValueSet]] = {
+  def resolveBindings(bindings: List[String])
+                     (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[Resolve[ValueSet]] = {
     for (id <- bindings) yield {
       try {
         if (valueSetLibrary.isExcludedFromTheValidation(id)) {
@@ -316,14 +326,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def bindingMetadata(strength: BindingStrength, vsList: List[ValueSet])(implicit Detections: ConfigurableDetections): BindingMetadata = {
-    val bs = Some(strength)
-    val stability = if (vsList.map(_.stability).contains(Some(Stability.Dynamic))) Some(Stability.Dynamic) else Some(Stability.Static)
-    val extensibility = if (vsList.map(_.extensibility).contains(Some(Extensibility.Open))) Some(Extensibility.Open) else Some(Extensibility.Closed)
-    BindingMetadata(bs, stability, extensibility)
-  }
-
-  def validate(target: Element, values: List[CodeHolder], spec: SingleCodeBinding)(implicit Detections: ConfigurableDetections): List[VSValidationCode] = {
+  def validate(target: Element, values: List[CodeHolder], spec: SingleCodeBinding)
+              (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[VSValidationCode] = {
     val detections = values.map(codeHolder => {
       codeHolder.code.value.raw match {
         // When code matches
@@ -364,7 +368,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     else notfound ::: cs ::: notfoundcs
   }
 
-  def validate(validationPayload: ValueSetValidationPayload)(implicit Detections: ConfigurableDetections): List[VSValidationCode] = {
+  def validate(validationPayload: ValueSetValidationPayload)
+              (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[VSValidationCode] = {
 
     // Check All Collected Codes Against All Bindings
     val vCodeBucket: List[(CodeHolder, ValueSet, VSValidationCode)] = validationPayload.values.flatMap(code => {
@@ -374,15 +379,17 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     })
 
     val vsCodes: Iterable[(CodeHolder, List[VSValidationCode], List[ValueSet])] = for(code <- vCodeBucket.groupBy(_._1)) yield {
-      val splitValidationCodes = code._2.partition(tuple => { tuple._3.codeIsFound })
-      val duplicateCodeFound: Option[VSValidationCode] = multipleCodesFound(code._1, splitValidationCodes._1)
-      val codesFound: List[VSValidationCode] = splitValidationCodes._1.map(_._3)
-      val issues = splitValidationCodes._2.partition(_._3.isSpecError)
+
+      val (codeFoundDetections, codeNotFoundDetections) = code._2.partition(tuple => { tuple._3.codeIsFound })
+
+      val duplicateCodeFound: Option[VSValidationCode] = multipleCodesFound(code._1, codeFoundDetections)
+      val codesFound: List[VSValidationCode] = codeFoundDetections.map(_._3)
+      val issues = codeNotFoundDetections.partition(_._3.isSpecError)
       val specIssues: List[VSValidationCode] = issues._1.map(_._3)
-      val invalidCodeSystem: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else splitValidationCodes._2.collect({
+      val invalidCodeSystem: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else codeNotFoundDetections.collect({
         case (_, _, value: VSValidationCode.SimpleCodeFoundInvalidCodeSystem) => value
       })
-      val csNotPopulated: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else splitValidationCodes._2.collect({
+      val csNotPopulated: List[VSValidationCode] = if(codesFound.nonEmpty) Nil else codeNotFoundDetections.collect({
         case (_, _, value: VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated) => value
       })
       val codeNotFound: Option[VSValidationCode] = if(codesFound.isEmpty && csNotPopulated.isEmpty) Some(VSValidationCode.CodeNotFound(code._1.code.value.raw, code._1.codeSystem.map(_.value.raw), code._2.map(_._2))) else None
@@ -419,7 +426,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     else None
   }
 
-  def checkCode(holder: CodeHolder, vs: ValueSet)(implicit Detections: ConfigurableDetections): VSValidationCode = {
+  def checkCode(holder: CodeHolder, vs: ValueSet)
+               (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): VSValidationCode = {
     holder match {
       case CodeHolder(code, None, _) => holder.location.codeSystemLocation match {
         case Some(csLocation) => checkValue(code.value.raw, vs) match {
@@ -432,11 +440,31 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def checkValue(code: String, vs: ValueSet)(implicit Detections: ConfigurableDetections): Resolve[Code] = {
-    val codes = vs.getCodes(code)
-    if (codes.size() == 0) Detection[Code](VSValidationCode.SimpleCodeNotFound(code, vs.id))
-    else if (codes.size() > 1) Detection[Code](VSValidationCode.MultipleCodesFoundInValueSet(code, vs, codes.asScala.toList))
-    else PayloadAndDetection[Code](codes.get(0), codeToVsValidation(codes.get(0), code, vs))
+  def checkValue(code: String, vs: ValueSet)
+                (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): Resolve[Code] = {
+    val codes = getCodes(code, vs)
+    if (codes.isEmpty) Detection[Code](VSValidationCode.SimpleCodeNotFound(code, vs.id))
+    else if (codes.length > 1) Detection[Code](VSValidationCode.MultipleCodesFoundInValueSet(code, vs, codes))
+    else PayloadAndDetection[Code](codes.head, codeToVsValidation(codes.head, code, vs))
+  }
+
+  def getCodes(code: String, vs: ValueSet)
+              (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): List[Code] = {
+    if(featureFlags.legacy0396 && vs.id.matches(".*0396.*")) {
+      vs.getCodes.filter(c => codeMatchLegacy0396(c, code))
+    } else {
+      vs.getCodes(code).asScala.toList
+    }
+  }
+
+  def codeMatchLegacy0396(code: Code, value: String): Boolean = {
+    code.pattern match {
+      case Some(pattern) => value.matches(pattern)
+      case None =>
+        if(code.value.equals("HL7nnnn")) value.matches("HL7[0-9]{4}")
+        else if(code.value.equals("99zzz")) value.matches("99[a-zA-Z0-9]{3}")
+        else code.value.equals(value)
+    }
   }
 
   def codeToVsValidation(code: Code, value: String, vs: ValueSet): VSValidationCode = {
@@ -468,7 +496,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def checkTriplet(value: String, codeSys: String, vs: ValueSet)(implicit Detections: ConfigurableDetections): VSValidationCode = {
+  def checkTriplet(value: String, codeSys: String, vs: ValueSet)
+                  (implicit Detections: ConfigurableDetections, featureFlags: FeatureFlags): VSValidationCode = {
     checkValue(value, vs) match {
       case PayloadAndDetection(code, issue) => if (code.codeSys == codeSys) issue else VSValidationCode.SimpleCodeFoundInvalidCodeSystem(value, code.codeSys, codeSys, vs)
       case Detection(detection : VSValidationCode.MultipleCodesFoundInValueSet) => {
@@ -481,7 +510,8 @@ trait DefaultValueSetValidator extends VsValidator with EscapeSeqHandler {
     }
   }
 
-  def createEntry(element: Element, issue: VSValidationCode, bindingStrength: Option[BindingStrength])(implicit Detections: ConfigurableDetections): Entry = {
+  def createEntry(element: Element, issue: VSValidationCode, bindingStrength: Option[BindingStrength])
+                 (implicit Detections: ConfigurableDetections): Entry = {
     issue match {
       case VSValidationCode.NoUsage(code, value, vs) => Detections.vsCodeFound("no-code-usage", element.location, value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull, code.pattern.isDefined, code.value, code.pattern.getOrElse(""))
       case VSValidationCode.RVS(code, value, vs) => Detections.vsCodeFound("rvs", element.location, value, vs.id, vs.stability.orNull, vs.extensibility.orNull, bindingStrength.orNull, code.pattern.isDefined, code.value, code.pattern.getOrElse(""))

@@ -19,4 +19,9 @@ public class EmptyValueSetLibrary implements ValueSetLibrary {
     public ValueSet get(String id) throws ValueSetNotFoundException {
         throw new ValueSetNotFoundException(id);
     }
+
+    @Override
+    public boolean containsLegacy0396Codes() {
+        return false;
+    }
 }

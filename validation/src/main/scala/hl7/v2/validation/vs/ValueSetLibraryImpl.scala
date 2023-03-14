@@ -9,8 +9,19 @@ import scala.util.Try
 
 case class ValueSetLibraryImpl(
     noValidation: Seq[String],
-    library: Map[String, ValueSet]
+    library: Map[String, ValueSet],
   ) extends ValueSetLibrary {
+
+  private val legacy0396: Boolean = library.foldLeft(false) {
+    (found, table) =>
+      if (found) found
+      else {
+        val tableMatch = table._1.matches(".*0396.*")
+        val codeHL7nnnn = tableMatch && table._2.getCodes.exists(c => c.value.equals("HL7nnnn") && c.pattern.isEmpty)
+        val code99zzz = tableMatch && table._2.getCodes.exists(c => c.value.equals("99zzz") && c.pattern.isEmpty)
+        tableMatch && (codeHL7nnnn || code99zzz)
+      }
+  }
 
   override def isExcludedFromTheValidation(id: String): java.lang.Boolean =
     noValidation contains id
@@ -20,6 +31,8 @@ case class ValueSetLibraryImpl(
       case Some(x) => x
       case None    => throw new ValueSetNotFoundException(id)
     }
+
+  override def containsLegacy0396Codes(): Boolean = legacy0396
 }
 
 object ValueSetLibraryImpl {
@@ -33,7 +46,6 @@ object ValueSetLibraryImpl {
     XOMDocumentBuilder.build(vsXML, HL7v2Schema.getValueSetLibrary) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
-      //val tblSet   = root.getFirstChildElement("ValueSetDefinitions")
       val tbls = root.getChildElements("ValueSetDefinitions")
       val noVal    = noValidation( noValDef )
       val lib      = tables(tbls)

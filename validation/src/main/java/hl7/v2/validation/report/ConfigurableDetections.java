@@ -301,6 +301,13 @@ public class ConfigurableDetections {
 		return entry(context.location(), desc, category, classification, null, null);
 	}
 
+	public Entry legacy0396(Element context) {
+		String category = conf.getString("report.legacy-0396.category");
+		String template = conf.getString("report.legacy-0396.template");
+		String classification = conf.getString("report.legacy-0396.classification");
+		return entry(context.location(), template, category, classification, null, null);
+	}
+
 	public Entry singleCodeSuccess(String expectedCode, String expectedCs, Simple code, Element context) {
 		String category = conf.getString("report.single-code-success.category");
 		String template = conf.getString("report.single-code-success.template");

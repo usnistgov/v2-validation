@@ -48,6 +48,7 @@ trait ValueSet{
   def getCodes(value: String): JList[Code]
   def contains(value: String): Boolean
   def codesList(): JList[Code]
+  def getCodes: List[Code]
 }
 
 case class InternalValueSet(
@@ -68,6 +69,7 @@ case class InternalValueSet(
   def getCodes(value: String): JList[Code] = (codes filter(c => codeMatch(c, value))).asJava
   def contains(value: String): Boolean = codes.exists(c => codeMatch(c, value))
   def codesList(): JList[Code] = codes.asJava
+  def getCodes: List[Code] = codes
 }
 
 case class ExternalValueSet(
@@ -82,4 +84,5 @@ case class ExternalValueSet(
   def getCodes(value: String): JList[Code] = ( codes filter(c => c.value == value) ).asJava
   def contains(value: String): Boolean = codes.exists(c => c.value == value )
   def codesList(): JList[Code] = codes.asJava
+  def getCodes: List[Code] = codes
 }

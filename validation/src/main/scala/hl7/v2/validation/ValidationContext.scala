@@ -7,7 +7,7 @@ import hl7.v2.validation.coconstraints.{CoConstraintValidationContext, EmptyCoCo
 import hl7.v2.validation.content.{DefaultConformanceContext, EmptyConformanceContext}
 import hl7.v2.validation.slicing.{EmptyProfileSlicingContext, ProfileSlicingContext}
 import hl7.v2.validation.vs.{EmptyValueSetLibrary, EmptyValueSetSpecification, ValueSetLibraryImpl}
-
+import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.util.{Failure, Success}
 
 
@@ -17,7 +17,8 @@ case class ValidationContext(
   conformanceContext: content.ConformanceContext = EmptyConformanceContext,
   vsSpecification : vs.ValueSetSpecification = EmptyValueSetSpecification,
   coConstraintValidationContext: CoConstraintValidationContext = EmptyCoConstraintValidationContext,
-  slicingContext: ProfileSlicingContext = EmptyProfileSlicingContext
+  slicingContext: ProfileSlicingContext = EmptyProfileSlicingContext,
+  featureFlags: FeatureFlags = FeatureFlags()
 ) {
 
 }
@@ -29,6 +30,7 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
   var vsSpecification : vs.ValueSetSpecification = EmptyValueSetSpecification
   var coConstraintValidationContext: CoConstraintValidationContext = EmptyCoConstraintValidationContext
   var slicingContext: ProfileSlicingContext = EmptyProfileSlicingContext
+  var featureFlags: FeatureFlags = FeatureFlags()
 
   private def useProfile(profileInputStream: InputStream) = {
     hl7.v2.profile.XMLDeserializer.deserialize(profileInputStream) match {
@@ -47,6 +49,14 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
 
   def useConformanceContext(conformanceContexts: List[InputStream]): ValidationContextBuilder = {
     DefaultConformanceContext.apply(conformanceContexts: _*) match {
+      case Success(cfc) => conformanceContext = cfc
+      case Failure(exception) => throw exception
+    }
+    this
+  }
+
+  def useConformanceContext(conformanceContexts: java.util.List[InputStream]): ValidationContextBuilder = {
+    DefaultConformanceContext.apply(conformanceContexts.asScala.toList:_*) match {
       case Success(cfc) => conformanceContext = cfc
       case Failure(exception) => throw exception
     }
@@ -80,6 +90,16 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
     this
   }
 
+  def useFeatureFlags(ff: FeatureFlags): ValidationContextBuilder = {
+    featureFlags = ff
+    this
+  }
+
+  def setFFLegacy0396(value: Boolean): ValidationContextBuilder = {
+    featureFlags = featureFlags.copy(legacy0396 = value)
+    this
+  }
+
   def getValidationContext: ValidationContext = {
     profile match {
       case None => throw new Exception("No profile defined")
@@ -89,7 +109,8 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
         conformanceContext,
         vsSpecification,
         coConstraintValidationContext,
-        slicingContext
+        slicingContext,
+        featureFlags
       )
     }
   }

@@ -34,6 +34,7 @@ trait Validator { this: Parser
   val profile: Profile
   val legacyVsValidationSpecification: Option[vs.ValueSetSpecification]
   val valueSetLibrary: vs.ValueSetLibrary
+  var featureFlags: FeatureFlags
 
   /**
    * Validates the message using the mixed in structure,
@@ -64,6 +65,11 @@ trait Validator { this: Parser
             val defaultConfig = ConfigFactory.load();
             implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).withFallback(defaultConfig).resolve());
             implicit val vsValidator: vs.Validator = new vs.Validator(detections)
+            implicit val activeFeatureFlags: FeatureFlags = featureFlags.copy()
+
+            val legacy0396Detection = if(activeFeatureFlags.legacy0396 && valueSetLibrary.containsLegacy0396Codes()) {
+              detections.legacy0396(m.asGroup) :: Nil
+            } else Nil
 
             for {
               (sliceAppliedMessage, slicingDetections) <- applySlices(m)
@@ -72,7 +78,7 @@ trait Validator { this: Parser
               r3 <- checkValueSets(sliceAppliedMessage, legacyVsValidationSpecification)
               r4 <- checkCoConstraint(sliceAppliedMessage)
             } yield {
-              report.Report(r1 ++ slicingDetections, r2 ++ r4, r3)
+              report.Report(r1 ++ slicingDetections, r2 ++ r4, r3 ++ legacy0396Detection)
             }
 
           case Failure(e) => Future failed e
@@ -91,6 +97,7 @@ class HL7Validator(
   val vsSpecification : vs.ValueSetSpecification,
   val coConstraintValidationContext: CoConstraintValidationContext,
   val profileSlicingContext: ProfileSlicingContext,
+  var featureFlags: FeatureFlags
 ) extends Validator
     with hl7.v2.parser.impl.DefaultParser
     with structure.DefaultValidator
@@ -112,7 +119,8 @@ class HL7Validator(
       conformanceContext,
       EmptyValueSetSpecification,
       EmptyCoConstraintValidationContext,
-      EmptyProfileSlicingContext
+      EmptyProfileSlicingContext,
+      FeatureFlags(),
     )
 
   /** v1.6.0+ vs specification (Empty Co-Constraint Specification) */
@@ -126,7 +134,8 @@ class HL7Validator(
       conformanceContext,
       vsSpecification,
       EmptyCoConstraintValidationContext,
-      EmptyProfileSlicingContext
+      EmptyProfileSlicingContext,
+      FeatureFlags(),
     )
 
   /** v1.6.0+ co-constraints (Empty VS Specification) */
@@ -140,7 +149,8 @@ class HL7Validator(
       conformanceContext,
       EmptyValueSetSpecification,
       coConstraintValidationContext,
-      EmptyProfileSlicingContext
+      EmptyProfileSlicingContext,
+      FeatureFlags(),
     )
 
   /** v1.6.0+ Use ValidationContext (Builder) */
@@ -151,8 +161,13 @@ class HL7Validator(
       context.conformanceContext,
       context.vsSpecification,
       context.coConstraintValidationContext,
-      context.slicingContext
+      context.slicingContext,
+      context.featureFlags
     )
+
+  def setFeatureFlags(ff: FeatureFlags) = {
+    featureFlags = ff.copy()
+  }
 }
 
 /**
@@ -165,9 +180,10 @@ class SyncHL7Validator(
         override val conformanceContext: content.ConformanceContext,
         override val vsSpecification : vs.ValueSetSpecification,
         override val coConstraintValidationContext: CoConstraintValidationContext,
-        override val profileSlicingContext: ProfileSlicingContext
+        override val profileSlicingContext: ProfileSlicingContext,
+        featureFlags: FeatureFlags,
 )
-  extends HL7Validator(profile, valueSetLibrary, conformanceContext, vsSpecification, coConstraintValidationContext, profileSlicingContext) {
+  extends HL7Validator(profile, valueSetLibrary, conformanceContext, vsSpecification, coConstraintValidationContext, profileSlicingContext, featureFlags) {
 
   /** v1 (Empty VS Specification, Empty Co-Constraint Specification) */
   def this(profile: Profile,
@@ -179,21 +195,23 @@ class SyncHL7Validator(
       conformanceContext,
       EmptyValueSetSpecification,
       EmptyCoConstraintValidationContext,
-      EmptyProfileSlicingContext
+      EmptyProfileSlicingContext,
+      FeatureFlags(),
     )
 
   /** v1.6.0+ vs specification (Empty Co-Constraint Specification) */
   def this(profile: Profile,
            valueSetLibrary: vs.ValueSetLibrary,
            conformanceContext: content.ConformanceContext,
-           vsSpecification : vs.ValueSetSpecification) =
+           vsSpecification: vs.ValueSetSpecification) =
     this(
       profile,
       valueSetLibrary,
       conformanceContext,
       vsSpecification,
       EmptyCoConstraintValidationContext,
-      EmptyProfileSlicingContext
+      EmptyProfileSlicingContext,
+      FeatureFlags(),
     )
 
   /** v1.6.0+ co-constraints (Empty VS Specification) */
@@ -207,7 +225,8 @@ class SyncHL7Validator(
       conformanceContext,
       EmptyValueSetSpecification,
       coConstraintValidationContext,
-      EmptyProfileSlicingContext
+      EmptyProfileSlicingContext,
+      FeatureFlags(),
     )
 
   /** v1.6.0+ Use ValidationContext (Builder) */
@@ -218,7 +237,8 @@ class SyncHL7Validator(
       context.conformanceContext,
       context.vsSpecification,
       context.coConstraintValidationContext,
-      context.slicingContext
+      context.slicingContext,
+      context.featureFlags
     )
 
 
