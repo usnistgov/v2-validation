@@ -46,7 +46,7 @@ object ValueConversionHelpers {
     * @param n - The number of days
     * @return The number of days in milliseconds
     */
-  def daysToMilliSeconds(n: Int): Long = n * 86400000
+  def daysToMilliSeconds(n: Int): Long = n.toLong * 86400000
 
   /**
     * Converts the time zone to milli seconds
