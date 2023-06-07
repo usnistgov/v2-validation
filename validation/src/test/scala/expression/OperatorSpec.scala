@@ -45,7 +45,9 @@ class OperatorSpec extends Specification { def is = s2"""
     DateTime( "20200110100110+0000" ) GE DateTime( "20200110100110+0000" ) should be true  $edt4
     DateTime( "20200110100110+0000" ) EQ DateTime( "20200110100110+0000" ) should be true  $edt5
     DateTime( "20200110100110+0000" ) NE DateTime( "20200110101010+0000" ) should be true  $edt6
-    
+    - Overflow on day 25 and up
+    DateTime( "20230523163100-0700" ) LE DateTime( "20230530113020-0700" ) should be true  $edt7
+
   TIME
     Time( "100110+0000" ) LT Time( "101010+0000" ) should be true  $ett1
     Time( "101010+0000" ) GT Time( "100110+0000" ) should be true  $ett2
@@ -380,7 +382,7 @@ class OperatorSpec extends Specification { def is = s2"""
   def edt4 = evalDefault(DateTime( "20200110100110+0000" ), GE, DateTime( "20200110100110+0000" ), true)
   def edt5 = evalDefault(DateTime( "20200110100110+0000" ), EQ, DateTime( "20200110100110+0000" ), true)
   def edt6 = evalDefault(DateTime( "20200110100110+0000" ), NE, DateTime( "20200110101010+0000" ), true)
-
+  def edt7 = evalDefault(DateTime( "20230523163100-0700" ), LE, DateTime( "20230530113020-0700" ), true)
 
   def ett1 = evalDefault(Time( "100110+0000" ), LT, Time( "101010+0000" ), true)
   def ett2 = evalDefault(Time( "101010+0000" ), GT, Time( "100110+0000" ), true)
