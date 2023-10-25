@@ -247,7 +247,7 @@ object Failures extends EscapeSeqHandler {
     * Creates and returns a value set failure stack traces
     */
   def valueSet(e: ValueSet, x: Entry): Fail = {
-    val location = Location(null, "...", x.getPath, x.getLine, x.getColumn)
+    val location = Location(null, "...", x.getPath, x.getLine, x.getColumn, "", None)
     var reasons = Reason(location, x.getDescription) :: Nil
 
     if( x.getStackTrace != null )

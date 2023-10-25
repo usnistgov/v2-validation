@@ -49,6 +49,26 @@ public class EnhancedEntry implements Entry {
 	}
 
 	@Override
+	public String getMessageProfilePath() {
+		return e.getMessageProfilePath();
+	}
+
+	@Override
+	public String getMessageProfilePositionPath() {
+		return e.getMessageProfilePositionPath();
+	}
+
+	@Override
+	public String getMessageInstancePathName() {
+		return e.getMessageInstancePathName();
+	}
+
+	@Override
+	public String getMessageInstancePositionPath() {
+		return e.getMessageInstancePositionPath();
+	}
+
+	@Override
 	public int getLine() {
 		// TODO Auto-generated method stub
 		return e.getLine();

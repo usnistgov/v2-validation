@@ -65,7 +65,8 @@ case class ParseQuery(
   id: String,
 )
 
-case class Entry(category: String, classification: String, description: String, path: String, line: Int, column: Int)
+case class Entry(category: String, classification: String, description: String, path: String, ref: ElementPath, line: Int, column: Int)
+case class ElementPath(profileNamePath: String, instanceNamePath: String, profilePositionPath: String, instancePositionPath: String)
 
 case class ResourceCheckResult(status: Boolean, issues: List[Entry])
 
@@ -74,6 +75,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
 
   implicit val vQueryReads: Reads[ValidationQuery] = Json.reads[ValidationQuery]
   implicit val vQueryWrites: Writes[ValidationQuery] = Json.writes[ValidationQuery]
+  implicit val pathWrites: Writes[ElementPath] = Json.writes[ElementPath]
   implicit val entryWrites: Writes[Entry] = Json.writes[Entry]
   implicit val resCheckWrites: Writes[ResourceCheckResult] = Json.writes[ResourceCheckResult]
   implicit val valResultWrites: Writes[ValidationResult] = Json.writes[ValidationResult]
@@ -117,6 +119,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               "Warning",
               e.getMessage,
               "",
+              null,
               e.getLineNumber,
               e.getColumnNumber
             )
@@ -130,6 +133,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               "Error",
               e.getMessage,
               "",
+              null,
               e.getLineNumber,
               e.getColumnNumber
             )
@@ -143,6 +147,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               "Error",
               e.getMessage,
               "",
+              null,
               e.getLineNumber,
               e.getColumnNumber
             )
@@ -156,12 +161,12 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       case Success(_) => ResourceCheckResult(issues.toList.isEmpty, issues.toList)
       case Failure(e: SAXParseException) => ResourceCheckResult(
         status = false, List {
-          Entry(category + " XML Validation", "Error", e.getMessage, "", e.getLineNumber, e.getColumnNumber)
+          Entry(category + " XML Validation", "Error", e.getMessage, "", null, e.getLineNumber, e.getColumnNumber)
         }
       )
       case Failure(e) => ResourceCheckResult(
         status = false, List {
-          Entry(category + " XML Validation", "FatalError", e.getMessage, "", 0, 0)
+          Entry(category + " XML Validation", "FatalError", e.getMessage, "", null, 0, 0)
         }
       )
     }
@@ -181,12 +186,12 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
         case Success(_) => ResourceCheckResult(status = true, Nil)
         case Failure(ex: ConfigException) => ResourceCheckResult(
           status = false, List {
-            Entry("Configuration Validation", "Error", ex.getMessage, "", ex.origin().lineNumber(), 0)
+            Entry("Configuration Validation", "Error", ex.getMessage, "", null, ex.origin().lineNumber(), 0)
           }
         )
         case Failure(ex) => ResourceCheckResult(
           status = false, List {
-            Entry("Configuration Validation", "Error", ex.getMessage, "", 0, 0)
+            Entry("Configuration Validation", "Error", ex.getMessage, "", null, 0, 0)
           }
         )
       }
@@ -251,6 +256,12 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               v.getClassification,
               v.getDescription,
               v.getPath,
+              ElementPath(
+                v.getMessageProfilePath,
+                v.getMessageInstancePathName,
+                v.getMessageProfilePositionPath,
+                v.getMessageInstancePositionPath
+              ),
               v.getLine,
               v.getColumn
             )
@@ -259,7 +270,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       case e => {
         e.printStackTrace();
         List {
-          Entry("Message Validation Failure", "Error", e.getMessage, "", 0, 0)
+          Entry("Message Validation Failure", "Error", e.getMessage, "", null, 0, 0)
         }
       }
     }
@@ -306,7 +317,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               !validationResult.configuration.status
             val entries = if (resourcesAreValid) Future {
               List {
-                Entry("Resource Validation Failure", "Error", "One or more resources are invalid", "", 0, 0)
+                Entry("Resource Validation Failure", "Error", "One or more resources are invalid", "", null, 0, 0)
               }
             } else validateMessage(query)
 

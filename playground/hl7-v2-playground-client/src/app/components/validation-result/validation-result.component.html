@@ -24,6 +24,7 @@
         <th>Line</th>
         <th>Column</th>
         <th>Path</th>
+        <th>Element Path References</th>
         <th>Message</th>
       </tr>
     </thead>
@@ -37,6 +38,14 @@
         </td>
         <td>
           {{item.path}}
+        </td>
+        <td>
+          <div *ngIf="item.ref"> 
+            <span>{{item.ref.profileNamePath}}</span><br>
+            <span>{{item.ref.instanceNamePath}}</span><br>
+            <span>{{item.ref.profilePositionPath}}</span><br>
+            <span>{{item.ref.instancePositionPath}}</span>
+          </div>
         </td>
         <td>
           {{item.description}}

@@ -62,7 +62,7 @@ trait VXUSpec extends ParserSpecHelper {
 	/OBX
 	/OBX
 	/OBX
-	/OBX""".stripMargin('/'), List(SegmentInstance(VXU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(VXU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	SegmentInstance(VXU_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
 	SegmentInstance(VXU_PD1, Location(EType.Segment, "PD1", "PD1", 3, 1, "PD1[1]"), 1, Nil, hasExtra = true, "PD1"),
 	SegmentInstance(VXU_NK1, Location(EType.Segment, "NK1", "NK1", 4, 1, "NK1[1]"), 1, Nil, hasExtra = true, "NK1"),
@@ -72,7 +72,7 @@ trait VXUSpec extends ParserSpecHelper {
 	GroupInstance(VXU_ORDER_OBSERVATION, 1, List(SegmentInstance(VXU_ORDER_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 8, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(VXU_ORDER_OBSERVATION, 2, List(SegmentInstance(VXU_ORDER_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 9, 1, "OBX[2]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(VXU_ORDER_OBSERVATION, 3, List(SegmentInstance(VXU_ORDER_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 10, 1, "OBX[3]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(VXU_ORDER_OBSERVATION, 4, List(SegmentInstance(VXU_ORDER_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 11, 1, "OBX[4]"), 1, Nil, hasExtra = true, "OBX")))))))
+	GroupInstance(VXU_ORDER_OBSERVATION, 4, List(SegmentInstance(VXU_ORDER_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 11, 1, "OBX[4]"), 1, Nil, hasExtra = true, "OBX"))))))))
 	
 
 }

@@ -5,9 +5,9 @@ import expression.{EvalResult, PlainText}
 import hl7.v2.instance.Query.query
 import hl7.v2.validation.structure.Helpers
 import org.specs2.Specification
-import hl7.v2.instance.{ComplexField, Counter, Element, Field, Group, Line, NULLComplexField, SegOrGroup, Segment, SimpleField, Message => MI}
+import hl7.v2.instance.{ComplexField, Counter, Element, Field, Group => GI, Line, NULLComplexField, SegOrGroup, Segment, SimpleField, Message => MI}
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.{Composite, Datatype, Message, Req, Segment => SM}
+import hl7.v2.profile.{Composite, Datatype, Message, Req, Segment => SM, Group => GM}
 import org.specs2.matcher.MatchResult
 
 trait SlicingEvalSpec extends Specification
@@ -523,7 +523,7 @@ trait SlicingEvalSpec extends Specification
   // ====================== Segment ========================
   def segmentAssertionSlicingTest(SLICING: SegmentAssertionSlicing, expected: (List[Segment], Element, List[SlicingCode]) => List[MatchResult[Any]]) = {
     val LSGS = mkMessage("SGA||A^B^C^D", MESSAGE)
-    val (segOrGroups, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
+    val (segOrGroups, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, None, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
     val TARGET_SEGMENT = LSGS.filter(_.position == SLICING.position).head
@@ -532,7 +532,7 @@ trait SlicingEvalSpec extends Specification
 
   def segmentOccurrenceSlicingTest(v: List[String], SLICING: SegmentOccurrenceSlicing, expected: (List[Segment], Map[Int, Element], List[SlicingCode]) => List[MatchResult[Any]]) = {
     val LSGS = mkMessage(v, MESSAGE)
-    val (segOrGroups, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
+    val (segOrGroups, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, None, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
     val TARGET_SEGMENT = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).view.mapValues(_.head).toMap
@@ -985,14 +985,14 @@ trait SlicingEvalSpec extends Specification
     )
 
     val LSGS = mkMessage("SGA||~A^B^C^D" :: "SGB||~A^B^C^D" :: Nil, MESSAGE)
-    val (_, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
+    val (_, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, None, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
     val TARGET = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).view.mapValues(_.head).toMap
 
     codes must containTheSameElementsAs(
       List(
-        SegmentSliceTargetIsGroup(SLICING, TARGET(1).asInstanceOf[Group]),
+        SegmentSliceTargetIsGroup(SLICING, TARGET(1).asInstanceOf[GI]),
       )
     )
   }
@@ -1007,7 +1007,7 @@ trait SlicingEvalSpec extends Specification
     )
 
     val LSGS = mkMessage("SGA||~A^B^C^D" :: Nil, MESSAGE)
-    val (_, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
+    val (_, codes) = LSGS.filter(_.position == SLICING.position).map((child) => applySegmentSlices(SLICING, None, child)).foldLeft(List[SegOrGroup](), List[SlicingCode]()){
       (acc, x) => (acc._1 ::: List(x._1), acc._2 ::: x._2)
     }
     val TARGET = LSGS.filter(_.position == SLICING.position).groupBy(_.instance).view.mapValues(_.head).toMap
@@ -1159,13 +1159,18 @@ trait SlicingEvalSpec extends Specification
   def mkMessage(value: String, profile: Message): LSG = {
     implicit val ambiguous: Boolean = false
     implicit val counter: Counter = Counter(scala.collection.mutable.Map())
-    processChildren(profile.structure, value.split("\n").zipWithIndex.map(x => Line(x._2, x._1)).toList, false)._1
+    processChildren(profile.structure, None, value.split("\n").zipWithIndex.map(x => Line(x._2, x._1)).toList, false)._1
   }
 
   def mkMessage(value: List[String], profile: Message): LSG = {
     implicit val ambiguous: Boolean = false
     implicit val counter: Counter = Counter(scala.collection.mutable.Map())
-    processChildren(profile.structure, value.zipWithIndex.map(x => Line(x._2, x._1)), false)._1
+    processChildren(profile.structure, None, value.zipWithIndex.map(x => Line(x._2, x._1)), false)._1
+  }
+
+
+  def Group(model: GM, instance: Int, children: List[SegOrGroup]): GI = {
+    GI(model = model, instance = instance, profilePath = None, children = children)
   }
 
   def assertGet(e: Element, path: String): Element = {

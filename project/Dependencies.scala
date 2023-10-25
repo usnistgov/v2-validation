@@ -36,7 +36,7 @@ object Dependencies {
   val spec2 = "org.specs2" %% "specs2-core" % "4.19.2"
   val spec2sc = "org.specs2" %% "specs2-scalacheck" % "4.19.2"
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.17.0"
-  val vreport       = "com.github.hl7-tools"          %   "validation-report"     %  "1.1.0"
+  val vreport       = "com.github.hl7-tools"          %   "validation-report"     %  "1.2.0"
   val scala_xml     = "org.scala-lang.modules"        %%   "scala-xml"        %  "1.3.0"
   val json4s = "org.json4s" %% "json4s-jackson" % "4.0.5"
 

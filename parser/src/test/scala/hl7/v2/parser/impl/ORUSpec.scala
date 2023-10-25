@@ -77,27 +77,27 @@ trait ORUSpec extends ParserSpecHelper {
 	/NTE
 	/TQ1
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_NTE, Location(EType.Segment, "NTE", "NTE", 5, 1, "NTE[1]"), 1, Nil, hasExtra = true, "NTE"),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_TIMING_QTY, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_TIMING_QTY_TQ1, Location(EType.Segment, "TQ1", "TQ1", 6, 1, "TQ1[1]"), 1, Nil, hasExtra = true, "TQ1"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 7, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 8, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 8, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val SED_RATE_1__NO_ORC_ORU = ("""/MSH
 	/PID
 	/OBR
 	/NTE
 	/TQ1
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 3, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_NTE, Location(EType.Segment, "NTE", "NTE", 4, 1, "NTE[1]"), 1, Nil, hasExtra = true, "NTE"),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_TIMING_QTY, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_TIMING_QTY_TQ1, Location(EType.Segment, "TQ1", "TQ1", 5, 1, "TQ1[1]"), 1, Nil, hasExtra = true, "TQ1"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 6, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 7, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 7, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val SED_RATE_2_ORU = ("""/MSH
 	/PID
 	/ORC
@@ -106,7 +106,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/TQ1
 	/OBX
 	/NTE
-	/SPM""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -114,16 +114,16 @@ trait ORUSpec extends ParserSpecHelper {
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_TIMING_QTY, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_TIMING_QTY_TQ1, Location(EType.Segment, "TQ1", "TQ1", 6, 1, "TQ1[1]"), 1, Nil, hasExtra = true, "TQ1"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 7, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_NTE, Location(EType.Segment, "NTE", "NTE", 8, 1, "NTE[2]"), 1, Nil, hasExtra = true, "NTE"))),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 9, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 9, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val SED_RATE_3_ORU = ("""/MSH
 	/PID
 	/ORC
 	/OBR
-	/SPM""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 5, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 5, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val CBC_ORU = ("""/MSH
 	/PID
 	/ORC
@@ -156,7 +156,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/OBX
 	/OBX
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -188,7 +188,7 @@ trait ORUSpec extends ParserSpecHelper {
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 26, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 30, 1, "OBX[26]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 27, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 31, 1, "OBX[27]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 28, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 32, 1, "OBX[28]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 33, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 33, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val CULTURE_AND_SUSCEPTIBILITY_2_ORU = ("""/MSH
 	/PID
 	/ORC
@@ -211,7 +211,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/OBR
 	/OBX
 	/OBX
-	/OBX""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -233,7 +233,7 @@ trait ORUSpec extends ParserSpecHelper {
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 20, 1, "OBR[4]"), 1, Nil, hasExtra = true, "OBR"),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 21, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 2, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 22, 1, "OBX[11]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 3, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 23, 1, "OBX[12]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 3, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 23, 1, "OBX[12]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	val REFLEX_1_ORU = ("""/MSH
 	/PID
 	/ORC
@@ -251,7 +251,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/SPM
 	/ORC
 	/OBR
-	/OBX""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -268,7 +268,7 @@ trait ORUSpec extends ParserSpecHelper {
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 15, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 2, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 16, 1, "ORC[2]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 17, 1, "OBR[2]"), 1, Nil, hasExtra = true, "OBR"),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 18, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 18, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	val REFLEX_1__NO_ORC_ORU = ("""/MSH
 	/PID
 	/OBR
@@ -284,7 +284,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/NTE
 	/SPM
 	/OBR
-	/OBX""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 3, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 4, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
@@ -299,7 +299,7 @@ trait ORUSpec extends ParserSpecHelper {
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_NTE, Location(EType.Segment, "NTE", "NTE", 13, 1, "NTE[1]"), 1, Nil, hasExtra = true, "NTE"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 14, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 2, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 15, 1, "OBR[2]"), 1, Nil, hasExtra = true, "OBR"),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 16, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 16, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	val REFLEX_1__THE_FIRST_ORC_ORU = ("""/MSH
 	/PID
 	/ORC
@@ -316,7 +316,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/NTE
 	/SPM
 	/OBR
-	/OBX""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -332,7 +332,7 @@ trait ORUSpec extends ParserSpecHelper {
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_NTE, Location(EType.Segment, "NTE", "NTE", 14, 1, "NTE[1]"), 1, Nil, hasExtra = true, "NTE"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 15, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 2, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 16, 1, "OBR[2]"), 1, Nil, hasExtra = true, "OBR"),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 17, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 17, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	val REFLEX_1__THE_SECOND_ORC_PRESENT_ORU = ("""/MSH
 	/PID
 	/OBR
@@ -349,7 +349,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/SPM
 	/ORC
 	/OBR
-	/OBX""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 3, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 4, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
@@ -365,7 +365,7 @@ trait ORUSpec extends ParserSpecHelper {
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 14, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION, 2, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_ORC, Location(EType.Segment, "ORC", "ORC", 15, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBR, Location(EType.Segment, "OBR", "OBR", 16, 1, "OBR[2]"), 1, Nil, hasExtra = true, "OBR"),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 17, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 1, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 17, 1, "OBX[10]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	val CCHD_EXAMPLE_MESSAGE_ORU = ("""/MSH
 	/PID
 	/NK1
@@ -398,7 +398,7 @@ trait ORUSpec extends ParserSpecHelper {
 	/OBX
 	/OBX
 	/OBX
-	/OBX""".stripMargin('/'), List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(ORU_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(ORU_PATIENT_RESULT, 1, List(GroupInstance(ORU_PATIENT_RESULT_PATIENT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
 	SegmentInstance(ORU_PATIENT_RESULT_PATIENT_NK1, Location(EType.Segment, "NK1", "NK1", 3, 1, "NK1[1]"), 1, Nil, hasExtra = true, "NK1"),
 	GroupInstance(ORU_PATIENT_RESULT_PATIENT_VISIT, 1, List(SegmentInstance(ORU_PATIENT_RESULT_PATIENT_VISIT_PV1, Location(EType.Segment, "PV1", "PV1", 4, 1, "PV1[1]"), 1, Nil, hasExtra = true, "PV1"))))),
@@ -430,7 +430,7 @@ trait ORUSpec extends ParserSpecHelper {
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 25, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 30, 1, "OBX[25]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 26, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 31, 1, "OBX[26]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 27, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 32, 1, "OBX[27]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 28, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 33, 1, "OBX[28]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	GroupInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION, 28, List(SegmentInstance(ORU_PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 33, 1, "OBX[28]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	
 
 }

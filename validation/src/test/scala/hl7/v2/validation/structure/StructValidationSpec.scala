@@ -224,8 +224,8 @@ trait StructValidationSpec
                /UAC""".stripMargin('/')
     val expected =
       List(
-        Detections.extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10,"PID[1]-3[2]") ),
-        Detections.extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13,"PID[1]-3[2].4") )
+        Detections.extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10,"PID[1]-3[2]", None) ),
+        Detections.extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13,"PID[1]-3[2].4", None) )
       )
     validate(m) must containTheSameElementsAs( expected )
   }
@@ -243,7 +243,7 @@ trait StructValidationSpec
                 /UAC""".stripMargin('/')
     val expected =
       List(
-        Detections.unescaped( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5,"PID[1]-1[1]") )
+        Detections.unescaped( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5,"PID[1]-1[1]", None) )
       )
 
     validate(m) must containTheSameElementsAs( expected )
@@ -267,8 +267,8 @@ trait StructValidationSpec
        OC(EType.Segment, "Optional Segment Test", "OPT", 2, 1,"OPT[1]"),
        OC(EType.Field, "Complex Field Constant Value Test", "OPT-1", 2, 5,"OPT[1]-1[1]"),
        OC(EType.Component, "Complex Component Test", "OPT-1.1", 2, 5,"OPT[1]-1[1].1"),
-       Detections.constantValueSpecError(Location(EType.Field, "Complex Field Constant Value Test", "OPT-1", 2, 5,"OPT[1]-1[1]"), "this is a spec error"),
-       Detections.constantValueSpecError(Location(EType.Component, "Complex Component Test", "OPT-1.1", 2, 5,"OPT[1]-1[1].1"), "this is a spec error")
+       Detections.constantValueSpecError(Location(EType.Field, "Complex Field Constant Value Test", "OPT-1", 2, 5,"OPT[1]-1[1]", None), "this is a spec error"),
+       Detections.constantValueSpecError(Location(EType.Component, "Complex Component Test", "OPT-1.1", 2, 5,"OPT[1]-1[1].1", None), "this is a spec error")
    )
    validate(m) must containTheSameElementsAs( expected )
  }
@@ -279,22 +279,22 @@ trait StructValidationSpec
     case Failure(e) => throw e
   }
 
-  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c, uid))
-  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c,uid))
-  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c, uid))
-  private def OC(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.oUsageComplex(Location(et, d, p, l, c, uid))
-  private def O(et: EType, d: String, p: String, l: Int, c: Int, uid : String, value: String) = Detections.ousage(Location(et, d, p, l, c, uid), value)
+  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c, uid, None))
+  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c,uid, None))
+  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c, uid, None))
+  private def OC(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.oUsageComplex(Location(et, d, p, l, c, uid, None))
+  private def O(et: EType, d: String, p: String, l: Int, c: Int, uid : String, value: String) = Detections.ousage(Location(et, d, p, l, c, uid, None), value)
 
   private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
-    Detections.cardinality(Location(et, d, p, l, c, uid), r, i)
+    Detections.cardinality(Location(et, d, p, l, c, uid, None), r, i)
 
   private def MinC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
-    Detections.cardinality(Location(et, d, p, l, c, uid), r, i)
+    Detections.cardinality(Location(et, d, p, l, c, uid, None), r, i)
 
   private def Len(et: EType, d: String, p: String, l: Int, c: Int, v: String, r: Range, uid : String) =
-    Detections.length(Location(et, d, p, l, c, uid), r, v)
+    Detections.length(Location(et, d, p, l, c, uid, None), r, v)
   
   private def NullCard(et: EType, d: String, p: String, l: Int, c: Int, i: Int, uid : String) =
-    Detections.ncardinality(Location(et, d, p, l, c, uid), i)
+    Detections.ncardinality(Location(et, d, p, l, c, uid, None), i)
 
 }

@@ -101,7 +101,7 @@ trait SlicingEvalMocks {
   def ST: Primitive = Primitive("ST", "ST", "String", "2.5")
   def mkSegment(value: String, segment: SegmentRef): SI = {
     implicit val ctr: Counter = Counter(scala.collection.mutable.Map[String, Int]())
-    SI(segment, value, 1, -1)
+    SI(segment, None, value, 1, -1)
   }
 
 }

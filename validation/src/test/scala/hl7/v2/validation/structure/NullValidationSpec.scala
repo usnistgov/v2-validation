@@ -183,7 +183,7 @@ trait NullValidationSpec
     assert(field.isSuccess)
     val expected =
       List(
-        Detections.ncardinality(Location(EType.Field,"Patient Identifier List","PID-3",2,9,"PID[1]-3[1]"), 2))
+        Detections.ncardinality(Location(EType.Field,"Patient Identifier List","PID-3",2,9,"PID[1]-3[1]", None), 2))
         
     def e81 = {
       validate(message1) === Nil
@@ -201,7 +201,7 @@ trait NullValidationSpec
   }
   
   def e9 = {
-    val loc = Location(EType.Field, "The description", "The path", 1, 1)
+    val loc = Location(EType.Field, "The description", "The path", 1, 1, "", None)
     val lcs = Some( Range(2, "3") )
     val lcn = None
     checkValue( Number("\"\""), lcs, None, None, loc) === Nil
@@ -212,20 +212,20 @@ trait NullValidationSpec
     case Failure(e) => throw e
   }
 
-  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c))
-  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c,uid))
-  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c))
+  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c, uid, None))
+  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c, uid, None))
+  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c, uid, None))
 
   private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
-    Detections.cardinality(Location(et, d, p, l, c, uid), r, i)
+    Detections.cardinality(Location(et, d, p, l, c, uid, None), r, i)
 
   private def MinC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
-    Detections.cardinality(Location(et, d, p, l, c, uid), r, i)
+    Detections.cardinality(Location(et, d, p, l, c, uid, None), r, i)
 
   private def Len(et: EType, d: String, p: String, l: Int, c: Int, v: String, r: Range, uid : String) =
-    Detections.length(Location(et, d, p, l, c, uid), r, v)
+    Detections.length(Location(et, d, p, l, c, uid, None), r, v)
   
   private def NullCard(et: EType, d: String, p: String, l: Int, c: Int, i: Int, uid : String) =
-    Detections.ncardinality(Location(et, d, p, l, c, uid), i)
+    Detections.ncardinality(Location(et, d, p, l, c, uid, None), i)
 
 }

@@ -9,22 +9,61 @@ case class Location(
     path: String,
     line: Int,
     column: Int,
-    uidPath : String 
+    uidPath : String,
+    elementProfilePath: Option[ElementProfilePath],
   ) {
   val prettyString = s"$eType $path ($desc)"
 
+  lazy val profilePositionPath: String = elementProfilePath.map(_.profilePositionPath).getOrElse("")
+  lazy val profilePath: String = elementProfilePath.map(_.profilePath).getOrElse("")
+  lazy val instancePositionPath: String = elementProfilePath.map(_.instancePositionPath).getOrElse("")
+  lazy val instancePath: String = elementProfilePath.map(_.instancePath).getOrElse("")
 }
 
-object Location {
-  def apply(
-    eType: EType,
-    desc: String,
-    path: String,
-    line: Int,
-    column: Int
-  ) : Location = {
-    Location(eType,desc,path,line,column,path)
+case class ElementProfilePath (
+  name: Option[String],
+  eType: EType,
+  position: Int,
+  instance: Int,
+  child: Option[ElementProfilePath],
+) {
+  lazy val profilePositionPath: String = reduce(
+    None,
+    Some(this),
+    (parent, current) => {
+      parent.map(p => s"$p.${current.position}").getOrElse(s"${current.position}")
+    }
+  )
+  lazy val profilePath: String = reduce(
+    None,
+    Some(this),
+    (parent, current) => {
+      val separator = if (current.eType.equals(EType.Field)) "-" else "."
+      parent.map(p => s"$p$separator${current.name.getOrElse(current.position)}").getOrElse(current.name.getOrElse(s"${current.position}"))
+    }
+  )
+  lazy val instancePositionPath: String = reduce(
+    None,
+    Some(this),
+    (parent, current) => {
+      parent.map(p => s"$p.${current.position}[${current.instance}]").getOrElse(s"${current.position}[${current.instance}]")
+    }
+  )
+  lazy val instancePath: String = reduce(
+    None,
+    Some(this),
+    (parent, current) => {
+      val separator = if (current.eType.equals(EType.Field)) "-" else "."
+      parent.map(p => s"$p$separator${current.name.getOrElse(current.position)}[${current.instance}]").getOrElse(s"${current.name.getOrElse(current.position)}[${current.instance}]")
+    }
+  )
+
+  def append(leaf: ElementProfilePath): ElementProfilePath = {
+    this.copy(child = Some(this.child.map(c => c.append(leaf)).getOrElse(leaf)))
+  }
+
+  private def reduce(value: Option[String], node: Option[ElementProfilePath], fn: (Option[String], ElementProfilePath) => String): String = {
+    node.map(n => reduce(Some(fn(value, n)), n.child, fn)).getOrElse(value.getOrElse(""))
   }
 }
-
 

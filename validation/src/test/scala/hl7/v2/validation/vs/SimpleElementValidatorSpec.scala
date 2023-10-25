@@ -30,7 +30,7 @@ class SimpleElementValidatorSpec
   implicit val Detections: ConfigurableDetections = new ConfigurableDetections(ConfigFactory.load());
   implicit val vsValidation: SimpleElementValidator = new SimpleElementValidator(Detections)
 
-  val l = Location(null, "", "", -1, -1)
+  val l = Location(null, "", "", -1, -1, "", None)
 
   val bs: Option[BindingStrength] = None
   val stability     = Some(Stability.Static)

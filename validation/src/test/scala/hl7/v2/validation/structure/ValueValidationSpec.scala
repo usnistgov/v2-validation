@@ -32,7 +32,7 @@ class ValueValidationSpec extends Specification { def is = s2"""
 
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
   implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
-  val loc = Location(EType.Field, "The description", "The path", 1, 1)
+  val loc = Location(EType.Field, "The description", "The path", 1, 1, "", None)
   val lcs = Some( Range(2, "3") )
   val rng = Some( Range(2, "3") )
   val lcn = None

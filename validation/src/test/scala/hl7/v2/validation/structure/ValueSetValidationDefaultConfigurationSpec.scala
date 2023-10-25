@@ -533,7 +533,7 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
 
   trait Default {
     val reqs: List[Req] = List[Req]()
-    val location: Location = Location(null, "desc ...", "Path", -1, -1)
+    val location: Location = Location(null, "desc ...", "Path", -1, -1, "", None)
     val hasExtra = false
     val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
     val rawMessageValue = "";

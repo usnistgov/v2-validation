@@ -3,7 +3,7 @@ package hl7.v2.validation.slicing
 import expression.EvalResult
 import expression.EvalResult.Trace
 import gov.nist.validation.report.Entry
-import hl7.v2.instance.{Counter, DataElement, Element, Field, Group, Message, SegOrGroup, Separators, TimeZone, Segment => SegmentInstance}
+import hl7.v2.instance.{Counter, DataElement, Element, ElementProfilePath, Field, Group, Message, SegOrGroup, Separators, TimeZone, Segment => SegmentInstance}
 import hl7.v2.profile.{Datatype, Segment}
 import hl7.v2.validation.vs.Validator
 import hl7.v2.validation.report.ConfigurableDetections
@@ -51,7 +51,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
     val segOrGroupsAndIssues = group.children.foldLeft((List[SegOrGroup](), List[SlicingCode]())) {
       (acc, child) => profileSlicingContext.segmentSlicingForMessageGroupAtPosition(messageId, group, child.position) match {
         case None =>  (acc._1 ::: List(child), acc._2)
-        case Some(slicing) => val (parsed, issues) =  applySegmentSlices(slicing, child)
+        case Some(slicing) => val (parsed, issues) =  applySegmentSlices(slicing, group.location.elementProfilePath, child)
           (acc._1 ::: List(parsed), acc._2 ::: issues)
       }
     }
@@ -112,7 +112,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
 
   }
 
-  def applySegmentSlices(slicing: Slicing[Segment], child: SegOrGroup)
+  def applySegmentSlices(slicing: Slicing[Segment], parentElementProfilePath: Option[ElementProfilePath], child: SegOrGroup)
     (
       implicit s: Separators,
       t: Option[TimeZone],
@@ -128,7 +128,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
         val (matched, detections) = matchSlice(segmentInstance, slicing)
         matched match {
           case Some(slice) =>
-            val (appliedSegmentRef, codes) = applySegmentToSegmentRef(segmentInstance, slice)
+            val (appliedSegmentRef, codes) = applySegmentToSegmentRef(segmentInstance, parentElementProfilePath, slice)
             (appliedSegmentRef, detections ::: codes ::: Nil)
           case None =>
             (segmentInstance, NoSliceMatch(slicing, segmentInstance, segmentInstance.model.ref.id) :: detections ::: Nil)
@@ -206,15 +206,16 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
     }
   }
 
-  def applySegmentToSegmentRef(instance: SegmentInstance, slice: Slice[Segment])
+  def applySegmentToSegmentRef(instance: SegmentInstance, parentElementProfilePath: Option[ElementProfilePath], slice: Slice[Segment])
     (implicit s: Separators, ctr: Counter): (SegmentInstance, List[SlicingCode]) = {
     try {
       val parsed = SegmentInstance.apply(
         instance.model.copy(ref = slice.use),
+        parentElementProfilePath,
         instance.rawMessageValue,
         instance.instance,
         instance.location.line
-      ).copy(location = instance.location)
+      ).copy()
       (parsed, Nil)
     } catch {
       case e: Exception => (instance, MatchError(slice, instance, e.getMessage) :: Nil)

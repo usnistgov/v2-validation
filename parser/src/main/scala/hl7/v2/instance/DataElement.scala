@@ -66,7 +66,16 @@ object DataElement {
     val _children = ml zip vs map { t =>
       val (m, (col, vv)) = t
       val pos = m.req.position
-      val loc = l.copy( eType(l.path), desc=m.name, path=s"${l.path}.$pos", column=col, uidPath = s"${l.uidPath}.$pos" )
+      val elementProfilePath = ElementProfilePath(
+        None,
+        eType(l.path),
+        pos,
+        1,
+        None,
+      )
+      val loc = l.copy( eType(l.path), desc=m.name, path=s"${l.path}.$pos", column=col, uidPath = s"${l.uidPath}.$pos", elementProfilePath =
+        Some(l.elementProfilePath.map(parent => parent.append(elementProfilePath)).getOrElse(elementProfilePath))
+      )
       component( m.datatype, m.req, loc, vv )
     }
     (hasExtra, _children.flatten)

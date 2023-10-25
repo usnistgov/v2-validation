@@ -140,11 +140,11 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/PID
 	/ORC
 	/OBR
-	/DG1""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/DG1""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 5, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1")))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 5, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"))))))))
 	val SED_RATE_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -154,7 +154,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/NTE
 	/PRT
 	/PRT
-	/DG1""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/DG1""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_TIMING, 1, List(SegmentInstance(LOIv1_ORDER_TIMING_TQ1, Location(EType.Segment, "TQ1", "TQ1", 4, 1, "TQ1[1]"), 1, Nil, hasExtra = true, "TQ1"))),
@@ -163,20 +163,20 @@ trait LOIv1Spec extends ParserSpecHelper {
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_NTE, Location(EType.Segment, "NTE", "NTE", 7, 1, "NTE[2]"), 2, Nil, hasExtra = true, "NTE"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRT, Location(EType.Segment, "PRT", "PRT", 8, 1, "PRT[1]"), 1, Nil, hasExtra = true, "PRT"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRT, Location(EType.Segment, "PRT", "PRT", 9, 1, "PRT[2]"), 2, Nil, hasExtra = true, "PRT"),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 10, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1")))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 10, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"))))))))
 	val CBC_LOIV1 = ("""/MSH
 	/PID
 	/ORC
 	/OBR
 	/PRT
 	/DG1
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRT, Location(EType.Segment, "PRT", "PRT", 5, 1, "PRT[1]"), 1, Nil, hasExtra = true, "PRT"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 6, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 7, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 7, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val LIPID_PANEL_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -185,7 +185,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/DG1
 	/DG1
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -193,7 +193,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 6, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 7, 1, "DG1[2]"), 2, Nil, hasExtra = true, "DG1"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 8, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 9, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 9, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val LIPID_PANEL_FI_LOIV1 = ("""/MSH
 	/PID
 	/PV1
@@ -205,7 +205,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/DG1
 	/DG1
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
 	GroupInstance(LOIv1_PATIENT_PATIENT_VISIT, 1, List(SegmentInstance(LOIv1_PATIENT_PATIENT_VISIT_PV1, Location(EType.Segment, "PV1", "PV1", 3, 1, "PV1[1]"), 1, Nil, hasExtra = true, "PV1"))),
 	GroupInstance(LOIv1_PATIENT_INSURANCE, 1, List(SegmentInstance(LOIv1_PATIENT_INSURANCE_IN1, Location(EType.Segment, "IN1", "IN1", 4, 1, "IN1[1]"), 1, Nil, hasExtra = true, "IN1"))),
@@ -216,20 +216,20 @@ trait LOIv1Spec extends ParserSpecHelper {
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 9, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 10, 1, "DG1[2]"), 2, Nil, hasExtra = true, "DG1"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 11, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 12, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 12, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val CULTURE_AND_SUSCEP_LOIV1 = ("""/MSH
 	/PID
 	/ORC
 	/OBR
 	/PRT
 	/DG1
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRT, Location(EType.Segment, "PRT", "PRT", 5, 1, "PRT[1]"), 1, Nil, hasExtra = true, "PRT"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 6, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 7, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 7, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val REFLEX_HEPATITIS_LOIV1 = ("""/MSH
 	/PID
 	/NK1
@@ -237,14 +237,14 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/OBR
 	/DG1
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
 	SegmentInstance(LOIv1_PATIENT_NK1, Location(EType.Segment, "NK1", "NK1", 3, 1, "NK1[1]"), 1, Nil, hasExtra = true, "NK1"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 4, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 5, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 6, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 7, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 8, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 8, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val PAP_SMEAR_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -252,14 +252,14 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/DG1
 	/OBX
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 5, 1, "DG1[1]"), 1, Nil, hasExtra = true, "DG1"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 6, 1, "OBX[1]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 2, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 7, 1, "OBX[2]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 8, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 8, 1, "SPM[1]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val GHP_LOIV1 = ("""/MSH
 	/PID
 	/NK1
@@ -273,7 +273,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/ORC
 	/TQ1
 	/OBR
-	/DG1""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/DG1""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
 	SegmentInstance(LOIv1_PATIENT_NK1, Location(EType.Segment, "NK1", "NK1", 3, 1, "NK1[1]"), 1, Nil, hasExtra = true, "NK1"),
 	SegmentInstance(LOIv1_PATIENT_NK1, Location(EType.Segment, "NK1", "NK1", 4, 1, "NK1[2]"), 2, Nil, hasExtra = true, "NK1"))),
@@ -286,7 +286,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	GroupInstance(LOIv1_ORDER, 2, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 11, 1, "ORC[2]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_TIMING, 1, List(SegmentInstance(LOIv1_ORDER_TIMING_TQ1, Location(EType.Segment, "TQ1", "TQ1", 12, 1, "TQ1[2]"), 1, Nil, hasExtra = true, "TQ1"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 13, 1, "OBR[2]"), 1, Nil, hasExtra = true, "OBR"),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 14, 1, "DG1[4]"), 1, Nil, hasExtra = true, "DG1")))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 14, 1, "DG1[4]"), 1, Nil, hasExtra = true, "DG1"))))))))
 	val CREATININE_CLEARANCE_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -304,7 +304,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/DG1
 	/OBX
 	/OBX
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -321,7 +321,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_DG1, Location(EType.Segment, "DG1", "DG1", 15, 1, "DG1[4]"), 2, Nil, hasExtra = true, "DG1"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 16, 1, "OBX[4]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION, 2, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 17, 1, "OBX[5]"), 1, Nil, hasExtra = true, "OBX"))),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 18, 1, "SPM[3]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 18, 1, "SPM[3]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val PROSTATE_BIOPSY_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -335,7 +335,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/SPM
 	/SPM
 	/SPM
-	/SPM""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SPM""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -348,7 +348,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 7, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 11, 1, "SPM[7]"), 1, Nil, hasExtra = true, "SPM"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 8, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 12, 1, "SPM[8]"), 1, Nil, hasExtra = true, "SPM"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 9, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 13, 1, "SPM[9]"), 1, Nil, hasExtra = true, "SPM"))),
-	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 10, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 14, 1, "SPM[10]"), 1, Nil, hasExtra = true, "SPM")))))))))
+	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 10, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 14, 1, "SPM[10]"), 1, Nil, hasExtra = true, "SPM"))))))))))
 	val ALL_SEGMENTS__NO_REPS_LOIV1 = ("""/MSH
 	/SFT
 	/NTE
@@ -395,7 +395,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/SGT
 	/FT1
 	/CTI
-	/BLG""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/BLG""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	SegmentInstance(LOIv1_SFT, Location(EType.Segment, "SFT", "SFT", 2, 1, "SFT[1]"), 1, Nil, hasExtra = true, "SFT"),
 	SegmentInstance(LOIv1_NTE, Location(EType.Segment, "NTE", "NTE", 3, 1, "NTE[1]"), 1, Nil, hasExtra = true, "NTE"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 4, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
@@ -441,7 +441,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 44, 1, "SGT[1]"), 1, Nil, hasExtra = true, "SGT"))))),
 	SegmentInstance(LOIv1_ORDER_FT1, Location(EType.Segment, "FT1", "FT1", 45, 1, "FT1[1]"), 1, Nil, hasExtra = true, "FT1"),
 	SegmentInstance(LOIv1_ORDER_CTI, Location(EType.Segment, "CTI", "CTI", 46, 1, "CTI[1]"), 1, Nil, hasExtra = true, "CTI"),
-	SegmentInstance(LOIv1_ORDER_BLG, Location(EType.Segment, "BLG", "BLG", 47, 1, "BLG[1]"), 1, Nil, hasExtra = true, "BLG")))))
+	SegmentInstance(LOIv1_ORDER_BLG, Location(EType.Segment, "BLG", "BLG", 47, 1, "BLG[1]"), 1, Nil, hasExtra = true, "BLG"))))))
 	val ALL_SEGMENTS__SEGMENT_REPETITIONS_LOIV1 = ("""/MSH
 	/SFT
 	/SFT
@@ -505,7 +505,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/FT1
 	/CTI
 	/CTI
-	/BLG""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/BLG""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	SegmentInstance(LOIv1_SFT, Location(EType.Segment, "SFT", "SFT", 2, 1, "SFT[1]"), 1, Nil, hasExtra = true, "SFT"),
 	SegmentInstance(LOIv1_SFT, Location(EType.Segment, "SFT", "SFT", 3, 1, "SFT[2]"), 2, Nil, hasExtra = true, "SFT"),
 	SegmentInstance(LOIv1_NTE, Location(EType.Segment, "NTE", "NTE", 4, 1, "NTE[1]"), 1, Nil, hasExtra = true, "NTE"),
@@ -568,7 +568,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	SegmentInstance(LOIv1_ORDER_FT1, Location(EType.Segment, "FT1", "FT1", 61, 1, "FT1[2]"), 2, Nil, hasExtra = true, "FT1"),
 	SegmentInstance(LOIv1_ORDER_CTI, Location(EType.Segment, "CTI", "CTI", 62, 1, "CTI[1]"), 1, Nil, hasExtra = true, "CTI"),
 	SegmentInstance(LOIv1_ORDER_CTI, Location(EType.Segment, "CTI", "CTI", 63, 1, "CTI[2]"), 2, Nil, hasExtra = true, "CTI"),
-	SegmentInstance(LOIv1_ORDER_BLG, Location(EType.Segment, "BLG", "BLG", 64, 1, "BLG[1]"), 1, Nil, hasExtra = true, "BLG")))))
+	SegmentInstance(LOIv1_ORDER_BLG, Location(EType.Segment, "BLG", "BLG", 64, 1, "BLG[1]"), 1, Nil, hasExtra = true, "BLG"))))))
 	val MULTIPLE_GROUPS_REPS_LOIV1 = ("""/MSH
 	/PID
 	/IN1
@@ -586,7 +586,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/SPM
 	/OBX
 	/SPM
-	/OBX""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/OBX""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"),
 	GroupInstance(LOIv1_PATIENT_INSURANCE, 1, List(SegmentInstance(LOIv1_PATIENT_INSURANCE_IN1, Location(EType.Segment, "IN1", "IN1", 3, 1, "IN1[1]"), 1, Nil, hasExtra = true, "IN1"))),
 	GroupInstance(LOIv1_PATIENT_INSURANCE, 2, List(SegmentInstance(LOIv1_PATIENT_INSURANCE_IN1, Location(EType.Segment, "IN1", "IN1", 4, 1, "IN1[2]"), 1, Nil, hasExtra = true, "IN1"))))),
@@ -603,7 +603,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 3, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 15, 1, "SPM[3]"), 1, Nil, hasExtra = true, "SPM"),
 	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_OBX, Location(EType.Segment, "OBX", "OBX", 16, 1, "OBX[5]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN, 4, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_SPM, Location(EType.Segment, "SPM", "SPM", 17, 1, "SPM[4]"), 1, Nil, hasExtra = true, "SPM"),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_OBX, Location(EType.Segment, "OBX", "OBX", 18, 1, "OBX[6]"), 1, Nil, hasExtra = true, "OBX")))))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_SPECIMEN_OBX, Location(EType.Segment, "OBX", "OBX", 18, 1, "OBX[6]"), 1, Nil, hasExtra = true, "OBX"))))))))))
 	val ONE_ORDER_GROUP_WITH_PRIOR_RESULTS_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -618,7 +618,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/OBX
 	/OBX
 	/OBX
-	/SGT""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SGT""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -632,7 +632,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 12, 1, "OBX[4]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 2, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 13, 1, "OBX[5]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 3, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 14, 1, "OBX[6]"), 1, Nil, hasExtra = true, "OBX"))))),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 15, 1, "SGT[1]"), 1, Nil, hasExtra = true, "SGT")))))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 15, 1, "SGT[1]"), 1, Nil, hasExtra = true, "SGT"))))))))))
 	val ONE_ORDER_GROUP_WITH_MULTIPLE_PRIOR_RESULTS_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -654,7 +654,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/OBX
 	/OBX
 	/OBX
-	/SGT""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SGT""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -675,7 +675,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 19, 1, "OBX[7]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 2, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 20, 1, "OBX[8]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 3, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 21, 1, "OBX[9]"), 1, Nil, hasExtra = true, "OBX"))))),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 22, 1, "SGT[2]"), 1, Nil, hasExtra = true, "SGT")))))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 22, 1, "SGT[2]"), 1, Nil, hasExtra = true, "SGT"))))))))))
 	val ONE_ORDER__ONE_PRIOR_RESULT__MULTIPLE_ORDER_PRIOR_LOIV1 = ("""/MSH
 	/PID
 	/ORC
@@ -695,7 +695,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	/OBX
 	/OBX
 	/OBX
-	/SGT""".stripMargin('/'), List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
+	/SGT""".stripMargin('/'), make(List(SegmentInstance(LOIv1_MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 	GroupInstance(LOIv1_PATIENT, 1, List(SegmentInstance(LOIv1_PATIENT_PID, Location(EType.Segment, "PID", "PID", 2, 1, "PID[1]"), 1, Nil, hasExtra = true, "PID"))),
 	GroupInstance(LOIv1_ORDER, 1, List(SegmentInstance(LOIv1_ORDER_ORC, Location(EType.Segment, "ORC", "ORC", 3, 1, "ORC[1]"), 1, Nil, hasExtra = true, "ORC"),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_OBR, Location(EType.Segment, "OBR", "OBR", 4, 1, "OBR[1]"), 1, Nil, hasExtra = true, "OBR"),
@@ -714,7 +714,7 @@ trait LOIv1Spec extends ParserSpecHelper {
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 1, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 17, 1, "OBX[7]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 2, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 18, 1, "OBX[8]"), 1, Nil, hasExtra = true, "OBX"))),
 	GroupInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR, 3, List(SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_ORDER_PRIOR_OBSERVATION_PRIOR_OBX, Location(EType.Segment, "OBX", "OBX", 19, 1, "OBX[9]"), 1, Nil, hasExtra = true, "OBX"))))),
-	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 20, 1, "SGT[1]"), 1, Nil, hasExtra = true, "SGT")))))))))
+	SegmentInstance(LOIv1_ORDER_OBSERVATION_REQUEST_PRIOR_RESULT_SGT, Location(EType.Segment, "SGT", "SGT", 20, 1, "SGT[1]"), 1, Nil, hasExtra = true, "SGT"))))))))))
 	
 
 }

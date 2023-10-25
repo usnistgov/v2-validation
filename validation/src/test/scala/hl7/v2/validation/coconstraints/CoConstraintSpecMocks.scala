@@ -99,12 +99,12 @@ trait CoConstraintSpecMocks {
     ccs
   )
 
-  def group(vs: List[String]) = Group(groupRef, 1, segments(vs))
+  def group(vs: List[String]) = Group(groupRef, 1, None, segments(vs))
   def makeGroupCond(vs: List[String], cond: String) = {
     val cct = segments(vs)
     implicit val ctr: Counter = Counter(scala.collection.mutable.Map[String, Int]())
-    val cnd = SM(segCondRef, cond, 1, -1)
-    Group(groupCond, 1, cct:::List(cnd))
+    val cnd = SM(segCondRef, None, cond, 1, -1)
+    Group(groupCond, 1, None, cct:::List(cnd))
   }
 
   def segments(vs: List[String]) = {
@@ -114,7 +114,7 @@ trait CoConstraintSpecMocks {
   }
   def segment(v: String, i: Int) = {
     implicit val ctr = Counter(scala.collection.mutable.Map[String, Int]())
-    SM(segRef, v, i, -1)
+    SM(segRef, None, v, i, -1)
   }
 
   def stackTrace(context: Element, stack: List[Trace]): JList[GTrace] =

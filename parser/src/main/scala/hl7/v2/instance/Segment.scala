@@ -31,13 +31,20 @@ object Segment extends EscapeSeqHandler {
     * @param l - The line number
     * @return A segment
     */
-  def apply(m: SM, v: String, i: Int, l: Int)
+  def apply(m: SM, parent: Option[ElementProfilePath], v: String, i: Int, l: Int)
            (implicit s: Separators, ctr : Counter): Segment = {
     require( isValid( s.fs, v ), s"Invalid segment instance '$v'" )
     val name = m.ref.name
     require(name == v.take(3), s"Invalid segment name. Expected: '$name', Found: '$v'")
-    val nb = ctr.countFor(name);
-    val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$nb]")
+    val nb = ctr.countFor(name)
+    val childElementProfilePath = ElementProfilePath(
+      Some(name),
+      EType.Segment,
+      m.req.position,
+      i,
+      None,
+    )
+    val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$nb]", Some(parent.map(p => p.append(childElementProfilePath)).getOrElse(childElementProfilePath)))
     val vs  = split( s.fs, v drop 4 , 5)
     // Attempt to resolve dynamic data types abort if errors
     val fml = resolveDyn(m.ref.fields, vs, m.ref.mappings).getOrElse(m.ref.fields)//m.ref.fields
@@ -118,8 +125,18 @@ object Segment extends EscapeSeqHandler {
     * @param c - The current location column
     * @return A location
     */
-  private def location(l: Location, d: String,  p: Int, i: Int, c: Int) =
-    l.copy(EType.Field, desc=d, path=s"${l.path}-$p", column = c, uidPath = s"${l.uidPath}-$p[$i]")
+  private def location(l: Location, d: String,  p: Int, i: Int, c: Int) = {
+    val elementProfilePath = ElementProfilePath(
+      None,
+      EType.Field,
+      p,
+      i,
+      None,
+    )
+    l.copy(EType.Field, desc=d, path=s"${l.path}-$p", column = c, uidPath = s"${l.uidPath}-$p[$i]", elementProfilePath =
+      Some(l.elementProfilePath.map(parent => parent.append(elementProfilePath)).getOrElse(elementProfilePath))
+    )
+  }
 
   private def resolveDyn(
       models: List[FM],

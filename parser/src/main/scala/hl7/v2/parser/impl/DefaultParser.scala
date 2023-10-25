@@ -27,7 +27,7 @@ trait DefaultParser extends Parser {
       val PPR(valid, invalid, preUnexpected, separators) = t
       implicit val s = separators
       implicit val ctr = Counter(scala.collection.mutable.Map[String, Int]())
-      val (children, unexpected) = processChildren(model.structure, valid.map(x => Line(x._1, x._2)))
+      val (children, unexpected) = processChildren(model.structure, None, valid.map(x => Line(x._1, x._2)))
       val tz: Option[TimeZone] = resolveTimeZone(children)
       val ils = invalid map (x => Line(x._1, x._2))
       val uls = (preUnexpected.map(x => Line(x._1, x._2)) ::: unexpected)
@@ -54,31 +54,39 @@ trait DefaultParser extends Parser {
    * Creates the children of a message or a group. Returns a pair consisting
    * of the list of children elements and the remaining stack.
    */
-  protected def processChildren(models: List[SGM], stack: Stack, head: Boolean = true)(implicit separators: Separators, ctr: Counter): (LSG, Stack) = {
+  protected def processChildren(models: List[SGM], parent: Option[ElementProfilePath], stack: Stack, head: Boolean = true)(implicit separators: Separators, ctr: Counter): (LSG, Stack) = {
     var isHead = head
     models.foldLeft((List[SegOrGroup](), stack)) { (acc, x) =>
       x match {
         case sm: SM =>
-          val (ls, s) = processSegment(sm, acc._2, isHead)
+          val (ls, s) = processSegment(sm, parent, acc._2, isHead)
           isHead = false
           (ls ::: acc._1, s)
         case gm: GM =>
-          val (lg, s) = processGroup(gm, acc._2)
+          val (lg, s) = processGroup(gm, parent, acc._2)
           isHead = false
           (lg ::: acc._1, s)
       }
     }
   }
 
-  private def processGroup(gm: GM, stack: Stack)(implicit separators: Separators, ctr: Counter): (List[Group], Stack) = {
+  private def processGroup(gm: GM, parent: Option[ElementProfilePath], stack: Stack)(implicit separators: Separators, ctr: Counter): (List[Group], Stack) = {
     def loop(acc: List[Group], s: Stack, i: Int): (List[Group], Stack) = {
       if (s.isEmpty) (acc, s)
       else if (!isExpected(s.head, gm)) (acc, s)
       else
         lookFor(gm, s.head) match {
           case Some(index) => {
-            val (children, ss) = processChildren(gm.structure.takeRight(gm.structure.size - index), s, true)
-            val g = Group(gm, i, children.reverse)
+            val node = ElementProfilePath(
+              Some(gm.name),
+              EType.Group,
+              gm.req.position,
+              i,
+              None,
+            )
+            val elementProfilePath = parent.map(p => p.append(node)).getOrElse(node)
+            val (children, ss) = processChildren(gm.structure.takeRight(gm.structure.size - index), Some(elementProfilePath), s, true)
+            val g = Group(gm, i, Some(elementProfilePath), children.reverse)
             loop(g :: acc, ss, i + 1)
           }
           case None => (acc, s)
@@ -95,11 +103,11 @@ trait DefaultParser extends Parser {
         case None => None
       }
 
-  private def processSegment(sm: SM, stack: Stack, isHead: Boolean)(implicit s: Separators, ctr: Counter): (List[Segment], Stack) =
-    if (isHead) (segment(sm, stack.head, 1) :: Nil, stack.tail)
+  private def processSegment(sm: SM, parent: Option[ElementProfilePath], stack: Stack, isHead: Boolean)(implicit s: Separators, ctr: Counter): (List[Segment], Stack) =
+    if (isHead) (segment(sm, parent, stack.head, 1) :: Nil, stack.tail)
     else {
       val (x, remainingStack) = stack span (l => isExpected(l, sm))
-      val ls = x.zipWithIndex map { t => segment(sm, t._1, t._2 + 1) }
+      val ls = x.zipWithIndex map { t => segment(sm, parent, t._1, t._2 + 1) }
       (ls.reverse, remainingStack)
     }
 
@@ -111,8 +119,8 @@ trait DefaultParser extends Parser {
    * @param s - The separators
    * @return A segment instance
    */
-  private def segment(m: SM, l: Line, i: Int)(implicit s: Separators, ctr: Counter) =
-    Segment(m, l.content, i, l.number)
+  private def segment(m: SM, parent: Option[ElementProfilePath], l: Line, i: Int)(implicit s: Separators, ctr: Counter) =
+    Segment(m, parent, l.content, i, l.number)
 
   private def isExpected(l: Line, m: GM): Boolean = m.structure.span(_.isInstanceOf[SM]) match {
     case (Nil, grpAndOthers) => grpAndOthers.exists(isExpected(l, _))

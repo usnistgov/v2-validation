@@ -183,7 +183,7 @@ public class Detections {
 				.getString("report.unexpected.classification");
 		String template = conf.getString("report.unexpected.template");
 		String desc = String.format(template, content);
-		return entry(line, 1, path, desc, category, classification);
+		return entry(line, 1, path, "", "", "", "", desc, category, classification);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class Detections {
 		String classification = conf.getString("report.invalid.classification");
 		String template = conf.getString("report.invalid.template");
 		String desc = String.format(template, content);
-		return entry(line, 1, "", desc, category, classification);
+		return entry(line, 1, "", "", "", "", "", desc, category, classification);
 	}
 
 	/*
@@ -517,38 +517,46 @@ public class Detections {
 			return ((TripletEntry) e).toAlert();
 		}
     	String classification = conf.getString("report.classification.alert");
-    	return new EntryImpl(e.getLine(), e.getColumn(), e.getPath(), e.getDescription(), e.getCategory(),
+		return new EntryImpl(e.getLine(), e.getColumn(), e.getPath(),
+				e.getMessageProfilePath(), e.getMessageProfilePositionPath(), e.getMessageInstancePathName(), e.getMessageInstancePositionPath(),
+				e.getDescription(), e.getCategory(),
 				classification, e.getStackTrace(), e.getMetaData());
     }
-	
+
 	private static Entry entry(int line, int column, String path,
-			String description, String category, String classification,
-			List<Trace> stackTrace, Map<String, Object> metaData) {
-		return new EntryImpl(line, column, path, description, category,
+	                     String messageProfilePath, String messageProfilePositionPath, String messageInstancePathName, String messageInstancePositionPath,
+	                     String description, String category, String classification,
+	                     List<Trace> stackTrace, Map<String, Object> metaData) {
+		return new EntryImpl(line, column, path, messageProfilePath, messageProfilePositionPath, messageInstancePathName, messageInstancePositionPath, description, category,
 				classification, stackTrace, metaData);
 	}
 
 	private static Entry entry(int line, int column, String path,
-			String description, String category, String classification) {
-		return entry(line, column, path, description, category, classification,
-				null, null);
+	                     String messageProfilePath, String messageProfilePositionPath, String messageInstancePathName, String messageInstancePositionPath,
+	                     String description, String category, String classification) {
+		return new EntryImpl(line, column, path, messageProfilePath, messageProfilePositionPath, messageInstancePathName, messageInstancePositionPath, description, category,
+				classification);
 	}
 
 	private static Entry entry(Location l, String description, String category,
-			String classification) {
+	                     String classification) {
 		int line = l.line();
 		int column = l.column();
 		String path = l.uidPath();
-		return entry(line, column, path, description, category, classification);
+		return entry(line, column, path,
+				l.profilePath(), l.profilePositionPath(), l.instancePath(), l.instancePositionPath(),
+				description, category, classification);
 	}
 
 	private static Entry entry(Location l, String description, String category,
-			String classification, List<Trace> stackTrace,
-			Map<String, Object> metaData) {
+	                     String classification, List<Trace> stackTrace,
+	                     Map<String, Object> metaData) {
 		int line = l.line();
 		int column = l.column();
 		String path = l.uidPath();
-		return entry(line, column, path, description, category, classification,
+		return entry(line, column, path,
+				l.profilePath(), l.profilePositionPath(), l.instancePath(), l.instancePositionPath(),
+				description, category, classification,
 				stackTrace, metaData);
 	}
 

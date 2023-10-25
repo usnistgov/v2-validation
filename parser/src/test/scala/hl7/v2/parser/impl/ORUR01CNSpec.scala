@@ -106,7 +106,7 @@ trait ORUR01CNSpec extends ParserSpecHelper {
 												/OBR
 												/OBR
 												/OBX
-												/OBX""".stripMargin('/'), List(
+												/OBX""".stripMargin('/'), make(List(
 		SegmentInstance(MSH, Location(EType.Segment, "MSH", "MSH", 1, 1, "MSH[1]"), 1, Nil, hasExtra = true, "MSH"),
 		GroupInstance(PATIENT_RESULT, 1, List(
 			GroupInstance(PATIENT_RESULT_PATIENT, 1, List(
@@ -124,6 +124,6 @@ trait ORUR01CNSpec extends ParserSpecHelper {
 					SegmentInstance(PATIENT_RESULT_ORDER_OBSERVATION_OBSERVATION_OBX, Location(EType.Segment, "OBX", "OBX", 6, 1, "OBX[2]"), 1, Nil, hasExtra = true, "OBX"),
 				))
 			)),
-		))))
+		)))))
 
 }

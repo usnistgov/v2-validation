@@ -19,9 +19,17 @@ export interface IEntry {
   classification: string;
   category: string;
   description: string;
+  ref?: IElementPath;
   line: number;
   column: number;
   path: string;
+}
+
+export interface IElementPath {
+  profileNamePath: string,
+  instanceNamePath: string,
+  profilePositionPath: string,
+  instancePositionPath: string,
 }
 
 export interface ICheckResourceResult {

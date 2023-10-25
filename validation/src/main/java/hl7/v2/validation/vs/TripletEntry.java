@@ -88,6 +88,26 @@ public class TripletEntry implements Entry {
 	}
 
 	@Override
+	public String getMessageProfilePath() {
+		return null;
+	}
+
+	@Override
+	public String getMessageProfilePositionPath() {
+		return null;
+	}
+
+	@Override
+	public String getMessageInstancePathName() {
+		return null;
+	}
+
+	@Override
+	public String getMessageInstancePositionPath() {
+		return null;
+	}
+
+	@Override
 	public int getLine() {
 		// TODO Auto-generated method stub
 		return 0;
