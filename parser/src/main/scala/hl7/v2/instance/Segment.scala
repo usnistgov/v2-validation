@@ -41,7 +41,7 @@ object Segment extends EscapeSeqHandler {
       Some(name),
       EType.Segment,
       m.req.position,
-      i,
+      Some(i),
       None,
     )
     val loc = Location(EType.Segment, m.ref.desc, name, l, 1, s"$name[$nb]", Some(parent.map(p => p.append(childElementProfilePath)).getOrElse(childElementProfilePath)))
@@ -130,7 +130,7 @@ object Segment extends EscapeSeqHandler {
       None,
       EType.Field,
       p,
-      i,
+      Some(i),
       None,
     )
     l.copy(EType.Field, desc=d, path=s"${l.path}-$p", column = c, uidPath = s"${l.uidPath}-$p[$i]", elementProfilePath =

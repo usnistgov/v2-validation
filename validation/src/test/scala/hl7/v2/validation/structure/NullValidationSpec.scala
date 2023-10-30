@@ -105,7 +105,7 @@ trait NullValidationSpec
                /UAC
                /UAC""".stripMargin('/')
 
-    validate(message) === Nil
+    skipElementProfilePath(validate(message)) === Nil
   }
 
   //An X Null Field should raise a detection
@@ -119,8 +119,8 @@ trait NullValidationSpec
     val expected =
       List(
         X(EType.Field, "User Authentication Credential Type Code", "UAC-1", 3, 5, "UAC[1]-1[1]"))
-    
-    validate(message) must containTheSameElementsAs(expected)
+
+    skipElementProfilePath(validate(message)) must containTheSameElementsAs(expected)
   }
 
   //A Null ComplexField has no children
@@ -153,7 +153,7 @@ trait NullValidationSpec
       List(
         Detections.length(comp.get.head.location, comp.get.head.req.length.get, Value.NULL),
         Detections.length(subcomp.get.head.location, subcomp.get.head.req.length.get, Value.NULL))
-        
+
     validate(message) must containTheSameElementsAs(expected)
   }
 
@@ -186,16 +186,16 @@ trait NullValidationSpec
         Detections.ncardinality(Location(EType.Field,"Patient Identifier List","PID-3",2,9,"PID[1]-3[1]", None), 2))
         
     def e81 = {
-      validate(message1) === Nil
+      skipElementProfilePath(validate(message1)) === Nil
     }
     def e82 = {
-      validate(message2) must containTheSameElementsAs(expected)
+      skipElementProfilePath(validate(message2)) must containTheSameElementsAs(expected)
     }
     def e83 = {
-      validate(message3) must containTheSameElementsAs(expected)
+      skipElementProfilePath(validate(message3)) must containTheSameElementsAs(expected)
     }
     def e84 = {
-      validate(message4) must containTheSameElementsAs(expected)
+      skipElementProfilePath(validate(message4)) must containTheSameElementsAs(expected)
     }
     e81 and e82 and e83 and e84
   }

@@ -24,7 +24,7 @@ case class ElementProfilePath (
   name: Option[String],
   eType: EType,
   position: Int,
-  instance: Int,
+  instance: Option[Int],
   child: Option[ElementProfilePath],
 ) {
   lazy val profilePositionPath: String = reduce(
@@ -46,7 +46,9 @@ case class ElementProfilePath (
     None,
     Some(this),
     (parent, current) => {
-      parent.map(p => s"$p.${current.position}[${current.instance}]").getOrElse(s"${current.position}[${current.instance}]")
+      val instance = current.instance.map((i) => s"[${i}]").getOrElse("")
+      val currentPath = s"${current.position}$instance"
+      parent.map(p => s"$p.$currentPath").getOrElse(currentPath)
     }
   )
   lazy val instancePath: String = reduce(
@@ -54,7 +56,9 @@ case class ElementProfilePath (
     Some(this),
     (parent, current) => {
       val separator = if (current.eType.equals(EType.Field)) "-" else "."
-      parent.map(p => s"$p$separator${current.name.getOrElse(current.position)}[${current.instance}]").getOrElse(s"${current.name.getOrElse(current.position)}[${current.instance}]")
+      val instance = current.instance.map((i) => s"[${i}]").getOrElse("")
+      val currentPath = s"${current.name.getOrElse(current.position)}$instance"
+      parent.map(p => s"$p$separator$currentPath").getOrElse(currentPath)
     }
   )
 

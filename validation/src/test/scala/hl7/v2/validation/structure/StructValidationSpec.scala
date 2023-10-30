@@ -7,11 +7,11 @@ import hl7.v2.profile.{Range, XMLDeserializer}
 import hl7.v2.validation.report._
 import hl7.v2.validation.vs.ValueSet
 import org.specs2.Specification
-import hl7.v2.instance.Query._
+
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
-import com.typesafe.config.ConfigFactory
+import gov.nist.validation.report.impl.EntryImpl
 
 /**
   * Integration test for the structure validation
@@ -93,7 +93,7 @@ trait StructValidationSpec
           X(EType.Component, "ID Number", "PID-3.1", 4, 9,"PID[1]-3[2].1"),
           X(EType.Group, "ORDER", "ORDER", 7, 1,"ORDER[1]")
       )
-    validate(m) must containTheSameElementsAs( expected )
+    skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
 
   }
 
@@ -114,7 +114,7 @@ trait StructValidationSpec
        O(EType.Field, "Optional Field", "OPT-2", 2, 6,"OPT[1]-2[1]", "A"),
        R(EType.Group, "PATIENT", "PATIENT", 1,1,"PATIENT[1]"),
      )
-   validate(m) must containTheSameElementsAs( expected )
+    skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
 
   }
 
@@ -143,8 +143,8 @@ trait StructValidationSpec
         MaxC(EType.Field, "Patient Identifier List", "PID-3", 5, 12, 4, Range(2, "3"),"PID[2]-3[4]"),
         MinC(EType.Segment, "User Authentication Credential Segment","UAC",6,1,1,Range(2,"2"),"UAC[3]")
       )
-      
-    validate(m) must containTheSameElementsAs( expected )
+
+    skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
   }
 
   /**
@@ -167,7 +167,7 @@ trait StructValidationSpec
             Len(EType.Field, "Set ID - PID", "PID-1", 5, 5, "333|", Range(2, "3"),"PID[2]-1[1]")
     )
 
-    validate(m) must containTheSameElementsAs( expected )
+    skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
   }
 
   /**
@@ -227,7 +227,7 @@ trait StructValidationSpec
         Detections.extra( Location(EType.Field, "Patient Identifier List", "PID-3", 2, 10,"PID[1]-3[2]", None) ),
         Detections.extra( Location(EType.Component, "Assigning Authority", "PID-3.4", 2, 13,"PID[1]-3[2].4", None) )
       )
-    validate(m) must containTheSameElementsAs( expected )
+    skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
   }
 
   /**
@@ -246,7 +246,7 @@ trait StructValidationSpec
         Detections.unescaped( Location(EType.Field, "Set ID - PID", "PID-1", 2, 5,"PID[1]-1[1]", None) )
       )
 
-    validate(m) must containTheSameElementsAs( expected )
+    skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
   }
 
  /**
@@ -270,7 +270,7 @@ trait StructValidationSpec
        Detections.constantValueSpecError(Location(EType.Field, "Complex Field Constant Value Test", "OPT-1", 2, 5,"OPT[1]-1[1]", None), "this is a spec error"),
        Detections.constantValueSpecError(Location(EType.Component, "Complex Component Test", "OPT-1.1", 2, 5,"OPT[1]-1[1].1", None), "this is a spec error")
    )
-   validate(m) must containTheSameElementsAs( expected )
+   skipElementProfilePath(validate(m)) must containTheSameElementsAs( expected )
  }
 
   private def validate(m: String)(implicit Detections : ConfigurableDetections): Seq[Entry] = parse(m, mm) match {

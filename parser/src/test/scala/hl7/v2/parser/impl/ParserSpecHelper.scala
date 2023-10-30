@@ -36,7 +36,7 @@ trait ParserSpecHelper extends Specification with ScalaCheck with DefaultParser 
             Some(group.model.name),
             EType.Group,
             group.req.position,
-            group.instance,
+            Some(group.instance),
             None
           )
           val elementProfilePath = parent.map(p => p.append(node)).getOrElse(node)
@@ -47,7 +47,7 @@ trait ParserSpecHelper extends Specification with ScalaCheck with DefaultParser 
             Some(segment.model.ref.name),
             EType.Segment,
             segment.req.position,
-            segment.instance,
+            Some(segment.instance),
             None
           )
           val elementProfilePath = parent.map(p => p.append(node)).getOrElse(node)

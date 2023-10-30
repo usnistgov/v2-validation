@@ -70,7 +70,7 @@ object DataElement {
         None,
         eType(l.path),
         pos,
-        1,
+        None,
         None,
       )
       val loc = l.copy( eType(l.path), desc=m.name, path=s"${l.path}.$pos", column=col, uidPath = s"${l.uidPath}.$pos", elementProfilePath =

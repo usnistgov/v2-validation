@@ -81,7 +81,7 @@ trait DefaultParser extends Parser {
               Some(gm.name),
               EType.Group,
               gm.req.position,
-              i,
+              Some(i),
               None,
             )
             val elementProfilePath = parent.map(p => p.append(node)).getOrElse(node)
