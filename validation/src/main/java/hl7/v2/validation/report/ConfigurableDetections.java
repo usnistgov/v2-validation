@@ -334,61 +334,61 @@ public class ConfigurableDetections {
 		this.conf = conf;
 	}
 	
-	public  Entry rusage(Location l) {
+	public  Entry rusage(Location l, String context) {
 		String category = conf.getString("report.r-usage.category");
 		String classification = conf.getString("report.r-usage.classification");
 		String template = conf.getString("report.r-usage.template");
-		String description = String.format(template, l.prettyString());
+		String description = String.format(template, l.prettyString(), context);
 		return entry(l, description, category, classification);
 	}
 
-	public  Entry ousage(Location l, String value) {
+	public  Entry ousage(Location l, String value, String context) {
 		String category = conf.getString("report.o-usage.category");
 		String classification = conf.getString("report.o-usage.classification");
 		String template = conf.getString("report.o-usage.template");
-		String desc = String.format(template, l.prettyString(), value);
+		String desc = String.format(template, l.prettyString(), value, context);
 		return entry(l, desc, category, classification);
 	}
 
-	public  Entry oUsageComplex(Location l) {
+	public  Entry oUsageComplex(Location l, String context) {
 		String category = conf.getString("report.o-usage-complex.category");
 		String classification = conf.getString("report.o-usage-complex.classification");
 		String template = conf.getString("report.o-usage-complex.template");
-		String desc = String.format(template, l.prettyString());
+		String desc = String.format(template, l.prettyString(), context);
 		return entry(l, desc, category, classification);
 	}
 
 	/**
 	 * @return A report entry for the X usage detection
 	 */
-	public  Entry xusage(Location l) {
+	public  Entry xusage(Location l, String context) {
 		String category = conf.getString("report.x-usage.category");
 		String classification = conf.getString("report.x-usage.classification");
 		String template = conf.getString("report.x-usage.template");
-		String description = String.format(template, l.prettyString());
+		String description = String.format(template, l.prettyString(), context);
 		return entry(l, description, category, classification);
 	}
 
 	/**
 	 * @return A report entry for the W usage detection
 	 */
-	public  Entry wusage(Location l) {
+	public  Entry wusage(Location l, String context) {
 		String category = conf.getString("report.w-usage.category");
 		String classification = conf.getString("report.w-usage.classification");
 		String template = conf.getString("report.w-usage.template");
-		String description = String.format(template, l.prettyString());
+		String description = String.format(template, l.prettyString(), context);
 		return entry(l, description, category, classification);
 	}
 
 	/**
 	 * @return A report entry for the RE usage detection
 	 */
-	public  Entry reusage(Location l) {
+	public  Entry reusage(Location l, String context) {
 		String category = conf.getString("report.re-usage.category");
 		String classification = conf
 				.getString("report.re-usage.classification");
 		String template = conf.getString("report.re-usage.template");
-		String description = String.format(template, l.prettyString());
+		String description = String.format(template, l.prettyString(), context);
 		return entry(l, description, category, classification);
 	}
 

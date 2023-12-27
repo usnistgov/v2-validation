@@ -118,7 +118,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
       val dl = Utils.defaultLocation(c, r)
 
       // Checks the usage
-      checkUsage( r.usage, children )(dl) match {
+      checkUsage(r.usage, children, None)(dl) match {
         case Nil => // No usage error thus we can continue the validation
           
           // Check the cardinality
@@ -145,7 +145,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     // Check for extra children
     val extra = if( c.hasExtra ) Detections.extra(c.location) :: Nil else Nil
     // Check if it's a complex O element
-    val optionalPopulated = if(c.req.usage.equals(Usage.O) && c.children.nonEmpty) Detections.oUsageComplex(c.location) :: Nil else Nil
+    val optionalPopulated = if(c.req.usage.equals(Usage.O) && c.children.nonEmpty) Detections.oUsageComplex(c.location, "") :: Nil else Nil
 
     // Merge results
     constantValueSpecError ::: extra ::: optionalPopulated ::: entries ::: dynMappingNotes
@@ -175,12 +175,12 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
     * @param dl - The default location
     * @return A list of report entries
     */
-  private def checkUsage(u: Usage, l: List[Element])(dl: Location)(implicit Detections : ConfigurableDetections): List[Entry] =
+  def checkUsage(u: Usage, l: List[Element], description: Option[String])(dl: Location)(implicit Detections : ConfigurableDetections): List[Entry] =
     (u, l) match {
-      case (Usage.R,  Nil) => Detections.rusage(dl)  :: Nil
-      case (Usage.RE, Nil) => Detections.reusage(dl) :: Nil
-      case (Usage.X,  xs ) => xs map { e => Detections.xusage(e.location) }
-      case (Usage.W,  xs ) => xs map { e => Detections.wusage(e.location) }
+      case (Usage.R,  Nil) => Detections.rusage(dl, description.getOrElse(""))  :: Nil
+      case (Usage.RE, Nil) => Detections.reusage(dl, description.getOrElse("")) :: Nil
+      case (Usage.X,  xs ) => xs map { e => Detections.xusage(e.location, description.getOrElse("")) }
+      case (Usage.W,  xs ) => xs map { e => Detections.wusage(e.location, description.getOrElse("")) }
       case _               => Nil
     }
 

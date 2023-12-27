@@ -1,7 +1,8 @@
 package hl7.v2.validation.structure
 
 import gov.nist.validation.report.Entry
-import hl7.v2.instance.Message
+import hl7.v2.instance.{Element, Location, Message}
+import hl7.v2.profile.Usage
 
 import scala.concurrent.Future
 import hl7.v2.validation.report.ConfigurableDetections
@@ -21,4 +22,5 @@ trait Validator {
     * @return  - The list of problems
     */
   def checkStructure(m: Message)(implicit Detections : ConfigurableDetections): Future[Seq[Entry]]
+  def checkUsage(u: Usage, l: List[Element], description: Option[String])(dl: Location)(implicit Detections : ConfigurableDetections): List[Entry]
 }

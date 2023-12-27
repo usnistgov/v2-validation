@@ -2,20 +2,24 @@ package hl7.v2.validation
 package content
 
 import java.util.{Arrays => JArrays, List => JList}
-
 import expression.EvalResult.{EvalData, Fail, Inconclusive, Pass, Trace}
 import gov.nist.validation.report.{Entry, Trace => GTrace}
 import hl7.v2.instance._
 import hl7.v2.validation.content.PredicateUsage.{R, X}
 import hl7.v2.profile.{Message => MM}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import expression._
 import hl7.v2.validation.report.ConfigurableDetections
 import expression.EvalResult.FailPlugin
+
 import scala.jdk.CollectionConverters.SeqHasAsJava
 
-trait DefaultValidator extends Validator with expression.Evaluator with PatternFinder {
+trait DefaultValidator extends Validator
+  with expression.Evaluator
+  with PatternFinder
+  with hl7.v2.validation.structure.Validator {
 
   /**
    * Check the message against the constraints defined
@@ -179,33 +183,43 @@ trait DefaultValidator extends Validator with expression.Evaluator with PatternF
    */
   private def checkUsage(e: Element, p: Predicate, u: PredicateUsage, predicatePass: Boolean)(implicit Detections : ConfigurableDetections): List[Entry] =
     try {
-      val (ccontexts, path) = reducePath(e, p.target)
-      val contexts = cleanFromNull(ccontexts)
-      if (contexts.isEmpty)
-        Detections.predicateSuccess(e, p) :: Nil //Nothing to do the parent is missing
-      else {
-        lazy val l = contexts flatMap { c => Query.query(c, path).get }
-        val predicateErrors = u match {
-          case R if l.isEmpty =>
-            contexts map { c =>
-              val dl = Utils.defaultLocation(c.asInstanceOf[Complex], path).getOrElse(c.location)
-              val usageErr = Detections.rusage(dl).getDescription
-              Detections.predicateFailure(dl, usageErr, "required", p.description)
-            }
-          case X if l.nonEmpty => l map { x =>
-            val usageErr = Detections.xusage(x.location).getDescription
-            Detections.predicateFailure(x.location, usageErr, "not supported", p.description)
+      val (rawParentContextElements, path) = reducePath(e, p.target)
+      val parents = cleanFromNull(rawParentContextElements)
+      if (parents.isEmpty) {
+        //Nothing to do the parent is missing
+        Detections.predicateSuccess(e, p) :: Nil
+      } else {
+        parents flatMap { parent =>
+          val elements = Query.query(parent, path).get
+          val dl: Location = Utils.defaultLocation(parent.asInstanceOf[Complex], path).getOrElse(parent.location)
+          val context = s" - Usage selected from conditional usage C(${p.trueUsage}/${p.falseUsage}) with predicate '${p.description}' evaluated as ${predicatePass}"
+          val predicateDetections = getPredicateDetections(e, dl, elements, u, p, context)
+          val usageDetections = checkUsage(PredicateUsage.toUsage(u), elements, Some(context))(dl)
+          val notes = elements match {
+            case Nil => Detections.predicateUsageNote(dl, u.toString, p.trueUsage.toString, p.falseUsage.toString, p.description, predicatePass) :: Nil
+            case values => values.map(value => Detections.predicateUsageNote(value.location, u.toString, p.trueUsage.toString, p.falseUsage.toString, p.description, predicatePass))
           }
-          case _ => Detections.predicateSuccess(e, p) :: Nil
+          notes ::: predicateDetections ::: usageDetections
         }
-        val notes = l.map(elm => Detections.predicateUsageNote(elm.location, u.toString, p.trueUsage.toString, p.falseUsage.toString, p.description, predicatePass))
-        predicateErrors ::: notes
       }
     } catch {
       case f: Throwable =>
         val trace = new GTrace("Path resolution failed.", JArrays.asList(f.getMessage))
         Detections.predicateSpecErr(e, p, JArrays.asList(trace)) :: Nil
     }
+
+  private def getPredicateDetections(context: Element, dl: Location, elements: List[Element], u: PredicateUsage, p: Predicate, detectionContextInfo: String)(implicit Detections : ConfigurableDetections): List[Entry] = {
+    u match {
+      case R if elements.isEmpty =>
+        val usageErr = Detections.rusage(dl, detectionContextInfo).getDescription
+        Detections.predicateFailure(dl, usageErr, "required", p.description) :: Nil
+      case X if elements.nonEmpty => elements map { x =>
+        val usageErr = Detections.xusage(x.location, detectionContextInfo).getDescription
+        Detections.predicateFailure(x.location, usageErr, "not supported", p.description)
+      }
+      case _ => Detections.predicateSuccess(context, p) :: Nil
+    }
+  }
 
   /*
    * The target path needs to be reduced since no verification should

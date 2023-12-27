@@ -4,6 +4,7 @@ import expression.Expression
 
 import scala.beans.BeanProperty
 import com.typesafe.config.ConfigFactory
+import hl7.v2.profile.Usage
 
 case class Reference(
     @BeanProperty chapter: String,
@@ -76,4 +77,12 @@ object PredicateUsage {
   case object RE extends PredicateUsage
   case object X  extends PredicateUsage
   case object O  extends PredicateUsage
+
+  def toUsage(pu: PredicateUsage): Usage = pu match {
+    case R => Usage.R
+    case RE => Usage.RE
+    case X => Usage.X
+    case O => Usage.O
+    case _ => throw new Error(s"No corresponding usage found for '${pu.toString}'")
+  }
 }

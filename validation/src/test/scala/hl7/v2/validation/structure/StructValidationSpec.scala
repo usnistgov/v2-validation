@@ -279,11 +279,11 @@ trait StructValidationSpec
     case Failure(e) => throw e
   }
 
-  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c, uid, None))
-  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c,uid, None))
-  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c, uid, None))
-  private def OC(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.oUsageComplex(Location(et, d, p, l, c, uid, None))
-  private def O(et: EType, d: String, p: String, l: Int, c: Int, uid : String, value: String) = Detections.ousage(Location(et, d, p, l, c, uid, None), value)
+  private def R(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.rusage(Location(et, d, p, l, c, uid, None), "")
+  private def X(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.xusage(Location(et, d, p, l, c,uid, None), "")
+  private def W(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.wusage(Location(et, d, p, l, c, uid, None), "")
+  private def OC(et: EType, d: String, p: String, l: Int, c: Int, uid : String) = Detections.oUsageComplex(Location(et, d, p, l, c, uid, None), "")
+  private def O(et: EType, d: String, p: String, l: Int, c: Int, uid : String, value: String) = Detections.ousage(Location(et, d, p, l, c, uid, None), value, "")
 
   private def MaxC(et: EType, d: String, p: String, l: Int, c: Int, i: Int, r: Range, uid : String) =
     Detections.cardinality(Location(et, d, p, l, c, uid, None), r, i)
