@@ -10,7 +10,7 @@
 #### validation-report
 
 * __GitHub Repository__ : https://github.com/usnistgov/validation-report
-* __Version__ : 1.1.0
+* __Version__ : 1.1.1
 
 #### hl7-v2-schemas
 
@@ -23,6 +23,23 @@
 2) Run "sbt" command on project root directory
 3) To run tests you can use "test" command
 4) To build the tool you can use "compile" command
+
+### Maven
+You can use this project as a maven dependency
+```xml
+<dependency>
+    <groupId>gov.nist</groupId>
+    <artifactId>hl7-v2-validation</artifactId>
+    <version>1.6.5</version>
+</dependency>
+```
+This project is published in https://hit-nexus.nist.gov repository
+```xml
+<repository>
+    <id>hit-nexus</id>
+    <url>https://hit-nexus.nist.gov/repository/releases</url>
+</repository>
+```
 
 ### Usage
 
