@@ -7,8 +7,8 @@ object Dependencies {
     "HIT Nexus" at "https://hit-nexus.nist.gov/repository/releases"
   )
 
-  val jacksonVersion = "2.13.4" // or 2.12.7
-  val jacksonDatabindVersion = "2.13.4.2" // or 2.12.7.1
+  val jacksonVersion = "2.17.0"
+  val jacksonDatabindVersion = "2.17.0"
 
   val jacksonOverrides = Seq(
     "com.fasterxml.jackson.core" % "jackson-core",
