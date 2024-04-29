@@ -27,7 +27,6 @@ object Dependencies {
     "com.fasterxml.jackson.module" %% "jackson-module-scala",
   ).map(_ % jacksonVersion)
 
-
   val schemas = "gov.nist.hit" % "hl7-v2-schemas" % "1.7.0-SNAPSHOT"
   val xom = "xom" % "xom" % "1.3.7"
   val stringUtils = "org.apache.commons" % "commons-lang3" % "3.12.0"
@@ -39,5 +38,6 @@ object Dependencies {
   val vreport       = "com.github.hl7-tools"          %   "validation-report"     %  "1.2.0"
   val scala_xml     = "org.scala-lang.modules"        %%   "scala-xml"        %  "1.3.0"
   val json4s = "org.json4s" %% "json4s-jackson" % "4.0.5"
+  val apacheHttp = "org.apache.httpcomponents" % "httpclient" % "4.5.9"
 
 }

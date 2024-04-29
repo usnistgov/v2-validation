@@ -1,36 +1,36 @@
-package hl7.v2.validation.structure
+package hl7.v2.validation.vs
 
 import com.typesafe.config.{Config, ConfigFactory}
-import hl7.v2.instance.{Complex, Element, Location, Simple, Text, Value}
+import hl7.v2.instance._
 import hl7.v2.profile.{BindingStrength, Req, Usage}
-import hl7.v2.validation.structure
-import hl7.v2.validation.vs.{BindingLocation, Code, CodeUsage, EmptyValueSetSpecification, Extensibility, InternalValueSet, Stability, VSValidationCode, ValueSetBinding, ValueSetLibraryImpl, ValueSetSpecification}
+import hl7.v2.validation.structure.Helpers
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
 import org.specs2.Specification
 import org.specs2.matcher.MatchResult
 
 object DetectionCodes extends Enumeration {
   type DetectionCodes = Value
 
-  val DynamicVS: structure.DetectionCodes.Value = Value("DynamicVS")//done
-  val XOR: structure.DetectionCodes.Value = Value("XOR")//done
-  val CodeNotFound: structure.DetectionCodes.Value = Value("CodeNotFound")//done
-  val PVS: structure.DetectionCodes.Value = Value("PVS")//done
-  val RVS: structure.DetectionCodes.Value = Value("RVS")//done
-  val EVS: structure.DetectionCodes.Value = Value("EVS")//done
-  val NoUsageVS: structure.DetectionCodes.Value = Value("NoUsageVS")//done
-  val InvalidCodeSys: structure.DetectionCodes.Value = Value("InvalidCodeSys")//done
-  val UBS: structure.DetectionCodes.Value = Value("UBS")//done
-  val VSExcluded: structure.DetectionCodes.Value = Value("VSExcluded")//done
-  val DuplicateCode: structure.DetectionCodes.Value = Value("DuplicateCode")//done
-  val DuplicateCodeAndCodeSystem: structure.DetectionCodes.Value = Value("DuplicateCodeAndCodeSystem")//done
-  val DuplicateCodeAndCodeSystemInValueSetList: structure.DetectionCodes.Value = Value("DuplicateCodeAndCodeSystemInValueSetList")//done
+  val DynamicVS: DetectionCodes.Value = Value("DynamicVS")//done
+  val XOR: DetectionCodes.Value = Value("XOR")//done
+  val CodeNotFound: DetectionCodes.Value = Value("CodeNotFound")//done
+  val PVS: DetectionCodes.Value = Value("PVS")//done
+  val RVS: DetectionCodes.Value = Value("RVS")//done
+  val EVS: DetectionCodes.Value = Value("EVS")//done
+  val NoUsageVS: DetectionCodes.Value = Value("NoUsageVS")//done
+  val InvalidCodeSys: DetectionCodes.Value = Value("InvalidCodeSys")//done
+  val UBS: DetectionCodes.Value = Value("UBS")//done
+  val VSExcluded: DetectionCodes.Value = Value("VSExcluded")//done
+  val DuplicateCode: DetectionCodes.Value = Value("DuplicateCode")//done
+  val DuplicateCodeAndCodeSystem: DetectionCodes.Value = Value("DuplicateCodeAndCodeSystem")//done
+  val DuplicateCodeAndCodeSystemInValueSetList: DetectionCodes.Value = Value("DuplicateCodeAndCodeSystemInValueSetList")//done
 
   //those are "spec error" detections
-  val UsageAndExtensibilityNotCompatible: structure.DetectionCodes.Value = Value("UsageAndExtensibilityNotCompatible")//done
-  val InvalidBindingLocation: structure.DetectionCodes.Value = Value("InvalidBindingLocation")//done
-  val MultiVSForPrimitive: structure.DetectionCodes.Value = Value("MultiVSForPrimitive")
-  val VSNotFound: structure.DetectionCodes.Value = Value("VSNotFound")
-  val EmptyVS: structure.DetectionCodes.Value = Value("EmptyVS")
+  val UsageAndExtensibilityNotCompatible: DetectionCodes.Value = Value("UsageAndExtensibilityNotCompatible")//done
+  val InvalidBindingLocation: DetectionCodes.Value = Value("InvalidBindingLocation")//done
+  val MultiVSForPrimitive: DetectionCodes.Value = Value("MultiVSForPrimitive")
+  val VSNotFound: DetectionCodes.Value = Value("VSNotFound")
+  val EmptyVS: DetectionCodes.Value = Value("EmptyVS")
 
 }
 
@@ -205,6 +205,7 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
 
   //------- MOCKS
   val valueSetLibrary = new ValueSetLibraryImpl(Nil, Map())
+  implicit val valueSetFactory: hl7.v2.validation.vs.factory.ValueSetFactory = new DefaultValueSetFactory(valueSetLibrary, new DefaultValueSetFactoryConfiguration(true, false))
   val vsSpecification: ValueSetSpecification = EmptyValueSetSpecification
   val elm: S = S(1, 1, Text("A"))
   val _default: Config = ConfigFactory.load()

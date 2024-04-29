@@ -1,25 +1,24 @@
 package hl7.v2.validation.vs
 
 import gov.nist.hit.hl7.v2.schemas.utils.HL7v2Schema
-
 import java.io.InputStream
 import nist.xml.util.XOMDocumentBuilder
 
 import scala.util.Try
 
-case class ValueSetLibraryImpl(
-    noValidation: Seq[String],
-    library: Map[String, ValueSet],
-  ) extends ValueSetLibrary {
+case class ValueSetLibraryImpl(noValidation: Seq[String], library: Map[String, ValueSet]) extends ValueSetLibrary {
 
   private val legacy0396: Boolean = library.foldLeft(false) {
     (found, table) =>
       if (found) found
       else {
-        val tableMatch = table._1.matches(".*0396.*")
-        val codeHL7nnnn = tableMatch && table._2.getCodes.exists(c => c.value.equals("HL7nnnn") && c.pattern.isEmpty)
-        val code99zzz = tableMatch && table._2.getCodes.exists(c => c.value.equals("99zzz") && c.pattern.isEmpty)
-        tableMatch && (codeHL7nnnn || code99zzz)
+        table._2 match {
+          case internalValueSet: InternalValueSet => val tableMatch = table._1.matches(".*0396.*")
+            val codeHL7nnnn = tableMatch && internalValueSet.codes.exists(c => c.value.equals("HL7nnnn") && c.pattern.isEmpty)
+            val code99zzz = tableMatch && internalValueSet.codes.exists(c => c.value.equals("99zzz") && c.pattern.isEmpty)
+            tableMatch && (codeHL7nnnn || code99zzz)
+          case _ => found
+        }
       }
   }
 
@@ -47,9 +46,10 @@ object ValueSetLibraryImpl {
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
       val tbls = root.getChildElements("ValueSetDefinitions")
+      val external = root.getChildElements("ExternalValueSetDefinitions")
       val noVal    = noValidation( noValDef )
-      val lib      = tables(tbls)
-      ValueSetLibraryImpl(noVal, lib)
+      val lib = tables(tbls, valueSet).toList ::: tables(external, externalValueSet).toList
+      ValueSetLibraryImpl(noVal, lib.toMap)
     }
   }
     
@@ -57,25 +57,41 @@ object ValueSetLibraryImpl {
   private def noValidation(e: nu.xom.Element): Seq[String] =
     if(e == null) Nil else e.getChildElements("BindingIdentifier").map(_.getValue.trim).toList
 
-  private def tableSet(e: nu.xom.Element): Map[String, ValueSet] =
+  private def set(e: nu.xom.Element, mapper: (nu.xom.Element) => ValueSet): Map[String, ValueSet] =
     if( e == null ) Map()
     else {
       val tableDefs = e.getChildElements("ValueSetDefinition")
       tableDefs.foldLeft(Map[String, ValueSet]()) { (acc, x) =>
-        val vs = valueSet(x)
+        val vs = mapper(x)
         acc + (vs.id -> vs)
       }
     }
   
-  private def tables(e: nu.xom.Elements): Map[String, ValueSet] =
+  private def tables(e: nu.xom.Elements, mapper: (nu.xom.Element) => ValueSet): Map[String, ValueSet] =
     if( e == null ) Map()
     else {
       e.foldLeft(Map[String, ValueSet]()){ (acc, x) =>
-        acc ++ tableSet(x)
+        acc ++ set(x, mapper)
       }
     }
 
-  private def valueSet(e: nu.xom.Element): ValueSet = {
+  private def externalRefs(e: nu.xom.Elements): Map[String, ExternalValueSet] =
+    if (e == null) Map()
+    else {
+      e.foldLeft(Map[String, ExternalValueSet]()) { (acc, x) =>
+        acc
+      }
+    }
+
+  private def externalValueSet(e: nu.xom.Element): ExternalValueSet = {
+    val id = e.attribute("BindingIdentifier")
+    val _stability = stability(e.attribute("Stability"))
+    val _extensibility = extensibility(e.attribute("Extensibility"))
+    val url = e.attribute("URL")
+    ExternalValueSet(id, url, _extensibility, _stability)
+  }
+
+  private def valueSet(e: nu.xom.Element): InternalValueSet = {
     val id = e.attribute("BindingIdentifier")
     val _stability = stability( e.attribute("Stability") )
     val _extensibility = extensibility( e.attribute("Extensibility") )

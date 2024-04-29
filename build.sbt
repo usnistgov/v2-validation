@@ -71,7 +71,8 @@ lazy val validation = Project("hl7-v2-validation", file("validation"))
     libraryDependencies ++= Seq(
       typesafe_config,
       stringUtils,
-      vreport
+      vreport,
+      apacheHttp
     )
   )
 

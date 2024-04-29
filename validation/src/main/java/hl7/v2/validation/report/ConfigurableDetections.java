@@ -21,10 +21,7 @@ import hl7.v2.profile.BindingStrength;
 import hl7.v2.profile.Range;
 import hl7.v2.profile.ValueSetSpec;
 import hl7.v2.validation.content.*;
-import hl7.v2.validation.vs.Extensibility;
-import hl7.v2.validation.vs.Stability;
-import hl7.v2.validation.vs.TripletEntry;
-import hl7.v2.validation.vs.ValueSet;
+import hl7.v2.validation.vs.*;
 import scala.Option;
 
 public class ConfigurableDetections {
@@ -36,7 +33,11 @@ public class ConfigurableDetections {
 	 * Value Set Validation related entries
 	 * =======================================================================
 	 */
-	
+
+	public Config getConfiguration() {
+		return conf;
+	}
+
 	public  Entry rvs(Location l, String value, String vs) {
 		String desc = vsTemplate3("rvs", value, l.prettyString(), vs);
 		return vsEntry("rvs", desc, l, null, null);
@@ -319,6 +320,21 @@ public class ConfigurableDetections {
 				code.location().prettyString()
 		);
 		return entry(context.location(), desc, category, classification, null, null);
+	}
+
+	public  Entry externalVsSpecError(Location l, String code, String msg, ExternalValueSet vs) {
+		String category = conf.getString("report.external-vs-spec-error.category");
+		String template = conf.getString("report.external-vs-spec-error.template");
+		String classification = conf.getString("report.external-vs-spec-error.classification");
+		String desc = String.format(
+				template,
+				code,
+				l.prettyString(),
+				vs.id(),
+				vs.url(),
+				msg
+		);
+		return entry(l, desc, category, classification, null, null);
 	}
 
 	/*
@@ -912,6 +928,7 @@ public class ConfigurableDetections {
 		return vsEntry("binding-location", desc, l);
 	}
 
+
 	/**
 	 * @return A report entry for an excluded VS detection
 	 */
@@ -946,9 +963,6 @@ public class ConfigurableDetections {
 	 */
 	
 	public  Entry toAlert(Entry e){
-		if(e instanceof TripletEntry){
-			return ((TripletEntry) e).toAlert();
-		}
     	String classification = conf.getString("report.classification.alert");
     	return new EntryImpl(e.getLine(), e.getColumn(), e.getPath(),
 			    e.getMessageProfilePath(), e.getMessageProfilePositionPath(), e.getMessageInstancePathName(), e.getMessageInstancePositionPath(),

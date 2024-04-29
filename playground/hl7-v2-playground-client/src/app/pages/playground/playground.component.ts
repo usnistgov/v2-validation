@@ -1,12 +1,13 @@
 import { ZipService } from './../../services/zip.service';
 import { Component } from '@angular/core';
 import { ValidationService } from '../../services/validation.service';
-import { mergeMap, tap, take } from 'rxjs/operators';
+import { mergeMap, tap, take, map } from 'rxjs/operators';
 import { IPlayGroundContent, DataService, ResourceType, Status } from '../../services/data.service';
 import { Observable, of } from 'rxjs';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { MatDialog } from '@angular/material/dialog';
 import { ParseDialogComponent } from '../../components/parse-dialog/parse-dialog.component';
+import { ApiKeyDialogComponent } from 'src/app/components/api-key-dialog/api-key-dialog.component';
 
 export interface IMessageID {
   structId: string;
@@ -34,6 +35,8 @@ export class PlaygroundComponent {
     matchBrackets: true,
     extraKeys: { 'Alt-F': 'findPersistent' }
   };
+
+  apiKeys: Record<string, string> = {};
 
   hl7EditorOptions = {
     theme: 'monokai',
@@ -202,6 +205,7 @@ export class PlaygroundComponent {
           configuration: this.dataService.get(ResourceType.CONFIGURATION).text,
           id: messageId.id,
           message: this.dataService.get(ResourceType.MESSAGE).text,
+          keys: this.apiKeys,
         });
       })
     ).subscribe((value) => {
@@ -266,6 +270,49 @@ export class PlaygroundComponent {
       }
     }
     return ids;
+  }
+
+  setAPIKeys() {
+    const externalValuesets = this.getExternalValueSets(this.dataService.get(ResourceType.VALUESET).text);
+    console.log(externalValuesets);
+    this.apiKeys = Object.keys(externalValuesets).reduce((acc, key) => {
+      return this.apiKeys[key] ? {
+        ...acc,
+        [key]: this.apiKeys[key],
+      } : acc;
+    }, {});
+    this.dialog.open(ApiKeyDialogComponent, {
+      width: "50vw",
+      data: {
+        keys: this.apiKeys,
+        valuesets: externalValuesets
+      }
+    }).afterClosed().pipe(
+      map((value) => {
+        if (value) {
+          this.apiKeys = value;
+        }
+      })
+    ).subscribe();
+  }
+
+  getExternalValueSets(value: string): Record<string, string> {
+    const externalVs: Record<string, string> = {};
+    if (window.DOMParser) {
+      const xmlDoc = new DOMParser().parseFromString(value, 'text/xml');
+      const container: HTMLCollectionOf<Element> = xmlDoc.getElementsByTagName('ExternalValueSetDefinitions');
+      if (container.length > 0) {
+        const collection = container[0].getElementsByTagName('ValueSetDefinition');
+        for (let i = 0; i < collection.length; i++) {
+          if (collection.item(i)?.getAttribute('BindingIdentifier')) {
+            const id = collection.item(i)?.getAttribute('BindingIdentifier') as string;
+            const url = collection.item(i)?.getAttribute('URL') as string;
+            externalVs[id] = url;
+          }
+        }
+      }
+    }
+    return externalVs;
   }
 
 }

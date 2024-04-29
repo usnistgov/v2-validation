@@ -1,0 +1,40 @@
+<div>
+    <h5>External Value Sets Without API Key</h5>
+    <table class="table table-sm table-stripped table-bordered">
+        <thead>
+            <tr>
+                <th>Binding Identifier</th>
+                <th>URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of vsNoKey">
+                <td>{{ item.value.bindingIdentifier }}</td>
+                <td>{{ item.value.url }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 5px;">
+        <h5>API Keys</h5>
+        <button class="btn btn-sm btn-primary" (click)="add()">Add</button>
+    </div>
+    <table class="table table-sm table-stripped table-bordered">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value Sets</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of keysGroups; let i = index" >
+                <th>
+                    <input type="password" class="form-control" [(ngModel)]="item.key" >
+                </th>
+                <th>
+                    <p-multiSelect appendTo="body" defaultLabel="Select Value Sets" [options]="item.options" [(ngModel)]="item.vsList" (ngModelChange)="onSelected(i, $event)" ></p-multiSelect>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<button class="btn btn-success" (click)="done()">Done</button>

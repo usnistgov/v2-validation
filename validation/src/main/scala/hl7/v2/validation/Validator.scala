@@ -3,18 +3,15 @@ package hl7.v2.validation
 import gov.nist.validation.report.Report
 import hl7.v2.parser.Parser
 import hl7.v2.profile.Profile
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import hl7.v2.validation.report.ConfigurableDetections
 import com.typesafe.config.ConfigFactory
-
-import scala.collection.JavaConverters._
 import java.io.Reader
-
 import hl7.v2.validation.coconstraints.{CoConstraintValidationContext, EmptyCoConstraintValidationContext}
 import hl7.v2.validation.slicing.{EmptyProfileSlicingContext, ProfileSlicingContext}
+import hl7.v2.validation.vs.factory.ValueSetFactory
 import hl7.v2.validation.vs.{DefaultValueSetSpecification, EmptyValueSetSpecification}
 
 /**
@@ -33,7 +30,7 @@ trait Validator { this: Parser
 
   val profile: Profile
   val legacyVsValidationSpecification: Option[vs.ValueSetSpecification]
-  val valueSetLibrary: vs.ValueSetLibrary
+  val valueSetFactory: ValueSetFactory
   var featureFlags: FeatureFlags
 
   /**
@@ -62,12 +59,11 @@ trait Validator { this: Parser
       case Some(model) =>
         parse(message, model) match {
           case Success(m) =>
-            val defaultConfig = ConfigFactory.load();
-            implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).withFallback(defaultConfig).resolve());
-            implicit val vsValidator: vs.Validator = new vs.Validator(detections)
+            val defaultConfig = ConfigFactory.load()
+            implicit val detections: ConfigurableDetections = if (configuration == null) new ConfigurableDetections(defaultConfig) else new ConfigurableDetections(ConfigFactory.parseReader(configuration).withFallback(defaultConfig).resolve())
             implicit val activeFeatureFlags: FeatureFlags = featureFlags.copy()
 
-            val legacy0396Detection = if(activeFeatureFlags.legacy0396 && valueSetLibrary.containsLegacy0396Codes()) {
+            val legacy0396Detection = if(activeFeatureFlags.legacy0396 && valueSetFactory.containsLegacy0396Codes()) {
               detections.legacy0396(m.asGroup) :: Nil
             } else Nil
 
@@ -92,7 +88,7 @@ trait Validator { this: Parser
  */
 class HL7Validator(
   val profile: Profile,
-  val valueSetLibrary: vs.ValueSetLibrary,
+  val valueSetFactory: ValueSetFactory,
   val conformanceContext: content.ConformanceContext,
   val vsSpecification : vs.ValueSetSpecification,
   val coConstraintValidationContext: CoConstraintValidationContext,
@@ -111,11 +107,11 @@ class HL7Validator(
 
   /** v1 (Empty VS Specification, Empty Co-Constraint Specification) */
   def this(profile: Profile,
-           valueSetLibrary: vs.ValueSetLibrary,
+           valueSetFactory: ValueSetFactory,
            conformanceContext: content.ConformanceContext) =
     this(
       profile,
-      valueSetLibrary,
+      valueSetFactory,
       conformanceContext,
       EmptyValueSetSpecification,
       EmptyCoConstraintValidationContext,
@@ -125,12 +121,12 @@ class HL7Validator(
 
   /** v1.6.0+ vs specification (Empty Co-Constraint Specification) */
   def this(profile: Profile,
-           valueSetLibrary: vs.ValueSetLibrary,
+           valueSetFactory: ValueSetFactory,
            conformanceContext: content.ConformanceContext,
            vsSpecification : vs.ValueSetSpecification) =
     this(
       profile,
-      valueSetLibrary,
+      valueSetFactory,
       conformanceContext,
       vsSpecification,
       EmptyCoConstraintValidationContext,
@@ -140,12 +136,12 @@ class HL7Validator(
 
   /** v1.6.0+ co-constraints (Empty VS Specification) */
   def this(profile: Profile,
-           valueSetLibrary: vs.ValueSetLibrary,
+           valueSetFactory: ValueSetFactory,
            conformanceContext: content.ConformanceContext,
            coConstraintValidationContext: CoConstraintValidationContext) =
     this(
       profile,
-      valueSetLibrary,
+      valueSetFactory,
       conformanceContext,
       EmptyValueSetSpecification,
       coConstraintValidationContext,
@@ -157,7 +153,7 @@ class HL7Validator(
   def this(context: ValidationContext) =
     this(
       context.profile,
-      context.valueSetLibrary,
+      context.valueSetFactory,
       context.conformanceContext,
       context.vsSpecification,
       context.coConstraintValidationContext,
@@ -165,7 +161,7 @@ class HL7Validator(
       context.featureFlags
     )
 
-  def setFeatureFlags(ff: FeatureFlags) = {
+  def setFeatureFlags(ff: FeatureFlags): Unit = {
     featureFlags = ff.copy()
   }
 }
@@ -175,23 +171,23 @@ class HL7Validator(
  * and validators (structure, content, valueset, coconstraints)
  */
 class SyncHL7Validator(
-        override val profile: Profile,
-        override val valueSetLibrary: vs.ValueSetLibrary,
-        override val conformanceContext: content.ConformanceContext,
-        override val vsSpecification : vs.ValueSetSpecification,
-        override val coConstraintValidationContext: CoConstraintValidationContext,
-        override val profileSlicingContext: ProfileSlicingContext,
-        featureFlags: FeatureFlags,
+    override val profile: Profile,
+    override val valueSetFactory: ValueSetFactory,
+    override val conformanceContext: content.ConformanceContext,
+    override val vsSpecification : vs.ValueSetSpecification,
+    override val coConstraintValidationContext: CoConstraintValidationContext,
+    override val profileSlicingContext: ProfileSlicingContext,
+    featureFlags: FeatureFlags,
 )
-  extends HL7Validator(profile, valueSetLibrary, conformanceContext, vsSpecification, coConstraintValidationContext, profileSlicingContext, featureFlags) {
+  extends HL7Validator(profile, valueSetFactory, conformanceContext, vsSpecification, coConstraintValidationContext, profileSlicingContext, featureFlags) {
 
   /** v1 (Empty VS Specification, Empty Co-Constraint Specification) */
   def this(profile: Profile,
-           valueSetLibrary: vs.ValueSetLibrary,
+           valueSetFactory: ValueSetFactory,
            conformanceContext: content.ConformanceContext) =
     this(
       profile,
-      valueSetLibrary,
+      valueSetFactory,
       conformanceContext,
       EmptyValueSetSpecification,
       EmptyCoConstraintValidationContext,
@@ -201,12 +197,12 @@ class SyncHL7Validator(
 
   /** v1.6.0+ vs specification (Empty Co-Constraint Specification) */
   def this(profile: Profile,
-           valueSetLibrary: vs.ValueSetLibrary,
+           valueSetFactory: ValueSetFactory,
            conformanceContext: content.ConformanceContext,
            vsSpecification: vs.ValueSetSpecification) =
     this(
       profile,
-      valueSetLibrary,
+      valueSetFactory,
       conformanceContext,
       vsSpecification,
       EmptyCoConstraintValidationContext,
@@ -216,12 +212,12 @@ class SyncHL7Validator(
 
   /** v1.6.0+ co-constraints (Empty VS Specification) */
   def this(profile: Profile,
-           valueSetLibrary: vs.ValueSetLibrary,
+           valueSetFactory: ValueSetFactory,
            conformanceContext: content.ConformanceContext,
            coConstraintValidationContext: CoConstraintValidationContext) =
     this(
       profile,
-      valueSetLibrary,
+      valueSetFactory,
       conformanceContext,
       EmptyValueSetSpecification,
       coConstraintValidationContext,
@@ -233,7 +229,7 @@ class SyncHL7Validator(
   def this(context: ValidationContext) =
     this(
       context.profile,
-      context.valueSetLibrary,
+      context.valueSetFactory,
       context.conformanceContext,
       context.vsSpecification,
       context.coConstraintValidationContext,

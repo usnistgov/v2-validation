@@ -8,7 +8,7 @@ import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
 
 import javax.inject._
 import javax.xml.transform.stream.StreamSource
-import javax.xml.validation.{Schema, SchemaFactory}
+import javax.xml.validation.Schema
 import org.xml.sax.ErrorHandler
 import play.api.mvc._
 import play.api.libs.json.{Json, Reads, Writes}
@@ -17,7 +17,16 @@ import gov.nist.hit.hl7.v2.schemas.utils.HL7v2Schema
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.validation.coconstraints.EmptyCoConstraintValidationContext
 import hl7.v2.validation.slicing.EmptyProfileSlicingContext
+import hl7.v2.validation.vs.external.client.ExternalValueSetClient
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
+import org.apache.http.{HttpRequest, HttpRequestInterceptor}
+import org.apache.http.conn.ssl.{NoopHostnameVerifier, SSLConnectionSocketFactory, TrustAllStrategy}
+import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
+import org.apache.http.ssl.SSLContextBuilder
 import service.FormatParsedMessage
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.HttpRequestWrapper
+import org.apache.http.protocol.HttpContext
 
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,7 +52,8 @@ case class ValidationQuery(
   slicing: String,
   configuration: String,
   id: String,
-  message: String
+  message: String,
+  keys: Map[String, String],
 )
 
 case class CheckResource(content: String, rType: ResourceType)
@@ -65,7 +75,7 @@ case class ParseQuery(
   id: String,
 )
 
-case class Entry(category: String, classification: String, description: String, path: String, ref: ElementPath, line: Int, column: Int)
+case class Entry(category: String, classification: String, description: String, path: String, ref: Option[ElementPath], line: Int, column: Int)
 case class ElementPath(profileNamePath: String, instanceNamePath: String, profilePositionPath: String, instancePositionPath: String)
 
 case class ResourceCheckResult(status: Boolean, issues: List[Entry])
@@ -84,6 +94,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
   implicit val parseReads: Reads[ParseQuery] = Json.reads[ParseQuery]
   implicit val parseWrites: Writes[ParseQuery] = Json.writes[ParseQuery]
 
+
   def index(ignored: String) = Action {
     Ok.sendResource("public/index.html", this.getClass.getClassLoader)
   }
@@ -100,14 +111,14 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/slicing.xml")).mkString,
           scala.io.Source.fromInputStream(getClass.getResourceAsStream("/reference.conf")).mkString,
           "aa72383a-7b48-46e5-a74a-82e019591fe7",
-          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/message.hl7")).mkString
+          scala.io.Source.fromInputStream(getClass.getResourceAsStream("/example/message.hl7")).mkString,
+          Map(),
         )
       )
     )
   }
 
-  def validateXML(xmlFile: String, schema: Schema, category: String): ResourceCheckResult = {
-    val schemaLang = "http://www.w3.org/2001/XMLSchema"
+  private def validateXML(xmlFile: String, schema: Schema, category: String): ResourceCheckResult = {
     val validator = schema.newValidator()
     val issues: mutable.Stack[Entry] = mutable.Stack()
     validator.setErrorHandler(
@@ -119,7 +130,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               "Warning",
               e.getMessage,
               "",
-              null,
+              None,
               e.getLineNumber,
               e.getColumnNumber
             )
@@ -133,7 +144,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               "Error",
               e.getMessage,
               "",
-              null,
+              None,
               e.getLineNumber,
               e.getColumnNumber
             )
@@ -147,7 +158,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               "Error",
               e.getMessage,
               "",
-              null,
+              None,
               e.getLineNumber,
               e.getColumnNumber
             )
@@ -186,12 +197,12 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
         case Success(_) => ResourceCheckResult(status = true, Nil)
         case Failure(ex: ConfigException) => ResourceCheckResult(
           status = false, List {
-            Entry("Configuration Validation", "Error", ex.getMessage, "", null, ex.origin().lineNumber(), 0)
+            Entry("Configuration Validation", "Error", ex.getMessage, "", None, ex.origin().lineNumber(), 0)
           }
         )
         case Failure(ex) => ResourceCheckResult(
           status = false, List {
-            Entry("Configuration Validation", "Error", ex.getMessage, "", null, 0, 0)
+            Entry("Configuration Validation", "Error", ex.getMessage, "", None, 0, 0)
           }
         )
       }
@@ -208,7 +219,7 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
     }
   }
 
-  def getValidationContext(query: ValidationQuery): ValidationContext = {
+  private def getValidationContext(query: ValidationQuery): ValidationContext = {
     val profile = XMLDeserializer.deserialize(new ByteArrayInputStream(query.profile.getBytes)) match {
       case Success(p) => p
       case Failure(e) => throw e
@@ -227,10 +238,30 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
       ),
       profile
     ).get
-    ValidationContext(profile, vsLib, constraints, vsSpec, coConstraints, slicing, FeatureFlags(vsLib.containsLegacy0396Codes()))
+    val vsFactory = new DefaultValueSetFactory(getHTTPClient(query.keys), vsLib, new DefaultValueSetFactoryConfiguration(true, true))
+    ValidationContext(profile, vsFactory, constraints, vsSpec, coConstraints, slicing, FeatureFlags(vsLib.containsLegacy0396Codes()))
   }
 
-  def getParsedTree(query: ParseQuery) = {
+  private def getHTTPClient(keys: Map[String, String]): CloseableHttpClient = {
+      val builder = new SSLContextBuilder();
+      builder.loadTrustMaterial(null, new TrustAllStrategy());
+      val socketFactory = new SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE)
+      val requestConfig = RequestConfig.custom.setConnectionRequestTimeout(2 * 1000).setConnectTimeout(2 * 1000).setSocketTimeout(2 * 1000).build
+      HttpClients
+          .custom()
+          .setDefaultRequestConfig(requestConfig)
+          .disableCookieManagement()
+          .setSSLSocketFactory(socketFactory)
+          .addInterceptorFirst(new HttpRequestInterceptor {
+            override def process(request: HttpRequest, context: HttpContext): Unit = {
+              val vsBinding = context.getAttribute(ExternalValueSetClient.HTTP_CONTEXT_VS_BINDING_IDENTIFIER).toString
+              request.addHeader("X-API-KEY", keys.getOrElse(context.getAttribute(ExternalValueSetClient.HTTP_CONTEXT_VS_BINDING_IDENTIFIER).toString, ""))
+            }
+          })
+          .build();
+  }
+
+  private def getParsedTree(query: ParseQuery) = {
     val profile = XMLDeserializer.deserialize(new ByteArrayInputStream(query.profile.getBytes)) match {
       case Success(p) => p
       case Failure(e) => throw e
@@ -256,12 +287,12 @@ class ValidationController @Inject()(cc: ControllerComponents) extends AbstractC
               v.getClassification,
               v.getDescription,
               v.getPath,
-              ElementPath(
+              Some(ElementPath(
                 v.getMessageProfilePath,
                 v.getMessageInstancePathName,
                 v.getMessageProfilePositionPath,
                 v.getMessageInstancePositionPath
-              ),
+              )),
               v.getLine,
               v.getColumn
             )

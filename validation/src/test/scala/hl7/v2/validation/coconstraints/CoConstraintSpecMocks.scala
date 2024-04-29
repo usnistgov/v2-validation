@@ -5,8 +5,10 @@ import hl7.v2.instance.{Counter, Element, Group, Separators, TimeZone, Segment =
 import hl7.v2.instance.Query.query
 import hl7.v2.profile.{Component, Composite, DynMapping, Field, Primitive, Range, Req, Segment, SegmentRef, Usage, Varies, Group => GM}
 import hl7.v2.validation.vs.{CodeUsage, EmptyValueSetSpecification, InternalValueSet, ValueSetLibraryImpl, ValueSetSpecification, Code => VCode}
+
 import java.util.{List => JList}
 import gov.nist.validation.report.{Trace => GTrace}
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
 
 import scala.jdk.CollectionConverters.SeqHasAsJava
 
@@ -19,6 +21,7 @@ trait CoConstraintSpecMocks {
   val vs1_1: InternalValueSet = InternalValueSet("vs1_1", None, None, List(VCode("D", "des", CodeUsage.R, "SYS"),VCode("E", "des", CodeUsage.P, "SYS"),VCode("F", "des", CodeUsage.E, "SYS")))
   val vs1_1_cs: InternalValueSet = InternalValueSet("vs1_1_cs", None, None, List(VCode("D", "des", CodeUsage.R, "SYS1"),VCode("E", "des", CodeUsage.P, "SYS1"),VCode("F", "des", CodeUsage.E, "SYS1")))
   val valueSetLibrary = new ValueSetLibraryImpl(List("excluded"), (vs1_1::vs1_cs::vs1_cs_1::vs1_1_cs::Nil).map(x => { (x.id, x) }).toMap)
+  implicit val valueSetFactory: hl7.v2.validation.vs.factory.ValueSetFactory = new DefaultValueSetFactory(valueSetLibrary, new DefaultValueSetFactoryConfiguration(true, false))
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
   implicit val time: Option[TimeZone] = None
 

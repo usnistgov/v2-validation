@@ -4,19 +4,22 @@ import expression.EvalResult.Pass
 import gov.nist.validation.report.Entry
 import hl7.v2.instance._
 import hl7.v2.instance.Query._
-import hl7.v2.profile.{ Message => MM }
+import hl7.v2.profile.{Message => MM}
 import expression._
 import hl7.v2.validation.vs.ValueSetLibrary
-import scala.util.{ Failure, Success }
+
+import scala.util.{Failure, Success}
 import hl7.v2.validation.report.ConfigurableDetections
+import hl7.v2.validation.vs.factory.ValueSetFactory
+
 import scala.jdk.CollectionConverters.SeqHasAsJava
 
 trait PatternFinder extends expression.Evaluator {
   
-  implicit def valueSetLibrary: ValueSetLibrary
+  implicit def valueSetFactory: ValueSetFactory
   
   def checkContexts(e: Element, c: List[Context], validator: (Element, Constraint) => List[Entry])(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
     c.foldLeft(List[Entry]())({ (acc, context) =>
         checkContext(e,context,validator) ::: acc
     })
@@ -24,7 +27,7 @@ trait PatternFinder extends expression.Evaluator {
   
   
   def checkContext(e: Element, c: Context, validator: (Element, Constraint) => List[Entry])(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
      query(e, c.contextPath) match {
       case Success(Nil) => missingContext(c,e)
       case Success(x)   => checkPatterns(x, c.Patterns,e, validator)
@@ -39,7 +42,7 @@ trait PatternFinder extends expression.Evaluator {
   }
   
   def checkPatterns( el: List[Element], pl: List[Pattern], root: Element, validator: (Element, Constraint) => List[Entry]) (implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): List[Entry] = {
+    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
     
     def loop( el: List[Element], pl: List[Pattern]): List[Entry] = {
       pl match {
@@ -52,7 +55,7 @@ trait PatternFinder extends expression.Evaluator {
   }
   
   def search(p : Pattern, el: List[Element], root: Element, validator: (Element, Constraint) => List[Entry])
-  (implicit s: Separators, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator) : (List[Entry], List[Element]) = {
+  (implicit s: Separators, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections) : (List[Entry], List[Element]) = {
     
     def find(els: List[Element], exp: Expression): List[Element] = {
       els match {

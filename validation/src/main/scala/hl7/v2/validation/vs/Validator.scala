@@ -7,11 +7,12 @@ import hl7.v2.validation.report.ConfigurableDetections
 import gov.nist.validation.report.Entry
 import hl7.v2.profile.BindingStrength
 import hl7.v2.validation.FeatureFlags
+import hl7.v2.validation.vs.factory.ValueSetFactory
 
 
 trait VsValidator {
 
-  implicit def valueSetLibrary: ValueSetLibrary
+  implicit def valueSetFactory: ValueSetFactory
 
   def vsSpecification: ValueSetSpecification;
 

@@ -13,6 +13,7 @@ export interface IValidationQuery {
   configuration: string;
   id: string;
   message: string;
+  keys: Record<string, string>;
 }
 
 export interface IEntry {

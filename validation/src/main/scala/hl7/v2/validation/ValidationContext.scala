@@ -1,31 +1,32 @@
 package hl7.v2.validation
 
 import java.io.InputStream
-
 import hl7.v2.profile.Profile
 import hl7.v2.validation.coconstraints.{CoConstraintValidationContext, EmptyCoConstraintValidationContext}
 import hl7.v2.validation.content.{DefaultConformanceContext, EmptyConformanceContext}
 import hl7.v2.validation.slicing.{EmptyProfileSlicingContext, ProfileSlicingContext}
-import hl7.v2.validation.vs.{EmptyValueSetLibrary, EmptyValueSetSpecification, ValueSetLibraryImpl}
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
+import hl7.v2.validation.vs.factory.{EmptyValueSetFactory, ValueSetFactory}
+import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
+import org.apache.http.impl.client.CloseableHttpClient
+
 import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.util.{Failure, Success}
 
 
 case class ValidationContext(
   profile: Profile,
-  valueSetLibrary: vs.ValueSetLibrary = EmptyValueSetLibrary.getInstance(),
+  valueSetFactory: ValueSetFactory = EmptyValueSetFactory,
   conformanceContext: content.ConformanceContext = EmptyConformanceContext,
   vsSpecification : vs.ValueSetSpecification = EmptyValueSetSpecification,
   coConstraintValidationContext: CoConstraintValidationContext = EmptyCoConstraintValidationContext,
   slicingContext: ProfileSlicingContext = EmptyProfileSlicingContext,
   featureFlags: FeatureFlags = FeatureFlags()
-) {
-
-}
+)
 
 class ValidationContextBuilder(profileInputStream: InputStream) {
   var profile: Option[Profile] = useProfile(profileInputStream)
-  var valueSetLibrary: vs.ValueSetLibrary = EmptyValueSetLibrary.getInstance()
+  var valueSetFactory: ValueSetFactory = EmptyValueSetFactory
   var conformanceContext: content.ConformanceContext = EmptyConformanceContext
   var vsSpecification : vs.ValueSetSpecification = EmptyValueSetSpecification
   var coConstraintValidationContext: CoConstraintValidationContext = EmptyCoConstraintValidationContext
@@ -39,9 +40,22 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
     }
   }
 
-  def useValueSetLibrary(libraryInputStream: InputStream): ValidationContextBuilder = {
+  def useValueSetFactory(factory: ValueSetFactory): ValidationContextBuilder = {
+    valueSetFactory = factory
+    this
+  }
+
+  def useDefaultValueSetFactory(libraryInputStream: InputStream, httpClient: CloseableHttpClient, cacheInstances: Boolean = true): ValidationContextBuilder = {
     ValueSetLibraryImpl(libraryInputStream) match {
-      case Success(vsLibrary) => valueSetLibrary = vsLibrary
+      case Success(vsLibrary) => valueSetFactory = new DefaultValueSetFactory(httpClient, vsLibrary, new DefaultValueSetFactoryConfiguration(cacheInstances, true))
+      case Failure(exception) => throw exception
+    }
+    this
+  }
+
+  def useDefaultValueSetFactoryWithoutHttp(libraryInputStream: InputStream, cacheInstances: Boolean = true): ValidationContextBuilder = {
+    ValueSetLibraryImpl(libraryInputStream) match {
+      case Success(vsLibrary) => valueSetFactory = new DefaultValueSetFactory(vsLibrary, new DefaultValueSetFactoryConfiguration(cacheInstances, false))
       case Failure(exception) => throw exception
     }
     this
@@ -105,7 +119,7 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
       case None => throw new Exception("No profile defined")
       case Some(p) => ValidationContext(
         p,
-        valueSetLibrary,
+        valueSetFactory,
         conformanceContext,
         vsSpecification,
         coConstraintValidationContext,

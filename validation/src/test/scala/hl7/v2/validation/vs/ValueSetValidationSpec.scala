@@ -1,15 +1,16 @@
-package hl7.v2.validation.structure
+package hl7.v2.validation.vs
 
 import gov.nist.validation.report.Entry
-import org.specs2.Specification
+import hl7.v2.instance._
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.validation.vs.{BindingLocation, Code, CodeHolder, CodeUsage, DefaultValueSetSpecification, EmptyValueSetSpecification, Extensibility, Stability, VSValidationCode, ValueSetBinding, ValueSetLibraryImpl, ValueSetSpecification, InternalValueSet => ValueSet}
-import hl7.v2.profile.{BindingStrength, Composite, Primitive, Req, Usage}
-import hl7.v2.instance.{Complex, ComplexComponent, Element, Location, Simple, SimpleComponent, Text, Value}
+import hl7.v2.profile._
+import hl7.v2.validation.vs.BindingLocation
 import hl7.v2.validation.FeatureFlags
+import hl7.v2.validation.structure.Helpers
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
+import hl7.v2.validation.vs.{InternalValueSet => ValueSet}
+import org.specs2.Specification
 import org.specs2.matcher.MatchResult
-
-import scala.collection.immutable.List
 
 
 trait ValueSetValidationSpec extends Specification
@@ -235,6 +236,7 @@ trait ValueSetValidationSpec extends Specification
 
   val empty: ValueSet = ValueSet("empty", None, None, List())
   val valueSetLibrary = new ValueSetLibraryImpl(List("excluded"), (vsCodePattern::vs1::vs2::vs3::vs1_1::vs2_2::vs1_cs::vs1_cs_1::vs1_1_cs::vs3_1::vs2_2_2::vs4::vs4_1::empty::vs1_no_usage::vs1_closed::vs1_dynamic::vs396_R::vs396_P::vs396_NF::vs396_BOTH::Nil).map(x => { (x.id, x) }).toMap)
+  implicit val valueSetFactory: hl7.v2.validation.vs.factory.ValueSetFactory = new DefaultValueSetFactory(valueSetLibrary, new DefaultValueSetFactoryConfiguration(true, false))
 
   // ============================================ TEST CASES ===========================================
 

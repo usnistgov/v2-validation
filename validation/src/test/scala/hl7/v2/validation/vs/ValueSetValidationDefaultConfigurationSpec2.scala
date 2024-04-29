@@ -1,9 +1,10 @@
-package hl7.v2.validation.structure
+package hl7.v2.validation.vs
 
 import com.typesafe.config.{Config, ConfigFactory}
-import hl7.v2.instance.{Complex, Element, Location, Simple, Text, Value}
+import hl7.v2.instance._
 import hl7.v2.profile.{BindingStrength, Req, Usage}
-import hl7.v2.validation.vs.{BindingLocation, Code, CodeUsage, EmptyValueSetSpecification, Extensibility, InternalValueSet, Stability, VSValidationCode, ValueSetBinding, ValueSetLibraryImpl, ValueSetSpecification}
+import hl7.v2.validation.structure.Helpers
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
 import org.specs2.Specification
 import org.specs2.matcher.MatchResult
 
@@ -37,6 +38,7 @@ trait ValueSetValidationDefaultConfigurationSpec2 extends Specification
       """
   //------- MOCKS
   val valueSetLibrary = new ValueSetLibraryImpl(Nil, Map())
+  implicit val valueSetFactory: hl7.v2.validation.vs.factory.ValueSetFactory = new DefaultValueSetFactory(valueSetLibrary, new DefaultValueSetFactoryConfiguration(true, false))
   val vsSpecification: ValueSetSpecification = EmptyValueSetSpecification
   val elm: S = S(1, 1, Text("A"))
   val _default: Config = ConfigFactory.load()

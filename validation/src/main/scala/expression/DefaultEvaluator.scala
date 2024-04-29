@@ -4,7 +4,6 @@ import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance.{Complex, _}
 import hl7.v2.profile.Range
-import hl7.v2.validation.vs.{Validator, ValueSetLibrary}
 import gov.nist.validation.report.Entry
 
 import scala.jdk.CollectionConverters.ListHasAsScala
@@ -22,8 +21,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param t - The default time zone
    * @return The evaluation result
    */
-  def eval(e: Expression, c: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      t: Option[TimeZone], VSValidator : Validator): EvalResult = e match {
+  def eval(e: Expression, c: Element)(implicit s: Separators, t: Option[TimeZone]): EvalResult = e match {
     case x: Presence          => presence(x, c)
     case x: PlainText         => plainText(x, c)
     case x: Format            => format(x, c)
@@ -346,13 +344,11 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param context - The context
    * @return The result of the evaluation
    */
-  def valueSet(vs: ValueSet, context: Element)(implicit l: ValueSetLibrary, VSValidator : Validator): EvalResult =
+  def valueSet(vs: ValueSet, context: Element): EvalResult =
     query(context, vs.path) match {
       case Failure(e)   => inconclusive(vs, context.location, e)
       case Success(Nil) => notFound(vs, vs.path, context, vs.notPresentBehavior)
-      case Success(x :: Nil) =>
-        val r = VSValidator.checkValueSet(x, vs.spec, l)   
-        if (isVSViolated(r)) Failures.valueSet(vs, r) else Pass
+      case Success(x :: Nil) => inconclusive(vs, context.location, "ValueSet expression is no longer supported.")
       case Success(xs) =>
         val msg = "Path resolution returned more than one element"
         inconclusive(vs, context.location, msg)
@@ -395,7 +391,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def subContext(subContext: SubContext, context: Element)(implicit l: ValueSetLibrary, s: Separators, dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+  def subContext(subContext: SubContext, context: Element)(implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
     contextRange(subContext.cardinality, subContext.atLeastOnce) match {
       case Success(range) => query(context, subContext.path) match {
         case Failure(e)   => inconclusive(subContext, context.location, e)
@@ -424,8 +420,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param context - The context
    * @return The evaluation result
    */
-  def and(and: AND, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+  def and(and: AND, context: Element)(implicit s: Separators,
+                                      dtz: Option[TimeZone]): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
       case f: Fail         => Failures.and(and, context, f)
@@ -444,8 +440,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param context - The context
    * @return The evaluation result
    */
-  def or(or: OR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                   dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+  def or(or: OR, context: Element)(implicit s: Separators,
+                                   dtz: Option[TimeZone]): EvalResult =
     eval(or.exp1, context) match {
       case f1: Fail =>
         eval(or.exp2, context) match {
@@ -461,8 +457,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param context - The context
    * @return The evaluation result
    */
-  def not(not: NOT, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+  def not(not: NOT, context: Element)(implicit s: Separators,
+                                      dtz: Option[TimeZone]): EvalResult =
     eval(not.exp, context) match {
       case Pass            => not.exp match {
         case Presence(p)   => Failures.not(not, query(context,p).get.head)
@@ -472,16 +468,16 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
       case i: Inconclusive => i
     }
   //x ⊕ y   =   (x ∨ y) ∧ ¬(x ∧ y)
-  def xor(xor: XOR, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                      dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+  def xor(xor: XOR, context: Element)(implicit s: Separators,
+                                      dtz: Option[TimeZone]): EvalResult =
     eval(AND(OR(xor.exp1, xor.exp2), NOT(AND(xor.exp1, xor.exp2))), context)
 
-  def imply(e: IMPLY, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                        dtz: Option[TimeZone], VSValidator : Validator): EvalResult =
+  def imply(e: IMPLY, context: Element)(implicit s: Separators,
+                                        dtz: Option[TimeZone]): EvalResult =
     eval(OR(NOT(e.exp1), e.exp2), context)
 
-  def exist(e: EXIST, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                        dtz: Option[TimeZone], VSValidator : Validator): EvalResult = {
+  def exist(e: EXIST, context: Element)(implicit s: Separators,
+                                        dtz: Option[TimeZone]): EvalResult = {
     def loop(expressions: List[Expression]): EvalResult = {
       expressions match {
         case x :: Nil => eval(x, context)
@@ -504,8 +500,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     }
   }
 
-  def forall(e: FORALL, context: Element)(implicit l: ValueSetLibrary, s: Separators,
-                                          dtz: Option[TimeZone], VSValidator : Validator): EvalResult = {
+  def forall(e: FORALL, context: Element)(implicit s: Separators,
+                                          dtz: Option[TimeZone]): EvalResult = {
 
     def loop(expressions: List[Expression]): EvalResult = {
       expressions match {

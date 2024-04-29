@@ -5,7 +5,6 @@ import hl7.v2.instance.{ EType, Location }
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{ Req, Usage, Range, XMLDeserializer }
 import hl7.v2.validation.report._
-import hl7.v2.validation.vs.ValueSet
 import org.specs2.Specification
 import expression._
 import hl7.v2.instance.Query._
@@ -16,6 +15,7 @@ import expression.EvalResult.{ Inconclusive, Fail, Pass }
 import hl7.v2.validation.vs.EmptyValueSetLibrary
 import hl7.v2.instance._
 import hl7.v2.validation.structure.ValueValidation._
+
 /**
  * Integration test for the structure validation
  */

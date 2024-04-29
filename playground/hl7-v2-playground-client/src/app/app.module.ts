@@ -14,6 +14,8 @@ import { PlaygroundComponent } from './pages/playground/playground.component';
 import { HomeComponent } from './pages/home/home.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { DocumentationComponent } from './pages/documentation/documentation.component';
+import { ApiKeyDialogComponent } from './components/api-key-dialog/api-key-dialog.component';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
   declarations: [
@@ -23,6 +25,7 @@ import { DocumentationComponent } from './pages/documentation/documentation.comp
     PlaygroundComponent,
     HomeComponent,
     DocumentationComponent,
+    ApiKeyDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -34,10 +37,11 @@ import { DocumentationComponent } from './pages/documentation/documentation.comp
     NoopAnimationsModule,
     MatDialogModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
+    MultiSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
   exports: [ParseDialogComponent],
-  entryComponents: [ParseDialogComponent]
+  entryComponents: [ParseDialogComponent, ApiKeyDialogComponent]
 })
 export class AppModule { }

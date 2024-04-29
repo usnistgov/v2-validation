@@ -48,6 +48,7 @@
           </div>
         </div>
         <div>
+          <button class="btn btn-dark btn-tool" (click)="setAPIKeys()" > API Keys </button>
           <ng-container *ngIf="activeTab !== resourceType.MESSAGE">
             <button class="btn btn-success btn-tool" (click)="checkResource(activeTab)"> Validate Resource </button>
             <button class="btn btn-primary btn-tool" (click)="format(activeTab)"> Format </button>

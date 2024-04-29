@@ -2,6 +2,7 @@ package hl7.v2.validation.vs
 
 import hl7.v2.instance.{Element, Path, Simple}
 import hl7.v2.profile.BindingStrength
+import hl7.v2.validation.vs.factory.{ValueSetFacade}
 
 import scala.util.{Failure, Success, Try}
 
@@ -32,6 +33,6 @@ case class SingleCodeBinding(target: String, code: String, codeSystem: String, b
 
 case class CodeHolder(code : Simple, codeSystem : Option[Simple], location : BindingLocation)
 
-case class ValueSetValidationPayload(target: Element, values: List[CodeHolder], valueSets: List[ValueSet], strength: Option[BindingStrength], detections: List[VSValidationCode])
+case class ValueSetValidationPayload(target: Element, values: List[CodeHolder], valueSets: List[ValueSetFacade], strength: Option[BindingStrength], detections: List[VSValidationCode])
 
 case class SingleCodeValidationPayload(target: Element, values: List[CodeHolder], spec: SingleCodeBinding, detections: List[VSValidationCode])

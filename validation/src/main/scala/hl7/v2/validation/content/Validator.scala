@@ -2,10 +2,10 @@ package hl7.v2.validation.content
 
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.Message
-import hl7.v2.validation.vs.ValueSetLibrary
 
 import scala.concurrent.Future
 import hl7.v2.validation.report.ConfigurableDetections
+import hl7.v2.validation.vs.factory.ValueSetFactory
 
 
 /**
@@ -20,7 +20,7 @@ trait Validator {
     * The conformance context used by this validator.
     */
   def conformanceContext: ConformanceContext
-  implicit def valueSetLibrary: ValueSetLibrary
+  implicit def valueSetFactory: ValueSetFactory
 
   /**
     * Check the message against the constraints defined
@@ -28,5 +28,5 @@ trait Validator {
     * @param m - The message to be checked
     * @return The report
     */
-  def checkContent(m: Message)(implicit Detections : ConfigurableDetections, VSValidator : hl7.v2.validation.vs.Validator): Future[Seq[Entry]]
+  def checkContent(m: Message)(implicit Detections : ConfigurableDetections): Future[Seq[Entry]]
 }

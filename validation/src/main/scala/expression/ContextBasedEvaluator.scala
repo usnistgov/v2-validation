@@ -3,15 +3,11 @@ package expression
 import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance._
-import hl7.v2.validation.vs.{ Validator, ValueSetLibrary }
-import gov.nist.validation.report.Entry
-
 import scala.util.{ Failure, Success, Try }
 
 class ContextBasedEvaluator extends EscapeSeqHandler {
 
-  def eval(e: Expression, c: Element)(implicit l: ValueSetLibrary, s: Separators,
-    t: Option[TimeZone]): EvalData = {
+  def eval(e: Expression, c: Element)(implicit s: Separators): EvalData = {
     e match {
       case x: PlainText => plainText(x, c)
       case x: StringList => stringList(x, c)

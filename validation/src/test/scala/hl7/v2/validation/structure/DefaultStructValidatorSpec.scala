@@ -1,5 +1,7 @@
 package hl7.v2.validation.structure
 
+import hl7.v2.validation.vs.{SingleCodeValidationSpec, ValueSetValidationDefaultConfigurationSpec, ValueSetValidationDefaultConfigurationSpec2, ValueSetValidationSpec}
+
 object DefaultStructValidatorSpec extends StructValidationSpec with DefaultValidator
 object NullValidatorSpec extends NullValidationSpec with DefaultValidator
 object DefaultValueSetValidationSpec extends ValueSetValidationSpec

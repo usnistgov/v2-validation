@@ -1,10 +1,11 @@
-package hl7.v2.validation.structure
+package hl7.v2.validation.vs
 
 import gov.nist.validation.report.Entry
-import hl7.v2.instance.{Complex, Element, Location, Simple, Text, Value}
+import hl7.v2.instance._
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.{Req, Usage}
-import hl7.v2.validation.vs.{BindingLocation, EmptyValueSetSpecification, SingleCodeBinding, VSValidationCode, ValueSetLibraryImpl, ValueSetSpecification}
+import hl7.v2.validation.structure.Helpers
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
 import org.specs2.Specification
 import org.specs2.matcher.MatchResult
 
@@ -35,6 +36,7 @@ trait SingleCodeValidationSpec extends Specification
   """
   val vsSpecification: ValueSetSpecification = EmptyValueSetSpecification
   val valueSetLibrary = new ValueSetLibraryImpl(List(), Map())
+  implicit val valueSetFactory: hl7.v2.validation.vs.factory.ValueSetFactory = new DefaultValueSetFactory(valueSetLibrary, new DefaultValueSetFactoryConfiguration(true, false))
 
   val xor1: MatchResult[List[Entry]] = {
     val s11 = S(1, 1, Text("A"))

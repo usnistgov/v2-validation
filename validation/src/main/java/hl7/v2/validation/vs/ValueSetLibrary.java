@@ -1,5 +1,4 @@
 package hl7.v2.validation.vs;
-
 /**
  * The value set library
  *
