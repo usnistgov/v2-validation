@@ -2,15 +2,15 @@ package expression
 
 import hl7.v2.instance._
 import hl7.v2.profile.{Req, Usage}
-import hl7.v2.validation.vs.EmptyValueSetLibrary
 import hl7.v2.validation.report.ConfigurableDetections
 import com.typesafe.config.ConfigFactory
 import hl7.v2.instance.Query.queryAsSimple
+import hl7.v2.validation.FeatureFlags
 
 trait Mocks {
 
+  implicit val featureFlags = FeatureFlags()
   implicit val Detections = new ConfigurableDetections(ConfigFactory.load());
-//  implicit val defaultValueSetLibrary = EmptyValueSetLibrary.getInstance()
   implicit val separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
 
   implicit val dtz = Some( TimeZone("+0000") )

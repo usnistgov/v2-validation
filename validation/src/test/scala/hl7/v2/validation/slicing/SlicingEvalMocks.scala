@@ -2,14 +2,10 @@ package hl7.v2.validation.slicing
 import hl7.v2.instance.{Counter, Separators, TimeZone, Segment => SI}
 import hl7.v2.profile.{Component, Composite, Field, Message, Primitive, Req, Segment, SegmentRef, Usage, Group => GM}
 
-import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl, ValueSetSpecification}
-
 
 trait SlicingEvalMocks {
 
   var profileSlicingContext: ProfileSlicingContext = EmptyProfileSlicingContext
-  val vsSpecification: ValueSetSpecification = EmptyValueSetSpecification
-  implicit val valueSetLibrary: ValueSetLibraryImpl = new ValueSetLibraryImpl(List("excluded"), Map())
   implicit val separators: Separators = Separators( '|', '^', '~', '\\', '&', Some('#') )
   implicit val time: Option[TimeZone] = None
 

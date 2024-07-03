@@ -3,11 +3,11 @@ package expression
 import expression.EvalResult.{Fail, Reason, Trace}
 import hl7.v2.instance._
 import hl7.v2.profile.Range
-import gov.nist.validation.report.Entry
 import hl7.v2.instance.Query._
 
 import scala.util.{Failure, Success}
 import expression.EvalResult.Inconclusive
+import hl7.v2.validation.vs.VsEntry
 object Failures extends EscapeSeqHandler {
 
   /**
@@ -243,29 +243,15 @@ object Failures extends EscapeSeqHandler {
     Inconclusive(Trace(e, Reason(c1.location, m) :: Nil))
   }
 
-  /**
-    * Creates and returns a value set failure stack traces
-    */
-  def valueSet(e: ValueSet, x: Entry): Fail = {
-    val location = Location(null, "...", x.getPath, x.getLine, x.getColumn, "", None)
-    var reasons = Reason(location, x.getDescription) :: Nil
-
-    if( x.getStackTrace != null )
-      (0 until x.getStackTrace.size()) foreach { i =>
-        val gtrace = x.getStackTrace.get(i)
-        (0 until gtrace.getReasons.size()) foreach { n =>
-          reasons = Reason(location, gtrace.getReasons.get(n)) :: reasons
-        }
-      }
-    Fail( Trace(e, reasons) :: Nil )
+  def valueSet(e: ValueSet, elm: Element, entries: List[VsEntry]) = {
+    val reasons = entries.map(entry => Reason(entry.target.location, "Value Set Validation Code : " + entry.code.getClass.getSimpleName))
+    Fail(Trace(e, Reason(elm.location, "Code not found according to the value set binding") :: reasons) :: Nil)
   }
-  /*def valueSet(e: ValueSet, xs: List[Entry]): Fail = {
-    val reasons = xs map { x =>
-      val location = Location(null, "...", x.getPath, x.getLine, x.getColumn)
-      Reason(location, s"Value Set assertion is violated. Details: ${x.getDescription}")
-    }
-    Fail( Trace(e, reasons) :: Nil )
-  }*/
+
+  def inconclusiveValueSet(e: Expression, l: Location, entries: List[VsEntry]): Inconclusive = {
+    val reasons = entries.map(entry => Reason(entry.target.location, "Value Set Validation Code : " + entry.code.getClass.getSimpleName))
+    Inconclusive(Trace(e, Reason(l, "Invalid value set binding specification") :: reasons))
+  }
 
   /**
     * Creates and returns an AND expression failure stack traces

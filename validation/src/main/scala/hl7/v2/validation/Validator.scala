@@ -31,6 +31,7 @@ trait Validator { this: Parser
   val profile: Profile
   val legacyVsValidationSpecification: Option[vs.ValueSetSpecification]
   val valueSetFactory: ValueSetFactory
+  val legacyExpressionValueSetValidator: vs.VsValidator = this
   var featureFlags: FeatureFlags
 
   /**

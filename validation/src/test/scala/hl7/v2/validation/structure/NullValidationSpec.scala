@@ -1,20 +1,19 @@
 package hl7.v2.validation.structure
 
 import gov.nist.validation.report.Entry
-import hl7.v2.instance.{ EType, Location }
+import hl7.v2.instance.{EType, Location}
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.{ Req, Usage, Range, XMLDeserializer }
-import hl7.v2.validation.report._
+import hl7.v2.profile.{Range, XMLDeserializer}
 import org.specs2.Specification
 import expression._
 import hl7.v2.instance.Query._
+
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util.{ Failure, Success }
-import expression.EvalResult.{ Inconclusive, Fail, Pass }
-import hl7.v2.validation.vs.EmptyValueSetLibrary
+import scala.util.{Failure, Success}
+import expression.EvalResult.Pass
 import hl7.v2.instance._
-import hl7.v2.validation.structure.ValueValidation._
+import hl7.v2.validation.DefaultEvaluatorWithEmptyValueSetValidation
 
 /**
  * Integration test for the structure validation
@@ -25,7 +24,7 @@ trait NullValidationSpec
     with Validator
     with DefaultParser
     with Helpers
-    with DefaultEvaluator {
+    with DefaultEvaluatorWithEmptyValueSetValidation {
   def is = s2"""
 
   NULL validation specification
@@ -43,7 +42,6 @@ trait NullValidationSpec
     
   """
 
-  implicit val defaultValueSetLibrary = EmptyValueSetLibrary.getInstance()
   implicit val separators = Separators('|', '^', '~', '\\', '&', Some('#'))
   implicit val dtz = Some(TimeZone("+0000"))
 
@@ -204,7 +202,7 @@ trait NullValidationSpec
     val loc = Location(EType.Field, "The description", "The path", 1, 1, "", None)
     val lcs = Some( Range(2, "3") )
     val lcn = None
-    checkValue( Number("\"\""), lcs, None, None, loc) === Nil
+    ValueValidation.checkValue( Number("\"\""), lcs, None, None, loc) === Nil
   }
   private def validate(m: String): Seq[Entry] = parse(m, mm) match {
     case Success(msg) =>

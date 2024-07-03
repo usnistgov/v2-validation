@@ -27,7 +27,8 @@ trait DefaultValidator extends Validator
    * @param m - The message to be checked
    * @return The report
    */
-  def checkContent(m: Message)(implicit Detections : ConfigurableDetections): Future[Seq[Entry]] = Future {
+  def checkContent(m: Message)
+                  (implicit Detections : ConfigurableDetections, ff: FeatureFlags): Future[Seq[Entry]] = Future {
     implicit val separators = m.separators
     implicit val dtz = m.defaultTimeZone
     implicit val model = m.model
@@ -40,8 +41,8 @@ trait DefaultValidator extends Validator
    * @param e - The element to be checked
    * @return The report
    */
-  private def check(e: Element)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
+  private def check(e: Element)
+                   (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
     val cl : List[Constraint] = conformanceContext.constraintsFor(e)
     val pl : List[Predicate] = conformanceContext.predicatesFor(e)
     val ccl: List[CoConstraint] = conformanceContext.coConstraintsFor(e)
@@ -62,8 +63,8 @@ trait DefaultValidator extends Validator
     }
   }
 
-  private def checkOI(e: Element)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
+  private def checkOI(e: Element)
+                     (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
     val contexts = conformanceContext.orderIndifferentConstraints()
     checkContexts(e,contexts,routeConstraint)
   }
@@ -90,8 +91,8 @@ trait DefaultValidator extends Validator
 
   private def format(s: String) = s.replace(" ", "-").toLowerCase()
 
-  private def routeConstraint(e: Element, c: Constraint)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
+  private def routeConstraint(e: Element, c: Constraint)
+                             (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = {
     if (isCB(c)) {
       if (mustRoute(c.assertion))
         List(checkCB(e, c, c.reference.get))
@@ -101,8 +102,8 @@ trait DefaultValidator extends Validator
       check(e, c, false)
   }
 
-  private def check(e: Element, c: Constraint, content: Boolean)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
+  private def check(e: Element, c: Constraint, content: Boolean)
+                   (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
     eval(c.assertion, e) match {
       case Pass => List(Detections.csSuccess(e, c,content))
       case Fail(stack) => 
@@ -115,14 +116,14 @@ trait DefaultValidator extends Validator
       case Inconclusive(trace) => List(Detections.csSpecError(e, c, c.description, stackTrace(e, trace :: Nil),content))
     }
   
-   private def checkCC(e: Element, c: CoConstraint)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
+   private def checkCC(e: Element, c: CoConstraint)
+                      (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
       c.constraints.foldLeft(List[Entry]()){
        (acc, x) => checkCC(e, c.description, x.key, x.assertions) ++ acc
    }
    
-   private def checkCC(e: Element, str : String, k: Expression, a: List[Expression])(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
+   private def checkCC(e: Element, str : String, k: Expression, a: List[Expression])
+                      (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
      eval(k, e) match {
       case Pass => checkCCList(e, str, a, k)
       case Fail(_) => Nil
@@ -130,8 +131,8 @@ trait DefaultValidator extends Validator
       case Inconclusive(trace) => Nil
     }
     
-   private def checkCCList(e: Element, str : String, a: List[Expression], k: Expression)(implicit s: Separators,
-    dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] = 
+   private def checkCCList(e: Element, str : String, a: List[Expression], k: Expression)
+                          (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], model: MM, Detections : ConfigurableDetections): List[Entry] =
     a.foldLeft(List[Entry]()){
        (acc, x) => eval(x, e) match {
          case Pass => Detections.coConstraintSuccess(e, str, k, x) :: acc
@@ -162,7 +163,8 @@ trait DefaultValidator extends Validator
 
   }
 
-  private def check(e: Element, p: Predicate)(implicit s: Separators, dtz: Option[TimeZone], Detections : ConfigurableDetections): List[Entry] =
+  private def check(e: Element, p: Predicate)
+                   (implicit s: Separators, ff: FeatureFlags, dtz: Option[TimeZone], Detections : ConfigurableDetections): List[Entry] =
     eval(p.condition, e) match {
       case Pass => checkUsage(e, p, p.trueUsage, predicatePass = true)
       case Fail(_) | FailPlugin(_,_) => checkUsage(e, p, p.falseUsage, predicatePass = false)

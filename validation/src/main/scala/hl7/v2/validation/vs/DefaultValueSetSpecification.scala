@@ -56,6 +56,26 @@ object DefaultValueSetSpecification {
     }
   }
 
+  def valueSetSpecToValueSetBinding(vsSpec: ValueSetSpec, dtName: String): ValueSetBinding = {
+    val isCoded = isCodedElement(dtName)
+    val strength = vsSpec.bindingStrength
+    val target = "."
+    val bindings = vsSpec.valueSetId.split(":").toList
+    val bindingLocations = vsSpec.bindingLocation match {
+      case None => List(BindingLocation(".", None))
+      case Some(bl) => bl match {
+        case BL.Position(value) => List(mapBindingLocation(value, isCoded))
+        case BL.XOR(position1, position2) => List(
+          mapBindingLocation(position1, isCoded),
+          mapBindingLocation(position2, isCoded)
+        )
+      }
+    }
+    ValueSetBinding(target, strength, bindings, bindingLocations)
+  }
+
+  def isCodedElement(dt: String): Boolean = dt.matches("C(W|N)?E")
+
   def extractFromProfile(profile: Profile): DefaultValueSetSpecification = {
     val datatypes = profile.datatypes.view.mapValues(extractFromDatatype).toMap
     val segments = profile.segments.view.mapValues(extractFromSegment).toMap

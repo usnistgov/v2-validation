@@ -2,6 +2,7 @@ package hl7.v2.validation.content
 
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.Message
+import hl7.v2.validation.FeatureFlags
 
 import scala.concurrent.Future
 import hl7.v2.validation.report.ConfigurableDetections
@@ -28,5 +29,5 @@ trait Validator {
     * @param m - The message to be checked
     * @return The report
     */
-  def checkContent(m: Message)(implicit Detections : ConfigurableDetections): Future[Seq[Entry]]
+  def checkContent(m: Message)(implicit Detections : ConfigurableDetections, ff: FeatureFlags): Future[Seq[Entry]]
 }

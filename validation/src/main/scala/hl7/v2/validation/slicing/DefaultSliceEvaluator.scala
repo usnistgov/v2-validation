@@ -5,6 +5,7 @@ import expression.EvalResult.Trace
 import gov.nist.validation.report.Entry
 import hl7.v2.instance.{Counter, DataElement, Element, ElementProfilePath, Field, Group, Message, SegOrGroup, Separators, TimeZone, Segment => SegmentInstance}
 import hl7.v2.profile.{Datatype, Segment}
+import hl7.v2.validation.FeatureFlags
 import hl7.v2.validation.report.ConfigurableDetections
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,7 +31,7 @@ case class SegmentSliceTargetIsGroup[T](slicing: Slicing[T], element: Group) ext
 
 trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
 
-  def applySlices(m: Message)(implicit Detections : ConfigurableDetections): Future[(Message, Seq[Entry])]= Future {
+  def applySlices(m: Message)(implicit Detections : ConfigurableDetections, ff: FeatureFlags): Future[(Message, Seq[Entry])]= Future {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
     implicit val context = profileSlicingContext
@@ -41,6 +42,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
   def applySegmentSlices(messageId: String, group: Group)
     (
       implicit s: Separators,
+      ff: FeatureFlags,
       t: Option[TimeZone],
       Detections: ConfigurableDetections,
       profileSlicingContext: ProfileSlicingContext
@@ -69,6 +71,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
   def applyFieldSlices(segmentInstance: SegmentInstance)
     (
       implicit s: Separators,
+      ff: FeatureFlags,
       t: Option[TimeZone],
       Detections: ConfigurableDetections,
       profileSlicingContext: ProfileSlicingContext
@@ -89,6 +92,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
   def applyFieldSlices(slicing: Slicing[Datatype], child: Field)
     (
       implicit s: Separators,
+      ff: FeatureFlags,
       t: Option[TimeZone],
       Detections: ConfigurableDetections
     ): (Field, List[SlicingCode]) = {
@@ -112,6 +116,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
     (
       implicit s: Separators,
       t: Option[TimeZone],
+      ff: FeatureFlags,
       Detections: ConfigurableDetections
     ): (SegOrGroup, List[SlicingCode]) = {
 
@@ -135,6 +140,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
   def matchSlice[T](element: Element, slicing: Slicing[T])
     (
       implicit s: Separators,
+      ff: FeatureFlags,
       t: Option[TimeZone],
       Detections: ConfigurableDetections
     ): (Option[Slice[T]], List[SlicingCode]) = {
@@ -157,6 +163,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
   def evaluateSlice[T](element: Element, slice: Slice[T])
     (
       implicit s: Separators,
+      ff: FeatureFlags,
       t: Option[TimeZone],
       Detections: ConfigurableDetections
     ): (Boolean, List[SlicingCode]) = {
@@ -177,6 +184,7 @@ trait DefaultSliceEvaluator extends SliceEvaluator with expression.Evaluator {
   def evaluateAssertionSlice[T](slice: AssertionSlice[T], element: Element)
     (
       implicit s: Separators,
+      ff: FeatureFlags,
       t: Option[TimeZone],
       Detections: ConfigurableDetections
     ): (Boolean, List[SlicingCode]) = {

@@ -20,6 +20,7 @@ trait EvaluatorSpec
   with StringFormatSpec
   with SubContextSpec
   with ComplexPathValueSpec
+  with ValueSetExpressionSpec
   with Mocks { def is = s2"""
 
   Expression evaluator specifications
@@ -435,5 +436,40 @@ trait EvaluatorSpec
       ComplexPathValue evaluation should fail If not present behavior is FAIL and both paths not found                      $complexPathValueNoElmFAIL
       ComplexPathValue evaluation should be inconclusive If not present behavior is INCONCLUSIVE and both paths not found   $complexPathValueNoElmINC
       ComplexPathValue evaluation should pass If not present behavior is PASS and both paths not found                      $complexPathValueNoElmPASS
+
+      ValueSetSpec
+        ValueSet expression fails when code is not found in value set
+          Simple Element  $failCodeNotFoundSimple
+          Complex Element $failCodeNotFoundComplex
+          Coded Element
+            Single binding location $failCodeNotFoundCE1
+            Multiple binding location $failCodeNotFoundCE2
+        ValueSet expression fails when code is found in value set with usage E
+          Simple Element  $failECodeNotFoundSimple
+          Complex Element $failECodeNotFoundComplex
+          Coded Element
+            Single binding location $failECodeNotFoundCE1
+            Multiple binding location $failECodeNotFoundCE2
+        ValueSet expression passes when code is found in value set (R, P)
+          Simple Element  $passSimple
+          Complex Element $passComplex
+          Coded Element
+            Single binding location $passCE1
+            Multiple binding location $passCE2
+        ValueSet expression inconclusive when there is a spec error
+          Simple Element with BL $incSimpleWithBL
+          Complex Element with no BL $incComplexWithoutBL
+        NotPresentBehaviour = FAIL
+          ValueSet expression fail when path is empty $npbFailEmpty
+          ValueSet expression fail when binding location's path is empty (single) $npbFailBLEmpty
+          ValueSet expression fail when both binding location's path is empty (multiple) $npbFail2BLEmpty
+        NotPresentBehaviour = PASS
+          ValueSet expression pass when path is empty $npbPassEmpty
+          ValueSet expression pass when binding location's path is empty (single) $npbPassBLEmpty
+          ValueSet expression pass when both binding location's path is empty (multiple) $npbPass2BLEmpty
+        NotPresentBehaviour = INCONCLUSIVE
+          ValueSet expression inconclusive when path is empty $npbIncEmpty
+          ValueSet expression inconclusive when binding location's path is empty (single) $npbIncBLEmpty
+          ValueSet expression inconclusive when both binding location's path is empty (multiple) $npbInc2BLEmpty
   """
 }

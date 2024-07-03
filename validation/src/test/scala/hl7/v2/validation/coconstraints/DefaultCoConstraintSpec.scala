@@ -1,8 +1,10 @@
 package hl7.v2.validation.coconstraints
 
+import hl7.v2.validation.vs.VsValidator
 import org.specs2.Specification
 
 object DefaultCoConstraintSpec extends Specification with CellCoConstraintSpec with CoConstraintTableSpec {
+  implicit val legacyExpressionValueSetValidator: VsValidator = this
   def is = s2"""
       Co-Constraint Cell Validation
         InconclusiveAssertion should be considered [NO_MATCH] ${inconclusiveIsNoMatch()}

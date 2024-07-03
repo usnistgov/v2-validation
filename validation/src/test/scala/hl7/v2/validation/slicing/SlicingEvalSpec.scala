@@ -5,14 +5,15 @@ import expression.{EvalResult, PlainText}
 import hl7.v2.instance.Query.query
 import hl7.v2.validation.structure.Helpers
 import org.specs2.Specification
-import hl7.v2.instance.{ComplexField, Counter, Element, Field, Group => GI, Line, NULLComplexField, SegOrGroup, Segment, SimpleField, Message => MI}
+import hl7.v2.instance.{ComplexField, Counter, Element, Field, Line, NULLComplexField, SegOrGroup, Segment, SimpleField, Group => GI, Message => MI}
 import hl7.v2.parser.impl.DefaultParser
-import hl7.v2.profile.{Composite, Datatype, Message, Req, Segment => SM, Group => GM}
+import hl7.v2.profile.{Composite, Datatype, Message, Req, Group => GM, Segment => SM}
+import hl7.v2.validation.DefaultEvaluatorWithEmptyValueSetValidation
 import org.specs2.matcher.MatchResult
 
 trait SlicingEvalSpec extends Specification
   with hl7.v2.validation.slicing.DefaultSliceEvaluator
-  with expression.DefaultEvaluator
+  with DefaultEvaluatorWithEmptyValueSetValidation
   with SlicingEvalMocks
   with Helpers
   with DefaultParser

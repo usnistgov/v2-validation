@@ -3,8 +3,12 @@ package expression
 import expression.EvalResult._
 import hl7.v2.instance.Query._
 import hl7.v2.instance.{Complex, _}
-import hl7.v2.profile.Range
+import hl7.v2.profile.{BindingLocation, Range}
 import gov.nist.validation.report.Entry
+import hl7.v2.validation.FeatureFlags
+import hl7.v2.validation.report.ConfigurableDetections
+import hl7.v2.validation.vs.{DefaultValueSetSpecification, VsEntry}
+import hl7.v2.validation.vs.VSValidationCode.EVS
 
 import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.util.{Failure, Success, Try}
@@ -21,7 +25,10 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param t - The default time zone
    * @return The evaluation result
    */
-  def eval(e: Expression, c: Element)(implicit s: Separators, t: Option[TimeZone]): EvalResult = e match {
+  def eval(e: Expression, c: Element)
+          (implicit s: Separators, t: Option[TimeZone],
+           detections: ConfigurableDetections,
+           featureFlags: FeatureFlags): EvalResult = e match {
     case x: Presence          => presence(x, c)
     case x: PlainText         => plainText(x, c)
     case x: Format            => format(x, c)
@@ -344,15 +351,61 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @param context - The context
    * @return The result of the evaluation
    */
-  def valueSet(vs: ValueSet, context: Element): EvalResult =
+  def valueSet(vs: ValueSet, context: Element)
+              (implicit detections: ConfigurableDetections, featureFlags: FeatureFlags): EvalResult = {
     query(context, vs.path) match {
-      case Failure(e)   => inconclusive(vs, context.location, e)
+      case Failure(e) => inconclusive(vs, context.location, e)
       case Success(Nil) => notFound(vs, vs.path, context, vs.notPresentBehavior)
-      case Success(x :: Nil) => inconclusive(vs, context.location, "ValueSet expression is no longer supported.")
-      case Success(xs) =>
+      case Success(x :: Nil) =>
+        // Check if one of the binding locations exists
+        val codeLocationExists = if(vs.spec.bindingLocation.isDefined) {
+          val locations = vs.spec.bindingLocation.get match {
+            case BindingLocation.Position(value) => value::Nil
+            case BindingLocation.XOR(a, b) => a::b::Nil
+          }
+          locations.exists((position) => query(x, s"${position}[1]") match {
+            case Success(Nil) => false
+            case _ => true
+          })
+        } else true
+
+        if(!codeLocationExists) {
+          val path = vs.spec.bindingLocation match {
+            case Some(BindingLocation.Position(p)) => s"${vs.path}.${p}[1]"
+            case Some(BindingLocation.XOR(p1, p2)) => s"${vs.path}.${p1}[1] and ${vs.path}.${p2}[1]"
+            case None => vs.path
+          }
+          return notFound(vs, path, context, vs.notPresentBehavior)
+        }
+
+        // Get datatype name (to determine if it's a coded element)
+        val datatype = x match {
+          case f: Field => Success(f.datatype)
+          case c: Component => Success(c.datatype)
+          case _ => Failure(new Throwable("Invalid value set binding target (only fields, components and sub components are allowed)"))
+        }
+        datatype match {
+          case Success(dt) =>
+            val vsEntries = legacyExpressionValueSetValidator.check(x :: Nil, DefaultValueSetSpecification.valueSetSpecToValueSetBinding(vs.spec, dt.name))
+            if(vsEntries.exists(e => e.code.codeIsFound && !e.code.isInstanceOf[EVS]))  {
+              // If value set validation detected that one of the codes is in the value set with usage != E
+              Pass
+            }
+            else if(vsEntries.exists(_.code.isSpecError))  {
+              // If value set validation detected a specification error
+              inconclusive(vs, x.location, vsEntries)
+            }
+            else {
+              Failures.valueSet(vs, x, vsEntries)
+            }
+          case Failure(t) => inconclusive(vs, x.location, t)
+        }
+      case Success(_) =>
         val msg = "Path resolution returned more than one element"
         inconclusive(vs, context.location, msg)
     }
+  }
+
 
   def isNull(n: isNULL, context: Element): EvalResult = {
     def loop(l: List[Element]): EvalResult = {
@@ -391,7 +444,7 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     * @param context - The context
     * @return The evaluation result
     */
-  def subContext(subContext: SubContext, context: Element)(implicit s: Separators, dtz: Option[TimeZone]): EvalResult =
+  def subContext(subContext: SubContext, context: Element)(implicit s: Separators, detections: ConfigurableDetections, featureFlags: FeatureFlags,dtz: Option[TimeZone]): EvalResult =
     contextRange(subContext.cardinality, subContext.atLeastOnce) match {
       case Success(range) => query(context, subContext.path) match {
         case Failure(e)   => inconclusive(subContext, context.location, e)
@@ -421,6 +474,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def and(and: AND, context: Element)(implicit s: Separators,
+                                      detections: ConfigurableDetections,
+                                      featureFlags: FeatureFlags,
                                       dtz: Option[TimeZone]): EvalResult =
     eval(and.exp1, context) match {
       case i: Inconclusive => i
@@ -441,6 +496,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def or(or: OR, context: Element)(implicit s: Separators,
+                                   detections: ConfigurableDetections,
+                                   featureFlags: FeatureFlags,
                                    dtz: Option[TimeZone]): EvalResult =
     eval(or.exp1, context) match {
       case f1: Fail =>
@@ -458,6 +515,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
    * @return The evaluation result
    */
   def not(not: NOT, context: Element)(implicit s: Separators,
+                                      detections: ConfigurableDetections,
+                                      featureFlags: FeatureFlags,
                                       dtz: Option[TimeZone]): EvalResult =
     eval(not.exp, context) match {
       case Pass            => not.exp match {
@@ -469,14 +528,20 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     }
   //x ⊕ y   =   (x ∨ y) ∧ ¬(x ∧ y)
   def xor(xor: XOR, context: Element)(implicit s: Separators,
+                                      detections: ConfigurableDetections,
+                                      featureFlags: FeatureFlags,
                                       dtz: Option[TimeZone]): EvalResult =
     eval(AND(OR(xor.exp1, xor.exp2), NOT(AND(xor.exp1, xor.exp2))), context)
 
   def imply(e: IMPLY, context: Element)(implicit s: Separators,
+                                        detections: ConfigurableDetections,
+                                        featureFlags: FeatureFlags,
                                         dtz: Option[TimeZone]): EvalResult =
     eval(OR(NOT(e.exp1), e.exp2), context)
 
   def exist(e: EXIST, context: Element)(implicit s: Separators,
+                                        detections: ConfigurableDetections,
+                                        featureFlags: FeatureFlags,
                                         dtz: Option[TimeZone]): EvalResult = {
     def loop(expressions: List[Expression]): EvalResult = {
       expressions match {
@@ -501,6 +566,8 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   }
 
   def forall(e: FORALL, context: Element)(implicit s: Separators,
+                                          detections: ConfigurableDetections,
+                                          featureFlags: FeatureFlags,
                                           dtz: Option[TimeZone]): EvalResult = {
 
     def loop(expressions: List[Expression]): EvalResult = {
@@ -717,8 +784,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
     Inconclusive(Trace(pv, reasons))
   }
 
-  //FIXME This needs to be updated according to Rob's feedback
-  //FIXME For now every non null entry is considered as violation
-  private def isVSViolated(e: Entry): Boolean = e != null
+  private def inconclusive(e: Expression, l: Location, entries: List[VsEntry]): Inconclusive = {
+    val reasons = entries.map(entry => Reason(entry.target.location, "Value Set Validation Code : " + entry.code.getClass.getSimpleName))
+    Inconclusive(Trace(e, Reason(l, "Invalid value set binding specification") :: reasons))
+  }
 
 }
