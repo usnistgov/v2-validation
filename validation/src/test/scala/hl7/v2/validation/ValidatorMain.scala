@@ -1,12 +1,17 @@
 package hl7.v2.validation
 
+import gov.nist.validation.report.Entry
 import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
-import hl7.v2.validation.vs.{EmptyValueSetSpecification, ValueSetLibraryImpl}
+import hl7.v2.validation.coconstraints.{DefaultCoConstraintValidationContext, EmptyCoConstraintValidationContext}
+import hl7.v2.validation.slicing.{DefaultProfileSlicingContext, EmptyProfileSlicingContext}
+import hl7.v2.validation.vs.{DefaultValueSetSpecification, EmptyValueSetSpecification, ValueSetLibraryImpl}
 
-import scala.concurrent.Await
+import java.io.InputStream
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
+import scala.jdk.CollectionConverters.{CollectionHasAsScala, ListHasAsScala}
+
 
 object Main extends App with DefaultParser with structure.DefaultValidator {
 
@@ -18,62 +23,67 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     result
   }
 
-  val xml = getClass.getResourceAsStream("/Profile.xml")
+  def validateFromResources(folder: String, messageId: String) = validate(
+    getClass.getResourceAsStream(s"${folder}/Profile.xml"),
+    getClass.getResourceAsStream(s"${folder}/Constraints.xml") :: Nil,
+    getClass.getResourceAsStream(s"${folder}/Valuesets.xml"),
+    Option(getClass.getResourceAsStream(s"${folder}/ValueSetBindings.xml")),
+    Option(getClass.getResourceAsStream(s"${folder}/Slicings.xml")),
+    Option(getClass.getResourceAsStream(s"${folder}/CoConstraints.xml")),
+    getClass.getResourceAsStream(s"${folder}/Message.txt"),
+    messageId
+  )
 
-  val profile = XMLDeserializer.deserialize( xml ) match {
-    case Success(p) => p
-    case Failure(e) => throw e
-  }
-
-  val mm = profile.messages("ORU_R01")
-
-  val m =
-    """
-      /asasa
-      /MSH|^~\&#|^XXX^ISO^qq|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO||NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|20110531140551-2400|||NIST-LRI-GU-001.00|T|2.5.1|||AL|NE|||||LRI_Common_Component^Profile Component^2.16.840.1.113883.9.16^ISO~LRI_GU_Component^Profile Component^2.16.840.1.113883.9.12^ISO~LRI_RU_Component^Profile Component^2.16.840.1.113883.9.14^ISO
-      /SFT
-      /PID|11111~2~3~1~""~4||PATID1234^^^NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO^MR||Jones^William^A^JR^^^L||19610615|M||2106-3^White^HL70005^CAUC^Caucasian^L
-      /ORC|1|ORD723222^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|R-783274^NIST Lab Filler^2.16.840.1.113883.3.72.5.25^ISO|GORD874211^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||||||||57422^Radon^Nicholas^M^JR^DR^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^NPI
-      /ORC!
-      /OBR|1|ORD723222^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|R-783274^NIST Lab Filler^2.16.840.1.113883.3.72.5.25^ISO|30341-2^Erythrocyte sedimentation rate^LN^815115^Erythrocyte sedimentation rate^99USI^^^Erythrocyte sedimentation rate|||20110331140551-0800||||L||7520000^fever of unknown origin^SCT^22546000^fever, origin unknown^99USI^^^Fever of unknown origin|||57422^Radon^Nicholas^M^JR^DR^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^NPI||||||20110331160428-0800|||F|||10092^Hamlin^Pafford^M^Sr.^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^NPI|||||||||||||||||||||CC^Carbon Copy^HL70507^C^Send Copy^L^^^Copied Requested
-      /NTE|1||Patient is extremely anxious about needles used for drawing blood.
-      /NTE|2||Patient is extremely anxious about needles used for drawing blood.
-      /NTE|3||Patient is extremely anxious about needles used for drawing blood.
-      /TQ1|1||||||20110331150028-0800|20110331152028-0800
-      /OBX|1|NM|1^Erythrocyte sedimentation rate^xx^815117^ESR^99USI^^^Erythrocyte sedimentation rate||10|mm/h^millimeter per hour^UCUM|0 to 17|N|||F|||20110331140551-0800|||||20110331150551-0800||||Century Hospital^^^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^XX^^^987|2070 Test Park^^Los Angeles^CA^90067^USA^B^^06037|2343242^Knowsalot^Phil^J.^III^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^DN
-      /OBX|2|CWE|XX^Erythrocyte sedimentation rate^xx^815117^ESR^99USI^^^Erythrocyte sedimentation rate||1^^CodeSyss|mm/h^millimeter per hour^UCUM|0 to 17|N|||F|||20110331140551-0800|||||20110331150551-0800||||Century Hospital^^^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^XX^^^987|2070 Test Park^^Los Angeles^CA^90067^USA^B^^06037|2343242^Knowsalot^Phil^J.^III^Dr.^^^NIST-AA-1&2.16.840.1.113883.3.72.5.30.1&ISO^L^^^DN
-      /PDQ
-      /""".stripMargin('/')
-
-  val context1 = getClass.getResourceAsStream("/rules/CContext.xml")
-
-  val context2 = getClass.getResourceAsStream("/rules/ConfContextSample.xml")
-
-  val conformanceContext = content.DefaultConformanceContext().get
-
-  val vsLibStream = getClass.getResourceAsStream("/ValueSets.xml")
-  val valueSetLibrary = ValueSetLibraryImpl(vsLibStream).get
-
-  val validator = new HL7Validator(profile, valueSetLibrary, conformanceContext, EmptyValueSetSpecification)
-
-  1 to 1 foreach { i =>
+  def validate(profileInput: InputStream, constraints: List[InputStream], valueSetLibraryInput: InputStream, vsBindings:  Option[InputStream], slicings: Option[InputStream], coConstraints: Option[InputStream], messageInput: InputStream, messageId: String) = {
+    val profile = XMLDeserializer.deserialize(profileInput) match {
+      case Success(p) => p
+      case Failure(e) => throw e
+    }
+    val message = scala.io.Source.fromInputStream(messageInput).mkString
+    val conformanceContext = content.DefaultConformanceContext(constraints:_*).get
+    val valueSetLibrary = ValueSetLibraryImpl(valueSetLibraryInput).get
+    val bindings = vsBindings.map(DefaultValueSetSpecification(_) match {
+      case Success(o) => o
+      case Failure(e) => throw e
+    }).getOrElse(EmptyValueSetSpecification)
+    val slicing = slicings.map(DefaultProfileSlicingContext(_, profile) match {
+      case Success(o) => o
+      case Failure(e) => throw e
+    }).getOrElse(EmptyProfileSlicingContext)
+    val coConstraintsSpec = coConstraints.map(DefaultCoConstraintValidationContext(_) match {
+      case Success(o) => o
+      case Failure(e) => throw e
+    }).getOrElse(EmptyCoConstraintValidationContext)
+    val context = ValidationContext(
+      profile,
+      valueSetLibrary,
+      conformanceContext,
+      bindings,
+      coConstraintsSpec,
+      slicing
+    )
+    val validator = new HL7Validator(context)
     time {
-      validator.validate( m, "ORU_R01" ) onComplete {
-        case Success( report ) =>
-          println( report.toText )
-          println( s"\n\n ${ report.toJson } \n\n" )
-        case Failure( e )      =>
+      validator.validate(message, messageId) onComplete {
+        case Success(report) =>
+          val entries = scala.collection.mutable.Map[String, scala.collection.mutable.ListBuffer[Entry]]()
+          for(category <- report.getEntries.values().asScala) {
+            for (entry <- category.asScala) {
+              entries.getOrElseUpdate(entry.getClassification, scala.collection.mutable.ListBuffer[Entry]()).addOne(entry)
+            }
+          }
+          for(classification <- entries.keys) {
+            val classEntries = entries.getOrElse(classification, Nil)
+            println("\n")
+            println(s"[Classification] ${classification} (${classEntries.size})")
+            println("\n")
+            for(entry <- classEntries) {
+              println(s"${entry.toText}")
+            }
+          }
+        case Failure(e) =>
           println(s"\n\n[Error] An error occurred while validating the message ... \n\t${e.getMessage}")
       }
     }
   }
-
-  /*import scala.concurrent.duration._
-
-  1 to 200 foreach { i =>
-    time {
-      val r = Await.result( validator.validate( m, "ORU_R01" ), 1.second )
-      r.toJson
-    }
-  }*/
 }

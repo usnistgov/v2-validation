@@ -12,6 +12,7 @@ import hl7.v2.validation.report.ConfigurableDetections;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An implementation of the value set validator
@@ -55,23 +56,25 @@ public class Validator extends ConfigurableValidation {
      * @param library - The value set library
      * @return A report entry if a problem is found null otherwise
      */
-    public  Entry checkValueSet(Element e, ValueSetSpec spec, ValueSetLibrary library) {
-    	Entry etr = null;
-        if( e instanceof Simple)
-            etr = simpleElementValidator.check((Simple) e, spec, library);
-        else if(e instanceof Complex){
-        	List<Entry> l = complexElementValidator.check((Complex) e, spec, library);
-        	if( l != null && l.size() > 0)
-        		etr = l.get(0);
+    public Entry checkValueSet(Element e, ValueSetSpec spec, ValueSetLibrary library) {
+        if(e instanceof Simple) {
+	        Entry entry = simpleElementValidator.check((Simple) e, spec, library);
+	        if(entry == null || (entry instanceof EnhancedEntry && ((EnhancedEntry) entry).isOk()) ){
+		        return null;
+	        } else {
+		        return entry;
+	        }
+        } else if(e instanceof Complex){
+        	List<Entry> entryList = complexElementValidator.check((Complex) e, spec, library);
+        	if(entryList == null || entryList.size() == 0) {
+				return null;
+	        } else {
+				Optional<Entry> failure = entryList.stream().filter((entry) -> !(entry instanceof EnhancedEntry) || !((EnhancedEntry) entry).isOk()).findFirst();
+				return failure.orElse(null);
+	        }
+        } else  {
+			return null;
         }
-
-        if(etr == null || (etr instanceof EnhancedEntry && ((EnhancedEntry) etr).isOk()) ){
-        	return null;
-        }
-        else {
-        	return etr;
-        }
-            
     }
     
 
