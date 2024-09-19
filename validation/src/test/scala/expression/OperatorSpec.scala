@@ -9,11 +9,11 @@ import Operator.LT
 import Operator.NE
 import hl7.v2.instance.{Date, DateTime, Number, Text, Time, TimeZone, Value}
 
-class OperatorSpec extends Specification { def is = s2"""
+class OperatorSpec extends Specification {def is = s2"""
   Operator specification
 
-  DEFAULT (Equivalent - Non Truncated) 
-  
+  DEFAULT (Equivalent - Non Truncated)
+
   NUMBER
     Number( "1" ) LT Number( "2" ) should be true  $e1
     Number( "2" ) GT Number( "1" ) should be true  $e2
@@ -21,8 +21,8 @@ class OperatorSpec extends Specification { def is = s2"""
     Number( "1" ) GE Number( "1" ) should be true  $e4
     Number( "1" ) EQ Number( "1" ) should be true  $e5
     Number( "1" ) NE Number( "2" ) should be true  $e6
-                                                       
-  TEXT                                                     
+
+  TEXT
     Text( "BC" ) LT Text( "AB" ) should be true  $et1
     Text( "AB" ) GT Text( "BC" ) should be true  $et2
     Text( "AB" ) LE Text( "AB" ) should be true  $et3
@@ -30,7 +30,7 @@ class OperatorSpec extends Specification { def is = s2"""
     Text( "AB" ) EQ Text( "AB" ) should be true  $et5
     Text( "AB" ) NE Text( "BC" ) should be true  $et6
 
-  DATE                                                       
+  DATE
     Date( "20200110" ) LT Date( "20200111" ) should be true  $ed1
     Date( "20200111" ) GT Date( "20200110" ) should be true  $ed2
     Date( "20200110" ) LE Date( "20200110" ) should be true  $ed3
@@ -38,7 +38,7 @@ class OperatorSpec extends Specification { def is = s2"""
     Date( "20200110" ) EQ Date( "20200110" ) should be true  $ed5
     Date( "20200110" ) NE Date( "20200111" ) should be true  $ed6
 
-  DATETIME                                                       
+  DATETIME
     DateTime( "20200110100110+0000" ) LT DateTime( "20200110101010+0000" ) should be true  $edt1
     DateTime( "20200110101010+0000" ) GT DateTime( "20200110100110+0000" ) should be true  $edt2
     DateTime( "20200110100110+0000" ) LE DateTime( "20200110100110+0000" ) should be true  $edt3
@@ -48,16 +48,41 @@ class OperatorSpec extends Specification { def is = s2"""
     - Overflow on day 25 and up
     DateTime( "20230523163100-0700" ) LE DateTime( "20230530113020-0700" ) should be true  $edt7
 
+  DEFAULT TIMEZONE MISSING
+    BOTH DATES HAVE TIMEZONE
+      DateTime("20200110100000-0000") EQ DateTime("20200110060000-0400") should be true $dteq1
+      DateTime("20200110100000-0000") EQ DateTime("20200110070000-0400") should be false $dteq2
+      DateTime("20200110100000-0000") NE DateTime("20200110070000-0400") should be true $dteq3
+      DateTime("20200110100000-0000") LT DateTime("20200110070000-0400") should be true $dteq4
+      DateTime("20200110100000-0000") GT DateTime("20200110070000-0400") should be false $dteq5
+      DateTime("20200110100000-0000") EQ DateTime("20200110100000-0200") should be false $dteq6
+      DateTime("20200110100000-0000") LT DateTime("20200110100000-0200") should be true $dteq7
+      DateTime("20200110100000-0000") GT DateTime("20200110100000-0200") should be false $dteq8
+    BOTH DATES DO NOT HAVE TIMEZONE
+      DateTime("20200110100000") EQ DateTime("20200110060000") should be false $dteq9
+      DateTime("20200110100000") NE DateTime("20200110060000") should be true $dteq10
+      DateTime("20200110100000") LT DateTime("20200110060000") should be false $dteq11
+      DateTime("20200110100000") GT DateTime("20200110060000") should be true $dteq12
+      DateTime("20200110100000") EQ DateTime("20200110100000") should be true $dteq13
+    ONLY ONE DATE HAS TIMEZONE
+      INCONCLUSIVE CASES
+        Without time component, the time is considered 000000
+        DateTime("20200101") EQ DateTime("20200101-0400") should be an error (Same day but timezone is needed to determine if it's the same time point) $dteq14
+        DateTime("20200102") EQ DateTime("20200101-0400") should be an error (One day difference but timezone is needed to determine if it's the same time point) $dteq15
+      CONCLUSIVE CASES
+        DateTime("20200103") EQ DateTime("20200101-0400") should be false $dteq16
+        DateTime("20200201") EQ DateTime("20200101-0400") should be false $dteq17
+
   TIME
     Time( "100110+0000" ) LT Time( "101010+0000" ) should be true  $ett1
     Time( "101010+0000" ) GT Time( "100110+0000" ) should be true  $ett2
     Time( "100110+0000" ) LE Time( "100110+0000" ) should be true  $ett3
     Time( "100110+0000" ) GE Time( "100110+0000" ) should be true  $ett4
     Time( "100110+0000" ) EQ Time( "100110+0000" ) should be true  $ett5
-    Time( "100110+0000" ) NE Time( "101010+0000" ) should be true  $ett6      
-                                                       
-  EQUALITY 
-                                                       
+    Time( "100110+0000" ) NE Time( "101010+0000" ) should be true  $ett6
+
+  EQUALITY
+
   Text
     Equivalent
       "ABC" EQ "AbC" should be true ${te1()}
@@ -126,7 +151,7 @@ class OperatorSpec extends Specification { def is = s2"""
       "2020012510" EQ "20200125102412" should be true (no default TZ) ${dtt14()}
       "20200125102412" EQ "20200125102413" should be false (no default TZ) ${dtt15()}
       "20200125102412" EQ "20200125102412+0000" should be true (no default TZ) ${dtt16()}
-                                                       
+
   Time
     Equivalent
       "102412+0000" EQ "062412-0400" should be true ${tte1()}
@@ -159,14 +184,18 @@ class OperatorSpec extends Specification { def is = s2"""
 
   implicit val dtz: Option[TimeZone] = Some(TimeZone("+0000"))
 
-  def eval[T <: Value](truncated: Boolean, identical: Boolean, creator: String => T, ops: List[Operator])(v1: String, v2: String, expectation: Boolean) = {
+  def eval[T <: Value](truncated: Boolean, identical: Boolean, creator: String => T, ops: List[Operator])(v1: String, v2: String, expectation: Boolean)(implicit dtz: Option[TimeZone]) = {
     ops.map(OP => {
       OP.eval(creator(v1), creator(v2), ComparisonMode(identical, truncated))  must beSuccessfulTry.withValue(expectation)
     })
   }
   
-  def evalDefault(v1: Value, op: Operator, v2: Value, expectation: Boolean) = {
+  def evalDefault(v1: Value, op: Operator, v2: Value, expectation: Boolean)(implicit dtz: Option[TimeZone]) = {
     op.eval(v1, v2, ComparisonMode(false, false))  must beSuccessfulTry.withValue(expectation)
+  }
+
+  def evalDefaultFailure(v1: Value, op: Operator, v2: Value)(implicit dtz: Option[TimeZone]) = {
+    op.eval(v1, v2, ComparisonMode(false, false))  must beAFailedTry
   }
   
   val eqOp = List(EQ)
@@ -390,5 +419,59 @@ class OperatorSpec extends Specification { def is = s2"""
   def ett4 = evalDefault(Time( "100110+0000" ), GE, Time( "100110+0000" ), true)
   def ett5 = evalDefault(Time( "100110+0000" ), EQ, Time( "100110+0000" ), true)
   def ett6 = evalDefault(Time( "100110+0000" ), NE, Time( "101010+0000" ), true)
-  
+
+  def dteq1 = evalDefault(DateTime( "20200110100000+0000" ), EQ, DateTime( "20200110060000-0400" ), true)
+  def dteq2 = evalDefault(DateTime( "20200110100000+0000" ), EQ, DateTime( "20200110070000-0400" ), false)
+  def dteq3 = evalDefault(DateTime( "20200110100000+0000" ), NE, DateTime( "20200110070000-0400" ), true)
+  def dteq4 = evalDefault(DateTime( "20200110100000+0000" ), LT, DateTime( "20200110070000-0400" ), true)
+  def dteq5 = evalDefault(DateTime( "20200110100000+0000" ), GT, DateTime( "20200110070000-0400" ), false)
+  def dteq6 = evalDefault(DateTime( "20200110100000+0000" ), EQ, DateTime( "20200110100000-0200" ), false)
+  def dteq7 = evalDefault(DateTime( "20200110100000+0000" ), LT, DateTime( "20200110100000-0200" ), true)
+  def dteq8 = evalDefault(DateTime( "20200110100000+0000" ), GT, DateTime( "20200110100000-0200" ), false)
+
+  def dteq9 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200110100000" ), EQ, DateTime( "20200110060000" ), false)
+  }
+
+  def dteq10 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200110100000" ), NE, DateTime( "20200110060000" ), true)
+  }
+
+  def dteq11 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200110100000" ), LT, DateTime( "20200110060000" ), false)
+  }
+
+  def dteq12 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200110100000" ), GT, DateTime( "20200110060000" ), true)
+  }
+
+  def dteq13 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200110100000" ), EQ, DateTime( "20200110100000" ), true)
+  }
+
+  def dteq14 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefaultFailure(DateTime( "20200101" ), GT, DateTime( "20200101-0400" ))
+  }
+
+  def dteq15 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefaultFailure(DateTime( "20200102" ), GT, DateTime( "20200101-0400" ))
+  }
+
+  def dteq16 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200103" ), EQ, DateTime( "20200101-0400" ), false)
+  }
+
+  def dteq17 = {
+    implicit val dtz: Option[TimeZone] = None
+    evalDefault(DateTime( "20200101" ), EQ, DateTime( "20200201-0400" ), false)
+  }
+
 }
