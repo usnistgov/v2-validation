@@ -48,7 +48,7 @@ import hl7.v2.validation.SyncHL7Validator;
 import hl7.v2.validation.ValidationContext;
 import hl7.v2.validation.ValidationContextBuilder;
 import hl7.v2.validation.report.Report;
-
+import org.apache.commons.io.IOUtils;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -65,7 +65,7 @@ public class Main {
         InputStream slicingsXML = Main.class.getResourceAsStream("/Slicings.xml");
         
         // Get HL7 Message 
-        InputStream message = Main.class.getResourceAsStream("/message.er7");
+        String message = IOUtils.toString(Main.class.getResourceAsStream("/message.er7"), StandardCharsets.UTF_8);
 
         // Create Validation Context object using builder
         ValidationContext context = new ValidationContextBuilder(profileXML)
@@ -74,6 +74,7 @@ public class Main {
                 .useVsBindings(valueSetBindingsXML) // Optional
                 .useSlicingContext(slicingsXML) // Optional
                 .useCoConstraintsContext(coConstraintsXML) // Optional
+                .setFFLegacy0396(true) // Optional (Sets Feature Flag for legacy HL70396 value set values pattern matching behaviour)
                 .getValidationContext();
 
         // Instantiate the validator
