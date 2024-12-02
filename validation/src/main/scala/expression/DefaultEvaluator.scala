@@ -190,16 +190,9 @@ trait DefaultEvaluator extends Evaluator with EscapeSeqHandler {
   def pathValue(pv: PathValue, context: Element)(implicit dtz: Option[TimeZone]): EvalResult =
     (queryAsSimple(context, pv.path1), queryAsSimple(context, pv.path2)) match {
       case (Success(Nil), Success(Nil))      => notFound(pv, s"[ ${pv.path1}, ${pv.path2} ]", context, pv.notPresentBehavior)
-      case (Success(x :: Nil), Success(Nil)) => Failures.pathValue(pv, x, pv.path2)
-      case (Success(Nil), Success(x :: Nil)) => Failures.pathValue(pv, x, pv.path1)
-//      case (Success(x1 :: Nil), Success(x2 :: Nil)) =>
-//        pv.operator.eval(x1.value, x2.value, pv.comparisonMode) match {
-//          case Success(true)  => Pass
-//          case Success(false) => Failures.pathValue(pv, x1, x2)
-//          case Failure(e)     => inconclusive(pv, context.location, e)
-//        }
+      case (Success(list), Success(Nil)) => Failures.pathValue(pv, list.head, pv.path2)
+      case (Success(Nil), Success(list)) => Failures.pathValue(pv, list.head, pv.path1)
       case (Success(xs1), Success(xs2)) => multiElementsCompare(pv, xs1, xs2)
-//        inconclusive(pv, context, xs1, xs2)
       case (Failure(e), _)              => inconclusive(pv, context.location, e)
       case (_, Failure(e))              => inconclusive(pv, context.location, e)
     }
