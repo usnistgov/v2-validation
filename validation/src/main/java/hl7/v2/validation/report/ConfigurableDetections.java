@@ -1095,7 +1095,11 @@ public class ConfigurableDetections {
 		String category = conf.getString("report.cardinality-group.category");
 		String classification = conf.getString("report.cardinality-group.classification");
 		String template = conf.getString("report.cardinality-group.template");
-		String description = String.format(template, group, r.min(), r.max(), nb, grouper, values);
+		String explanation = "";
+		if(grouper != null && values != null && !grouper.isEmpty() && !values.isEmpty()) {
+			explanation = " Co-constraint group occurrences are identified by '"+ grouper +"' valued "+ values;
+		}
+		String description = String.format(template, group, r.min(), r.max(), nb, explanation);
 		return entry(e.location(), description, category, classification);
 	}
 
