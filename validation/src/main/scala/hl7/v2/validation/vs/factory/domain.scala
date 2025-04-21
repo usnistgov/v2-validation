@@ -15,10 +15,11 @@ abstract class ValueSetFacade {
   def getCodeList: JList[Code]
 }
 
-abstract class ValueSetFactory() extends ValueSetLibrary {
+abstract class ValueSetFactory extends ValueSetLibrary {
   def isExcludedFromValidation(vsId: String): Boolean
   @throws(classOf[Exception])
   def getValueSetById(vsId: String): ValueSetFacade
+  def externalValueSetValidationIsEnabled(): Boolean
 }
 
 object EmptyValueSetFactory extends ValueSetFactory {
@@ -31,7 +32,7 @@ object EmptyValueSetFactory extends ValueSetFactory {
    * @param id - The value set if
    * @return True if the value set is excluded from the validation
    */
-  override def isExcludedFromTheValidation(id: String): lang.Boolean = ???
+  override def isExcludedFromTheValidation(id: String): lang.Boolean = false
 
   /**
    * Returns the value set with the specified id
@@ -42,5 +43,9 @@ object EmptyValueSetFactory extends ValueSetFactory {
    */
   override def get(id: String): ValueSet = throw new ValueSetNotFoundException(id);
 
-  override def containsLegacy0396Codes(): Boolean = ???
+  override def containsLegacy0396Codes(): Boolean = false
+
+  override def containsExternalValueSets(): Boolean = false
+
+  override def externalValueSetValidationIsEnabled(): Boolean = false
 }

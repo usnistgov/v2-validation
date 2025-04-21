@@ -309,6 +309,13 @@ public class ConfigurableDetections {
 		return entry(context.location(), template, category, classification, null, null);
 	}
 
+	public Entry externalValueSetValidationDisabled(Element context) {
+		String category = conf.getString("report.external-valueset-validation-disabled.category");
+		String template = conf.getString("report.external-valueset-validation-disabled.template");
+		String classification = conf.getString("report.external-valueset-validation-disabled.classification");
+		return entry(context.location(), template, category, classification, null, null);
+	}
+
 	public Entry singleCodeSuccess(String expectedCode, String expectedCs, Simple code, Element context) {
 		String category = conf.getString("report.single-code-success.category");
 		String template = conf.getString("report.single-code-success.template");

@@ -68,6 +68,10 @@ trait Validator { this: Parser
               detections.legacy0396(m.asGroup) :: Nil
             } else Nil
 
+            val externalValueSetValidationDisabledDetection = if(valueSetFactory.containsExternalValueSets() && !valueSetFactory.externalValueSetValidationIsEnabled()) {
+              detections.externalValueSetValidationDisabled(m.asGroup) :: Nil
+            } else Nil
+
             for {
               (sliceAppliedMessage, slicingDetections) <- applySlices(m)
               r1 <- checkStructure(sliceAppliedMessage)
@@ -75,7 +79,7 @@ trait Validator { this: Parser
               r3 <- checkValueSets(sliceAppliedMessage, legacyVsValidationSpecification)
               r4 <- checkCoConstraint(sliceAppliedMessage)
             } yield {
-              report.Report(r1 ++ slicingDetections, r2 ++ r4, r3 ++ legacy0396Detection)
+              report.Report(r1 ++ slicingDetections, r2 ++ r4, r3 ++ legacy0396Detection ++ externalValueSetValidationDisabledDetection)
             }
 
           case Failure(e) => Future failed e

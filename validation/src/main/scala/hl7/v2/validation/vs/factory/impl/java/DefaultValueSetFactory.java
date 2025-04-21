@@ -48,6 +48,11 @@ public class DefaultValueSetFactory extends ValueSetFactory {
 		throw new Exception("Unknown value set type for binding '"+ valueSet.id()+"'");
 	}
 
+	@Override
+	public boolean externalValueSetValidationIsEnabled() {
+		return this.configuration.enableExternalHttpRequests && this.httpClient != null;
+	}
+
 	public ValueSetFacade getExternalValueSet(ExternalValueSet metadata) {
 		if(this.configuration.cacheInstances && this.instanceCache.containsKey(metadata.id())) {
 			return this.instanceCache.get(metadata.id());
@@ -83,5 +88,10 @@ public class DefaultValueSetFactory extends ValueSetFactory {
 	@Override
 	public boolean containsLegacy0396Codes() {
 		return valueSetLibrary.containsLegacy0396Codes();
+	}
+
+	@Override
+	public boolean containsExternalValueSets() {
+		return valueSetLibrary.containsExternalValueSets();
 	}
 }

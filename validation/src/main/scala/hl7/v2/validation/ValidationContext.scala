@@ -40,6 +40,15 @@ class ValidationContextBuilder(profileInputStream: InputStream) {
     }
   }
 
+  @Deprecated
+  def useValueSetLibrary(libraryInputStream: InputStream): ValidationContextBuilder = {
+    ValueSetLibraryImpl(libraryInputStream) match {
+      case Success(vsLibrary) => valueSetFactory = new DefaultValueSetFactory(vsLibrary, new DefaultValueSetFactoryConfiguration(true, false))
+      case Failure(exception) => throw exception
+    }
+    this
+  }
+
   def useValueSetFactory(factory: ValueSetFactory): ValidationContextBuilder = {
     valueSetFactory = factory
     this

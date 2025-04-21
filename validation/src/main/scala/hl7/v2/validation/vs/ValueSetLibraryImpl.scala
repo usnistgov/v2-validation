@@ -22,6 +22,10 @@ case class ValueSetLibraryImpl(noValidation: Seq[String], library: Map[String, V
       }
   }
 
+  private val hasExternalValueSets: Boolean  = {
+    library.values.exists(vs => vs.isInstanceOf[ExternalValueSet])
+  }
+
   override def isExcludedFromTheValidation(id: String): java.lang.Boolean =
     noValidation contains id
 
@@ -32,6 +36,8 @@ case class ValueSetLibraryImpl(noValidation: Seq[String], library: Map[String, V
     }
 
   override def containsLegacy0396Codes(): Boolean = legacy0396
+
+  override def containsExternalValueSets(): Boolean = hasExternalValueSets
 }
 
 object ValueSetLibraryImpl {

@@ -24,4 +24,9 @@ public class EmptyValueSetLibrary implements ValueSetLibrary {
     public boolean containsLegacy0396Codes() {
         return false;
     }
+
+    @Override
+    public boolean containsExternalValueSets() {
+        return false;
+    }
 }

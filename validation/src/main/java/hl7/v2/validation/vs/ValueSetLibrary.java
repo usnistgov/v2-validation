@@ -12,7 +12,7 @@ public interface ValueSetLibrary {
      * @param id - The value set if
      * @return True if the value set is excluded from the validation
      */
-    public Boolean isExcludedFromTheValidation(String id);
+    Boolean isExcludedFromTheValidation(String id);
 
     /**
      * Returns the value set with the specified id
@@ -20,8 +20,10 @@ public interface ValueSetLibrary {
      * @return The value set with the specified id
      * @throws ValueSetNotFoundException if the value set is not in the library
      */
-    public ValueSet get(String id) throws ValueSetNotFoundException;
+    ValueSet get(String id) throws ValueSetNotFoundException;
 
-    public boolean containsLegacy0396Codes();
+    boolean containsLegacy0396Codes();
+
+    boolean containsExternalValueSets();
 
 }
