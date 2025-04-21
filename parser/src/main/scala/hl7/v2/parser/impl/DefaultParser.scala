@@ -36,11 +36,16 @@ trait DefaultParser extends Parser {
 
   def resolveTimeZone(children: LSG): Option[TimeZone] = {
     children.find(c => c.position == 1).collect({
-      case segment: Segment if segment.model.ref.name.equals("MSH") =>
-        segment.children.find(f => f.position == 7).collect({
-          case sf: SimpleField if isValidDateTimeFormat(sf.value.raw) =>
-            Option(splitOnTZ(sf.value.raw)._2).filter(_.nonEmpty).map(TimeZone)
-        }).flatten
+      case segment: Segment if segment.model.ref.name.equals("MSH") => resolveTimeZoneFromMSH7(segment)
+    }).flatten
+  }
+
+  def resolveTimeZoneFromMSH7(msh: Segment): Option[TimeZone] = {
+    msh.children.find(f => f.position == 7).collect({
+      case sf: SimpleField if isValidDateTimeFormat(sf.value.raw) => Option(splitOnTZ(sf.value.raw)._2).filter(_.nonEmpty).map(TimeZone)
+      case cf: ComplexField => cf.children.find(f => f.position == 1).collect({
+        case sc: SimpleComponent if isValidDateTimeFormat(sc.value.raw) => Option(splitOnTZ(sc.value.raw)._2).filter(_.nonEmpty).map(TimeZone)
+      }).flatten
     }).flatten
   }
 

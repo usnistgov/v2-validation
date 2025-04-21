@@ -25,7 +25,6 @@ import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
 import org.apache.http.ssl.SSLContextBuilder
 import service.FormatParsedMessage
 import org.apache.http.client.config.RequestConfig
-import org.apache.http.client.methods.HttpRequestWrapper
 import org.apache.http.protocol.HttpContext
 
 import scala.util.{Failure, Success, Try}

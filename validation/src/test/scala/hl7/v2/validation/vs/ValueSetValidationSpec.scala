@@ -25,8 +25,6 @@ trait ValueSetValidationSpec extends Specification
       Validation should detect a VS Not Found (Primitive/Single, Complex/Single, Complex/Multiple) $vsNotFound
       Validation should detect an Undefined Binding Strength, stop the validation and return a UBS detection (Primitive/Single, Complex/Single, Complex/Multiple) $ubs
       Validation should detect a binding on a simple element with multiple value sets, stop the validation $multiVsOnSimple
-      Validation should detect a used code that is Permitted inside a Closed value set (Primitive/Single, Complex/Single, Complex/Multiple) $PinsideClosed
-      Validation should detect a dynamic value set in the case of a PVS code (Primitive/Single, Complex/Single, Complex/Multiple) $PVSDynamic
       Validation should detect a dynamic value set in the case of a Code Not Found code (Primitive/Single, Complex/Single, Complex/Multiple) $NotFoundDynamic
       Complex element with unresolvable binding location should return a spec error $unresolvableBL
       Complex element with unresolvable code system binding location should return a spec error $unresolvableCsBL
@@ -241,38 +239,53 @@ trait ValueSetValidationSpec extends Specification
   // ============================================ TEST CASES ===========================================
 
   val simpleCodePatternMatch: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_CP, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A1", vsCodePattern), Some(BindingStrength.R))
     ))
   }
 
-  val simpleCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = check(HD_CP, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
-    createEntry(HD_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
-  ))
+  val simpleCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
+    check(HD_CP, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
+      createEntry(HD_CP, VSValidationCode.CodeNotFound("PAT", None, List(vsCodePattern)), Some(BindingStrength.R))
+    ))
+  }
 
-  val simpleCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = check(HD_CP, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None))))  must containTheSameElementsAs(List(
-    createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
-    createEntry(HD_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
-    createEntry(HD_CP, VSValidationCode.MultipleCodesFoundInValueSet("A5",vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
-  ))
+  val simpleCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
+    check(HD_CP, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation(".", None))))  must containTheSameElementsAs(List(
+      createEntry(HD_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
+      createEntry(HD_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
+      createEntry(HD_CP, VSValidationCode.MultipleCodesFoundInValueSet("A5",vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
+    ))
+  }
 
   val complexCodePatternMatch: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("1[*]", Some("3[*]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A1", vsCodePattern), Some(BindingStrength.R))
     ))
   }
 
-  val complexCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("10[*]", Some("12[*]"))))) must containTheSameElementsAs(List(
-    createEntry(CWE_2_7_CP, VSValidationCode.CodeNotFound("PAT", Some("SYS"), List(vsCodePattern)), Some(BindingStrength.R))
-  ))
+  val complexCodePatternMatchValueNotRegex: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
+    check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("10[*]", Some("12[*]"))))) must containTheSameElementsAs(List(
+      createEntry(CWE_2_7_CP, VSValidationCode.CodeNotFound("PAT", Some("SYS"), List(vsCodePattern)), Some(BindingStrength.R))
+    ))
+  }
 
-  val complexCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("4[*]", Some("6[*]")))))  must containTheSameElementsAs(List(
-    createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
-    createEntry(CWE_2_7_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
-    createEntry(CWE_2_7_CP, VSValidationCode.MultipleCodeAndCodeSystemFound("A5", "SYS", vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
-  ))
+  val complexCodePatternMatchCodeAndPattern: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
+    check(CWE_2_7_CP, ValueSetBinding(".", Some(BindingStrength.R), List("vsCodePattern"), List(BindingLocation("4[*]", Some("6[*]")))))  must containTheSameElementsAs(List(
+      createEntry(CWE_2_7_CP, VSValidationCode.RVS(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")), "A5", vsCodePattern), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CP, VSValidationCode.EVS(Code("A5", "duplicate", CodeUsage.E, "SYS"), "A5", vsCodePattern), Some(BindingStrength.R)),
+      createEntry(CWE_2_7_CP, VSValidationCode.MultipleCodeAndCodeSystemFound("A5", "SYS", vsCodePattern, List(Code("PAT", "pattern", CodeUsage.R, "SYS", Some("[A-Z][0-9]")),Code("A5", "duplicate", CodeUsage.E, "SYS"))), Some(BindingStrength.R))
+    ))
+  }
 
   val skipTargets : Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     Seq(Usage.X, Usage.W) map(u => {
       val CWE_2_7_X = CWE_2_7.copy(req = CWE_2_7.req.copy(usage = u))
       check(CWE_2_7_X, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[*]", Some("3[*]")))))  must containTheSameElementsAs(Nil)
@@ -280,6 +293,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val skipContext: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     Seq(Usage.X, Usage.W) map(u => {
       val CWE_2_7_X = CWE_2_7.copy(req = CWE_2_7.req.copy(usage = u))
       val complexComponent = makeComponent(CWE_2_7_X, "CWE", Map(1 -> "ST", 3 -> "ST", 4 -> "ST", 6 -> "ST", 10 -> "ST", 12 -> "ST"))
@@ -297,6 +311,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val skipContextChildren: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     Seq(Usage.X, Usage.W) map(u => {
       val CWE_2_7_X = CWE_2_7.copy(req = CWE_2_7.req.copy(usage = u))
       val complexComponent = makeComponent(CWE_2_7_X, "CWE", Map(1 -> "ST", 3 -> "ST", 4 -> "ST", 6 -> "ST", 10 -> "ST", 12 -> "ST"))
@@ -315,6 +330,7 @@ trait ValueSetValidationSpec extends Specification
 
 
   val emptyVs: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     // Simple
     val sBindings = ValueSetBinding("1[*]", Some(BindingStrength.R), List("empty"), List(BindingLocation(".", None)))::Nil
 
@@ -325,35 +341,8 @@ trait ValueSetValidationSpec extends Specification
     parts.map(c => check(c._1, c._2) must contain(createEntry(c._1, VSValidationCode.EmptyVS(empty), Some(BindingStrength.R))))
   }
 
-  val PinsideClosed: Seq[MatchResult[List[Entry]]] = {
-    // Simple
-    val sBindings = ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_closed"), List(BindingLocation(".", None)))::Nil
-
-    // Complex
-    val cBindings = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_closed"), List(BindingLocation("1[1]", Some("3[1]")))) :: ValueSetBinding(".", Some(BindingStrength.R), List("vs2_2", "vs1_closed"), List(BindingLocation("1[1]", Some("3[1]")))) :: Nil
-
-    val parts: Seq[(Element, ValueSetBinding)] = sBindings.map(b => (HD_1, b)) ::: cBindings.map(b => (CWE_2_7, b))
-    parts.map(c => check(c._1, c._2) must containTheSameElementsAs(List(
-      createEntry(c._1, VSValidationCode.UsageAndExtensibilityNotCompatible(Code("A", "des", CodeUsage.P, "SYS"), vs1_closed), Some(BindingStrength.R)),
-      createEntry(c._1, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), "A", vs1_closed), Some(BindingStrength.R))
-    )))
-  }
-
-  val PVSDynamic: Seq[MatchResult[List[Entry]]] = {
-    // Simple
-    val sBindings = ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_dynamic"), List(BindingLocation(".", None)))::Nil
-
-    // Complex
-    val cBindings = ValueSetBinding(".", Some(BindingStrength.R), List("vs1_dynamic"), List(BindingLocation("1[1]", Some("3[1]")))) :: ValueSetBinding(".", Some(BindingStrength.R), List("vs2_2", "vs1_dynamic"), List(BindingLocation("1[1]", Some("3[1]")))) :: Nil
-
-    val parts: Seq[(Element, ValueSetBinding)] = sBindings.map(b => (HD_1, b)) ::: cBindings.map(b => (CWE_2_7, b))
-    parts.map(c => check(c._1, c._2) must containTheSameElementsAs(List(
-      createEntry(c._1, VSValidationCode.DynamicValueSet(vs1_dynamic), Some(BindingStrength.R)),
-      createEntry(c._1, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), "A", vs1_dynamic), Some(BindingStrength.R))
-    )))
-  }
-
   val NotFoundDynamic: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     // Simple
     val sBindings = ValueSetBinding("2[*]", Some(BindingStrength.R), List("vs1_dynamic"), List(BindingLocation(".", None)))::Nil
 
@@ -368,6 +357,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val excludedVs: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     // Simple
     val sBindingsA = ValueSetBinding("1[*]", Some(BindingStrength.R), List("excluded"), List(BindingLocation(".", None)))::Nil
 
@@ -379,6 +369,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val vsNotFound: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     // Simple
     val sBindingsA = ValueSetBinding("1[*]", Some(BindingStrength.R), List("not_found"), List(BindingLocation(".", None)))::Nil
 
@@ -390,6 +381,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val ubs: Seq[MatchResult[List[Entry]]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     // Simple
     val sBindingsA = ValueSetBinding("1[*]", Some(BindingStrength.U), List("vs1_1"), List(BindingLocation(".", None)))::Nil
 
@@ -404,6 +396,7 @@ trait ValueSetValidationSpec extends Specification
     // Simple
     val binding = ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_1", "vsx"), List(BindingLocation(".", None)))
 
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, binding) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.MultipleVSForPrimitive(binding), Some(BindingStrength.R))
     ))
@@ -412,6 +405,7 @@ trait ValueSetValidationSpec extends Specification
   val unresolvableBL: MatchResult[List[Entry]] = {
     val binding = ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_1"), List(BindingLocation("1[1]", None)))
 
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, binding) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.InvalidCodeBindingLocation("1[1]", multiple = false), Some(BindingStrength.R))
     ))
@@ -420,6 +414,7 @@ trait ValueSetValidationSpec extends Specification
   val unresolvableCsBL: MatchResult[List[Entry]] = {
     val binding = ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_1"), List(BindingLocation(".", Some("1[1]"))))
 
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, binding) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.InvalidCodeSystemBindingLocation("1[1]", multiple = false), Some(BindingStrength.R))
     ))
@@ -427,36 +422,42 @@ trait ValueSetValidationSpec extends Specification
 
 
   val checkSimpleBindingR: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkSimpleBindingNoUsage: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1_no_usage"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), "A", vs1_no_usage), Some(BindingStrength.R))
     ))
   }
 
   val checkSimpleBindingP: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, ValueSetBinding("2[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkSimpleBindingE: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_1, ValueSetBinding("3[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_1, VSValidationCode.EVS(Code("C", "des", CodeUsage.P, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
   val codeNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_2, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs1"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_2, VSValidationCode.CodeNotFound("D", None, List(vs1)), Some(BindingStrength.R))
     ))
   }
 
   val simpleSingleVsDuplicate: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_2, ValueSetBinding("1[*]", Some(BindingStrength.R), List("vs2"), List(BindingLocation(".", None)))) must containTheSameElementsAs(List(
       createEntry(HD_2, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
       createEntry(HD_2, VSValidationCode.PVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
@@ -465,36 +466,42 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingR: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingNoUsage: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_no_usage"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), "A", vs1_no_usage), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingP: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingE: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("10[1]", Some("12[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs2"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodeNotFound("A", Some("SYS"), List(vs2)), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingInvalidCodeSystem: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs3"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodeNotFound("A", Some("SYS"), List(vs3)), Some(BindingStrength.R)),
       createEntry(CWE_2_7, VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS", vs3), Some(BindingStrength.R))
@@ -502,6 +509,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingCodeSystemNp: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_CSNP, ValueSetBinding(".", Some(BindingStrength.R), List("vs3"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
 //      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("A", None, List(vs3)), Some(BindingStrength.R)),
       createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("A", "SYS1", "3[1]", vs3), Some(BindingStrength.R))
@@ -509,6 +517,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingDuplicateInVs: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs2"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_a, VSValidationCode.RVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
       createEntry(CWE_2_7_a, VSValidationCode.PVS(Code("D", "des", CodeUsage.P, "SYS"), "D", vs2), Some(BindingStrength.R)),
@@ -517,36 +526,42 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiVsNoUsage: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_no_usage", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.NoUsage(Code("A", "des", null, "SYS"), "A", vs1_no_usage), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsR: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsE: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsP: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("10[1]", Some("12[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs2_2", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodeNotFound("A", Some("SYS"), List(vs2_2, vs1_1)), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiVsInvalidCS: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs", "vs1_cs_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodeNotFound("A", Some("SYS"), List(vs1_cs, vs1_cs_1)), Some(BindingStrength.R)),
       createEntry(CWE_2_7, VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS", vs1_cs), Some(BindingStrength.R)),
@@ -555,6 +570,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiVsCSNP: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_CSNP, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs", "vs1_cs_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
 //      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("A", None, List(vs1_cs, vs1_cs_1)), Some(BindingStrength.R)),
       createEntry(CWE_2_7_CSNP, VSValidationCode.SimpleCodeFoundCodeSystemNotPopulated("A", "SYS1", "3[1]", vs1_cs), Some(BindingStrength.R)),
@@ -565,12 +581,14 @@ trait ValueSetValidationSpec extends Specification
 
 
   val checkComplexBindingMultiVsValidAndInvalidCS: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_cs_1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiDuplicate: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs3_1", "vs1"), List(BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.RVS(Code("A", "des", CodeUsage.R, "SYS"), "A", vs1), Some(BindingStrength.R)),
       createEntry(CWE_2_7, VSValidationCode.PVS(Code("A", "des", CodeUsage.P, "SYS"), "A", vs3_1), Some(BindingStrength.R)),
@@ -579,6 +597,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLRP: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodedElementXOR(List(
         CodeHolder(S(1, 1, Text("A")), Some(S(3, 1, Text("SYS"))), BindingLocation("1[1]", Some("3[1]"))),
@@ -590,12 +609,14 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLRNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs1"), List(BindingLocation("10[1]", Some("12[1]")), BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_a, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiBLBothNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs2_2"), List(BindingLocation("10[1]", Some("12[1]")), BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_a, VSValidationCode.CodeNotFound("C", Some("SYS"), List(vs2_2)), Some(BindingStrength.R)),
       createEntry(CWE_2_7_a, VSValidationCode.CodeNotFound("D", Some("SYS"), List(vs2_2)), Some(BindingStrength.R))
@@ -603,6 +624,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLBothInvalidCs: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodeNotFound("A", Some("SYS"), List(vs1_cs)), Some(BindingStrength.R)),
       createEntry(CWE_2_7, VSValidationCode.CodeNotFound("B", Some("SYS"), List(vs1_cs)), Some(BindingStrength.R)),
@@ -612,6 +634,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLBothCSNP: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_CSNP, ValueSetBinding(".", Some(BindingStrength.R), List("vs1_cs"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
 //      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("A", None, List(vs1_cs)), Some(BindingStrength.R)),
 //      createEntry(CWE_2_7_CSNP, VSValidationCode.CodeNotFound("B", None, List(vs1_cs)), Some(BindingStrength.R)),
@@ -623,6 +646,7 @@ trait ValueSetValidationSpec extends Specification
 
 
   val checkComplexBindingMultiBLMultiVsRP_1: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs2_2"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.CodedElementXOR(List(
         CodeHolder(S(1, 1, Text("A")), Some(S(3, 1, Text("SYS"))), BindingLocation("1[1]", Some("3[1]"))),
@@ -634,6 +658,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLMultiVsRP_2: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs1_1"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7, VSValidationCode.RVS(Code("D", "des", CodeUsage.R, "SYS"), "D", vs1_1), Some(BindingStrength.R)),
       createEntry(CWE_2_7, VSValidationCode.PVS(Code("B", "des", CodeUsage.P, "SYS"), "B", vs1), Some(BindingStrength.R))
@@ -641,12 +666,14 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLMultiVsRNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs1", "vs2_2"), List(BindingLocation("10[1]", Some("12[1]")), BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_a, VSValidationCode.EVS(Code("C", "des", CodeUsage.E, "SYS"), "C", vs1), Some(BindingStrength.R))
     ))
   }
 
   val checkComplexBindingMultiBLMultiVsBothNotFound: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_a, ValueSetBinding(".", Some(BindingStrength.R), List("vs2_2", "vs2_2_2"), List(BindingLocation("10[1]", Some("12[1]")), BindingLocation("1[1]", Some("3[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_a, VSValidationCode.CodeNotFound("C", Some("SYS"), List(vs2_2, vs2_2_2)), Some(BindingStrength.R)),
       createEntry(CWE_2_7_a, VSValidationCode.CodeNotFound("D", Some("SYS"), List(vs2_2, vs2_2_2)), Some(BindingStrength.R))
@@ -654,6 +681,7 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkComplexBindingMultiBLMultiVsOneInvalidCsOtherPass: MatchResult[List[Entry]] = {
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_b, ValueSetBinding(".", Some(BindingStrength.R), List("vs4", "vs4_1"), List(BindingLocation("1[1]", Some("3[1]")), BindingLocation("4[1]", Some("6[1]"))))) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("M", "des", CodeUsage.R, "SYS"), "M", vs4), Some(BindingStrength.R)),
       createEntry(CWE_2_7_b, VSValidationCode.RVS(Code("N", "des", CodeUsage.R, "SYS"), "N", vs4_1), Some(BindingStrength.R))
@@ -661,28 +689,32 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkLegacy396EnabledHL7nnnnR: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), "HL70125", vs396_R), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396EnabledHL7nnnnP: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.PVS(Code("HL7nnnn", "des", CodeUsage.P, "SYS"), "HL70125", vs396_P), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396EnabledHL7nnnnNF: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_NF)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396EnabledHL7nnnnBoth: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), "HL70125", vs396_BOTH), Some(BindingStrength.R)),
       createEntry(HD_0396, VSValidationCode.PVS(Code("HL70125", "des", CodeUsage.P, "SYS"), "HL70125", vs396_BOTH), Some(BindingStrength.R)),
@@ -691,28 +723,32 @@ trait ValueSetValidationSpec extends Specification
   }
 
   val checkLegacy396Enabled99zzzR: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99abc", vs396_R), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Enabled99zzzP: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.PVS(Code("99zzz", "des", CodeUsage.P, "SYS"), "99abc", vs396_P), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Enabled99zzzNF: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_NF)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Enabled99zzzBoth: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99abc", vs396_BOTH), Some(BindingStrength.R)),
       createEntry(HD_0396, VSValidationCode.PVS(Code("99abc", "des", CodeUsage.P, "SYS"), "99abc", vs396_BOTH), Some(BindingStrength.R)),
@@ -722,28 +758,32 @@ trait ValueSetValidationSpec extends Specification
 
 
   val checkLegacy396DisabledHL7nnnnR: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_R)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396DisabledHL7nnnnP: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_P)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396DisabledHL7nnnnNF: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("HL70125", None, List(vs396_NF)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396DisabledHL7nnnnBOTH: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("3[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.PVS(Code("HL70125", "des", CodeUsage.P, "SYS"), "HL70125", vs396_BOTH), Some(BindingStrength.R)),
     ))
@@ -751,28 +791,32 @@ trait ValueSetValidationSpec extends Specification
 
 
   val checkLegacy396Disabled99zzzR: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_R)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Disabled99zzzP: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_P"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_P)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Disabled99zzzNF: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_NF"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("99abc", None, List(vs396_NF)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Disabled99zzzBOTH: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_BOTH"), List(BindingLocation("4[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.PVS(Code("99abc", "des", CodeUsage.P, "SYS"), "99abc", vs396_BOTH), Some(BindingStrength.R)),
     ))
@@ -780,28 +824,32 @@ trait ValueSetValidationSpec extends Specification
 
 
   val checkLegacy396EnabledHL7nnnnExactMatch: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("1[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.CodeNotFound("HL7nnnn", None, List(vs396_R)), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Enabled99zzzExactMatch: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("2[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99zzz", vs396_R), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396DisabledHL7nnnnExactMatch: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = false, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("1[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("HL7nnnn", "des", CodeUsage.R, "SYS"), "HL7nnnn", vs396_R), Some(BindingStrength.R)),
     ))
   }
 
   val checkLegacy396Disabled99zzzExactMatch: MatchResult[List[Entry]] = {
-    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true)
+    implicit val featureFlags: FeatureFlags = FeatureFlags(legacy0396 = true, overrideLowerLevelBindings = false)
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(HD_0396, ValueSetBinding(".", Some(BindingStrength.R), List("0396_R"), List(BindingLocation("2[1]", None)))) must containTheSameElementsAs(List(
       createEntry(HD_0396, VSValidationCode.RVS(Code("99zzz", "des", CodeUsage.R, "SYS"), "99zzz", vs396_R), Some(BindingStrength.R)),
     ))

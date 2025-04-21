@@ -579,7 +579,7 @@ trait CoConstraintTableSpec  extends Specification
         segments => {
           implicit val grp: Group = group(segments)
           checkBindingContext(grp, sBinding) must containTheSameElementsAs(
-            createEntry(CardinalityGroup(ccg, 1, "CCT-3", List("1").mkString("[", ",", "]")))
+            createEntry(CardinalityGroup(ccg, 1, Some("CCT-3"), Some(List("1").mkString("[", ",", "]"))))
           )
         })
     }
@@ -603,6 +603,31 @@ trait CoConstraintTableSpec  extends Specification
         })
     }
     failure ++ success
+  }
+
+  def minCardinalityFailureNoMatchGrp() = {
+    val cc = scc(CoConstraintUsage.R, Range(1, "*"), List(
+      PlainText("CCT-1 (A)", "1[*]", "CWE")
+    ), List())
+    val ccg = grp("GRP", CoConstraintUsage.S, Range(2, "*"), cc, List())
+    val sBinding = simpleBinding(List(), List(ccg), List(GroupId(1, "3[1]", "CCT-3")))
+
+    def failure = {
+      Seq(
+        // No Segments
+        List(""),
+        // Multi Segment, No Match
+        List("CCT|ST|x^^y|1", "CCT|NM|x^^y|1"),
+      ) map (
+        segments => {
+          implicit val grp: Group = group(segments)
+          checkBindingContext(grp, sBinding) must containTheSameElementsAs(
+            createEntry(CardinalityGroup(ccg, 1, None, None))
+          )
+        })
+    }
+
+    failure
   }
 
   def maxCardinalityGrp() = {
@@ -643,7 +668,7 @@ trait CoConstraintTableSpec  extends Specification
         segments => {
           implicit val grp: Group = group(segments._1)
           checkBindingContext(grp, sBinding) must containTheSameElementsAs(
-            createEntry(CardinalityGroup(ccg, segments._2, "CCT-3", segments._3.sorted.mkString("[", ",", "]")))
+            createEntry(CardinalityGroup(ccg, segments._2, Some("CCT-3"), Some(segments._3.sorted.mkString("[", ",", "]"))))
           )
         })
     }

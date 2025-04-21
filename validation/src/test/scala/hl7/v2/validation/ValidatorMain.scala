@@ -5,6 +5,7 @@ import hl7.v2.parser.impl.DefaultParser
 import hl7.v2.profile.XMLDeserializer
 import hl7.v2.validation.coconstraints.{DefaultCoConstraintValidationContext, EmptyCoConstraintValidationContext}
 import hl7.v2.validation.slicing.{DefaultProfileSlicingContext, EmptyProfileSlicingContext}
+import hl7.v2.validation.vs.factory.impl.java.{DefaultValueSetFactory, DefaultValueSetFactoryConfiguration}
 import hl7.v2.validation.vs.{DefaultValueSetSpecification, EmptyValueSetSpecification, ValueSetLibraryImpl}
 
 import java.io.InputStream
@@ -42,6 +43,10 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     val message = scala.io.Source.fromInputStream(messageInput).mkString
     val conformanceContext = content.DefaultConformanceContext(constraints:_*).get
     val valueSetLibrary = ValueSetLibraryImpl(valueSetLibraryInput).get
+    val factory = new DefaultValueSetFactory(valueSetLibrary, new DefaultValueSetFactoryConfiguration(
+      true,
+      false
+    ))
     val bindings = vsBindings.map(DefaultValueSetSpecification(_) match {
       case Success(o) => o
       case Failure(e) => throw e
@@ -56,7 +61,7 @@ object Main extends App with DefaultParser with structure.DefaultValidator {
     }).getOrElse(EmptyCoConstraintValidationContext)
     val context = ValidationContext(
       profile,
-      valueSetLibrary,
+      factory,
       conformanceContext,
       bindings,
       coConstraintsSpec,

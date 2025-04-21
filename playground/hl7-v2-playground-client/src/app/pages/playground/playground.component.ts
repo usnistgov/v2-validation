@@ -274,7 +274,6 @@ export class PlaygroundComponent {
 
   setAPIKeys() {
     const externalValuesets = this.getExternalValueSets(this.dataService.get(ResourceType.VALUESET).text);
-    console.log(externalValuesets);
     this.apiKeys = Object.keys(externalValuesets).reduce((acc, key) => {
       return this.apiKeys[key] ? {
         ...acc,

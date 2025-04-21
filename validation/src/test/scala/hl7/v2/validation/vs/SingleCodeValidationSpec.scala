@@ -57,6 +57,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("4[*]", Some("6[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeMultiLocationXOR(CWE_2_7_XOR, List(s11, s41), binding), None)
     ))
@@ -83,6 +84,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("10[*]", Some("12[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeMultiLocationXOR(CWE_2_7_XOR, List(s11, s41, s101), binding), None)
     ))
@@ -108,6 +110,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("1[*]", Some("3[*]")),
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeInvalidCodeSystem(CWE_2_7_XOR, s11, s31, binding), None)
     ))
@@ -136,6 +139,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("4[*]", Some("6[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeInvalidCodeSystem(CWE_2_7_XOR, s11, s31, binding), None),
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeInvalidCodeSystem(CWE_2_7_XOR, s41, s61, binding), None)
@@ -160,6 +164,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("1[*]", Some("3[*]")),
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(EC1, binding) must containTheSameElementsAs(List(
       createEntry(EC1, VSValidationCode.SingleCodeCodeSystemNotFound(EC1, s11, "3[*]", binding), None)
     ))
@@ -184,6 +189,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("4[*]", Some("6[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(EC2, binding) must containTheSameElementsAs(List(
       createEntry(EC2, VSValidationCode.SingleCodeCodeSystemNotFound(EC2, s11, "3[*]", binding), None),
       createEntry(EC2, VSValidationCode.SingleCodeCodeSystemNotFound(EC2, s41, "6[*]", binding), None)
@@ -201,6 +207,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("1[*]", Some("3[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeNotFound(s11, "X", binding), None)
     ))
@@ -227,6 +234,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("10[*]", Some("12[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeNotFound(s11, "X", binding), None),
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeNotFound(s41, "Y", binding), None),
@@ -255,6 +263,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("10[*]", Some("12[*]"))
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeCodeSystemNotFound(CWE_2_7_XOR, s41, "6[*]", binding), None),
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeInvalidCodeSystem(CWE_2_7_XOR, s11, s31, binding), None),
@@ -274,6 +283,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("1[*]", Some("3[*]")),
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeSuccess(CWE_2_7_XOR, s11, binding), None)
     ))
@@ -296,6 +306,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("4[*]", Some("6[*]")),
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeSuccess(CWE_2_7_XOR, s11, binding), None),
     ))
@@ -318,6 +329,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("4[*]", Some("6[*]")),
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeSuccess(CWE_2_7_XOR, s11, binding), None),
     ))
@@ -338,6 +350,7 @@ trait SingleCodeValidationSpec extends Specification
         BindingLocation("4[*]", Some("6[*]")),
       )
     )
+    implicit val overridesMap: BindingOverrideMap = new BindingOverrideMap()
     check(CWE_2_7_XOR, binding) must containTheSameElementsAs(List(
       createEntry(CWE_2_7_XOR, VSValidationCode.SingleCodeSuccess(CWE_2_7_XOR, s11, binding), None),
     ))

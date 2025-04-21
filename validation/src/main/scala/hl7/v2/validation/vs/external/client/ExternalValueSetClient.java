@@ -1,5 +1,6 @@
 package hl7.v2.validation.vs.external.client;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hl7.v2.validation.vs.Code;
 import hl7.v2.validation.vs.CodeUsage;
@@ -26,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExternalValueSetClient {
-	static final ObjectMapper mapper = new ObjectMapper();
+	static final ObjectMapper mapper = new ObjectMapper()
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	public static final String HTTP_CONTEXT_VS_URL = "valueSetURL";
 	public static final String HTTP_CONTEXT_VS_BINDING_IDENTIFIER = "valueSetBindingIdentifier";
 
@@ -65,6 +67,10 @@ public class ExternalValueSetClient {
 		}
 	}
 
+	public static boolean isNullOrEmpty(String value) {
+		return value == null || value.isEmpty();
+	}
+
 	public static List<Code> processResponse(HttpResponse response) throws InvalidContentTypeException, FailureResponseException, ResponseParsingException {
 		if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 			final ContentType contentType = ContentType.parse(response.getEntity().getContentType().getValue());
@@ -78,7 +84,7 @@ public class ExternalValueSetClient {
 									new Code(
 											code.getValue(),
 											code.getDisplayText(),
-											CodeUsage.fromString(code.getUsage()),
+											isNullOrEmpty(code.getUsage()) ? null : CodeUsage.fromString(code.getUsage()),
 											code.getCodeSystem(),
 											code.isPattern() ? Option.apply(code.getRegularExpression()) : Option.empty()
 									)
@@ -87,7 +93,7 @@ public class ExternalValueSetClient {
 					}
 					return codes;
 				} catch(IOException e) {
-					throw new ResponseParsingException(e);
+					throw new ResponseParsingException();
 				}
 			} else {
 				throw new InvalidContentTypeException(contentType);
@@ -97,7 +103,7 @@ public class ExternalValueSetClient {
 				ResponseMessage errorMessage = mapper.readValue(response.getEntity().getContent(), ResponseMessage.class);
 				throw new FailureResponseException(response.getStatusLine().getStatusCode(), errorMessage.getMessage());
 			} catch(IOException e) {
-				throw new ResponseParsingException(e);
+				throw new ResponseParsingException();
 			}
 		}
 	}

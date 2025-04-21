@@ -3,7 +3,7 @@ import sbt._
 import Keys._
 
 ThisBuild / organization  := "gov.nist"
-ThisBuild / version       := "1.7.0-SNAPSHOT"
+ThisBuild / version       := "1.7.0"
 ThisBuild / scalaVersion  := "2.13.10"
 ThisBuild / resolvers    ++= Dependencies.resolutionRepos
 ThisBuild / scalacOptions := Seq(
@@ -48,6 +48,7 @@ lazy val profile = Project("hl7-v2-profile", file("profile"))
     scala_xml,
     schemas,
     spec2 % "test",
+    spec2mock % "test",
     scalaCheck % "test",
     spec2sc % "test")
   )

@@ -870,11 +870,6 @@ public class ConfigurableDetections {
 		return vsEntry("multi-vs-simple", desc, l, null, null);
 	}
 
-	public  Entry incompatibleUsageAndExtensibility(Location l, String value, String valueSet) {
-		String desc = vsTemplate3("usage-and-extensibility", value, l.prettyString(), valueSet);
-		return vsEntry("usage-and-extensibility", desc, l, null, null);
-	}
-
 	public Entry dynamicVs(Location l, String valueSet) {
 		String desc = vsTemplate2("dynamic-vs", valueSet, l.prettyString());
 		return vsEntry("dynamic-vs", desc, l, null, null);
@@ -1117,7 +1112,11 @@ public class ConfigurableDetections {
 		String category = conf.getString("report.cardinality-group.category");
 		String classification = conf.getString("report.cardinality-group.classification");
 		String template = conf.getString("report.cardinality-group.template");
-		String description = String.format(template, group, r.min(), r.max(), nb, grouper, values);
+		String explanation = "";
+		if(grouper != null && values != null && !grouper.isEmpty() && !values.isEmpty()) {
+			explanation = " Co-constraint group occurrences are identified by '"+ grouper +"' valued "+ values;
+		}
+		String description = String.format(template, group, r.min(), r.max(), nb, explanation);
 		return entry(e.location(), description, category, classification);
 	}
 

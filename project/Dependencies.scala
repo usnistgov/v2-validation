@@ -27,12 +27,13 @@ object Dependencies {
     "com.fasterxml.jackson.module" %% "jackson-module-scala",
   ).map(_ % jacksonVersion)
 
-  val schemas = "gov.nist.hit" % "hl7-v2-schemas" % "1.7.0-SNAPSHOT"
+  val schemas = "gov.nist.hit" % "hl7-v2-schemas" % "1.7.0"
   val xom = "xom" % "xom" % "1.3.7"
   val stringUtils = "org.apache.commons" % "commons-lang3" % "3.12.0"
   val typesafe_config = "com.typesafe"                  % "config"                % "1.4.2"
   val xmlUtil       = "gov.nist"                      %  "xml-util"               % "2.1.0"
   val spec2 = "org.specs2" %% "specs2-core" % "4.19.2"
+  val spec2mock = "org.specs2" %% "specs2-mock" % "4.19.2"
   val spec2sc = "org.specs2" %% "specs2-scalacheck" % "4.19.2"
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.17.0"
   val vreport       = "com.github.hl7-tools"          %   "validation-report"     %  "1.2.0"

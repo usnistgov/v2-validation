@@ -18,10 +18,10 @@ export interface IBundle {
 export class ZipService {
   readonly PROFILE = 'Profile.xml';
   readonly CONSTRAINTS = 'Constraints.xml';
-  readonly SLICING = 'Slicing.xml';
+  readonly SLICING = 'Slicings.xml';
   readonly COCONSTRAINTS = 'CoConstraints.xml';
   readonly VSLIB = 'ValueSets.xml';
-  readonly BINDINGS = 'Bindings.xml';
+  readonly BINDINGS = 'ValueSetBindings.xml';
 
   constructor() {
   }

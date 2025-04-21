@@ -26,7 +26,6 @@ object DetectionCodes extends Enumeration {
   val DuplicateCodeAndCodeSystemInValueSetList: DetectionCodes.Value = Value("DuplicateCodeAndCodeSystemInValueSetList")//done
 
   //those are "spec error" detections
-  val UsageAndExtensibilityNotCompatible: DetectionCodes.Value = Value("UsageAndExtensibilityNotCompatible")//done
   val InvalidBindingLocation: DetectionCodes.Value = Value("InvalidBindingLocation")//done
   val MultiVSForPrimitive: DetectionCodes.Value = Value("MultiVSForPrimitive")
   val VSNotFound: DetectionCodes.Value = Value("VSNotFound")
@@ -184,12 +183,6 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
       UBS Detection when a value set is Open/ Dynamic and Binding Strength is Suggested should be ALERT $ubs_open_dynamic_suggested
       UBS Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $ubs_closed_static_suggested
       UBS Detection when a value set is Open/ Static and Binding Strength is Suggested should be ALERT $ubs_open_static_suggested
-
-      UsageAndExtensibilityNotCompatible Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be ALERT $usage_extensibility_closed_dynamic_required
-      UsageAndExtensibilityNotCompatible Detection when a value set is Closed/ Static and Binding Strength is Required should be ALERT $usage_extensibility_closed_static_required
-
-      UsageAndExtensibilityNotCompatible Detection when a value set is Closed/ Dynamic and Binding Strength is Suggested should be ALERT $usage_extensibility_closed_dynamic_suggested
-      UsageAndExtensibilityNotCompatible Detection when a value set is Closed/ Static and Binding Strength is Suggested should be ALERT $usage_extensibility_closed_static_suggested
 
       InvalidBindingLocation Detection when a value set is Closed/ Dynamic and Binding Strength is Required should be SPEC_ERROR $invalid_bl_closed_dynamic_required
       InvalidBindingLocation Detection when a value set is Open/ Dynamic and Binding Strength is Required should be SPEC_ERROR $invalid_bl_open_dynamic_required
@@ -432,13 +425,6 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
   val vs_excluded_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.VSExcluded, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
   val vs_excluded_open_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.VSExcluded, valueSet(Some(Stability.Static), Some(Extensibility.Open)), Some(BindingStrength.S), ALERT)
 
-  //--UsageAndExtensibilityNotCompatible : only for P usage codes in CLOSED value sets
-  val usage_extensibility_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.UsageAndExtensibilityNotCompatible, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
-  val usage_extensibility_closed_static_required: MatchResult[String] = expectationSingleVs(DetectionCodes.UsageAndExtensibilityNotCompatible, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.R), ALERT)
-
-  val usage_extensibility_closed_dynamic_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.UsageAndExtensibilityNotCompatible, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
-  val usage_extensibility_closed_static_suggested: MatchResult[String] = expectationSingleVs(DetectionCodes.UsageAndExtensibilityNotCompatible, valueSet(Some(Stability.Static), Some(Extensibility.Closed)), Some(BindingStrength.S), ALERT)
-
   //--InvalidBindingLocation
   val invalid_bl_closed_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidBindingLocation, valueSet(Some(Stability.Dynamic), Some(Extensibility.Closed)), Some(BindingStrength.R), SPEC_ERROR)
   val invalid_bl_open_dynamic_required: MatchResult[String] = expectationSingleVs(DetectionCodes.InvalidBindingLocation, valueSet(Some(Stability.Dynamic), Some(Extensibility.Open)), Some(BindingStrength.R), SPEC_ERROR)
@@ -517,7 +503,6 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
       case DetectionCodes.EmptyVS => VSValidationCode.EmptyVS(vs)
       case DetectionCodes.DuplicateCode => VSValidationCode.MultipleCodesFoundInValueSet("A", vs, List())
       case DetectionCodes.DuplicateCodeAndCodeSystem => VSValidationCode.MultipleCodeAndCodeSystemFound("A", "B", vs, List())
-      case DetectionCodes.UsageAndExtensibilityNotCompatible => VSValidationCode.UsageAndExtensibilityNotCompatible(PCode, vs)
       case DetectionCodes.InvalidBindingLocation => VSValidationCode.InvalidCodeBindingLocation("1", multiple = false)
       case DetectionCodes.MultiVSForPrimitive => VSValidationCode.MultipleVSForPrimitive(vsb)
       case _ => throw new Exception("Detection Code Not Found, ValueSet Required")
@@ -536,7 +521,7 @@ trait ValueSetValidationDefaultConfigurationSpec extends Specification
     val reqs: List[Req] = List[Req]()
     val location: Location = Location(null, "desc ...", "Path", -1, -1, "", None)
     val hasExtra = false
-    val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, false, None)
+    val req: Req = Req(-1, "", Usage.O, None, None, None, Nil, None, hide = false, None)
     val rawMessageValue = "";
   }
 

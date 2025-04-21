@@ -192,31 +192,50 @@ object ValueComparator {
   /**
   * Compares the values they both have to have a valid date time format
   */
-  private def dateTimeComparator(dtz: TZ)(v1: DateTime, v2: Value, truncate: Boolean = false): Try[Int] =
-    for {
-      x1 <- checkDateTimeFormat(v1.raw)
-      x2 <- checkDateTimeFormat(v2.raw)
-      (va, vb) <- preProcessDateTime(x1, x2, truncate)
-      (dtm1, tzs1) = splitOnTZ(va)
-      (dtm2, tzs2) = splitOnTZ(vb)
-      (tz1, tz2) <- checkTimeZoneCompare(dtz)(tzs1, tzs2)
-      // If no default TZ
-      // -> one of the dates doesn't have TZ then fail
-      // -> both dates don't have TZ then use +0000 (consider in the same TZ)
-    } yield {
-      dtm1 take 6 compareTo ( dtm2 take 6 ) match {
-        case 0 => // we need to check the day
-          val d1 = dtm1 drop 6 take 2 match { case "" => 0 case x => x.toInt }
-          val d2 = dtm2 drop 6 take 2 match { case "" => 0 case x => x.toInt }
-          val t1 = dtm1 drop 8 match { case "" => s"00+0000" case x => s"$x$tz1" }
-          val t2 = dtm2 drop 8 match { case "" => s"00+0000" case x => s"$x$tz2" }
+  private def dateTimeComparator(dtz: TZ)(v1: DateTime, v2: Value, truncate: Boolean = false): Try[Int] = {
+    checkDateTimeFormat(v1.raw).map(x1 => {
+      checkDateTimeFormat(v2.raw).map(x2 => {
+        preProcessDateTime(x1, x2, truncate).map(values => {
+          val dtm1andTzs1 = splitOnTZ(values._1)
+          val dtm2andTzs2 = splitOnTZ(values._2)
+          val (dtm1, dtm2) = (dtm1andTzs1._1, dtm2andTzs2._1)
+          val (tzs1, tzs2) = (dtm1andTzs1._2, dtm2andTzs2._2)
+          dtm1 take 6 compareTo ( dtm2 take 6 ) match {
+            case 0 =>
+              val d1 = dtm1 drop 6 take 2 match {
+                case "" => 0
+                case x => x.toInt
+              }
+              val d2 = dtm2 drop 6 take 2 match {
+                case "" => 0
+                case x => x.toInt
+              }
 
-          val r1 = daysToMilliSeconds(d1) + timeToMilliSeconds(t1).get
-          val r2 = daysToMilliSeconds(d2) + timeToMilliSeconds(t2).get
+              if(Math.abs(d1 - d2) > 1) {
+                return Success(d1 compareTo d2)
+              } else {
+                // There is one or zero day difference, timezone is necessary to determine the difference
+                checkTimeZoneCompare(dtz)(tzs1, tzs2).map((tz) => {
+                  val (tz1, tz2) = (tz._1, tz._2)
+                  val t1 = dtm1 drop 8 match {
+                    case "" => s"00+0000"
+                    case x => s"$x$tz1"
+                  }
+                  val t2 = dtm2 drop 8 match {
+                    case "" => s"00+0000"
+                    case x => s"$x$tz2"
+                  }
 
-          r1 compareTo r2
-        case x => x
-      }
-    }
+                  val r1 = daysToMilliSeconds(d1) + timeToMilliSeconds(t1).get
+                  val r2 = daysToMilliSeconds(d2) + timeToMilliSeconds(t2).get
 
+                  r1 compareTo r2
+                })
+              }
+            case x => Success(x)
+          }
+        }).flatten
+      }).flatten
+    }).flatten
+  }
 }

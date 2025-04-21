@@ -33,7 +33,7 @@ case class GroupInstance(groupName: String, grouperName: String, groupId: String
 case class RequiredGroup(group: CoConstraintGroup) extends CoConstraintValidationCode
 case class RequiredCoConstraint(groupInstance: Option[GroupInstance], coConstraint: CoConstraint) extends CoConstraintValidationCode
 case class CardinalityCoConstraint(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, found: Int) extends CoConstraintValidationCode
-case class CardinalityGroup(group: CoConstraintGroup, found: Int, grouper: String, values: String) extends CoConstraintValidationCode
+case class CardinalityGroup(group: CoConstraintGroup, found: Int, grouper: Option[String], values: Option[String]) extends CoConstraintValidationCode
 case class ElementIsNotSegment(path: String, element: Element) extends CoConstraintValidationCode
 case class CoConstraintPlainTextFailure(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: PlainText, value: String) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
 case class CoConstraintPlainTextSuccess(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: PlainText) extends CoConstraintValidationCode with CoConstraintSelectorMatch
@@ -303,7 +303,13 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
 
   def checkGroupRequirement(group: CoConstraintGroup, groupers: List[CCGroupId]): List[CoConstraintValidationCode] = {
     if (groupers.isEmpty && group.requirement.usage.equals(CoConstraintUsage.R))  RequiredGroup(group)::Nil
-    else if (!group.requirement.cardinality.includes(groupers.size)) CardinalityGroup(group, groupers.size, groupers.head.grouper.name, groupers.map(_.value).sorted.mkString("[", ",", "]"))::Nil
+    else if (!group.requirement.cardinality.includes(groupers.size)) {
+      if(groupers.isEmpty) {
+        CardinalityGroup(group, 0, None, None)::Nil
+      } else {
+        CardinalityGroup(group, groupers.size, Some(groupers.head.grouper.name), Some(groupers.map(_.value).sorted.mkString("[", ",", "]")))::Nil
+      }
+    }
     else Nil
   }
 
@@ -516,7 +522,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
         coConstraint.requirement.cardinality,
         found
       )::Nil
-      case CardinalityGroup(group, found, grouper, values) => Detections.ccCardinalityGroup(context, group.name, group.requirement.cardinality, found, grouper, values)::Nil
+      case CardinalityGroup(group, found, grouper, values) => Detections.ccCardinalityGroup(context, group.name, group.requirement.cardinality, found, grouper.orNull, values.orNull)::Nil
         // Group Id
       case NotDistinctGrouper(cc, grouper) => List(Detections.ccNotDistinctGrouper(grouper.element, describeCoConstraint(segment, cc), grouper.value, context.location.uidPath))
       // PlainText

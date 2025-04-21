@@ -123,7 +123,6 @@ trait ValueSetValidationDefaultConfigurationSpec2 extends Specification
       case DetectionCodes.EmptyVS => VSValidationCode.EmptyVS(vs)
       case DetectionCodes.DuplicateCode => VSValidationCode.MultipleCodesFoundInValueSet("A", vs, List())
       case DetectionCodes.DuplicateCodeAndCodeSystem => VSValidationCode.MultipleCodeAndCodeSystemFound("A", "B", vs, List())
-      case DetectionCodes.UsageAndExtensibilityNotCompatible => VSValidationCode.UsageAndExtensibilityNotCompatible(PCode, vs)
       case DetectionCodes.InvalidBindingLocation => VSValidationCode.InvalidCodeBindingLocation("1", multiple = false)
       case DetectionCodes.MultiVSForPrimitive => VSValidationCode.MultipleVSForPrimitive(vsb)
       case _ => throw new Exception("Detection Code Not Found, ValueSet Required")
