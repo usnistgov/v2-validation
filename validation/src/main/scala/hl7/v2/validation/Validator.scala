@@ -255,7 +255,7 @@ class SyncHL7Validator(
     */
   @throws[Exception]
   def check(message: String, id: String): Report =
-    Await.result(validate(message, id), 10.second)
+    Await.result(validate(message, id), 600.second)
 
   /**
     * Validates the message using the mixed in structure,
@@ -268,7 +268,7 @@ class SyncHL7Validator(
     */
   @throws[Exception]
   def checkUsingConfiguration(message: String, id: String, configuration: Reader): Report =
-    Await.result(validate(message, id, configuration), 10.second)
+    Await.result(validate(message, id, configuration), 600.second)
 
 }
 
