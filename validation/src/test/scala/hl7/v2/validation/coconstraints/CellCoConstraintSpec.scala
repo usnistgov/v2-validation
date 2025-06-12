@@ -20,7 +20,7 @@ trait CellCoConstraintSpec extends Specification
 
   // ======== Co-Constraint Cell Validation
 
-  def inconclusiveIsNoMatch() = Seq(InconclusiveAssertion(null, null, null), InconclusiveVsBinding(null, null, null, null)).map(
+  def inconclusiveIsNoMatch() = Seq(InconclusiveAssertion(null, null, null), InconclusiveVsBinding(null, null, null)).map(
     isMatch(_) === false
   )
 
@@ -490,8 +490,12 @@ trait CellCoConstraintSpec extends Specification
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
         validateValueSetBinding(None, s, vsB, cc) === Some(List(
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[1]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))
+          CoConstraintVsBindingSuccess(
+            None,
+            cc,
+            s,
+            vsB,
+            List((vbL.head, VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))))
           )
         ))
       })
@@ -513,11 +517,14 @@ trait CellCoConstraintSpec extends Specification
           val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
           val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
           validateValueSetBinding(None, s, vsB, cc) === Some(List(
-            CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[1]"), vsB, vbL.head,
-              VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))
+            CoConstraintVsBindingSuccess(
+              None,
+              cc,
+              s,
+              vsB,
+              List((vbL.head, VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))))
             )
           ))
-
       })
     }
 
@@ -535,8 +542,12 @@ trait CellCoConstraintSpec extends Specification
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
         validateValueSetBinding(None, s, vsB, cc) === Some(List(
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[2]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R))
+          CoConstraintVsBindingSuccess(
+            None,
+            cc,
+            s,
+            vsB,
+            List((vbL.head, VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R))))
           )
         ))
       })
@@ -557,8 +568,12 @@ trait CellCoConstraintSpec extends Specification
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
         validateValueSetBinding(None, s, vsB, cc) === Some(List(
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[2]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R))
+          CoConstraintVsBindingSuccess(
+            None,
+            cc,
+            s,
+            vsB,
+            List((vbL.head, VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R))))
           )
         ))
       })
@@ -578,11 +593,15 @@ trait CellCoConstraintSpec extends Specification
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
         validateValueSetBinding(None, s, vsB, cc) === Some(List(
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[1]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))
-          ),
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[2]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R))
+          CoConstraintVsBindingSuccess(
+            None,
+            cc,
+            s,
+            vsB,
+            List(
+              (vbL.head, VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))),
+              (vbL.head, VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R)))
+            )
           )
         ))
       })
@@ -603,11 +622,15 @@ trait CellCoConstraintSpec extends Specification
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
         validateValueSetBinding(None, s, vsB, cc) === Some(List(
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[1]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))
-          ),
-          CoConstraintVsBindingSuccess(None, cc, assertGet(s, "2[2]"), vsB, vbL.head,
-            VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R))
+          CoConstraintVsBindingSuccess(
+            None,
+            cc,
+            s,
+            vsB,
+            List(
+              (vbL.head, VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))),
+              (vbL.head, VsEntry(assertGet(s, "2[2]"), tuple._2, Some(BindingStrength.R)))
+            )
           )
         ))
       })
@@ -642,13 +665,17 @@ trait CellCoConstraintSpec extends Specification
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
 
-        unwrapOptionAndMatchList(validateValueSetBinding(None, s, vsB, cc),
-          tuple._2 map (vsDetCode => {
-            CoConstraintVsBindingFailure(None, cc, s, vsB,
-              VsEntry(assertGet(s, "2[1]"), vsDetCode._1, Some(BindingStrength.R)),
-              vsDetCode._2
-            )
-          })
+        unwrapOptionAndMatchList(
+          validateValueSetBinding(None, s, vsB, cc),
+          List(CoConstraintVsBindingFailure(
+              None,
+              cc,
+              s,
+              vsB,
+              tuple._2 map {
+                vsDetCode => (vsDetCode._2, VsEntry(assertGet(s, "2[1]"), vsDetCode._1, Some(BindingStrength.R)))
+              }
+          ))
         )
       })
     }
@@ -666,31 +693,33 @@ trait CellCoConstraintSpec extends Specification
 
       Seq(
         ("CCT|ST|Y^^SYS1^X^^SYS1|A||||", List(
-          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), vs1_cs_b),
-          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_1)), vs1_1_b),
           (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_cs)), vs1_cs_b),
+          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), vs1_cs_b),
           (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_1)), vs1_1_b),
+          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_1)), vs1_1_b),
         )),
         ("CCT|ST|B^^SYS2^A^^SYS2|A||||", List(
-          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS2", vs1_cs), vs1_cs_b),
-          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_cs)), vs1_cs_b),
-          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_1)), vs1_1_b),
           (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("B", "SYS1", "SYS2", vs1_cs), vs1_cs_b),
           (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_cs)), vs1_cs_b),
+          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS2", vs1_cs), vs1_cs_b),
+          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_cs)), vs1_cs_b),
           (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_1)), vs1_1_b),
+          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_1)), vs1_1_b),
         ))
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
-
-        unwrapOptionAndMatchList(validateValueSetBinding(None, s, vsB, cc),
-          tuple._2 map (vsDetCode => {
-            CoConstraintVsBindingFailure(None, cc, s, vsB,
-              VsEntry(assertGet(s, "2[1]"), vsDetCode._1, Some(BindingStrength.R)),
-              vsDetCode._2
+        unwrapOptionAndMatchList(
+          validateValueSetBinding(None, s, vsB, cc),
+          List(CoConstraintVsBindingFailure(
+              None,
+              cc,
+              s,
+              vsB,
+              tuple._2 map (vsDetCode => (vsDetCode._2, VsEntry(assertGet(s, "2[1]"), vsDetCode._1, Some(BindingStrength.R)))),
             )
-          })
+          )
         )
       })
     }
@@ -706,31 +735,35 @@ trait CellCoConstraintSpec extends Specification
 
       Seq(
         ("CCT|ST|Y^^SYS1~X^^SYS1|A||||", List(
-          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_1)), "2[2]", vs1_1_b),
           (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_cs)), "2[1]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), "2[2]", vs1_cs_b),
           (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_1)), "2[1]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_1)), "2[2]", vs1_1_b),
         )),
         ("CCT|ST|B^^SYS2~A^^SYS2|A||||", List(
-          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS2", vs1_cs), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_cs)), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_1)), "2[2]", vs1_1_b),
           (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("B", "SYS1", "SYS2", vs1_cs), "2[1]", vs1_cs_b),
           (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_cs)), "2[1]", vs1_cs_b),
+          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS2", vs1_cs), "2[2]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_cs)), "2[2]", vs1_cs_b),
           (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_1)), "2[1]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_1)), "2[2]", vs1_1_b),
         ))
       ) map(tuple => {
         val s = segment(tuple._1, 1)
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
 
-        unwrapOptionAndMatchList(validateValueSetBinding(None, s, vsB, cc),
-          tuple._2 map (vsDetCode => {
-            CoConstraintVsBindingFailure(None, cc, s, vsB,
-              VsEntry(assertGet(s, vsDetCode._2), vsDetCode._1, Some(BindingStrength.R)),
-              vsDetCode._3
+        unwrapOptionAndMatchList(
+          validateValueSetBinding(None, s, vsB, cc),
+          List(
+            CoConstraintVsBindingFailure(
+              None,
+              cc,
+              s,
+              vsB,
+              tuple._2 map (vsDetCode => (vsDetCode._3, VsEntry(assertGet(s, vsDetCode._2), vsDetCode._1, Some(BindingStrength.R)))),
             )
-          })
+          )
         )
       })
     }
@@ -748,42 +781,44 @@ trait CellCoConstraintSpec extends Specification
 
       Seq(
         ("CCT|ST|T^^SYS1^Y^^SYS1~Z^^SYS1^X^^SYS1|A||||", List(
-          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_1)), "2[2]", vs1_1_b),
-          (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_cs)), "2[1]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_1)), "2[1]", vs1_1_b),
-          (VSValidationCode.CodeNotFound("Z", Some("SYS1"), List(vs1_cs)), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("Z", Some("SYS1"), List(vs1_1)), "2[2]", vs1_1_b),
           (VSValidationCode.CodeNotFound("T", Some("SYS1"), List(vs1_cs)), "2[1]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_cs)), "2[1]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("Z", Some("SYS1"), List(vs1_cs)), "2[2]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), "2[2]", vs1_cs_b),
           (VSValidationCode.CodeNotFound("T", Some("SYS1"), List(vs1_1)), "2[1]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("Y", Some("SYS1"), List(vs1_1)), "2[1]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("Z", Some("SYS1"), List(vs1_1)), "2[2]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_1)), "2[2]", vs1_1_b),
         )),
         ("CCT|ST|C^^SYS2^B^^SYS2~C^^SYS2^A^^SYS2|A||||", List(
-          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS2", vs1_cs), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_cs)), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_1)), "2[2]", vs1_1_b),
-          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("B", "SYS1", "SYS2", vs1_cs), "2[1]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_cs)), "2[1]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_1)), "2[1]", vs1_1_b),
-          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("C", "SYS1", "SYS2", vs1_cs), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("C", Some("SYS2"), List(vs1_cs)), "2[2]", vs1_cs_b),
-          (VSValidationCode.CodeNotFound("C", Some("SYS2"), List(vs1_1)), "2[2]", vs1_1_b),
           (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("C", "SYS1", "SYS2", vs1_cs), "2[1]", vs1_cs_b),
           (VSValidationCode.CodeNotFound("C", Some("SYS2"), List(vs1_cs)), "2[1]", vs1_cs_b),
+          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("B", "SYS1", "SYS2", vs1_cs), "2[1]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_cs)), "2[1]", vs1_cs_b),
+          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("C", "SYS1", "SYS2", vs1_cs), "2[2]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("C", Some("SYS2"), List(vs1_cs)), "2[2]", vs1_cs_b),
+          (VSValidationCode.SimpleCodeFoundInvalidCodeSystem("A", "SYS1", "SYS2", vs1_cs), "2[2]", vs1_cs_b),
+          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_cs)), "2[2]", vs1_cs_b),
           (VSValidationCode.CodeNotFound("C", Some("SYS2"), List(vs1_1)), "2[1]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("B", Some("SYS2"), List(vs1_1)), "2[1]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("C", Some("SYS2"), List(vs1_1)), "2[2]", vs1_1_b),
+          (VSValidationCode.CodeNotFound("A", Some("SYS2"), List(vs1_1)), "2[2]", vs1_1_b),
         ))
       ) map(tuple => {
         val s = segment(tuple._1, 1)
 
         val vsB = ValueSet("CCT-2 (B)", "2[*]", vbL)
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
-
         unwrapOptionAndMatchList(validateValueSetBinding(None, s, vsB, cc),
-          tuple._2 map (vsDetCode => {
-            CoConstraintVsBindingFailure(None, cc, s, vsB,
-              VsEntry(assertGet(s, vsDetCode._2), vsDetCode._1, Some(BindingStrength.R)),
-              vsDetCode._3
+          List(
+            CoConstraintVsBindingFailure(
+              None,
+              cc,
+              s,
+              vsB,
+              tuple._2 map (vsDetCode => (vsDetCode._3, VsEntry(assertGet(s, vsDetCode._2), vsDetCode._1, Some(BindingStrength.R)))),
             )
-          })
+          )
         )
       })
     }
@@ -806,11 +841,13 @@ trait CellCoConstraintSpec extends Specification
         val cc = scc(CoConstraintUsage.R, Range(1, "1"), List(vsB), List())
 
         unwrapOptionAndMatchList(validateValueSetBinding(None, s, vsB, cc), List(
-          InconclusiveVsBinding(vsB, vbL(0), s.location,
-            VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))
-          ),
-          InconclusiveVsBinding(vsB, vbL(1), s.location,
-            VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))
+          InconclusiveVsBinding(
+            vsB,
+            s.location,
+            List(
+              (vbL.head, VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R))),
+              (vbL(1), VsEntry(assertGet(s, "2[1]"), tuple._2, Some(BindingStrength.R)))
+            )
           )
         ))
     })
@@ -839,9 +876,9 @@ trait CellCoConstraintSpec extends Specification
     one
   }
 
-  def vsBindingSuccessIsMatch = isMatch(CoConstraintVsBindingSuccess(None, null, null, null, null, null)) === true
+  def vsBindingSuccessIsMatch = isMatch(CoConstraintVsBindingSuccess(None, null, null, null, null)) === true
 
-  def vsBindingFailureNoMatch = isMatch(CoConstraintVsBindingFailure(None, null, null, null, null, null)) === false
+  def vsBindingFailureNoMatch = isMatch(CoConstraintVsBindingFailure(None, null, null, null, null)) === false
 
   def unwrapOptionAndMatchList[T](o: Option[List[T]], expected: List[T]) = o.map(ls => ls must containTheSameElementsAs(expected)).getOrElse(1 mustEqual(2))
 

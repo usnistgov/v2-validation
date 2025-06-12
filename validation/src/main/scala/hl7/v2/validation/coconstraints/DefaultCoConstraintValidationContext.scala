@@ -6,7 +6,7 @@ import java.io.InputStream
 import hl7.v2.instance.Message
 import hl7.v2.profile.Range
 import hl7.v2.validation.vs.DefaultValueSetSpecification
-import nist.xml.util.{ClassPathResourceResolver, XOMDocumentBuilder}
+import nist.xml.util.XOMDocumentBuilder
 
 import scala.util.{Failure, Try}
 

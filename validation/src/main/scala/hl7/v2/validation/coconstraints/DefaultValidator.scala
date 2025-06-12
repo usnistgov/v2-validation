@@ -3,10 +3,9 @@ package hl7.v2.validation.coconstraints
 import expression.EvalResult.Trace
 import expression.{EvalResult, Evaluator}
 import hl7.v2.instance.{Element, EscapeSeqHandler, Group, Location, Message, Segment, Separators, Simple, TimeZone}
-import hl7.v2.profile
 import hl7.v2.validation.report.ConfigurableDetections
 import hl7.v2.instance.Query._
-import hl7.v2.validation.vs.{ValueSetBinding, ValueSetLibrary, VsEntry, VsValidator}
+import hl7.v2.validation.vs.{ValueSetBinding, VsEntry, VsValidator}
 
 import java.util.{List => JList}
 import gov.nist.validation.report.{Entry, Trace => GTrace}
@@ -15,6 +14,7 @@ import hl7.v2.validation.FeatureFlags
 import scala.jdk.CollectionConverters.SeqHasAsJava
 import scala.concurrent._
 import ExecutionContext.Implicits.global
+import scala.annotation.tailrec
 import scala.util.{Failure, Success}
 
 sealed trait CoConstraintValidationCode
@@ -41,11 +41,11 @@ case class CoConstraintCodeFailureNotFound(groupInstance: Option[GroupInstance],
 case class CoConstraintCodeFailureInvalidCs(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: Code, cs: String) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
 case class CoConstraintCodeFailureNotFoundCs(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: Code, location: CoConstraintBindingLocation) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
 case class CoConstraintCodeSuccess(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: Code) extends CoConstraintValidationCode with CoConstraintSelectorMatch
-case class CoConstraintVsBindingFailure(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: ValueSet, vsEntry: VsEntry, binding: ValueSetBinding) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
-case class CoConstraintVsBindingSuccess(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: ValueSet, bindingFound: ValueSetBinding, vsEntry: VsEntry) extends CoConstraintValidationCode with CoConstraintSelectorMatch
+case class CoConstraintVsBindingFailure(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: ValueSet, failures: List[(ValueSetBinding, VsEntry)]) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
+case class CoConstraintVsBindingSuccess(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, element: Element, constraint: ValueSet, successes: List[(ValueSetBinding, VsEntry)]) extends CoConstraintValidationCode with CoConstraintSelectorMatch
 case class InconclusiveCondition(context: Element, condition: String, trace: JList[GTrace]) extends CoConstraintValidationCode
 case class InconclusiveAssertion(cell: CoConstraintCell, location: Location, m: String) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
-case class InconclusiveVsBinding(cell: CoConstraintCell, binding: ValueSetBinding, location: Location, vsEntry: VsEntry) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
+case class InconclusiveVsBinding(cell: CoConstraintCell, location: Location, inconclusives: List[(ValueSetBinding, VsEntry)]) extends CoConstraintValidationCode with CoConstraintSelectorNoMatch
 case class NotDistinctGrouper(coConstraint: CoConstraint, groupId: CCGroupId) extends CoConstraintValidationCode
 case class InconclusiveGrouper(context: Element, path: String, message: String) extends CoConstraintValidationCode
 case class InconclusiveTarget(context: Element, path: String, message: String) extends CoConstraintValidationCode
@@ -58,15 +58,14 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
                        (implicit Detections : ConfigurableDetections, featureFlags: FeatureFlags): Future[Seq[Entry]] = Future {
     implicit val separators: Separators = m.separators
     implicit val dtz: Option[TimeZone] = m.defaultTimeZone
-    implicit val model: profile.Message = m.model
     checkMessage(m)
   }
 
   /*
   * Evaluate each binding on the message
   */
-  def checkMessage(m: Message)
-                  (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): List[Entry]  = {
+  private def checkMessage(m: Message)
+                          (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): List[Entry]  = {
     val bindings = coConstraintValidationContext.coConstraintBindingsFor(m)
     bindings.foldLeft(List[Entry]()) {
       (acc, binding) => acc ++ checkBindingContext(m.asGroup, binding)
@@ -101,17 +100,16 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   * Evaluate segment binding from context
   * Check if elements are segments
   */
-  def checkBindingSegment(group: Group, segment: CoConstraintBindingSegment)
-                         (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): List[Entry] = {
+  private def checkBindingSegment(group: Group, segment: CoConstraintBindingSegment)
+                                 (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): List[Entry] = {
     implicit val segmentName: String = segment.name
     implicit val context: Group = group
     query(group, segment.path) match {
       case Failure(exception) => createEntry(InconclusiveTarget(group, segment.path, exception.getMessage))
-      case Success(elements) => {
+      case Success(elements) =>
         val (segments, issues) = sanitizeElementList(segment.path, elements)
         val detections: List[CoConstraintValidationCode] = issues ::: checkCoConstraints(segments, segment.bindings)
         detections.flatMap(createEntry)
-      }
     }
   }
 
@@ -120,7 +118,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     If the groupId is not populated then the segment is considered as not having a cc-groupId
     If the groupId is not found and one or more paths failed then returns failures
    */
-  def qualifySegments(segments: List[Segment], groupers: List[GroupId]): (List[CCSegment], List[CoConstraintValidationCode]) = {
+  private def qualifySegments(segments: List[Segment], groupers: List[GroupId]): (List[CCSegment], List[CoConstraintValidationCode]) = {
     val qResults = for(segment <- segments) yield {
       val groupId = findGroupId(segment, groupers, Nil)
       (CCSegment(segment, groupId._1), groupId._2)
@@ -129,7 +127,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     (qResults.map(_._1), qResults.flatMap(_._2))
   }
 
-  def findGroupId(segment: Segment, groupers: List[GroupId], issues: List[CoConstraintValidationCode]): (Option[CCGroupId], List[CoConstraintValidationCode]) = {
+  @tailrec
+  private def findGroupId(segment: Segment, groupers: List[GroupId], issues: List[CoConstraintValidationCode]): (Option[CCGroupId], List[CoConstraintValidationCode]) = {
     groupers match {
       case Nil => (None, issues)
       case x::ls => getGroupId(segment, x) match {
@@ -139,7 +138,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     }
   }
 
-  def getGroupId(segment: Segment, grouper: GroupId): (Option[(GroupId, String, Element)], Option[CoConstraintValidationCode]) = {
+  private def getGroupId(segment: Segment, grouper: GroupId): (Option[(GroupId, String, Element)], Option[CoConstraintValidationCode]) = {
     queryAsSimple(segment, grouper.path) match {
       case Success(v::Nil) => (Some((grouper, v.value.raw, v)), None)
       case Success(_) => (None, None)
@@ -150,8 +149,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   /*
     Checks all the co-constraint tables defined on the list of target segments (Conditional and Simple Tables)
    */
-  def checkCoConstraints(ls: List[Segment], tables: List[CoConstraintTable])
-                        (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], context: Element, featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
+  private def checkCoConstraints(ls: List[Segment], tables: List[CoConstraintTable])
+                                (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], context: Element, featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
     tables.foldLeft(List[CoConstraintValidationCode]()) {
       (acc, table) =>
         val (segments, groupIdIssues) = qualifySegments(ls, table.grouper)
@@ -165,8 +164,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   /*
     Checks Individual Co-Constraint (distinct cc-groupId), then checks Co-Constraint Group on the remaining unmatched segments
    */
-  def checkCoConstraintTable(segments: List[CCSegment], coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup])
-                            (implicit Detections : ConfigurableDetections, l: ValueSetLibrary, s: Separators,  t: Option[TimeZone], context: Element, featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
+  private def checkCoConstraintTable(segments: List[CCSegment], coConstraints: List[CoConstraint], coConstraintGroups: List[CoConstraintGroup])
+                                    (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], context: Element, featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
     val (remainingSegments, entries) = checkCoConstraintList(None, segments, coConstraints, distinctGrouper = true)
     val (_, entryList) = coConstraintGroups.foldLeft((remainingSegments, entries)) {
       (acc, group) => {
@@ -181,8 +180,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   /*
     Applies the co-constraint table if the condition passes (evaluated from the GROUP context
    */
-  def checkConditionalCoConstraintTable(segments: List[CCSegment], binding: ConditionalCoConstraintTable)
-                                       (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], context: Element, featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
+  private def checkConditionalCoConstraintTable(segments: List[CCSegment], binding: ConditionalCoConstraintTable)
+                                               (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], context: Element, featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
     eval(binding.condition.assertion, context) match {
       case EvalResult.Pass => checkCoConstraintTable(segments, binding.coConstraints, binding.coConstraintGroups)
       case EvalResult.Inconclusive(trace) => InconclusiveCondition(context, binding.condition.description, stackTrace(context, trace :: Nil)) :: Nil
@@ -195,8 +194,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     Recursive, checks first co-constraint on the list against all segment
     then checks the remaining co-constraint on the remaining segments that didn't match the first co-constraint
  */
-  def checkCoConstraintList(groupInstance: Option[GroupInstance], segments: List[CCSegment], coConstraints: List[CoConstraint], distinctGrouper: Boolean)
-                           (implicit Detections : ConfigurableDetections, context: Element, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): (List[CCSegment], List[CoConstraintValidationCode]) = {
+  private def checkCoConstraintList(groupInstance: Option[GroupInstance], segments: List[CCSegment], coConstraints: List[CoConstraint], distinctGrouper: Boolean)
+                                   (implicit Detections : ConfigurableDetections, context: Element, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): (List[CCSegment], List[CoConstraintValidationCode]) = {
     coConstraints match {
       case coConstraint :: list =>
         val (remainingSegments, detectionsOfCoConstraint) = checkCoConstraint(groupInstance, segments, coConstraint, distinctGrouper)
@@ -212,8 +211,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     Then group segments based on cc-groupId from matched segments by the primary
     Then validate each group of segments against the CoConstraintGroup co-constraints
    */
-  def checkCoConstraintGroup(segments: List[CCSegment], group: CoConstraintGroup)
-                            (implicit Detections : ConfigurableDetections, context: Element, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): (List[CCSegment], List[CoConstraintValidationCode]) = {
+  private def checkCoConstraintGroup(segments: List[CCSegment], group: CoConstraintGroup)
+                                    (implicit Detections : ConfigurableDetections, context: Element, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): (List[CCSegment], List[CoConstraintValidationCode]) = {
     val primary = group.primary
     val coConstraints = group.coConstraints
 
@@ -253,7 +252,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     If the cc-groupId should be distinct (case of individual co-constraint) then check that the cc-groupId is unique in the list of segments
    */
   def checkCoConstraint(groupInstance: Option[GroupInstance], segments: List[CCSegment], coConstraint: CoConstraint, distinctGrouper: Boolean)
-                       (implicit Detections : ConfigurableDetections, context: Element, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): (List[CCSegment], List[CoConstraintValidationCode]) = {
+                       (implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): (List[CCSegment], List[CoConstraintValidationCode]) = {
     val (matches, noMatches) = segments.partition(ccs => segmentMatchSelector(ccs.segment, coConstraint))
     val requirementIssues = checkCoConstraintRequirement(groupInstance, coConstraint, matches.map(_.segment))
     val constraintIssues = checkConstraints(groupInstance, matches.map(_.segment), coConstraint)
@@ -270,7 +269,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     (noMatches, requirementIssues ++ constraintIssues ++ groupIdIssues)
   }
 
-  def findMatchingGroupId(grpId: String, segments: List[CCSegment]): List[CCSegment] = {
+  private def findMatchingGroupId(grpId: String, segments: List[CCSegment]): List[CCSegment] = {
     segments.filter(ccs => {
       ccs.groupId.isDefined && ccs.groupId.get.value.equals(grpId)
     })
@@ -279,8 +278,8 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   /*
     True if a segment match selectors, false otherwise
    */
-  def segmentMatchSelector(segment: Segment, cc: CoConstraint)
-                          (implicit Detections : ConfigurableDetections, context: Element, s: Separators, t: Option[TimeZone], featureFlags: FeatureFlags): Boolean = {
+  private def segmentMatchSelector(segment: Segment, cc: CoConstraint)
+                                  (implicit Detections : ConfigurableDetections, s: Separators, t: Option[TimeZone], featureFlags: FeatureFlags): Boolean = {
     val selectorsEval = cc.selectors.map {
       case plainText: PlainText => validatePlainText(None, segment, plainText, cc)
       case code: Code => validateCode(None, segment, code, cc)
@@ -295,13 +294,13 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
    */
   def isMatch(code: CoConstraintValidationCode with CoConstraintSelector): Boolean = code._match
 
-  def checkCoConstraintRequirement(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, segments: List[Segment]): List[CoConstraintValidationCode] = {
+  private def checkCoConstraintRequirement(groupInstance: Option[GroupInstance], coConstraint: CoConstraint, segments: List[Segment]): List[CoConstraintValidationCode] = {
     if (segments.isEmpty && coConstraint.requirement.usage.equals(CoConstraintUsage.R))  RequiredCoConstraint(groupInstance, coConstraint)::Nil
     else if (!coConstraint.requirement.cardinality.includes(segments.size)) CardinalityCoConstraint(groupInstance, coConstraint, segments.size)::Nil
     else Nil
   }
 
-  def checkGroupRequirement(group: CoConstraintGroup, groupers: List[CCGroupId]): List[CoConstraintValidationCode] = {
+  private def checkGroupRequirement(group: CoConstraintGroup, groupers: List[CCGroupId]): List[CoConstraintValidationCode] = {
     if (groupers.isEmpty && group.requirement.usage.equals(CoConstraintUsage.R))  RequiredGroup(group)::Nil
     else if (!group.requirement.cardinality.includes(groupers.size)) {
       if(groupers.isEmpty) {
@@ -314,7 +313,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
   }
 
   def checkConstraints(groupInstance: Option[GroupInstance], segments: List[Segment], cc: CoConstraint)
-                      (implicit Detections : ConfigurableDetections, context: Element, s: Separators,  t: Option[TimeZone], featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
+                      (implicit Detections : ConfigurableDetections, s: Separators, t: Option[TimeZone], featureFlags: FeatureFlags): List[CoConstraintValidationCode] = {
     segments.flatMap {
       segment => cc.constraints.flatMap {
         case plainText: PlainText => validatePlainText(groupInstance, segment, plainText, cc)
@@ -324,7 +323,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     }.flatten
   }
 
-  def validatePlainText(groupInstance: Option[GroupInstance], segment: Segment, plainText: PlainText, cc: CoConstraint)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone]): Option[List[CoConstraintValidationCode with CoConstraintSelector]] =
+  def validatePlainText(groupInstance: Option[GroupInstance], segment: Segment, plainText: PlainText, cc: CoConstraint)(implicit s: Separators): Option[List[CoConstraintValidationCode with CoConstraintSelector]] =
     queryAsSimple(segment, plainText.path) match {
       case Success(elements) => elements match {
         case Nil => None
@@ -342,7 +341,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     }
 
 
-  def validateCode(groupInstance: Option[GroupInstance], segment: Segment, code: Code, cc: CoConstraint)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone]): Option[List[CoConstraintValidationCode with CoConstraintSelector]] =
+  def validateCode(groupInstance: Option[GroupInstance], segment: Segment, code: Code, cc: CoConstraint)(implicit s: Separators): Option[List[CoConstraintValidationCode with CoConstraintSelector]] =
     query(segment, code.path) match {
       case Success(elements) =>
 
@@ -353,7 +352,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
           })
         })
 
-        // collect success, notfound, code system errors and inconclusives
+        // collect success, notfound, code system errors and inconclusive
         val (success, notfound, cs, notfoundcs, inconclusive) = (
           detections.collect{ case (_, Some(ss: CoConstraintCodeSuccess)) => ss },
           detections.collect{ case (_, Some(ss: CoConstraintCodeFailureNotFound)) => ss },
@@ -374,7 +373,7 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
       case Failure(f) => Some(InconclusiveAssertion(code, segment.location, f.getMessage)::Nil)
     }
 
-  def validateCodeBindingLocation(groupInstance: Option[GroupInstance], elm: Element, code: Code, cc: CoConstraint, location: CoConstraintBindingLocation)(implicit Detections : ConfigurableDetections, s: Separators,  t: Option[TimeZone]): Option[CoConstraintValidationCode with CoConstraintSelector] = {
+  private def validateCodeBindingLocation(groupInstance: Option[GroupInstance], elm: Element, code: Code, cc: CoConstraint, location: CoConstraintBindingLocation)(implicit s: Separators): Option[CoConstraintValidationCode with CoConstraintSelector] = {
     def checkValue(path: String, value: String, typ: String, success: Simple => CoConstraintValidationCode with CoConstraintSelector, fail: Simple => CoConstraintValidationCode with CoConstraintSelector, nil: () => CoConstraintValidationCode with CoConstraintSelector) =
       queryAsSimple(elm, path) match {
       case Success(_code::Nil) =>
@@ -425,20 +424,20 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
           // else if there was one or more spec errors return spec errors
           // else if there are not founds return all not founds
           if(codeFound.nonEmpty) {
-            Some(codeFound.map(elm => CoConstraintVsBindingSuccess(groupInstance, coConstraint, elm._2.target, vs, elm._1, elm._2)))
+            Some(List(CoConstraintVsBindingSuccess(groupInstance, coConstraint, segment, vs, codeFound)))
           } else if(specError.nonEmpty) {
-            Some(specError.map(elm => InconclusiveVsBinding(vs, elm._1, segment.location, elm._2)))
+            Some(List(InconclusiveVsBinding(vs, segment.location, specError)))
           } else if(notFound.nonEmpty) {
-            Some(notFound.map(elm => CoConstraintVsBindingFailure(groupInstance, coConstraint, segment, vs, elm._2, elm._1)))
+            Some(List(CoConstraintVsBindingFailure(groupInstance, coConstraint, segment, vs, notFound)))
           } else {
             None
           }
       }
-      case Failure(f) => Some(InconclusiveAssertion(vs, segment.location, f.getMessage)::Nil)
+      case Failure(f) => Some(List(InconclusiveAssertion(vs, segment.location, f.getMessage)))
     }
   }
 
-  def sanitizeElementList(path: String, elmList: List[Element])(implicit Detections : ConfigurableDetections): (List[Segment], List[CoConstraintValidationCode]) = {
+  private def sanitizeElementList(path: String, elmList: List[Element]): (List[Segment], List[CoConstraintValidationCode]) = {
     elmList.foldLeft((List[Segment](), List[CoConstraintValidationCode]())) {
       (acc, elm) =>
         try {
@@ -458,11 +457,11 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
         new GTrace(assertion, reasons.asJava)
     }).asJava
 
-  def describeCoConstraint(segment: String, cc: CoConstraint)(implicit Detections : ConfigurableDetections): String = {
+  private def describeCoConstraint(segment: String, cc: CoConstraint)(implicit Detections : ConfigurableDetections): String = {
     val selectors = cc.selectors.map {
       case PlainText(element, _, value) =>
         String.format(Detections.getConfiguration.getString("co-constraint.plain-text.selector"), element, value)
-      case ValueSet(element, path, bindings) =>
+      case ValueSet(element, _, bindings) =>
         String.format(Detections.getConfiguration.getString("co-constraint.value-set.selector"), describeBindingLocations(element, bindings.head.bindingLocations.map(_.codeLocation)), makeList(bindings.head.bindings))
       case Code(element, _, code, codeSystem, bindingLocation) =>
         String.format(Detections.getConfiguration.getString("co-constraint.code.selector"), describeBindingLocations(element, bindingLocation.map(_.position.toString)), code, codeSystem)
@@ -470,34 +469,28 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
     String.format(Detections.getConfiguration.getString("co-constraint.description"), segment, selectors)
   }
 
-  def describeConstraint(constraint: CoConstraintCell)(implicit Detections : ConfigurableDetections): String = {
+  private def describeConstraint(constraint: CoConstraintCell)(implicit Detections : ConfigurableDetections): String = {
     constraint match {
       case PlainText(element, _, value) =>
         String.format(Detections.getConfiguration.getString("co-constraint.plain-text.constraint"), element, value)
-      case ValueSet(element, path, bindings) =>
+      case ValueSet(element, _, bindings) =>
         String.format(Detections.getConfiguration.getString("co-constraint.value-set.constraint"), describeBindingLocations(element, bindings.head.bindingLocations.map(_.codeLocation)), makeList(bindings.head.bindings))
       case Code(element, _, code, codeSystem, bindingLocation) =>
         String.format(Detections.getConfiguration.getString("co-constraint.code.constraint"), describeBindingLocations(element, bindingLocation.map(_.position.toString)), code, codeSystem)
     }
   }
 
-  def describeVsBinding(element: String, binding: ValueSetBinding)(implicit Detections : ConfigurableDetections): String = {
+  private def describeVsBinding(element: String, binding: ValueSetBinding)(implicit Detections : ConfigurableDetections): String = {
     String.format(Detections.getConfiguration.getString("co-constraint.value-set.constraint"), describeBindingLocations(element, binding.bindingLocations.map(_.codeLocation)), makeList(binding.bindings))
   }
 
-  def describeBindingLocations(element: String, locations: List[String]): String = {
-    locations.map(location => s"${element}.${location}").mkString(" or ")
+  private def describeBindingLocations(element: String, locations: List[String]): String = {
+    locations.map(location => s"$element.$location").mkString(" or ")
   }
 
-  def describeVsBindings(bindings: List[ValueSetBinding])(implicit Detections : ConfigurableDetections): String = {
-    bindings.map(b => {
-      String.format(Detections.getConfiguration.getString("co-constraint.value-set.binding"), makeList(b.bindings), makeList(b.bindingLocations.map(_.codeLocation)))
-    }).mkString(s" ${Detections.getConfiguration.getString("co-constraint.value-set.connector")} ")
-  }
+  private def makeList(values: List[String]): String = values.mkString("[", ", ","]")
 
-  def makeList(values: List[String]): String = values.mkString("[", ", ","]")
-
-  def describeGroupInstance(groupInstance: Option[GroupInstance])(implicit Detections : ConfigurableDetections): String = {
+  private def describeGroupInstance(groupInstance: Option[GroupInstance])(implicit Detections : ConfigurableDetections): String = {
     groupInstance match {
       case None => ""
       case Some(value) =>
@@ -570,29 +563,28 @@ trait DefaultValidator extends CoConstraintValidator with Evaluator with VsValid
         describeConstraint(constraint)
       )::Nil
         // ValueSet
-      case CoConstraintVsBindingFailure(groupInstance, coConstraint, element, constraint, vsEntry, binding) => List(
-        Detections.ccVsFailure(
+      case CoConstraintVsBindingFailure(groupInstance, coConstraint, element, constraint, failures) =>
+        val bindings = failures.map(_._1).distinct
+        bindings.map(binding => Detections.ccVsFailure(
           describeGroupInstance(groupInstance),
           element,
           describeCoConstraint(segment, coConstraint),
           describeVsBinding(constraint.element, binding)
-        ),
-        createEntry(vsEntry.target, vsEntry.code, vsEntry.strength)
-      )
-      case CoConstraintVsBindingSuccess(groupInstance, coConstraint, element, constraint, binding, vsEntry) => List(
-        Detections.ccCellSuccess(
+        )):::failures.map(vsEntry => createEntry(vsEntry._2.target, vsEntry._2.code, vsEntry._2.strength))
+      case CoConstraintVsBindingSuccess(groupInstance, coConstraint, element, constraint, successes) =>
+        val bindings = successes.map(_._1).distinct
+        bindings.map(binding => Detections.ccCellSuccess(
           describeGroupInstance(groupInstance),
           element,
           describeCoConstraint(segment, coConstraint),
           describeVsBinding(constraint.element, binding)
-        ),
-        createEntry(vsEntry.target, vsEntry.code, vsEntry.strength)
-      )
+        )):::successes.map(vsEntry => createEntry(vsEntry._2.target, vsEntry._2.code, vsEntry._2.strength))
         // Spec Errors
       case ElementIsNotSegment(path, element) => Detections.ccElementIsNotSegment(element, path, context)::Nil
       case InconclusiveCondition(context, condition, trace) => Detections.ccConditionSpecError(context.location, condition, trace)::Nil
       case InconclusiveAssertion(cell, location, m) => Detections.ccSpecError(location, describeConstraint(cell), m)::Nil
-      case InconclusiveVsBinding(cell, _, location, vsEntry) => List(Detections.ccBindingSpecError(location, describeConstraint(cell)),  createEntry(vsEntry.target, vsEntry.code, vsEntry.strength))
+      case InconclusiveVsBinding(cell, location, inconclusives) =>
+        Detections.ccBindingSpecError(location, describeConstraint(cell))::inconclusives.map(vsEntry => createEntry(vsEntry._2.target, vsEntry._2.code, vsEntry._2.strength))
       case InconclusiveGrouper(context, path, reason) => List(Detections.ccGrouperSpecError(context, path, reason))
       case InconclusiveTarget(context, path, reason) => List(Detections.ccTargetSpecError(context, path, reason))
     }

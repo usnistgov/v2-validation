@@ -499,8 +499,8 @@ trait CoConstraintTableSpec  extends Specification
       implicit val grp: Group = group(List("CCT|CWE|A^^SYS1|A"))
       checkBindingContext(grp, sBinding) must containTheSameElementsAs(
         createEntry(
-          CoConstraintVsBindingSuccess(None, sBinding.segments.head.bindings.head.coConstraints.head, assertGet(grp, "1[1].2[1]"), cell, vb,
-            VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs), Some(BindingStrength.R))
+          CoConstraintVsBindingSuccess(None, sBinding.segments.head.bindings.head.coConstraints.head, assertGet(grp, "1[1]"), cell,
+            List((vb, VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs), Some(BindingStrength.R))))
           )
         )
       )
@@ -511,8 +511,7 @@ trait CoConstraintTableSpec  extends Specification
       checkBindingContext(grp, sBinding) must containTheSameElementsAs(
         createEntry(
           CoConstraintVsBindingFailure(None, sBinding.segments.head.bindings.head.coConstraints.head, assertGet(grp, "1[1]"), cell,
-            VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), Some(BindingStrength.R)),
-            vb
+            List((vb, VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), Some(BindingStrength.R))))
           )
         )
       )
@@ -1033,8 +1032,8 @@ trait CoConstraintTableSpec  extends Specification
       ))
       val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "ST")), List(cc))
       checkBindingContext(grp, sBinding._1) must containTheSameElementsAs(
-        createEntry(CoConstraintVsBindingSuccess(groupInstance("1"), cc, assertGet(grp, "1[1].2[1]"), vs, vsB,
-          VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs), Some(BindingStrength.R))
+        createEntry(CoConstraintVsBindingSuccess(groupInstance("1"), cc, assertGet(grp, "1[1]"), vs,
+          List((vsB, VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs), Some(BindingStrength.R))))
         ))
       )
     }
@@ -1055,8 +1054,7 @@ trait CoConstraintTableSpec  extends Specification
       val sBinding = binding(List(PlainText("CCT-1 (A)", "1[*]", "ST")), List(cc))
       checkBindingContext(grp, sBinding._1) must containTheSameElementsAs(
         createEntry(CoConstraintVsBindingFailure(groupInstance("1"), cc, assertGet(grp, "1[1]"), vs,
-          VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), Some(BindingStrength.R)),
-          vsB
+          List((vsB, VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("X", Some("SYS1"), List(vs1_cs)), Some(BindingStrength.R))))
         ))
       )
     }
@@ -1083,8 +1081,12 @@ trait CoConstraintTableSpec  extends Specification
       checkBindingContext(grp, sBinding._1) must containTheSameElementsAs(
         createEntry(CoConstraintPlainTextSuccess(groupInstance("1"), cc, assertGet(grp, "1[1].2[1].1[1]"), cc.constraints.head.asInstanceOf[PlainText])) :::
         createEntry(CoConstraintCodeSuccess(groupInstance("1"), cc, assertGet(grp, "1[1].2[1]"), cc.constraints(1).asInstanceOf[Code])) :::
-        createEntry(CoConstraintVsBindingSuccess(groupInstance("1"), cc, assertGet(grp, "1[1].2[1]"), vs, vsB,
-          VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs), Some(BindingStrength.R))
+        createEntry(CoConstraintVsBindingSuccess(
+          groupInstance("1"),
+          cc,
+          assertGet(grp, "1[1]"),
+          vs,
+          List((vsB, VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.RVS(VCode("A", "des", CodeUsage.R, "SYS1"), "A", vs1_cs), Some(BindingStrength.R))))
         ))
       )
     }
@@ -1112,8 +1114,7 @@ trait CoConstraintTableSpec  extends Specification
         createEntry(CoConstraintPlainTextFailure(groupInstance("1"), cc, assertGet(grp, "1[1].2[1].1[1]"), cc.constraints.head.asInstanceOf[PlainText], "x")) :::
         createEntry(CoConstraintCodeFailureNotFound(groupInstance("1"), cc, assertGet(grp, "1[1].2[1].1[1]").asInstanceOf[Simple], cc.constraints(1).asInstanceOf[Code])) :::
         createEntry(CoConstraintVsBindingFailure(groupInstance("1"), cc, assertGet(grp, "1[1]"), vs,
-          VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("x", Some("y"), List(vs1_cs)), Some(BindingStrength.R)),
-          vsB
+          List((vsB, VsEntry(assertGet(grp, "1[1].2[1]"), VSValidationCode.CodeNotFound("x", Some("y"), List(vs1_cs)), Some(BindingStrength.R))))
         ))
       )
     }
