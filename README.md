@@ -7,13 +7,13 @@ The project has two external dependencies :
 ### xml-util
 
 * __GitHub Repository__ : https://github.com/usnistgov/xml-util
-* __Jar File Location__ : /dependencies/xml-util-2.1.0/xml-util-2.1.0.jar
-* __POM File Location__ : /dependencies/xml-util-2.1.0/xml-util-2.1.0.pom
+* __Jar File Location__ : /dependencies/xml-util-2.1.1/xml-util-2.1.1.jar
+* __POM File Location__ : /dependencies/xml-util-2.1.1/xml-util-2.1.1.pom
 * __Maven__ :
     ```
     <groupId>gov.nist</groupId>
     <artifactId>xml-util</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     ```
 
 ### validation-report
@@ -34,8 +34,8 @@ The project has two external dependencies :
 3) Install xml-utils, run command :
     ```
     mvn install:install-file 
-    -Dfile=xml-util-2.1.0/xml-util-2.1.0.jar
-    -DpomFile=xml-util-2.1.0/xml-util-2.1.0.pom
+    -Dfile=xml-util-2.1.1/xml-util-2.1.1.jar
+    -DpomFile=xml-util-2.1.1/xml-util-2.1.1.pom
     ```
 4) Install validation-report, run command :
     ```
