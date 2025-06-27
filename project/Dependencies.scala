@@ -27,7 +27,7 @@ object Dependencies {
     "com.fasterxml.jackson.module" %% "jackson-module-scala",
   ).map(_ % jacksonVersion)
 
-  val schemas = "gov.nist.hit" % "hl7-v2-schemas" % "1.7.0"
+  val schemas = "gov.nist.hit" % "hl7-v2-schemas" % "1.7.1"
   val xom = "xom" % "xom" % "1.3.7"
   val stringUtils = "org.apache.commons" % "commons-lang3" % "3.12.0"
   val typesafe_config = "com.typesafe"                  % "config"                % "1.4.2"

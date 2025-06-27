@@ -51,41 +51,48 @@ object ValueSetLibraryImpl {
     XOMDocumentBuilder.build(vsXML, HL7v2Schema.getValueSetLibrary) map { doc =>
       val root = doc.getRootElement
       val noValDef = root.getFirstChildElement("NoValidation")
-      val tbls = root.getChildElements("ValueSetDefinitions")
+      val tables = root.getChildElements("ValueSetDefinitions")
       val external = root.getChildElements("ExternalValueSetDefinitions")
       val noVal    = noValidation( noValDef )
-      val lib = tables(tbls, valueSet).toList ::: tables(external, externalValueSet).toList
+      val lib = extractValueSetDefinitions(tables).toList ::: extractExternalValueSetDefinitions(external).toList
       ValueSetLibraryImpl(noVal, lib.toMap)
     }
   }
-    
 
   private def noValidation(e: nu.xom.Element): Seq[String] =
     if(e == null) Nil else e.getChildElements("BindingIdentifier").map(_.getValue.trim).toList
-
-  private def set(e: nu.xom.Element, mapper: (nu.xom.Element) => ValueSet): Map[String, ValueSet] =
-    if( e == null ) Map()
-    else {
-      val tableDefs = e.getChildElements("ValueSetDefinition")
-      tableDefs.foldLeft(Map[String, ValueSet]()) { (acc, x) =>
-        val vs = mapper(x)
-        acc + (vs.id -> vs)
-      }
-    }
   
-  private def tables(e: nu.xom.Elements, mapper: (nu.xom.Element) => ValueSet): Map[String, ValueSet] =
+  private def extractValueSetDefinitions(e: nu.xom.Elements): Map[String, ValueSet] =
     if( e == null ) Map()
     else {
-      e.foldLeft(Map[String, ValueSet]()){ (acc, x) =>
-        acc ++ set(x, mapper)
+      e.foldLeft(Map[String, ValueSet]()){ (vsList, definitions) =>
+        val internal = definitions
+          .getChildElements("ValueSetDefinition")
+          .foldLeft(Map[String, ValueSet]()) { (vsList, e) => {
+            val vs = valueSet(e)
+            vsList + (vs.id -> vs)
+          }}
+        val external = definitions
+            .getChildElements("ExternalValueSetDefinition")
+            .foldLeft(Map[String, ValueSet]()) { (extVsList, e) => {
+              val vs = externalValueSet(e)
+              extVsList + (vs.id -> vs)
+            }}
+        vsList ++ internal ++ external
       }
     }
 
-  private def externalRefs(e: nu.xom.Elements): Map[String, ExternalValueSet] =
-    if (e == null) Map()
+  private def extractExternalValueSetDefinitions(e: nu.xom.Elements): Map[String, ValueSet] =
+    if( e == null ) Map()
     else {
-      e.foldLeft(Map[String, ExternalValueSet]()) { (acc, x) =>
-        acc
+      e.foldLeft(Map[String, ValueSet]()){ (vsList, definitions) =>
+        val external = definitions
+          .getChildElements("ValueSetDefinition")
+          .foldLeft(Map[String, ValueSet]()) { (vsList, e) => {
+            val vs = externalValueSet(e)
+            vsList + (vs.id -> vs)
+          }}
+        vsList ++ external
       }
     }
 
