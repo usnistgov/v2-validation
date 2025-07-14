@@ -10,12 +10,12 @@
 #### validation-report
 
 * __GitHub Repository__ : https://github.com/usnistgov/validation-report
-* __Version__ : 1.1.1
+* __Version__ : 1.2.0
 
 #### hl7-v2-schemas
 
 * __GitHub Repository__ : https://github.com/usnistgov/hl7-v2-schemas
-* __Version__ : 1.6.0
+* __Version__ : 1.7.1
 
 ### Build
 
@@ -30,7 +30,7 @@ You can use this project as a maven dependency
 <dependency>
     <groupId>gov.nist</groupId>
     <artifactId>hl7-v2-validation</artifactId>
-    <version>1.6.5</version>
+    <version>1.7.2</version>
 </dependency>
 ```
 This project is published in https://hit-nexus.nist.gov repository
