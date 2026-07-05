@@ -12,8 +12,8 @@ object ValueComparator {
 
   /**
     * Compares the values v1 and v2 and returns :
-    *   A Success( 1 ) if 'v1' is greater that 'v2'
-    *   A Success(-1 ) if 'v1' is lower that 'v2'
+    *   A Success( 1 ) if 'v1' is greater than 'v2'
+    *   A Success(-1 ) if 'v1' is lower than 'v2'
     *   A Success( 0 ) if 'v1' is equal to 'v2'
     *   A Failure if :
     *     'v1' and 'v2' are not comparable
@@ -91,7 +91,7 @@ object ValueComparator {
     }
 
   /**
-    * Returns true is v is comparable to a Number
+    * Returns true if v is comparable to a Number
     */
   private def numberComparisonGuard(v: Value): Boolean = v match {
     case x: Number => true
@@ -101,7 +101,7 @@ object ValueComparator {
   }
 
   /**
-    * Returns true is v is comparable to a Date
+    * Returns true if v is comparable to a Date
     */
   private def dateComparisonGuard(v: Value): Boolean = v match {
     case x: Date  => true
@@ -111,7 +111,7 @@ object ValueComparator {
   }
 
   /**
-    * Returns true is v is comparable to a Time
+    * Returns true if v is comparable to a Time
     */
   private def timeComparisonGuard(v: Value): Boolean = v match {
     case x: Time  => true
@@ -121,7 +121,7 @@ object ValueComparator {
   }
 
   /**
-    * Returns true is v is comparable to a DateTime
+    * Returns true if v is comparable to a DateTime
     */
   private def dateTimeComparisonGuard(v: Value): Boolean = v match {
     case x: DateTime  => true

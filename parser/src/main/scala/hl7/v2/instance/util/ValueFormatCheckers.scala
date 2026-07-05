@@ -36,35 +36,35 @@ object ValueFormatCheckers {
 
   /**
     * Returns true 's' has a valid Number format
-    * @param s - The string to tested
+    * @param s - The string to be tested
     * @return True 's' has a valid Number format
     */
   def isValidNumberFormat(s: String): Boolean = NM.pattern.matcher(s).matches
 
   /**
     * Returns true 's' has a valid Date format
-    * @param s - The string to tested
+    * @param s - The string to be tested
     * @return True 's' has a valid Date format
     */
   def isValidDateFormat(s: String): Boolean = DT.pattern.matcher(s).matches
 
   /**
     * Returns true 's' has a valid Time format
-    * @param s - The string to tested
+    * @param s - The string to be tested
     * @return True 's' has a valid Time format
     */
   def isValidTimeFormat(s: String): Boolean = TM.pattern.matcher(s).matches
 
   /**
     * Returns true 's' has a valid DateTime format
-    * @param s - The string to tested
+    * @param s - The string to be tested
     * @return True 's' has a valid DateTime format
     */
   def isValidDateTimeFormat(s: String): Boolean = DTM.pattern.matcher(s).matches
 
   /**
     * Returns true 's' has a valid TimeZone format
-    * @param s - The string to tested
+    * @param s - The string to be tested
     * @return True 's' has a valid TimeZone format
     */
   def isValidTimeZone(s: String): Boolean = s matches TZ
