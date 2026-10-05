@@ -27,7 +27,7 @@ trait DefaultValidator extends Validator with EscapeSeqHandler {
   }
 
   /**
-    * Checks the element against the the specified requirements
+    * Checks the element against the specified requirements
     * and recursively check the children if applicable
     * @param e - The element to be checked
     * @return A list of problems found

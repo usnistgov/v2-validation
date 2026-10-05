@@ -47,7 +47,7 @@ object Segment extends EscapeSeqHandler {
   }
 
   /**
-    * Creates abd returns a list of field
+    * Creates and returns a list of field
     * @param fml - The list of field models
     * @param vs  - The value and column array
     * @param l   - The parent location

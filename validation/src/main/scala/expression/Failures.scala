@@ -34,7 +34,7 @@ object Failures extends EscapeSeqHandler {
   
   def formatCheck(c: Element, e: StringFormat): Fail = {
     val path    = s"${c.location.path}.${e.path}"
-    val reasons = Reason( c.location, s"$path is not conform to ${e.format.toString()} string format"):: Nil
+    val reasons = Reason( c.location, s"$path does not conform to ${e.format.toString()} string format"):: Nil
     Fail( Trace( e, reasons ) :: Nil )
   }
 
@@ -170,7 +170,7 @@ object Failures extends EscapeSeqHandler {
   def and(e: AND, c: Element, f: Fail): Fail = Fail( Trace( e, Nil) :: f.stack )
 
   /**
-   * Creates and returns an FORALL expression failure stack traces
+   * Creates and returns a FORALL expression failure stack traces
    */
   def forall(e: FORALL, c: Element, f: Fail): Fail = Fail( Trace( e, Nil) :: f.stack )
 
